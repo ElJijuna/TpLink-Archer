@@ -6,12 +6,12 @@ App SwiftUI → canal de control autorizado → extensión DriverKit → transpo
 
 La app administrará escaneo, asociación y credenciales en Keychain. NetworkingDriverKit publicaría una interfaz Ethernet sobre el enlace inalámbrico; esta integración debe demostrarse antes de construir la interfaz final. No hay promesa de integración con el menú Wi-Fi nativo.
 
-El módulo C++ existente solo codifica solicitudes. Falta implementar transporte USB, secuencias de energía, lectura de identidad/chip-cut/efuse, carga de firmware, MAC/BB/RF, colas TX/RX, eventos firmware, gestión 802.11 y autenticación WPA2. NDIS de Windows y mac80211 de Linux no son componentes trasladables directamente a DriverKit.
+El módulo C++ codifica solicitudes y valida descriptores; el diagnóstico IOUSBLib ya realiza una lectura de registro. Falta implementar transporte USB DriverKit, secuencias de energía, lectura de identidad/chip-cut/efuse, carga de firmware, MAC/BB/RF, colas TX/RX, eventos firmware, gestión 802.11 y autenticación WPA2. NDIS de Windows y mac80211 de Linux no son componentes trasladables directamente a DriverKit.
 
 ## Hitos con criterios de salida
 
 1. **Identidad y evidencia (parcial):** INF exacto y familia confirmados; pendiente identificar revisión física y fijar commit de fuentes Linux antes de una adaptación.
-2. **Transporte:** enumerar endpoints desde descriptores y verificar lecturas documentadas de identidad, controlando errores, desconexión y cancelación. Ninguna escritura de prueba a registros desconocidos.
+2. **Transporte (parcial):** endpoints reales recuperados y lectura de registro 0xFC verificada con IOUSBLib; falta el transporte DriverKit con control de errores, desconexión y cancelación. Ninguna escritura de prueba a registros desconocidos.
 3. **Inicialización:** recuperar secuencias de encendido, firmware y datos regulatorios específicos de la placa. Validar chip-cut y procedencia del firmware. El nombre de una cadena de firmware no permite extraer su imagen con seguridad.
 4. **Enlace:** escaneo pasivo, asociación 2,4/5 GHz y WPA2; demostrar tráfico bidireccional antes de publicar una interfaz de red. Respetar país, canales y potencia de placa.
 5. **Producto macOS:** integrar app y DEXT; verificar entitlements, firma e instalación normal. Probar DHCP, DNS, IPv4/IPv6, suspensión y una hora de transferencia en hardware Intel y ARM.

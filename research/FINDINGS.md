@@ -37,3 +37,15 @@ No se ha validado asociación, firmware, cifrado, tráfico USB de datos ni red. 
 ## Verificación realizada
 
 `make test probe universal`: correcto en Apple Silicon. Tres pruebas Python, pruebas C++ de encabezados y rangos, detección real y compilación universal. Ejecución Intel, Linux y controlador DriverKit pendientes.
+
+## Segunda etapa: descriptores y primera transferencia real
+
+El cliente nativo IOUSBLib recuperó una configuración de 81 bytes. Interfaz 0, alternate setting 0: bulk IN 0x84/0x88 y bulk OUT 0x05/0x06/0x07/0x09/0x0A/0x0B/0x0C; todos con máximo de 512 bytes. No se han determinado todavía los roles de cada cola. El descriptor se conserva como fixture y su hash está en `hardware-observation.json`.
+
+Una solicitud IN (`c0 05 fc 00 00 00 04 00`) obtuvo 4 bytes: valor little-endian `0x80000371`, byte bajo 0x71. Se eligió el registro por `rtw89_read_chip_ver` en Linux core.c y `R_BE_SYS_CHIPINFO` en reg.h. Es una observación runtime del registro, no una validación completa de revisión/placa ni de compatibilidad con todo el driver Linux. No se escribieron registros, no se abrió el dispositivo en exclusiva y no se cargó firmware.
+
+El sandbox rechazó el acceso al cliente USB con -536870210; la misma consulta funcionó fuera del sandbox. La herramienta devuelve error ante acceso denegado, respuestas cortas o archivo de salida existente.
+
+Nuevas pruebas: descriptores truncados, longitudes inválidas, endpoint duplicado, conteos incoherentes, alternate settings y fixture real. Compilación universal y ejecución ARM verificadas; prueba Intel pendiente.
+
+El parser también pasó AddressSanitizer y UndefinedBehaviorSanitizer con el fixture y los casos malformados.

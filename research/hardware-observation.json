@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-18",
+  "target": "37ad:0104",
+  "host_architecture": "arm64",
+  "configuration_descriptor": {
+    "path": "tests/fixtures/37ad-0104-usb2-config.bin",
+    "bytes": 81,
+    "sha256": "0833ca9d5679092049565b2d599554ec721f6f0f8e9315688b11f87c2ddfa645"
+  },
+  "register_read": {
+    "bmRequestType": 192,
+    "bRequest": 5,
+    "wValue": 252,
+    "wIndex": 0,
+    "wLength": 4,
+    "wLenDone": 4,
+    "raw_value": 2147484529,
+    "raw_hex": "0x80000371",
+    "hardware_id_low_byte": 113,
+    "interpretation": "raw_observation_only"
+  },
+  "limitations": [
+    "Intel execution not tested",
+    "No firmware uploaded",
+    "No register writes",
+    "No association or network traffic tested",
+    "USB descriptor client denied by sandbox; succeeded outside sandbox"
+  ]
+}

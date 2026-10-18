@@ -5,6 +5,16 @@
     "bytes": 7504549
   },
   {
+    "path": "artifacts/rtw89-core.c",
+    "sha256": "131e39c92f0ac60ca3a9e581a692b7689c3ed6d0042ca1980a83cb0064aab211",
+    "bytes": 230622
+  },
+  {
+    "path": "artifacts/rtw89-reg.h",
+    "sha256": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d",
+    "bytes": 409283
+  },
+  {
     "path": "artifacts/rtw89-usb.c",
     "sha256": "858b8771c585a65fe5b1498c1d98e786134ee3c46b18985924310a24c1a6d80e",
     "bytes": 33068
