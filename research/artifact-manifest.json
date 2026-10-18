@@ -1,0 +1,227 @@
+[
+  {
+    "path": "artifacts/official-driver.zip",
+    "sha256": "8343fb20dbfe11571ab2da94856fbabb6fa2a1f25387adaa0f5eb718cf6a1b33",
+    "bytes": 7504549
+  },
+  {
+    "path": "artifacts/rtw89-usb.c",
+    "sha256": "858b8771c585a65fe5b1498c1d98e786134ee3c46b18985924310a24c1a6d80e",
+    "bytes": 33068
+  },
+  {
+    "path": "artifacts/rtw89-usb.h",
+    "sha256": "dc2a33fc80eedc6aa07422b0b44527669c8723df9fe2096722fe756a3b69c93e",
+    "bytes": 2438
+  },
+  {
+    "path": "artifacts/rtw8922au.c",
+    "sha256": "8281d447225706cb770a53983a57a8a07e814e77d85f72360de1ca1873d846f5",
+    "bytes": 3215
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/RTUWPSrvcLib.dll",
+    "sha256": "92f17c65d79780b6bd63cc37b3a39c9272bafaa7157348c334cca16d1c7c5be9",
+    "bytes": 1353088
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/RTUWPSrvcMain.exe",
+    "sha256": "2acb7f988c9cea8ad29999a378b600fdbb83ade4003c951828d1d2f50b1f562b",
+    "bytes": 1352576
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/RTUWPUsbSwExt.dll",
+    "sha256": "cfd9e67d0e0fa7b9e12466ed8e7fd6a349ce0fb5982bf1c0905fcc054198214d",
+    "bytes": 1404288
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/RTUWPWlanExt.dll",
+    "sha256": "d23c439a0a6e67eb66ce332a387a160f5e9479ee9cb40dbd010f6f8bc3eb9d29",
+    "bytes": 1309056
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/TXPWR_ByRate_Enc.txt",
+    "sha256": "ea52378a28d3c53720d92f77fcc5d7598b5b4840c7d4668a7ead4e5ce7bada0e",
+    "bytes": 24153
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/TXPWR_LMT_6G_Enc.txt",
+    "sha256": "05ee72d6782ec44f4e86305a042aec6da34360c3aea316a4847e08284f1887bc",
+    "bytes": 23974
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/TXPWR_LMT_Enc.txt",
+    "sha256": "52581d56fbe0999f917698503b4fc412e23832530353531214fcc0fb5147ded0",
+    "bytes": 28591
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/TXPWR_LMT_RU_6G_Enc.txt",
+    "sha256": "a3bff4325b17224866d345076d7cbed62cf498d8b1c55689f1ddff3c388be306",
+    "bytes": 42731
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/TXPWR_LMT_RU_Enc.txt",
+    "sha256": "de7740158250bb9ab61bf23b1d5f6ca1796948dca986d91db6460b5fb568c718",
+    "bytes": 28301
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/netrtwlanu7.cat",
+    "sha256": "0a61b3d6836f0e36c51a3e22fe02a505ef76f93d7f7729d0599f9ae0e67aab32",
+    "bytes": 15759
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/netrtwlanu7.inf",
+    "sha256": "1804edf54072b036e5dffbc6aa9276c22fc09181828c839b274d1f059784cdb5",
+    "bytes": 91346
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/rtwlanu7.sys",
+    "sha256": "78bddb546049277dd9b061f776f9f12038256b2d88927dada5fc998b3b0e308d",
+    "bytes": 6862720
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/RTUWPSrvcLib.dll",
+    "sha256": "fa76c5f6e92b1fc62fccdf922a3ee484ebf1f24f09d6f0c7582eabb80c62bad0",
+    "bytes": 1001856
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/RTUWPSrvcMain.exe",
+    "sha256": "6be76c34ca293ae5e6691cb29f13466f18b64f88dfd48237e6ba54cac9f2a437",
+    "bytes": 1005952
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/RTUWPUsbSwExt.dll",
+    "sha256": "df5033b5b30c647d1b053d9f55eca1c8020779f8890a7d15b82712bc23795288",
+    "bytes": 1031552
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/RTUWPWlanExt.dll",
+    "sha256": "0f0385da9593578ab67ee41167b874579cdbf1e56446566b5b9ff827488b25ff",
+    "bytes": 965504
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/TXPWR_ByRate_Enc.txt",
+    "sha256": "ea52378a28d3c53720d92f77fcc5d7598b5b4840c7d4668a7ead4e5ce7bada0e",
+    "bytes": 24153
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/TXPWR_LMT_6G_Enc.txt",
+    "sha256": "05ee72d6782ec44f4e86305a042aec6da34360c3aea316a4847e08284f1887bc",
+    "bytes": 23974
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/TXPWR_LMT_Enc.txt",
+    "sha256": "52581d56fbe0999f917698503b4fc412e23832530353531214fcc0fb5147ded0",
+    "bytes": 28591
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/TXPWR_LMT_RU_6G_Enc.txt",
+    "sha256": "a3bff4325b17224866d345076d7cbed62cf498d8b1c55689f1ddff3c388be306",
+    "bytes": 42731
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/TXPWR_LMT_RU_Enc.txt",
+    "sha256": "de7740158250bb9ab61bf23b1d5f6ca1796948dca986d91db6460b5fb568c718",
+    "bytes": 28301
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/netrtwlanu7.cat",
+    "sha256": "19fd2e49265d0c4a0e0e51106b00422568b1f31a564894acbe04568938b60a7a",
+    "bytes": 15693
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/netrtwlanu7.inf",
+    "sha256": "a02e20b4060efccc54f51181673a7eb70eb09c13804e45bf538a93bb877d1dd6",
+    "bytes": 91338
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/rtwlanu7.sys",
+    "sha256": "8a38cd7a2834dac1d61f8d30507869d9b9821a8cfa6e05f4fadc993c5b1c1be5",
+    "bytes": 6012288
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/RTUWPSrvcLib.dll",
+    "sha256": "d93a47aced726bd952a5a106390ab073c29a199c8cb8605e895173320718fc99",
+    "bytes": 1353088
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/RTUWPSrvcMain.exe",
+    "sha256": "837d26588b6819663463ccdf690dcfba5b8fbd1d00b5fdebc8b5d4c9ea805ed2",
+    "bytes": 1352576
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/RTUWPUsbSwExt.dll",
+    "sha256": "db2c892f69bf7a47a572dac611007b6e7e1e90e1a2c4df78e2c6cb704f70f745",
+    "bytes": 1404288
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/RTUWPWlanExt.dll",
+    "sha256": "2e8595332f8c0a2e951c33bdf1fc84c5cd5f30be4c0446da898452a96e1738e7",
+    "bytes": 1309056
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/TXPWR_ByRate_Enc.txt",
+    "sha256": "ea52378a28d3c53720d92f77fcc5d7598b5b4840c7d4668a7ead4e5ce7bada0e",
+    "bytes": 24153
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/TXPWR_LMT_6G_Enc.txt",
+    "sha256": "05ee72d6782ec44f4e86305a042aec6da34360c3aea316a4847e08284f1887bc",
+    "bytes": 23974
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/TXPWR_LMT_Enc.txt",
+    "sha256": "52581d56fbe0999f917698503b4fc412e23832530353531214fcc0fb5147ded0",
+    "bytes": 28591
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/TXPWR_LMT_RU_6G_Enc.txt",
+    "sha256": "a3bff4325b17224866d345076d7cbed62cf498d8b1c55689f1ddff3c388be306",
+    "bytes": 42731
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/TXPWR_LMT_RU_Enc.txt",
+    "sha256": "de7740158250bb9ab61bf23b1d5f6ca1796948dca986d91db6460b5fb568c718",
+    "bytes": 28301
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/netrtwlanu7.cat",
+    "sha256": "54798d75345a9220050bd76d722dd7e444a84c58bcfc26511d059b500e98ea94",
+    "bytes": 15736
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/netrtwlanu7.inf",
+    "sha256": "5dfa6d1c7d1ae3cfc7ed6477410ff0e668fde67242854af30b46acc1243bf4a9",
+    "bytes": 91596
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/rtwlanu7.sys",
+    "sha256": "68f735cc46b25ce983997d7f8693b24ea75af3abaf42a2f4d69fb63ad5590332",
+    "bytes": 6834552
+  },
+  {
+    "path": "artifacts/windows/app/WifiAutoInstall.ini",
+    "sha256": "4f661b514a58210810cf4be1b5f1bbcc0fd3fa8f145518b82108f74ebb0d403c",
+    "bytes": 162
+  },
+  {
+    "path": "artifacts/windows/app/WifiAutoInstallDriver.exe",
+    "sha256": "4843f20a8dddf6ab4a657cf9773fd0e7115ed447501d0226ce8a07a91085e575",
+    "bytes": 168800
+  },
+  {
+    "path": "artifacts/windows/app/WifiAutoInstallSrv.exe",
+    "sha256": "50b02474125f96644239b77303f6bdbba7939fb8e8642296ba221375d2e7e03b",
+    "bytes": 135480
+  },
+  {
+    "path": "artifacts/windows/app/X64/WifiAutoInstallDriver.exe",
+    "sha256": "4843f20a8dddf6ab4a657cf9773fd0e7115ed447501d0226ce8a07a91085e575",
+    "bytes": 168800
+  },
+  {
+    "path": "artifacts/windows/app/X86/WifiAutoInstallDriver.exe",
+    "sha256": "11a75260a557c9ab91c788ba62aef18d758c5fbb318dbdb9207e56fd1aece1ba",
+    "bytes": 138592
+  }
+]

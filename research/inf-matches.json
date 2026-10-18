@@ -1,0 +1,50 @@
+[
+  {
+    "path": "artifacts/windows/app/Driver/Win10X64/netrtwlanu7.inf",
+    "sha256": "1804edf54072b036e5dffbc6aa9276c22fc09181828c839b274d1f059784cdb5",
+    "driver_version": "11/18/2025,5002.24.126.7",
+    "matches": [
+      {
+        "line": 28,
+        "section": "TPLINK.NTamd64.10.0...16299",
+        "description_token": "%TPLINK_0104.DeviceDesc%",
+        "install_section": "RTL8922au.ndi",
+        "hardware_ids": [
+          "USB\\VID_37AD&PID_0104"
+        ]
+      }
+    ]
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win10X86/netrtwlanu7.inf",
+    "sha256": "a02e20b4060efccc54f51181673a7eb70eb09c13804e45bf538a93bb877d1dd6",
+    "driver_version": "11/18/2025,5002.24.126.7",
+    "matches": [
+      {
+        "line": 28,
+        "section": "TPLINK.NTx86.10.0...16299",
+        "description_token": "%TPLINK_0104.DeviceDesc%",
+        "install_section": "RTL8922au.ndi",
+        "hardware_ids": [
+          "USB\\VID_37AD&PID_0104"
+        ]
+      }
+    ]
+  },
+  {
+    "path": "artifacts/windows/app/Driver/Win11/netrtwlanu7.inf",
+    "sha256": "5dfa6d1c7d1ae3cfc7ed6477410ff0e668fde67242854af30b46acc1243bf4a9",
+    "driver_version": "11/18/2025,5102.24.126.7",
+    "matches": [
+      {
+        "line": 28,
+        "section": "TPLINK.NTamd64.10.0...21250",
+        "description_token": "%TPLINK_0104.DeviceDesc%",
+        "install_section": "RTL8922au.ndi",
+        "hardware_ids": [
+          "USB\\VID_37AD&PID_0104"
+        ]
+      }
+    ]
+  }
+]
