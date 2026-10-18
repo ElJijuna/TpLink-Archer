@@ -53,3 +53,7 @@ El parser también pasó AddressSanitizer y UndefinedBehaviorSanitizer con el fi
 ## Tercera etapa
 
 Se recuperaron dos imágenes embebidas mediante buffers y longitudes referenciados por código, y se verificó lectura de revisión/estado de firmware. Ver `FIRMWARE.md`, `firmware-manifest.json` y `startup-observation.json`. El estado bruto 3 se interpreta como inicializado en la referencia Linux; no identifica la imagen ejecutada ni acredita conexión Wi-Fi. Las nueve pruebas Python y ambas suites C++ pasaron; compilación universal correcta.
+
+## Cuarta etapa
+
+Se implementaron cabeceras H2C, envoltura USB y parsing RX/C2H. Prueba real de entradas bulk: ambas respondieron por timeout sin datos durante un intento acotado, con apertura y cierre normal de la interfaz. Ver `FIRMWARE_CHANNEL.md` para evidencia, alcance del resultado y limitaciones. No se ha observado una respuesta C2H ni identificado una consulta de versión activa.

@@ -12,6 +12,8 @@ Con Xcode Command Line Tools y Python 3:
 make test
 make probe
 make universal
+make receive-universal decode
+./build/archer-decode tests/fixtures/synthetic-c2h-be.bin
 ./build/archer-probe-universal --descriptors
 ./build/archer-probe-universal --dump-descriptors /tmp/archer-new-config.bin
 ./build/archer-probe-universal --read-chip-info
@@ -33,3 +35,5 @@ La tercera etapa recuperó dos imágenes embebidas del SYS oficial y añadió in
 Consultar [research/FINDINGS.md](research/FINDINGS.md) y [research/PROPOSAL.md](research/PROPOSAL.md). Los paquetes originales se mantienen en `artifacts/`, excluidos de Git. No se incluye una licencia de redistribución para binarios TP-Link.
 
 El INF oficial vincula este USB ID a `RTL8922au.ndi`. Esto identifica la familia que Windows selecciona; el modelo comercial exacto sigue sin comprobarse físicamente.
+
+La cuarta etapa añade codificación H2C, envoltura USB BE y decodificación RX/C2H con pruebas. [research/FIRMWARE_CHANNEL.md](research/FIRMWARE_CHANNEL.md) documenta el intento de recepción real (dos timeouts, sin datos) y el comando de recepción acotada. Todavía no se envían comandos al firmware.
