@@ -1,5 +1,20 @@
 [
   {
+    "path": "artifacts/firmware/manifest.json",
+    "sha256": "408c6b55aff47e5a63599826c270a77b7607cba0ea9c78f5400356e3df249699",
+    "bytes": 4228
+  },
+  {
+    "path": "artifacts/firmware/rtl8922a-cut1-0.34.40.0.bin",
+    "sha256": "568540dee2b1839527d581a3e29572ad4bf89eee100337a0b2d2c22f45b906ef",
+    "bytes": 317576
+  },
+  {
+    "path": "artifacts/firmware/rtl8922a-cut2-0.35.47.15.bin",
+    "sha256": "d77e1c63f620540f375475d63191e4f7b8d921b9a555364b25b65f58a5b1e33f",
+    "bytes": 400248
+  },
+  {
     "path": "artifacts/official-driver.zip",
     "sha256": "8343fb20dbfe11571ab2da94856fbabb6fa2a1f25387adaa0f5eb718cf6a1b33",
     "bytes": 7504549
@@ -8,6 +23,21 @@
     "path": "artifacts/rtw89-core.c",
     "sha256": "131e39c92f0ac60ca3a9e581a692b7689c3ed6d0042ca1980a83cb0064aab211",
     "bytes": 230622
+  },
+  {
+    "path": "artifacts/rtw89-fw.c",
+    "sha256": "acc4188f0829051ce67ad7dbcdff6819523948a291702279c3b555d0ed1d840c",
+    "bytes": 368492
+  },
+  {
+    "path": "artifacts/rtw89-fw.h",
+    "sha256": "d73c8eff7cf97ecc2096b72415a1130cc45d8719c909f5435b26d3bd71cf96e4",
+    "bytes": 180254
+  },
+  {
+    "path": "artifacts/rtw89-mac_be.c",
+    "sha256": "7b78b2791f45cadd25fa46113200fadc9d954ddc47c50b88458fd299d5ea1fa1",
+    "bytes": 101077
   },
   {
     "path": "artifacts/rtw89-reg.h",
@@ -23,6 +53,11 @@
     "path": "artifacts/rtw89-usb.h",
     "sha256": "dc2a33fc80eedc6aa07422b0b44527669c8723df9fe2096722fe756a3b69c93e",
     "bytes": 2438
+  },
+  {
+    "path": "artifacts/rtw8922a.c",
+    "sha256": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535",
+    "bytes": 117506
   },
   {
     "path": "artifacts/rtw8922au.c",

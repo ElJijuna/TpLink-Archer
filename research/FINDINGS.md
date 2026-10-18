@@ -49,3 +49,7 @@ El sandbox rechazó el acceso al cliente USB con -536870210; la misma consulta f
 Nuevas pruebas: descriptores truncados, longitudes inválidas, endpoint duplicado, conteos incoherentes, alternate settings y fixture real. Compilación universal y ejecución ARM verificadas; prueba Intel pendiente.
 
 El parser también pasó AddressSanitizer y UndefinedBehaviorSanitizer con el fixture y los casos malformados.
+
+## Tercera etapa
+
+Se recuperaron dos imágenes embebidas mediante buffers y longitudes referenciados por código, y se verificó lectura de revisión/estado de firmware. Ver `FIRMWARE.md`, `firmware-manifest.json` y `startup-observation.json`. El estado bruto 3 se interpreta como inicializado en la referencia Linux; no identifica la imagen ejecutada ni acredita conexión Wi-Fi. Las nueve pruebas Python y ambas suites C++ pasaron; compilación universal correcta.

@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-18",
+  "target": "37ad:0104",
+  "host_architecture": "arm64",
+  "register_reads": [
+    {
+      "address": "0xf0",
+      "raw_value": 205724983,
+      "raw_hex": "0x0c431d37",
+      "chip_version_bits_15_12": 1
+    },
+    {
+      "address": "0xfc",
+      "raw_value": 2147484529,
+      "raw_hex": "0x80000371",
+      "hardware_id_low_byte": 113
+    },
+    {
+      "address": "0x1e0",
+      "raw_value": 201326592,
+      "raw_hex": "0x0c000000",
+      "firmware_status_bits_29_26": 3
+    }
+  ],
+  "inferences": [
+    {
+      "source": "rtw89-mac_be.c:fwdl_status_map",
+      "statement": "raw status 3 maps to RTW89_FWDL_WCPU_FW_INIT_RDY; actual running firmware identity is unknown"
+    }
+  ],
+  "effects": [
+    "Three vendor IN requests",
+    "No USB open/seize",
+    "No configuration changes",
+    "No register writes",
+    "No firmware uploaded"
+  ]
+}
