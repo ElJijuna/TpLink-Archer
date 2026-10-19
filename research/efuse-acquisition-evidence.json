@@ -1,0 +1,93 @@
+{
+  "chip_revision_code": 1,
+  "physical_bytes": 4864,
+  "phycap_bytes": 56,
+  "rf_logical_bytes": 576,
+  "otp_programming_performed": false,
+  "radio_initialized": false,
+  "control_restoration": [
+    {
+      "address": "0x0",
+      "width": 2,
+      "mask": "0xc100",
+      "initial": "0x39e",
+      "final": "0x39e",
+      "controlled_bits_restored": true
+    },
+    {
+      "address": "0xcc",
+      "width": 1,
+      "mask": "0x4",
+      "initial": "0x29",
+      "final": "0x29",
+      "controlled_bits_restored": true
+    },
+    {
+      "address": "0xa4",
+      "width": 4,
+      "mask": "0x80000",
+      "initial": "0x88300003",
+      "final": "0x88300003",
+      "controlled_bits_restored": true
+    },
+    {
+      "address": "0x68",
+      "width": 4,
+      "mask": "0x10000",
+      "initial": "0x80406804",
+      "final": "0x80406804",
+      "controlled_bits_restored": true
+    },
+    {
+      "address": "0x74",
+      "width": 4,
+      "mask": "0x10000000",
+      "initial": "0x1004fd",
+      "final": "0x1004fd",
+      "controlled_bits_restored": true
+    }
+  ],
+  "source_header_url": "https://raw.githubusercontent.com/torvalds/linux/master/drivers/net/wireless/realtek/rtw89/rtw8922a.h",
+  "artifacts": [
+    {
+      "path": "artifacts/efuse-stage13.jsonl",
+      "sha256": "05704dcf5d91c481415ed5fc3c71ddcc830b02a629133b201188c3b2b62c58d7"
+    },
+    {
+      "path": "artifacts/efuse-stage13.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/efuse-stage13/physical-ddv.bin",
+      "sha256": "b4ca726d25b04ca152d69e0c77a2f73f49916fb9f22ffd8c261380e99608c5df"
+    },
+    {
+      "path": "artifacts/efuse-stage13/phycap.bin",
+      "sha256": "ca1de3fdd127c861ab5f3b8fccefeef916a109f437b7de50e23f5ea08486bfd2"
+    },
+    {
+      "path": "artifacts/efuse-stage13/rf-logical.bin",
+      "sha256": "f105aa4a4efd345b6533da26d6dfb250bda461533a8ca962e27ad3083600fc37"
+    },
+    {
+      "path": "artifacts/rtw8922a.h",
+      "sha256": "1c59b5141dd01bcee004524095b5c7c7100b2826c1171966c4aa3f79b86928e8"
+    },
+    {
+      "path": "artifacts/rtw8922a.c",
+      "sha256": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535"
+    },
+    {
+      "path": "artifacts/rtw89-efuse_be.c",
+      "sha256": "be3d1321b1cc2bc107a3cea4df6ecc92072c2ab2bae39796075c7e9dfc15e62e"
+    },
+    {
+      "path": "artifacts/rtw89-reg.h",
+      "sha256": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d"
+    },
+    {
+      "path": "artifacts/rtw89-core.h",
+      "sha256": "13fcfa34fdea89773a9bbb5a6fe95d2bf95464eb1f4d759e5d39cb2ce48167af"
+    }
+  ]
+}

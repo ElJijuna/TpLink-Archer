@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
         MacRegisterBus bus;
         if (mode == "--inspect") {
             for (auto address : {0xfcu,0x1e0u,0x3f0u,0x68u,0x4u,0x74u,
-                                 0x7140u,0x7160u,0x7164u,0x8400u,0x10000u})
+                                 0x0u,0x30u,0xa4u,0xccu,0x7140u,0x7160u,0x7164u,0x8400u,0x10000u})
                 (void)bus.read(address,4);
             for (auto address : {0x7160u,0x7164u,0x1f5u}) (void)bus.read(address,1);
         } else {

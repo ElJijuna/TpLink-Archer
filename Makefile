@@ -1,6 +1,6 @@
 CXX := clang++
 CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -Iinclude
-.PHONY: test probe universal receive-universal decode decode-universal mailbox-universal
+.PHONY: test probe universal receive-universal decode decode-universal mailbox-universal efuse-universal
 build:
 	mkdir -p build
 build/usb-request-test: tests/usb_request_test.cpp include/archer/usb_request.hpp | build
@@ -13,7 +13,10 @@ build/register-mailbox-test: tests/register_mailbox_test.cpp include/archer/regi
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/sequence-ledger-test: tests/sequence_ledger_test.cpp include/archer/sequence_ledger.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
-test: build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+build/efuse-reader-test: tests/efuse_reader_test.cpp include/archer/efuse_reader.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+	./build/efuse-reader-test
 	./build/sequence-ledger-test
 	./build/usb-request-test
 	./build/usb-descriptors-test
@@ -39,3 +42,6 @@ decode-universal: | build
 
 mailbox-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_mailbox.cpp -framework IOKit -framework CoreFoundation -o build/archer-mailbox-universal
+
+efuse-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_efuse.cpp -framework IOKit -framework CoreFoundation -o build/archer-efuse-universal

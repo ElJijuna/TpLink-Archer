@@ -44,3 +44,40 @@ rtw89-efuse_be.c physical dump and logical parser; rtw8922a.c USB MAC read,
 efuse RF parsing, efuse block table and rfk_init_late. Source snapshots remain
 hash-bound local references; a pinned revision and the relevant chip tables
 are still required for a distributable implementation.
+
+## Stage 13: physical efuse acquisition and raw RF interpretation
+
+`make efuse-universal` builds the new Intel/ARM executable. Run from the project
+root: `build/archer-efuse-universal NEW_DIRECTORY`. It holds the same adapter
+ledger lock as the bulk diagnostic and uses the verified WLAN IO window.
+Only RTL8922A revision code 1, active system state and the observed idle efuse
+isolation configuration are accepted. The DDV control write contains only a
+16-bit read address: no OTP programming mode or data-write operation exists.
+The read window enables the documented isolation/power/burst controls, reads
+the full 0x1300-byte DDV region plus 0x38 bytes at 0x1700, and checks control
+restoration before saving complete maps. Each read is bounded; acquisition
+has a 30-second deadline checked between words. Cleanup attempts every control
+restoration even after an earlier cleanup transfer failure; errors are surfaced.
+The read command/status and data latches are not restored or retriggered.
+
+Physical ARM acquisition succeeded. The 576-byte logical RF extraction is
+populated. `tools/rf_calibration.py` follows the packed rtw8922a_efuse layout
+and reports raw factory fields and per-path TSSI, thermal and RX gain arrays:
+RFE type code 1, crystal trim code 66 (0x42), board-info code 33 (0x21).
+Country bytes are ff/ff and do not provide a country assignment. Raw codes
+are not yet transformed into board/radio programming parameters.
+
+Observed original/final controlled fields in isolation, debug, burst, power
+and WLAN IO match; hashes and restoration checks are retained in
+`efuse-acquisition-evidence.json`. Raw maps and register traces remain local
+ignored artifacts. The logical extraction and raw interpretation tools do not
+write the adapter. Unit tests exercise acquisition length, read-only command
+words, timeout, data transfer failure, cleanup failure continuation, unsupported
+revision, and synthetic logical decoding/field offsets. Six C++ suites and
+23 Python tests pass. Intel is compile-tested; hardware execution is ARM only.
+
+The next radio step is to interpret PHY calibration and RFE/FEM selection,
+then implement the required baseband/RF tables and firmware calibration waits
+for this board. Radio, scanning and association are still absent. The source
+header was fetched from Linux master and hash-bound alongside retained source;
+revision pinning and cross-file compatibility remain a distribution prerequisite.

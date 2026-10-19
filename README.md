@@ -81,3 +81,11 @@ ese archivo: no hay reciclaje automático al agotar las 256 secuencias. Se
 validaron físicamente las secuencias 2–5 con retorno 0. El decodificador efuse
 offline y los requisitos pendientes están en `research/RADIO_BRINGUP.md`.
 La radio todavía no se ha inicializado.
+
+### Efuse de fábrica adquirida
+
+`make efuse-universal` construye el lector DDV/PHY Intel y ARM. En el Mac ARM
+se adquirieron ambos mapas y se verificó la restauración de sus controles.
+El bloque RF contiene RFE tipo 1 y trim de cristal 0x42. Los decodificadores
+son offline; esos parámetros todavía no se han aplicado a la radio. Evidencia
+en `research/efuse-acquisition-evidence.json`.
