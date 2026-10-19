@@ -1,0 +1,36 @@
+{
+  "firmware_source": "https://gitlab.com/kernel-firmware/linux-firmware/-/raw/main/rtw89/rtw8922a_fw-1.bin",
+  "firmware_revision_pinned": false,
+  "firmware_uploaded": false,
+  "rf_registers_written": false,
+  "artifacts": [
+    {
+      "path": "artifacts/efuse-stage13/phycap.bin",
+      "sha256": "ca1de3fdd127c861ab5f3b8fccefeef916a109f437b7de50e23f5ea08486bfd2"
+    },
+    {
+      "path": "artifacts/rtw8922a_fw-1.bin",
+      "sha256": "4340bc322912f30f1793bb57a1747c23b15e40db2df628d6687d1ddf722f2828"
+    },
+    {
+      "path": "artifacts/linux-firmware-WHENCE",
+      "sha256": "0dd59e46f1e5d33d112236b17cb6de9d8f46fbf8fd09685cb474eb70a55f4da1"
+    },
+    {
+      "path": "artifacts/LICENCE.rtlwifi_firmware.txt",
+      "sha256": "a61351665b4f264f6c631364f85b907d8f8f41f8b369533ef4021765f9f3b62e"
+    },
+    {
+      "path": "artifacts/rtw8922a.c",
+      "sha256": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535"
+    },
+    {
+      "path": "artifacts/rtw89-fw.c",
+      "sha256": "acc4188f0829051ce67ad7dbcdff6819523948a291702279c3b555d0ed1d840c"
+    },
+    {
+      "path": "artifacts/rtw89-fw.h",
+      "sha256": "d73c8eff7cf97ecc2096b72415a1130cc45d8719c909f5435b26d3bd71cf96e4"
+    }
+  ]
+}

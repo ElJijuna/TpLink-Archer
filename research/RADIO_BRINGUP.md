@@ -81,3 +81,49 @@ then implement the required baseband/RF tables and firmware calibration waits
 for this board. Radio, scanning and association are still absent. The source
 header was fetched from Linux master and hash-bound alongside retained source;
 revision pinning and cross-file compatibility remain a distribution prerequisite.
+
+## Stage 14: PHY trim decoding and firmware table discovery
+
+`tools/phy_calibration.py` now interprets the physical PHY region. On this
+adapter both thermal trim values are programmed: path A=-1, path B=0.
+Thermal format uses bit 6 as positive sign and bits 5:0 as magnitude; bit 7
+is not the sign. The PA/PAD programmed flag is derived from offset 0, and
+PA/PAD values are split into low 2G/high 5G nibbles at the source offsets.
+Path A PA=(0,1), PAD=(1,3); path B PA=(14,2), PAD=(2,1). These values are
+raw calibration codes, not dB or transmit-power settings. They have not been
+written to RF registers. Output: `phy-calibration-observation.json`.
+
+The retained RTL8922A chip definition has NULL host BB/RF/NCTL tables and a
+NULL FEM setup callback; RFE parameters are loaded from firmware elements.
+RFE type 1 alone does not identify all external-component programming or
+supply a complete table selection key.
+
+Downloaded `rtw89/rtw8922a_fw-1.bin` from the upstream Linux Firmware GitLab
+repository for offline analysis only. The 1583434-byte package contains five
+MFW image records and nineteen appended elements. Structural inventory:
+`linux-firmware-elements.json`; source hashes: `radio-stage14-evidence.json`.
+No image was uploaded and no register-pair sequence was executed. The package
+was fetched from main and is hash-bound but not commit-pinned. It is not
+established to match the currently resident firmware or all newer source APIs.
+WHENCE identifies the rtw89 license, retained locally from
+`LICENSES/LICENCE.rtlwifi_firmware.txt`; binaries remain ignored local artifacts.
+
+`tools/firmware_elements.py` validates image directory bounds/non-overlap,
+32-byte element headers, payload bounds, register-pair divisibility, and
+TX power entry sizes/counts. Located tables contain 533 BB pairs, 412 gain
+pairs, 2067 radio-A pairs, 2089 radio-B pairs and 1200 NCTL pairs. These
+include encoded table conditions/delays; they must not be treated as a flat
+list of direct USB register writes.
+
+The offline selection pass only considers generic AID=0 power elements. It
+prefers matching RFE=1 over default RFE=0 with the source's last-match rule.
+This package provides default candidates for nine power element types, not
+RFE=1-specific candidates. Actual chip AID is still unknown and must be read
+through the XTAL serial interface before validating final element selection.
+AID is the silicon analog identifier here, not an association identifier.
+
+Six C++ suites and 29 Python tests pass, including signed magnitude, erased
+trim gates, page boundaries, malformed MFW extents, partial register entries,
+TX-power size mismatch and RFE/default precedence. The next step is XTAL-SI
+identity acquisition, then a condition-aware BB/RF table interpreter tied to
+that identity, board calibration and the selected firmware feature set.

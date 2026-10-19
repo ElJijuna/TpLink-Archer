@@ -1,0 +1,543 @@
+{
+  "sha256": "4340bc322912f30f1793bb57a1747c23b15e40db2df628d6687d1ddf722f2828",
+  "bytes": 1583434,
+  "images": [
+    {
+      "index": 0,
+      "cut_code": 0,
+      "type": 1,
+      "mp": 0,
+      "offset": 96,
+      "bytes": 317576,
+      "sha256": "568540dee2b1839527d581a3e29572ad4bf89eee100337a0b2d2c22f45b906ef"
+    },
+    {
+      "index": 1,
+      "cut_code": 1,
+      "type": 1,
+      "mp": 0,
+      "offset": 317672,
+      "bytes": 385680,
+      "sha256": "82d9493a4fab74d49fb65b2928a66a74b6bcde923508cd0fff65c7283cf297af"
+    },
+    {
+      "index": 2,
+      "cut_code": 0,
+      "type": 3,
+      "mp": 0,
+      "offset": 703352,
+      "bytes": 252000,
+      "sha256": "03419b7cc44f1f2fbbb90fbd8bf587fbcea2ead8bb851958fcb58ac639573011"
+    },
+    {
+      "index": 3,
+      "cut_code": 1,
+      "type": 3,
+      "mp": 0,
+      "offset": 955352,
+      "bytes": 285616,
+      "sha256": "a98e0e6152c5eb97fb93af6945002dc7c1d430d8b522557e621227841242345e"
+    },
+    {
+      "index": 4,
+      "cut_code": 0,
+      "type": 255,
+      "mp": 0,
+      "offset": 1240968,
+      "bytes": 91776,
+      "sha256": "fecaf873d825d821d14381c66a8f08108a8c54d37a46dd49fa865831d0f5b0a2"
+    }
+  ],
+  "elements": [
+    {
+      "id": 0,
+      "name": "BBMCU0",
+      "header_offset": 1332752,
+      "payload_offset": 1332784,
+      "bytes": 33560,
+      "aid": 0,
+      "version": [
+        134,
+        236,
+        0,
+        0
+      ],
+      "sha256": "5a89eca4758bc4535c3202ecf2b15b067507ea8731b981b631b539c20744eb2d"
+    },
+    {
+      "id": 0,
+      "name": "BBMCU0",
+      "header_offset": 1366352,
+      "payload_offset": 1366384,
+      "bytes": 33560,
+      "aid": 0,
+      "version": [
+        4,
+        28,
+        0,
+        0
+      ],
+      "sha256": "7ce12d68dd9c4de5dd00a381902a5e7454d0efb593fd144895aa398f6fbc2f11"
+    },
+    {
+      "id": 2,
+      "name": "BB_REG",
+      "header_offset": 1399952,
+      "payload_offset": 1399984,
+      "bytes": 4264,
+      "aid": 0,
+      "version": [
+        0,
+        51,
+        0,
+        0
+      ],
+      "sha256": "eab1593cbb9918fbca6573d02f84520859bc3052793a26a30d9c0c0a8b5448b4",
+      "register_pairs": 533,
+      "index": 0
+    },
+    {
+      "id": 3,
+      "name": "BB_GAIN",
+      "header_offset": 1404256,
+      "payload_offset": 1404288,
+      "bytes": 3296,
+      "aid": 0,
+      "version": [
+        0,
+        51,
+        0,
+        0
+      ],
+      "sha256": "2015385e521fa90963d1700ae35a5982a7893c8b99d7bf082aa0fc6f2924427e",
+      "register_pairs": 412,
+      "index": 0
+    },
+    {
+      "id": 4,
+      "name": "RADIO_A",
+      "header_offset": 1407584,
+      "payload_offset": 1407616,
+      "bytes": 16536,
+      "aid": 0,
+      "version": [
+        0,
+        37,
+        0,
+        0
+      ],
+      "sha256": "ecbb3401966011fbee98df1609516eacb5cb17d36464b85bb83ab36fb46ecccc",
+      "register_pairs": 2067,
+      "index": 1
+    },
+    {
+      "id": 5,
+      "name": "RADIO_B",
+      "header_offset": 1424160,
+      "payload_offset": 1424192,
+      "bytes": 16712,
+      "aid": 0,
+      "version": [
+        0,
+        37,
+        0,
+        0
+      ],
+      "sha256": "ca15af8ca95e51b9308a75f76734a5fdd56d11fcf766f7a165e9018d065af424",
+      "register_pairs": 2089,
+      "index": 0
+    },
+    {
+      "id": 8,
+      "name": "RF_NCTL",
+      "header_offset": 1440912,
+      "payload_offset": 1440944,
+      "bytes": 9600,
+      "aid": 0,
+      "version": [
+        0,
+        13,
+        0,
+        0
+      ],
+      "sha256": "198e51c5aa24666a22dfb6b2b66cf7d41390c7c418057ddb2de08c1f51b2441a",
+      "register_pairs": 1200,
+      "index": 0
+    },
+    {
+      "id": 9,
+      "name": "TXPWR_BYRATE",
+      "header_offset": 1450544,
+      "payload_offset": 1450576,
+      "bytes": 2750,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "e0713e9cf00b382fbb3d40337bba018e72091f9790cba00bf2de4e06762cd8be",
+      "rfe_type": 0,
+      "entry_size": 11,
+      "entry_count": 250
+    },
+    {
+      "id": 10,
+      "name": "TXPWR_LMT_2G",
+      "header_offset": 1453328,
+      "payload_offset": 1453360,
+      "bytes": 15288,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "b8decc082c9b64098c8222d542000608df9652147b93fde5ea920adcd9e895d4",
+      "rfe_type": 0,
+      "entry_size": 7,
+      "entry_count": 2184
+    },
+    {
+      "id": 11,
+      "name": "TXPWR_LMT_5G",
+      "header_offset": 1468656,
+      "payload_offset": 1468688,
+      "bytes": 19292,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "ecc80526c1071546df6f7bdd772536550a43c896c644d1967985e6060a02edd2",
+      "rfe_type": 0,
+      "entry_size": 7,
+      "entry_count": 2756
+    },
+    {
+      "id": 12,
+      "name": "TXPWR_LMT_6G",
+      "header_offset": 1487984,
+      "payload_offset": 1488016,
+      "bytes": 38912,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "a9b654398698819dd4be2e5190b74d56e460444d77252bef723a062f4b3cfb9b",
+      "rfe_type": 0,
+      "entry_size": 8,
+      "entry_count": 4864
+    },
+    {
+      "id": 13,
+      "name": "ID_13",
+      "header_offset": 1526928,
+      "payload_offset": 1526960,
+      "bytes": 5460,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "a5c7d2fdcaa7ee417a7c5d61d5c3426c057543298f3eb972961a4b86a5f1bd79",
+      "rfe_type": 0,
+      "entry_size": 5,
+      "entry_count": 1092
+    },
+    {
+      "id": 14,
+      "name": "ID_14",
+      "header_offset": 1532432,
+      "payload_offset": 1532464,
+      "bytes": 10920,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "b56a85ef8d597699722694ff2e219ff818da5cc312175f34d7723016fde18130",
+      "rfe_type": 0,
+      "entry_size": 5,
+      "entry_count": 2184
+    },
+    {
+      "id": 15,
+      "name": "ID_15",
+      "header_offset": 1543392,
+      "payload_offset": 1543424,
+      "bytes": 36864,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "2e5c9fc14201eb2a98cb7f6b4a4540ca10a4b38d12e9814ae9e077285c0646da",
+      "rfe_type": 0,
+      "entry_size": 6,
+      "entry_count": 6144
+    },
+    {
+      "id": 16,
+      "name": "ID_16",
+      "header_offset": 1580288,
+      "payload_offset": 1580320,
+      "bytes": 180,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "31048e8ad438147f47aea4a46fceda2f7a4b3d4f00c7f9a4fb52e0bcc94b83d4",
+      "rfe_type": 0,
+      "entry_size": 4,
+      "entry_count": 45
+    },
+    {
+      "id": 17,
+      "name": "ID_17",
+      "header_offset": 1580512,
+      "payload_offset": 1580544,
+      "bytes": 99,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "3b870f42ea55106dc0a640b852174dda36284f170d1fecb05b6ae26c2f8afa99",
+      "rfe_type": 0,
+      "entry_size": 3,
+      "entry_count": 33
+    },
+    {
+      "id": 18,
+      "name": "TXPWR_TRK",
+      "header_offset": 1580656,
+      "payload_offset": 1580688,
+      "bytes": 1080,
+      "aid": 0,
+      "version": [
+        0,
+        37,
+        0,
+        0
+      ],
+      "sha256": "f95a86676fd251e503f4c89c77af2152bedb95525de28c1fef701e26918d15ce"
+    },
+    {
+      "id": 19,
+      "name": "RFKLOG_FMT",
+      "header_offset": 1581776,
+      "payload_offset": 1581808,
+      "bytes": 1398,
+      "aid": 0,
+      "version": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "22fd5eea6c2ec837f0c87bbd8f033d78ee04502ba39a719db42e1f91ddf5dfd3"
+    },
+    {
+      "id": 19,
+      "name": "RFKLOG_FMT",
+      "header_offset": 1583216,
+      "payload_offset": 1583248,
+      "bytes": 186,
+      "aid": 0,
+      "version": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "sha256": "4945a6effad2d08bd6ab44a8f398415d77290680af98c18a31ebf128c6b0f200"
+    }
+  ],
+  "rfe_type": 1,
+  "generic_aid_power_candidates": [
+    {
+      "id": 9,
+      "name": "TXPWR_BYRATE",
+      "header_offset": 1450544,
+      "payload_offset": 1450576,
+      "bytes": 2750,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "e0713e9cf00b382fbb3d40337bba018e72091f9790cba00bf2de4e06762cd8be",
+      "rfe_type": 0,
+      "entry_size": 11,
+      "entry_count": 250
+    },
+    {
+      "id": 10,
+      "name": "TXPWR_LMT_2G",
+      "header_offset": 1453328,
+      "payload_offset": 1453360,
+      "bytes": 15288,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "b8decc082c9b64098c8222d542000608df9652147b93fde5ea920adcd9e895d4",
+      "rfe_type": 0,
+      "entry_size": 7,
+      "entry_count": 2184
+    },
+    {
+      "id": 11,
+      "name": "TXPWR_LMT_5G",
+      "header_offset": 1468656,
+      "payload_offset": 1468688,
+      "bytes": 19292,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "ecc80526c1071546df6f7bdd772536550a43c896c644d1967985e6060a02edd2",
+      "rfe_type": 0,
+      "entry_size": 7,
+      "entry_count": 2756
+    },
+    {
+      "id": 12,
+      "name": "TXPWR_LMT_6G",
+      "header_offset": 1487984,
+      "payload_offset": 1488016,
+      "bytes": 38912,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "a9b654398698819dd4be2e5190b74d56e460444d77252bef723a062f4b3cfb9b",
+      "rfe_type": 0,
+      "entry_size": 8,
+      "entry_count": 4864
+    },
+    {
+      "id": 13,
+      "name": "ID_13",
+      "header_offset": 1526928,
+      "payload_offset": 1526960,
+      "bytes": 5460,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "a5c7d2fdcaa7ee417a7c5d61d5c3426c057543298f3eb972961a4b86a5f1bd79",
+      "rfe_type": 0,
+      "entry_size": 5,
+      "entry_count": 1092
+    },
+    {
+      "id": 14,
+      "name": "ID_14",
+      "header_offset": 1532432,
+      "payload_offset": 1532464,
+      "bytes": 10920,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "b56a85ef8d597699722694ff2e219ff818da5cc312175f34d7723016fde18130",
+      "rfe_type": 0,
+      "entry_size": 5,
+      "entry_count": 2184
+    },
+    {
+      "id": 15,
+      "name": "ID_15",
+      "header_offset": 1543392,
+      "payload_offset": 1543424,
+      "bytes": 36864,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "2e5c9fc14201eb2a98cb7f6b4a4540ca10a4b38d12e9814ae9e077285c0646da",
+      "rfe_type": 0,
+      "entry_size": 6,
+      "entry_count": 6144
+    },
+    {
+      "id": 16,
+      "name": "ID_16",
+      "header_offset": 1580288,
+      "payload_offset": 1580320,
+      "bytes": 180,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "31048e8ad438147f47aea4a46fceda2f7a4b3d4f00c7f9a4fb52e0bcc94b83d4",
+      "rfe_type": 0,
+      "entry_size": 4,
+      "entry_count": 45
+    },
+    {
+      "id": 17,
+      "name": "ID_17",
+      "header_offset": 1580512,
+      "payload_offset": 1580544,
+      "bytes": 99,
+      "aid": 0,
+      "version": [
+        0,
+        39,
+        1,
+        0
+      ],
+      "sha256": "3b870f42ea55106dc0a640b852174dda36284f170d1fecb05b6ae26c2f8afa99",
+      "rfe_type": 0,
+      "entry_size": 3,
+      "entry_count": 33
+    }
+  ],
+  "actual_chip_aid_known": false,
+  "hardware_compatibility_validated": false,
+  "hardware_writes_performed": false
+}

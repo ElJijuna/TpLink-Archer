@@ -89,3 +89,10 @@ se adquirieron ambos mapas y se verificó la restauración de sus controles.
 El bloque RF contiene RFE tipo 1 y trim de cristal 0x42. Los decodificadores
 son offline; esos parámetros todavía no se han aplicado a la radio. Evidencia
 en `research/efuse-acquisition-evidence.json`.
+
+### Tablas y calibración PHY identificadas
+
+El decodificador PHY obtiene trims térmicos A=−1/B=0 y los códigos PA/PAD.
+El analizador de firmware Linux localizó tablas BB, ganancias, radio A/B y
+NCTL. No se ejecutaron esas tablas: falta validar el AID del chip y sus
+condiciones. Consulte `research/RADIO_BRINGUP.md`, etapa 14.

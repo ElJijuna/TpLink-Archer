@@ -1,0 +1,29 @@
+{
+  "thermal_programmed": true,
+  "pa_and_pad_programmed": true,
+  "paths": [
+    {
+      "path": 0,
+      "thermal_raw": 129,
+      "thermal_trim": -1,
+      "pa_raw": 16,
+      "pa_2g": 0,
+      "pa_5g": 1,
+      "pad_raw": 49,
+      "pad_2g": 1,
+      "pad_5g": 3
+    },
+    {
+      "path": 1,
+      "thermal_raw": 192,
+      "thermal_trim": 0,
+      "pa_raw": 46,
+      "pa_2g": 14,
+      "pa_5g": 2,
+      "pad_raw": 18,
+      "pad_2g": 2,
+      "pad_5g": 1
+    }
+  ],
+  "rf_writes_applied": false
+}
