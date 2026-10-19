@@ -1,0 +1,130 @@
+{
+  "chip": "RTL8922A",
+  "transport": "USB2",
+  "mode": "SCC",
+  "executable": false,
+  "fifo_bytes": 589824,
+  "reserved_tail_bytes": 2048,
+  "wde": {
+    "page_bytes": 64,
+    "linked": 508,
+    "unlinked": 4,
+    "offset": 0
+  },
+  "ple": {
+    "page_bytes": 256,
+    "linked": 2059,
+    "unlinked": 109,
+    "offset": 32768
+  },
+  "register_candidates": [
+    {
+      "address": 35848,
+      "mask": 536837891,
+      "value": 33292288
+    },
+    {
+      "address": 36872,
+      "mask": 536837891,
+      "value": 134939650
+    },
+    {
+      "address": 35904,
+      "name": "hif",
+      "value": 32244204
+    },
+    {
+      "address": 35908,
+      "name": "wcpu",
+      "value": 393222
+    },
+    {
+      "address": 35912,
+      "name": "dcpu",
+      "value": 0
+    },
+    {
+      "address": 35916,
+      "name": "pkt_in",
+      "value": 0
+    },
+    {
+      "address": 35920,
+      "name": "cpu_io",
+      "value": 655370
+    },
+    {
+      "address": 36928,
+      "name": "cma0_tx",
+      "value": 30343631
+    },
+    {
+      "address": 36932,
+      "name": "cma1_tx",
+      "value": 0
+    },
+    {
+      "address": 36936,
+      "name": "c2h",
+      "value": 1048592
+    },
+    {
+      "address": 36940,
+      "name": "h2c",
+      "value": 1572888
+    },
+    {
+      "address": 36944,
+      "name": "wcpu",
+      "value": 95617031
+    },
+    {
+      "address": 36948,
+      "name": "mpdu_proc",
+      "value": 96075790
+    },
+    {
+      "address": 36952,
+      "name": "cma0_dma",
+      "value": 98893881
+    },
+    {
+      "address": 36956,
+      "name": "cma1_dma",
+      "value": 0
+    },
+    {
+      "address": 36960,
+      "name": "bb_rpt",
+      "value": 95944716
+    },
+    {
+      "address": 36964,
+      "name": "wd_rel",
+      "value": 589833
+    },
+    {
+      "address": 36968,
+      "name": "cpu_io",
+      "value": 65537
+    },
+    {
+      "address": 36972,
+      "name": "tx_rpt",
+      "value": 95420420
+    },
+    {
+      "address": 36976,
+      "name": "h2d",
+      "value": 0
+    }
+  ],
+  "prerequisites": [
+    "quiesce firmware/queues before DLE repartition",
+    "validate firmware mode transition",
+    "disable DLE, enable clocks, configure layout and quotas",
+    "enable DLE and poll WDE/PLE readiness",
+    "initialize preload and HCI flow control before traffic"
+  ],
+  "limitation": "DLE candidate only; not a complete MAC or H2C initialization sequence"
+}

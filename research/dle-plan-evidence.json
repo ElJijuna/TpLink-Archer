@@ -1,0 +1,31 @@
+{
+  "source_identity": "retained Linux snapshots; revision not yet pinned",
+  "sources": [
+    {
+      "path": "artifacts/rtw8922a.c",
+      "sha256": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535"
+    },
+    {
+      "path": "artifacts/rtw89-mac.c",
+      "sha256": "cd760d4e9f6037f6de5cb2d567e4d522e45c033346cb70ce6aa12558f4d41c95"
+    },
+    {
+      "path": "artifacts/rtw89-mac_be.c",
+      "sha256": "7b78b2791f45cadd25fa46113200fadc9d954ddc47c50b88458fd299d5ea1fa1"
+    },
+    {
+      "path": "artifacts/rtw89-core.h",
+      "sha256": "13fcfa34fdea89773a9bbb5a6fe95d2bf95464eb1f4d759e5d39cb2ce48167af"
+    },
+    {
+      "path": "artifacts/rtw89-mac.h",
+      "sha256": "c9578eab79cddef3f5ee1ee1144b3dddc68c490bb79429a51fca75126772f3fd"
+    },
+    {
+      "path": "artifacts/rtw89-reg.h",
+      "sha256": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d"
+    }
+  ],
+  "plan_sha256": "1ba37a2c126d31488f911e2097625824fec456790d2efcd57e41e9deef3db881",
+  "hardware_writes_performed": false
+}
