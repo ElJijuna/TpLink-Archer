@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-18",
+  "target": "37ad:0104",
+  "host": "macOS arm64",
+  "query": "GET_FEATURE part 0 via register mailbox",
+  "trace_path": "artifacts/mailbox-query-stage5.jsonl",
+  "trace_sha256": "19ad66fe097182a813900dd9e94e167a954e93a7f38b0bb7aad80b01a84828c2",
+  "response_words": [
+    "0x07020403",
+    "0x0f040402",
+    "0x5433190e",
+    "0x0f020270"
+  ],
+  "fixture_path": "tests/fixtures/phy-cap-part0.bin",
+  "fixture_sha256": "6ecf05fc0284c2f39017aafb5623c67a0f1cce155c3a77bf1a9b872ca3dbd88f",
+  "result": {
+    "result": "phy_cap_part0",
+    "rx_streams": 2,
+    "tx_streams": 2,
+    "bandwidth_code": 7,
+    "protocol_code": 4,
+    "tx_antennas": 2,
+    "rx_antennas": 2,
+    "band_mask": 15,
+    "sequence": 0
+  },
+  "hci_control_initial": 1049853,
+  "hci_control_final": 1049853,
+  "effects": [
+    "Temporary HCI WLAN IO enable",
+    "GET_FEATURE mailbox request",
+    "C2H acknowledgement",
+    "Mailbox counters advanced",
+    "HCI WLAN IO enable bit restored"
+  ],
+  "firmware_uploaded": false,
+  "efuse_programmed": false
+}

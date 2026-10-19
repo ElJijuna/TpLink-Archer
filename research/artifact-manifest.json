@@ -15,6 +15,21 @@
     "bytes": 400248
   },
   {
+    "path": "artifacts/mailbox-inspection-stage5.jsonl",
+    "sha256": "f6f2a87b396a5165d466529a142df267f20f395aab45dd17cd5ffaa10d5f8cf7",
+    "bytes": 1314
+  },
+  {
+    "path": "artifacts/mailbox-query-stage5.jsonl",
+    "sha256": "19ad66fe097182a813900dd9e94e167a954e93a7f38b0bb7aad80b01a84828c2",
+    "bytes": 2905
+  },
+  {
+    "path": "artifacts/mailbox-query-stage5.stderr",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  {
     "path": "artifacts/official-driver.zip",
     "sha256": "8343fb20dbfe11571ab2da94856fbabb6fa2a1f25387adaa0f5eb718cf6a1b33",
     "bytes": 7504549
@@ -30,6 +45,21 @@
     "bytes": 233552
   },
   {
+    "path": "artifacts/rtw89-efuse.c",
+    "sha256": "1cd4146af524cfa97c46a7298cf80c43029bde91995b76618b3a1d3c6c509ffd",
+    "bytes": 13234
+  },
+  {
+    "path": "artifacts/rtw89-efuse.h",
+    "sha256": "d3e2e2b2be0bc80c33ec71d7d5d07cb8063e39daad67be10795b71ba20edc776",
+    "bytes": 1469
+  },
+  {
+    "path": "artifacts/rtw89-efuse_be.c",
+    "sha256": "be3d1321b1cc2bc107a3cea4df6ecc92072c2ab2bae39796075c7e9dfc15e62e",
+    "bytes": 16603
+  },
+  {
     "path": "artifacts/rtw89-fw.c",
     "sha256": "acc4188f0829051ce67ad7dbcdff6819523948a291702279c3b555d0ed1d840c",
     "bytes": 368492
@@ -38,6 +68,16 @@
     "path": "artifacts/rtw89-fw.h",
     "sha256": "d73c8eff7cf97ecc2096b72415a1130cc45d8719c909f5435b26d3bd71cf96e4",
     "bytes": 180254
+  },
+  {
+    "path": "artifacts/rtw89-mac.c",
+    "sha256": "cd760d4e9f6037f6de5cb2d567e4d522e45c033346cb70ce6aa12558f4d41c95",
+    "bytes": 224720
+  },
+  {
+    "path": "artifacts/rtw89-mac.h",
+    "sha256": "c9578eab79cddef3f5ee1ee1144b3dddc68c490bb79429a51fca75126772f3fd",
+    "bytes": 59333
   },
   {
     "path": "artifacts/rtw89-mac_be.c",

@@ -57,3 +57,7 @@ Se recuperaron dos imágenes embebidas mediante buffers y longitudes referenciad
 ## Cuarta etapa
 
 Se implementaron cabeceras H2C, envoltura USB y parsing RX/C2H. Prueba real de entradas bulk: ambas respondieron por timeout sin datos durante un intento acotado, con apertura y cierre normal de la interfaz. Ver `FIRMWARE_CHANNEL.md` para evidencia, alcance del resultado y limitaciones. No se ha observado una respuesta C2H ni identificado una consulta de versión activa.
+
+## Quinta etapa: intercambio activo por registros
+
+Se obtuvo una respuesta GET_FEATURE parte 0 real después de habilitar temporalmente WLAN IO. Reporta 2 flujos TX/RX, 2 antenas TX/RX y protocolo 4 (802.11be). El bit de acceso volvió a su valor original. Ver `REGISTER_MAILBOX.md` y `mailbox-observation.json`. Esto no valida todavía comandos por bulk ni conectividad inalámbrica. Hopper tiene la demo expirada, por lo que no hubo nuevas descompilaciones en esta etapa.
