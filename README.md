@@ -39,3 +39,12 @@ El INF oficial vincula este USB ID a `RTL8922au.ndi`. Esto identifica la familia
 La cuarta etapa añade codificación H2C, envoltura USB BE y decodificación RX/C2H con pruebas. [research/FIRMWARE_CHANNEL.md](research/FIRMWARE_CHANNEL.md) documenta el intento de recepción real (dos timeouts, sin datos) y el comando de recepción acotada. Todavía no se envían comandos al firmware.
 
 La quinta etapa logró una respuesta real del firmware mediante `GET_FEATURE` por buzón de registros. [research/REGISTER_MAILBOX.md](research/REGISTER_MAILBOX.md) documenta el protocolo y la prueba: 2 flujos TX/RX y 802.11be. `make mailbox-universal` compila el diagnóstico; `--query-with-io-window` escribe registros volátiles y restaura después el bit de acceso WLAN. Todavía no proporciona conexión Wi-Fi.
+
+### Recepción bulk con ventana WLAN IO
+
+`make receive-universal` y
+`./build/archer-receive-universal --with-io-window NUEVO_DIRECTORIO` permiten
+repetir la prueba acotada con restauración del acceso WLAN. La prueba física
+ARM obtuvo respuesta PHY_CAP por registros, pero ambos endpoints bulk IN
+agotaron su tiempo sin datos. Véase `research/bulk-io-window-observation.json`.
+Todavía falta validar la inicialización y los comandos del transporte bulk.

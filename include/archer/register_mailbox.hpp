@@ -5,6 +5,7 @@
 #include <exception>
 #include <optional>
 #include <string>
+#include <functional>
 
 namespace archer {
 struct RegisterBus {
@@ -62,7 +63,8 @@ inline PhysicalCapabilities query_phy_capabilities(RegisterBus& bus) {
 }
 // rtw8922a_pwr_on_func enables HCI_WLAN_IO and waits for IO_ST.
 // This diagnostic window restores only the enable bit, preserving other fields.
-inline PhysicalCapabilities query_phy_capabilities_with_io_window(RegisterBus& bus) {
+inline PhysicalCapabilities query_phy_capabilities_with_io_window(RegisterBus& bus,
+    const std::function<void()>& while_enabled = {}) {
     if ((bus.read(0xfc, 4) & 255) != 0x71 ||
         ((bus.read(0x3f0, 4) >> 16) & 0x3ff) != 0x220 ||
         ((bus.read(0x1e0, 4) >> 26) & 15) != 3)
@@ -86,6 +88,7 @@ inline PhysicalCapabilities query_phy_capabilities_with_io_window(RegisterBus& b
         }
         if (!ready) throw std::runtime_error("WLAN IO enable did not become ready");
         result = query_phy_capabilities(bus);
+        if (while_enabled) while_enabled();
     } catch (...) { failure = std::current_exception(); }
     if (change) {
         try {

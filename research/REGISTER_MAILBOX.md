@@ -64,3 +64,22 @@ La consulta y el mapa de registros proceden de los snapshots Linux `mac.c:rtw89_
 REA sigue conectado, pero Hopper mostró “Demo period has expired. Document will be closed.” No se intentó eludir esa limitación. Esta etapa usa la evidencia REA previamente exportada y las fuentes Linux; no atribuye nuevos resultados de descompilación a REA. El último `binary_session` consultado informó `open:false` y `cleanup_pending:false`.
 
 Pendiente: identificar la versión en ejecución, validar el transporte bulk con el acceso WLAN habilitado y desarrollar la inicialización MAC/PHY y gestión 802.11 antes de integrar DriverKit. La parte 1 de capacidades no se consulta automáticamente: Linux también condiciona su uso a características de versión de firmware todavía desconocidas aquí.
+
+## Stage 6: bulk RX while WLAN IO is enabled
+
+`archer-receive --with-io-window NEW_DIRECTORY` now keeps the verified access
+window open around a PHY_CAP register query and one bounded read on each bulk IN
+endpoint. The register transport is shared with the mailbox executable. The
+window restores the access bit after callback exceptions as well as success;
+unit tests exercise both paths. Reads consume queued data; no bulk OUT is sent.
+
+The physical ARM test returned the same valid PHY_CAP response. Endpoints 0x84
+and 0x88 each timed out with status -536854447 and zero captured bytes. Register
+0x74 returned to 0x001004fd. Host mailbox counter advanced from 0x11 to 0x22 as
+required by the successful register exchange. Evidence hashes and endpoint
+results are in `bulk-io-window-observation.json`.
+
+This rules out a disabled WLAN IO gate as the sole explanation for the earlier
+idle RX result. It does not establish that bulk RX is broken or initialized.
+Next work must identify the required USB/MAC queue initialization and a supported
+H2C diagnostic command before claiming bulk H2C/C2H communication.

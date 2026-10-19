@@ -63,6 +63,20 @@ int main() {
     FakeBus gated; gated.registers[0x74] = 0x1004fd;
     (void)archer::query_phy_capabilities_with_io_window(gated);
     assert(gated.registers[0x74] == 0x1004fd && gated.writes.size() == 10);
+    FakeBus callback; callback.registers[0x74] = 0x1004fd;
+    bool called = false;
+    (void)archer::query_phy_capabilities_with_io_window(callback, [&] {
+        called = true;
+        assert((callback.registers[0x74] & 0x90000000) == 0x90000000);
+    });
+    assert(called && callback.registers[0x74] == 0x1004fd);
+    FakeBus callback_failure; callback_failure.registers[0x74] = 0x1004fd;
+    rejects([&] {
+        (void)archer::query_phy_capabilities_with_io_window(callback_failure, [] {
+            throw std::runtime_error("Injected bulk failure");
+        });
+    });
+    assert(callback_failure.registers[0x74] == 0x1004fd);
     FakeBus blocked; blocked.registers[0x74] = 0x1004fd;
     blocked.registers[0x7160] = 0xea;
     rejects([&] { (void)archer::query_phy_capabilities_with_io_window(blocked); });

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include "archer/firmware_channel.hpp"
+#include "archer/macos_register_bus.hpp"
 
 static long number(io_registry_entry_t device, CFStringRef key) {
     auto value = IORegistryEntryCreateCFProperty(device, key, kCFAllocatorDefault, 0);
@@ -97,9 +98,10 @@ static int receive(io_service_t service, const std::filesystem::path& directory)
 }
 int main(int argc, char** argv) {
     if (argc == 2 && std::string(argv[1]) == "--help") {
-        std::cout << "Usage: archer-receive NEW_DIRECTORY\n"; return 0;
+        std::cout << "Usage: archer-receive [--with-io-window] NEW_DIRECTORY\n"; return 0;
     }
-    if (argc != 2) { std::cerr << "Usage: archer-receive NEW_DIRECTORY\n"; return 2; }
+    const bool window = argc == 3 && std::string(argv[1]) == "--with-io-window";
+    if (argc != 2 && !window) { std::cerr << "Usage: archer-receive [--with-io-window] NEW_DIRECTORY\n"; return 2; }
     io_iterator_t iterator = IO_OBJECT_NULL;
     auto status = IOServiceGetMatchingServices(kIOMainPortDefault,
         IOServiceMatching("IOUSBHostInterface"), &iterator);
@@ -121,7 +123,18 @@ int main(int argc, char** argv) {
         std::cerr << "Expected exactly one Archer interface; found " << matches << '\n';
         return matches ? 2 : 1;
     }
-    const auto result = receive(selected, argv[1]);
+    int result = 2;
+    try {
+        if (window) {
+            MacRegisterBus bus;
+            (void)archer::query_phy_capabilities_with_io_window(bus, [&] {
+                result = receive(selected, argv[2]);
+            });
+        } else result = receive(selected, argv[1]);
+    } catch (const std::exception& error) {
+        std::cerr << "receive window: " << error.what() << '\n';
+        result = 2;
+    }
     IOObjectRelease(selected);
     return result;
 }

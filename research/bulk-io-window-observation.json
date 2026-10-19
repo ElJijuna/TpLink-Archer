@@ -1,0 +1,41 @@
+{
+  "stage": 6,
+  "operation": "bounded bulk IN with WLAN IO enabled",
+  "transmitted_bulk_out": false,
+  "register_phy_cap_response_valid": true,
+  "initial_hci_opt_ctrl": "0x001004fd",
+  "final_hci_opt_ctrl": "0x001004fd",
+  "host_mailbox_counter_before": "0x11",
+  "host_mailbox_counter_after": "0x22",
+  "result": "Both bulk IN endpoints timed out; no payload captured",
+  "endpoint_results": [
+    {
+      "endpoint_address": 132,
+      "pipe_reference": 1,
+      "status": -536854447,
+      "timeout": true,
+      "bytes": 0
+    },
+    {
+      "endpoint_address": 136,
+      "pipe_reference": 5,
+      "status": -536854447,
+      "timeout": true,
+      "bytes": 0
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/receive-io-window-stage6.jsonl",
+      "sha256": "3e730b2ee7de116a9ba897f38874b4beb41e1da02654a4eeaff4cb3fc1dd2d6d"
+    },
+    {
+      "path": "artifacts/receive-io-window-stage6.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/receive-io-window-stage6/receive.jsonl",
+      "sha256": "2aacbe05a902da84fe85b151f6e40890db9eab5c71ec9d21453957e529e9cd71"
+    }
+  ]
+}
