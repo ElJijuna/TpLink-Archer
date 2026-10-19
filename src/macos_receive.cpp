@@ -19,7 +19,7 @@ static long number(io_registry_entry_t device, CFStringRef key) {
     return result;
 }
 // One read per bulk IN pipe. Reads consume queued data. No OUT transfer is sent.
-static int receive(io_service_t service, const std::filesystem::path& directory) {
+static int receive(io_service_t service, const std::filesystem::path& directory, bool diagnostic = false) {
     IOCFPlugInInterface** plugin = nullptr;
     SInt32 score = 0;
     auto status = IOCreatePlugInInterfaceForService(service, kIOUSBInterfaceUserClientTypeID,
@@ -39,6 +39,7 @@ static int receive(io_service_t service, const std::filesystem::path& directory)
     }
     int result = 3; // No data during this bounded attempt.
     unsigned inputs = 0;
+    bool matched_ack = false;
     try {
         if (!std::filesystem::create_directory(directory))
             throw std::runtime_error("Output directory must be new");
@@ -47,6 +48,33 @@ static int receive(io_service_t service, const std::filesystem::path& directory)
         UInt8 endpoints = 0;
         status = (*usb)->GetNumEndpoints(usb, &endpoints);
         if (status != kIOReturnSuccess) throw std::runtime_error("Cannot enumerate USB pipes");
+        if (diagnostic) {
+            if (endpoints != 9) throw std::runtime_error("Unexpected endpoint inventory");
+            UInt8 output = 0;
+            for (unsigned pipe = 1; pipe <= endpoints; ++pipe) {
+                UInt8 direction = 0, endpoint = 0, type = 0, interval = 0;
+                UInt16 packet_size = 0;
+                status = (*usb)->GetPipeProperties(usb, pipe, &direction, &endpoint,
+                                                  &type, &packet_size, &interval);
+                if (status != kIOReturnSuccess) throw std::runtime_error("Cannot inspect TX pipe");
+                if (direction == kUSBOut && endpoint == 7 && type == kUSBBulk && packet_size == 512) {
+                    if (output) throw std::runtime_error("Ambiguous H2C endpoint");
+                    output = static_cast<UInt8>(pipe);
+                }
+            }
+            if (!output) throw std::runtime_error("Expected USB2 H2C endpoint 0x07 absent");
+            auto command = archer::diagnostic_log_disable(0);
+            std::ofstream tx(directory / "h2c-log-disable.bin", std::ios::binary);
+            tx.write(reinterpret_cast<const char*>(command.data()), command.size());
+            tx.close();
+            if (!tx) throw std::runtime_error("Cannot preserve outgoing command");
+            status = (*usb)->WritePipeTO(usb, output, command.data(), command.size(), 500, 1000);
+            manifest << "{\"operation\":\"bulk_write\",\"endpoint_address\":7,\"pipe_reference\":"
+                     << unsigned(output) << ",\"requested_bytes\":" << command.size()
+                     << ",\"status\":" << status << "}\n";
+            manifest.flush();
+            if (status != kIOReturnSuccess) throw std::runtime_error("H2C write failed; no retry");
+        }
         for (unsigned pipe = 1; pipe <= endpoints; ++pipe) {
             UInt8 direction = 0, endpoint = 0, type = 0, interval = 0;
             UInt16 packet_size = 0;
@@ -76,10 +104,18 @@ static int receive(io_service_t service, const std::filesystem::path& directory)
                 if (!capture) throw std::runtime_error("Cannot save RX bytes");
                 try {
                     const auto packets = archer::decode_usb_rx_be(bytes);
-                    for (const auto& packet : packets)
+                    for (const auto& packet : packets) {
+                        if (diagnostic && packet.c2h && packet.c2h->category == 1 &&
+                            packet.c2h->command_class == 0 && packet.c2h->function == 0) {
+                            const auto ack = archer::decode_receive_ack(bytes.data() + packet.payload_offset, packet.payload_bytes);
+                            matched_ack = ack.category == 1 && ack.command_class == 0 &&
+                                ack.function == 0 && ack.sequence == 0;
+                            std::cout << "log_disable_receive_ack=" << (matched_ack ? "success" : "mismatch") << '\n';
+                        }
                         std::cout << "rx_type=" << packet.packet_type
                                   << " payload_bytes=" << packet.payload_bytes
                                   << " c2h=" << (packet.c2h.has_value() ? "yes" : "no") << '\n';
+                    }
                 } catch (const std::invalid_argument& error) {
                     std::cerr << "Raw bytes retained; BE RX decode failed: " << error.what() << '\n';
                 }
@@ -94,14 +130,16 @@ static int receive(io_service_t service, const std::filesystem::path& directory)
     status = (*usb)->USBInterfaceClose(usb);
     (*usb)->Release(usb);
     if (status != kIOReturnSuccess) { std::cerr << "USBInterfaceClose failed\n"; return 2; }
+    if (diagnostic && result != 2 && !matched_ack) return 4;
     return result;
 }
 int main(int argc, char** argv) {
     if (argc == 2 && std::string(argv[1]) == "--help") {
-        std::cout << "Usage: archer-receive [--with-io-window] NEW_DIRECTORY\n"; return 0;
+        std::cout << "Usage: archer-receive [--with-io-window | --diagnostic-log-disable] NEW_DIRECTORY\n"; return 0;
     }
-    const bool window = argc == 3 && std::string(argv[1]) == "--with-io-window";
-    if (argc != 2 && !window) { std::cerr << "Usage: archer-receive [--with-io-window] NEW_DIRECTORY\n"; return 2; }
+    const bool diagnostic = argc == 3 && std::string(argv[1]) == "--diagnostic-log-disable";
+    const bool window = diagnostic || (argc == 3 && std::string(argv[1]) == "--with-io-window");
+    if (argc != 2 && !window) { std::cerr << "Usage: archer-receive [--with-io-window | --diagnostic-log-disable] NEW_DIRECTORY\n"; return 2; }
     io_iterator_t iterator = IO_OBJECT_NULL;
     auto status = IOServiceGetMatchingServices(kIOMainPortDefault,
         IOServiceMatching("IOUSBHostInterface"), &iterator);
@@ -128,7 +166,14 @@ int main(int argc, char** argv) {
         if (window) {
             MacRegisterBus bus;
             (void)archer::query_phy_capabilities_with_io_window(bus, [&] {
-                result = receive(selected, argv[2]);
+                if (diagnostic) {
+                    for (auto address : {0x8d00u, 0x9100u})
+                        if ((bus.read(address, 4) & 3) != 3)
+                            throw std::runtime_error("DLE not ready; no bulk command sent");
+                    if (!(bus.read(0x7880, 4) & 1))
+                        throw std::runtime_error("HCI TX DMA disabled");
+                }
+                result = receive(selected, argv[2], diagnostic);
             });
         } else result = receive(selected, argv[1]);
     } catch (const std::exception& error) {

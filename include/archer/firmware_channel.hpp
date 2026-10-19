@@ -40,6 +40,13 @@ inline std::vector<std::uint8_t> wrap_h2c_usb_be(const std::vector<std::uint8_t>
     std::copy(h2c.begin(), h2c.end(), result.begin() + 24);
     return result;
 }
+// Linux LOG_CFG disable semantics; ACKs requested for transport diagnostics.
+inline std::vector<std::uint8_t> diagnostic_log_disable(unsigned sequence) {
+    std::vector<std::uint8_t> payload(12, 0);
+    payload[0] = 4; // LOUD threshold; component masks are zero.
+    payload[1] = 2; // BIT(C2H path index 1).
+    return wrap_h2c_usb_be(encode_h2c(1, 0, 0, sequence, payload, true, true));
+}
 struct C2hHeader {
     unsigned category, command_class, function, total_length;
 };
@@ -50,6 +57,17 @@ inline C2hHeader decode_c2h(const std::uint8_t* data, std::size_t size) {
     if (length < 8 || length != size)
         throw std::invalid_argument("C2H declared length does not match RX packet");
     return {word0 & 3, (word0 >> 2) & 63, (word0 >> 8) & 255, length};
+}
+struct ReceiveAck {
+    unsigned category, command_class, function, sequence;
+};
+inline ReceiveAck decode_receive_ack(const std::uint8_t* data, std::size_t size) {
+    const auto header = decode_c2h(data, size);
+    if (size != 12 || header.category != 1 || header.command_class != 0 || header.function != 0)
+        throw std::invalid_argument("Expected MAC INFO REC_ACK");
+    const auto word = channel_u32(data + 8);
+    return {word & 3, (word >> 2) & 63, (word >> 8) & 255,
+            (word >> 16) & 255};
 }
 struct RxPacket {
     std::size_t descriptor_offset, payload_offset, payload_bytes;

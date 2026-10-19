@@ -61,3 +61,10 @@ agregación RX y CMAC deshabilitados. El mapa y las limitaciones están en
 `python3 tools/dle_plan.py` genera las cuotas y los campos del perfil normal
 USB2 SCC. Valida los 589824 bytes de memoria y las cuotas H2C/C2H. El plan es
 offline y todavía no ejecuta la transición del firmware ni inicializa Wi-Fi.
+
+### Primer intercambio bulk confirmado
+
+El adaptador recibió un LOG_CFG H2C de diagnóstico por USB y devolvió un
+REC_ACK C2H coincidente en el Mac ARM. Captura real y límites en
+`research/bulk-command-observation.json` y `research/FIRMWARE_CHANNEL.md`.
+Se confirmó recepción del comando; todavía no hay radio, escaneo ni conexión.

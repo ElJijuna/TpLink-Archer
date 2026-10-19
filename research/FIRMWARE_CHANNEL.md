@@ -51,3 +51,45 @@ El fixture `synthetic-c2h-be.bin` es sintético. No representa una respuesta obs
 ## Pendiente para comunicación activa
 
 Identificar un comando de consulta válido para la versión ejecutada; corroborar su payload, ACK y condiciones de disponibilidad H2C; configurar el canal si fuera necesario; y verificar una respuesta C2H real. No se inventó un opcode de consulta de versión a partir de nombres de logs ni se trató el estado de firmware como garantía de disponibilidad del canal USB.
+
+## Stage 10: physical USB bulk H2C/C2H receipt acknowledgment
+
+ARM hardware execution sent one 44-byte USB transfer through endpoint 0x07
+(IOKit pipe reference 4), using the BE 24-byte TX prefix, 8-byte H2C header
+and 12-byte LOG_CFG payload. Command category=MAC 1, class=FW_INFO 0,
+function=LOG_CFG 0, sequence=0. Payload level=4, path=2, component and extended
+component masks=0: the Linux log-disable semantics. Receipt and completion ACK
+flags were requested. This changes firmware log configuration; the previous
+configuration is unknown and was not restored. No Wi-Fi scan or association
+was initiated and no bulk command retry was performed.
+
+The write returned status 0. Endpoint 0x84 returned 36 bytes: a 24-byte RX
+descriptor, packet type 10, and a 12-byte C2H packet. Its header identifies
+MAC INFO REC_ACK (category 1, class 0, function 0). Its acknowledged H2C fields
+match category 1/class 0/function 0/sequence 0. The upper header byte 0x4b is
+not the acknowledged H2C sequence; that sequence is extracted from REC_ACK
+word 2 bits 23:16. No DONE_ACK was observed in this bounded single-read test.
+Endpoint 0x88 timed out. WLAN IO returned to 0x001004fd.
+
+This validates one actual bulk command and its receipt acknowledgment on ARM;
+it does not establish command completion, stable repeated sequencing, radio
+initialization, scan or networking. Intel is compilation-tested only.
+
+`archer-receive-universal --diagnostic-log-disable NEW_DIRECTORY` implements
+this explicit diagnostic. It requires ready DLE managers, enabled HCI TX DMA,
+and the expected nine-endpoint USB2 inventory with bulk OUT 0x07/512 bytes.
+It preserves the outgoing bytes and raw RX before decoding. No arbitrary
+command injection is exposed. Exit 4 means no matching receipt ACK; exit 0 in
+this mode requires matching ACK, whereas ordinary receive mode still only
+requires bytes. The test capture predates this stricter exit condition; the
+new decoder is verified against that exact physical fixture offline.
+
+Evidence: `bulk-command-observation.json`; real regression fixture:
+`tests/fixtures/log-disable-receive-ack-usb.bin`. Source definitions:
+fw.c `rtw89_fw_h2c_fw_log`, fw.h SET_LOG_CFG fields and REC_ACK word-2 masks,
+mac.h INFO function enum. Hopper remains unavailable due to license expiry;
+no new native REA analysis is claimed.
+
+Next: implement a bounded event loop with independent receive/completion ACK
+tracking and sequence ownership, then establish firmware identity and radio
+bring-up prerequisites before issuing scan commands.

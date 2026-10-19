@@ -1,0 +1,42 @@
+{
+  "operation": "single LOG_CFG disable with receive/done ACK requested",
+  "bulk_out_endpoint": 7,
+  "bulk_out_pipe_reference": 4,
+  "bulk_out_bytes": 44,
+  "bulk_out_status": 0,
+  "bulk_in_endpoint": 132,
+  "bulk_in_bytes": 36,
+  "c2h_payload_bytes": 12,
+  "response": "MAC INFO REC_ACK",
+  "acknowledged_h2c": {
+    "category": 1,
+    "class": 0,
+    "function": 0,
+    "sequence": 0
+  },
+  "done_ack_observed": false,
+  "radio_operation_started": false,
+  "hci_opt_ctrl_restored": "0x001004fd",
+  "artifacts": [
+    {
+      "path": "artifacts/bulk-diagnostic-stage10.jsonl",
+      "sha256": "9bb0db152a4bef6130ce87b5824cb78740e17e9f3316f70ee92e44060e5e824a"
+    },
+    {
+      "path": "artifacts/bulk-diagnostic-stage10/receive.jsonl",
+      "sha256": "5fce790c9944df9a5667ec5c7a19a33ff38816eb4caf7838e60d8095477aae4d"
+    },
+    {
+      "path": "artifacts/bulk-diagnostic-stage10/h2c-log-disable.bin",
+      "sha256": "80f4180bbef368eeeaaa95171833fc2a1f6e448f15f9b8e502ad036716339078"
+    },
+    {
+      "path": "artifacts/bulk-diagnostic-stage10/endpoint-132.bin",
+      "sha256": "64dadaa034dce75a19e6c6a1245474d47302e9d564eb7ff482760b6a46903000"
+    },
+    {
+      "path": "tests/fixtures/log-disable-receive-ack-usb.bin",
+      "sha256": "64dadaa034dce75a19e6c6a1245474d47302e9d564eb7ff482760b6a46903000"
+    }
+  ]
+}

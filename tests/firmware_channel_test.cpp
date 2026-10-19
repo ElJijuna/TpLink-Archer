@@ -1,6 +1,8 @@
 #include "archer/firmware_channel.hpp"
 #include <cassert>
 #include <iostream>
+#include <fstream>
+#include <iterator>
 template<class F> static void rejects(F function) {
     bool rejected = false;
     try { function(); } catch (const std::invalid_argument&) { rejected = true; }
@@ -8,6 +10,21 @@ template<class F> static void rejects(F function) {
 }
 int main() {
     using namespace archer;
+    const auto diagnostic = diagnostic_log_disable(0);
+    assert(diagnostic.size() == 44 && channel_u32(diagnostic.data()) == 0x0d000014);
+    assert(channel_u32(diagnostic.data()+28) == 0xc014);
+    assert(diagnostic[32] == 4 && diagnostic[33] == 2);
+    std::ifstream capture("tests/fixtures/log-disable-receive-ack-usb.bin", std::ios::binary);
+    assert(capture.good());
+    const std::vector<std::uint8_t> recorded{std::istreambuf_iterator<char>(capture), {}};
+    const auto actual = decode_usb_rx_be(recorded);
+    assert(actual.size() == 1 && actual[0].payload_bytes == 12);
+    const auto ack = decode_receive_ack(recorded.data()+actual[0].payload_offset, 12);
+    assert(ack.category == 1 && ack.command_class == 0 && ack.function == 0);
+    assert(ack.sequence == 0);
+    auto bad_ack = std::vector<std::uint8_t>(recorded.begin()+24, recorded.end());
+    bad_ack[1] = 1;
+    rejects([&] { (void)decode_receive_ack(bad_ack.data(), bad_ack.size()); });
     auto h2c = encode_h2c(1, 3, 2, 0xab, {0x55,0xaa}, true, true);
     const std::vector<std::uint8_t> expected{0x0d,2,0,0xab,10,0xc0,0,0,0x55,0xaa};
     assert(h2c == expected);
