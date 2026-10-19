@@ -127,3 +127,46 @@ trim gates, page boundaries, malformed MFW extents, partial register entries,
 TX-power size mismatch and RFE/default precedence. The next step is XTAL-SI
 identity acquisition, then a condition-aware BB/RF table interpreter tied to
 that identity, board calibration and the selected firmware feature set.
+
+## Stage 15: physical analog identity and AID-aware element selection
+
+Added `make identity-universal` and `build/archer-identity-universal` (run from
+project root). It holds the shared adapter lock, uses the verified WLAN IO
+window, and issues only normal BE XTAL-SI reads with chip selector 0 and zero
+write bitmask. Only CV and CHIP_ID_L/H offsets are exposed. Busy/inaccessible
+controls fail before command submission; bounded polling, reply address, mode
+and chip selector are checked. There is no XTAL configuration write or timeout
+reset. The command/data status latch is not restored to avoid retriggering it.
+
+Physical ARM observations: XTAL CV raw=0x11, low ID=0x33, high ID=0x69.
+Digital CV=1, analog CV=1, AID=0x6933. WLAN IO returned to 0x001004fd.
+The three raw identity bytes are retained as a regression fixture; full trace
+and source hashes are in `chip-identity-observation.json`. Intel compiles but
+has not been hardware-tested.
+
+The offline MFW inspector now accepts an optional physical AID argument:
+`python3 tools/firmware_elements.py artifacts/rtw8922a_fw-1.bin 0x6933`.
+It filters generic/matching AID elements and follows first-match register-table
+selection independently from last RFE-match/default power selection. Four-slot
+radio index bounds are enforced. Public output now uses `power_candidates`
+instead of the obsolete `generic_aid_power_candidates` name. The physical
+selection report is `linux-firmware-elements-aid6933.json`.
+
+For this retained package, five register-table candidates are generic AID=0:
+BB, BB gain, RADIO_A in slot rf_radio[1], RADIO_B in slot rf_radio[0], and NCTL.
+The slot order comes from element metadata, not the radio name. All nine
+selected power candidates use default RFE=0. Identity acceptance is not proof
+of full runtime compatibility: the table interpreter must still handle its
+conditional/delay instructions, and the source/firmware pairing and runtime
+firmware feature set remain unvalidated.
+
+Seven C++ suites and 31 Python tests pass. Tests include physical identity
+replay, busy/timeout/mismatched XTAL replies, generic versus physical AID,
+radio-slot first-match behavior, invalid AID/index bounds and power precedence.
+No RF table or radio configuration was written in this stage.
+
+The next dependency is the upstream phy.c condition/delay interpreter.
+Its download was not executed: automatic approval review failed because of
+an account usage limit, rather than deciding that the action was unsafe.
+No alternate network path or approval bypass was attempted. Local selection,
+regression tests and evidence recording were completed using available files.

@@ -94,7 +94,8 @@
       ],
       "sha256": "eab1593cbb9918fbca6573d02f84520859bc3052793a26a30d9c0c0a8b5448b4",
       "register_pairs": 533,
-      "index": 0
+      "index": 0,
+      "target": "bb_tbl"
     },
     {
       "id": 3,
@@ -111,7 +112,8 @@
       ],
       "sha256": "2015385e521fa90963d1700ae35a5982a7893c8b99d7bf082aa0fc6f2924427e",
       "register_pairs": 412,
-      "index": 0
+      "index": 0,
+      "target": "bb_gain"
     },
     {
       "id": 4,
@@ -128,7 +130,8 @@
       ],
       "sha256": "ecbb3401966011fbee98df1609516eacb5cb17d36464b85bb83ab36fb46ecccc",
       "register_pairs": 2067,
-      "index": 1
+      "index": 1,
+      "target": "rf_radio[1]"
     },
     {
       "id": 5,
@@ -145,7 +148,8 @@
       ],
       "sha256": "ca15af8ca95e51b9308a75f76734a5fdd56d11fcf766f7a165e9018d065af424",
       "register_pairs": 2089,
-      "index": 0
+      "index": 0,
+      "target": "rf_radio[0]"
     },
     {
       "id": 8,
@@ -162,7 +166,8 @@
       ],
       "sha256": "198e51c5aa24666a22dfb6b2b66cf7d41390c7c418057ddb2de08c1f51b2441a",
       "register_pairs": 1200,
-      "index": 0
+      "index": 0,
+      "target": "rf_nctl"
     },
     {
       "id": 9,
@@ -373,7 +378,7 @@
     }
   ],
   "rfe_type": 1,
-  "generic_aid_power_candidates": [
+  "power_candidates": [
     {
       "id": 9,
       "name": "TXPWR_BYRATE",
@@ -537,7 +542,101 @@
       "entry_count": 33
     }
   ],
+  "register_candidates": [
+    {
+      "id": 2,
+      "name": "BB_REG",
+      "header_offset": 1399952,
+      "payload_offset": 1399984,
+      "bytes": 4264,
+      "aid": 0,
+      "version": [
+        0,
+        51,
+        0,
+        0
+      ],
+      "sha256": "eab1593cbb9918fbca6573d02f84520859bc3052793a26a30d9c0c0a8b5448b4",
+      "register_pairs": 533,
+      "index": 0,
+      "target": "bb_tbl"
+    },
+    {
+      "id": 3,
+      "name": "BB_GAIN",
+      "header_offset": 1404256,
+      "payload_offset": 1404288,
+      "bytes": 3296,
+      "aid": 0,
+      "version": [
+        0,
+        51,
+        0,
+        0
+      ],
+      "sha256": "2015385e521fa90963d1700ae35a5982a7893c8b99d7bf082aa0fc6f2924427e",
+      "register_pairs": 412,
+      "index": 0,
+      "target": "bb_gain"
+    },
+    {
+      "id": 4,
+      "name": "RADIO_A",
+      "header_offset": 1407584,
+      "payload_offset": 1407616,
+      "bytes": 16536,
+      "aid": 0,
+      "version": [
+        0,
+        37,
+        0,
+        0
+      ],
+      "sha256": "ecbb3401966011fbee98df1609516eacb5cb17d36464b85bb83ab36fb46ecccc",
+      "register_pairs": 2067,
+      "index": 1,
+      "target": "rf_radio[1]"
+    },
+    {
+      "id": 5,
+      "name": "RADIO_B",
+      "header_offset": 1424160,
+      "payload_offset": 1424192,
+      "bytes": 16712,
+      "aid": 0,
+      "version": [
+        0,
+        37,
+        0,
+        0
+      ],
+      "sha256": "ca15af8ca95e51b9308a75f76734a5fdd56d11fcf766f7a165e9018d065af424",
+      "register_pairs": 2089,
+      "index": 0,
+      "target": "rf_radio[0]"
+    },
+    {
+      "id": 8,
+      "name": "RF_NCTL",
+      "header_offset": 1440912,
+      "payload_offset": 1440944,
+      "bytes": 9600,
+      "aid": 0,
+      "version": [
+        0,
+        13,
+        0,
+        0
+      ],
+      "sha256": "198e51c5aa24666a22dfb6b2b66cf7d41390c7c418057ddb2de08c1f51b2441a",
+      "register_pairs": 1200,
+      "index": 0,
+      "target": "rf_nctl"
+    }
+  ],
+  "aid_selection_scope": "generic_only",
   "actual_chip_aid_known": false,
+  "chip_aid": null,
   "hardware_compatibility_validated": false,
   "hardware_writes_performed": false
 }

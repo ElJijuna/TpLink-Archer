@@ -96,3 +96,10 @@ El decodificador PHY obtiene trims térmicos A=−1/B=0 y los códigos PA/PAD.
 El analizador de firmware Linux localizó tablas BB, ganancias, radio A/B y
 NCTL. No se ejecutaron esas tablas: falta validar el AID del chip y sus
 condiciones. Consulte `research/RADIO_BRINGUP.md`, etapa 14.
+
+### Identidad analógica validada
+
+El lector XTAL-SI obtuvo AID 0x6933 y revisión analógica 1. La selección
+offline ya filtra tablas por esa identidad y conserva sus índices de radio.
+`make identity-universal` construye el lector Intel/ARM. Falta implementar
+el intérprete de condiciones de tablas antes de aplicar registros RF.

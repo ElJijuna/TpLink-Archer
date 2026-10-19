@@ -40,7 +40,7 @@ class ElementTests(unittest.TestCase):
 
     def test_rfe_preference_generic_aid_only(self):
         r=m.inspect(container([power(0),power(1),power(0),power(2),power(1,0x1234)]))
-        chosen=r['generic_aid_power_candidates']
+        chosen=r['power_candidates']
         self.assertEqual(len(chosen),1)
         self.assertEqual(chosen[0]['rfe_type'],1)
         self.assertEqual(chosen[0]['aid'],0)
@@ -49,3 +49,26 @@ class ElementTests(unittest.TestCase):
         with self.assertRaises(ValueError):m.inspect(b'bad')
         with self.assertRaises(ValueError):m.inspect(b'\xff\xff'+b'\0'*14)
         with self.assertRaises(ValueError):m.inspect(container([element(9,b'123',b'\0\0\1\4\1\0\0\0')]))
+
+    def test_physical_aid_and_radio_slot_selection(self):
+        pairs=struct.pack('<II',1,2)
+        raw=container([element(2,pairs,aid=0x1111),element(2,pairs,aid=0x6933),
+                       element(2,pairs,aid=0),
+                       element(4,pairs,b'\1'+b'\0'*7),
+                       element(5,pairs,b'\1'+b'\0'*7),
+                       power(1,0x1111),power(1,0x6933),power(0)])
+        r=m.inspect(raw,aid=0x6933)
+        self.assertTrue(r['actual_chip_aid_known'])
+        self.assertEqual(r['aid_selection_scope'],'generic_and_matching')
+        self.assertEqual(r['register_candidates'][0]['aid'],0x6933)
+        self.assertEqual(len(r['register_candidates']),2)
+        self.assertEqual(r['register_candidates'][1]['id'],4)
+        self.assertEqual(r['register_candidates'][1]['target'],'rf_radio[1]')
+        self.assertEqual(r['power_candidates'][0]['aid'],0x6933)
+
+    def test_invalid_identity_and_radio_index(self):
+        for aid in (-1,65536):
+            with self.assertRaises(ValueError):m.inspect(container([]),aid=aid)
+        with self.assertRaises(ValueError):m.inspect(container([]),rfe=256)
+        with self.assertRaises(ValueError):m.inspect(container([
+            element(4,b'12345678',b'\4'+b'\0'*7)]))
