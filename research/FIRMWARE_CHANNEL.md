@@ -93,3 +93,38 @@ no new native REA analysis is claimed.
 Next: implement a bounded event loop with independent receive/completion ACK
 tracking and sequence ownership, then establish firmware identity and radio
 bring-up prerequisites before issuing scan commands.
+
+## Stage 11: command completion and stale-event rejection
+
+The bounded diagnostic now owns one immutable identity (MAC/FW_INFO/LOG_CFG,
+sequence 1) and reads up to three rounds across both IN endpoints, with the
+existing per-read timeout. Each round has a separate capture. It transmits
+only once; no automatic retry or queue rewrite is performed. REC_ACK sequence
+uses bits 23:16 of word 2, while DONE_ACK sequence uses bits 31:24 and its
+return code occupies bits 23:16. The tracker accepts either event ordering,
+preserves receipt independently, ignores foreign command identities and
+rejects conflicting completion codes or malformed events. Diagnostic exit 0
+now requires a matching successful completion; 6 means receipt only, 4 no
+matching acknowledgment, 5 firmware error, 2 transport/parse error.
+
+Physical ARM result, three 36-byte transfers on 0x84:
+
+1. DONE_ACK sequence 0 from the earlier session: ignored.
+2. REC_ACK sequence 1 matching the new command.
+3. DONE_ACK sequence 1, return code 0: completion confirmed.
+
+Endpoint 0x88 timed out each round. WLAN IO returned to 0x001004fd. The command
+again requested zero log components; its log configuration effect remains.
+This validates completed LOG_CFG handling, not radio initialization or Wi-Fi.
+
+Real fixtures replay all three events in the C++ suite; synthetic cases cover
+completion before receipt, duplicate completion, conflicting codes, foreign
+sequences and failure codes. Evidence hashes: `bulk-completion-observation.json`.
+
+Limitations: sequence 1 is fixed for this single-command diagnostic, not a
+production sequence allocator. Repeated invocation can encounter older events
+with that same sequence, so this program must not be used to claim repeated
+transaction isolation. A production transport needs shared sequence ownership,
+stale-event draining and a bounded wraparound policy before additional commands.
+The current round-robin synchronous reader can wait on idle endpoint 0x88;
+a later asynchronous transport should service both pipes without that delay.

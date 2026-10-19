@@ -7,7 +7,7 @@ build/usb-request-test: tests/usb_request_test.cpp include/archer/usb_request.hp
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/usb-descriptors-test: tests/usb_descriptors_test.cpp include/archer/usb_descriptors.hpp tests/fixtures/37ad-0104-usb2-config.bin | build
 	$(CXX) $(CXXFLAGS) $< -o $@
-build/firmware-channel-test: tests/firmware_channel_test.cpp include/archer/firmware_channel.hpp | build
+build/firmware-channel-test: tests/firmware_channel_test.cpp include/archer/firmware_channel.hpp include/archer/command_tracker.hpp $(wildcard tests/fixtures/log-disable*.bin) | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/register-mailbox-test: tests/register_mailbox_test.cpp include/archer/register_mailbox.hpp tests/fixtures/phy-cap-part0.bin | build
 	$(CXX) $(CXXFLAGS) $< -o $@

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include "archer/firmware_channel.hpp"
+#include "archer/command_tracker.hpp"
 #include "archer/macos_register_bus.hpp"
 
 static long number(io_registry_entry_t device, CFStringRef key) {
@@ -18,7 +19,7 @@ static long number(io_registry_entry_t device, CFStringRef key) {
     }
     return result;
 }
-// One read per bulk IN pipe. Reads consume queued data. No OUT transfer is sent.
+// Passive mode reads once per pipe; diagnostic mode sends once and reads bounded rounds.
 static int receive(io_service_t service, const std::filesystem::path& directory, bool diagnostic = false) {
     IOCFPlugInInterface** plugin = nullptr;
     SInt32 score = 0;
@@ -39,7 +40,8 @@ static int receive(io_service_t service, const std::filesystem::path& directory,
     }
     int result = 3; // No data during this bounded attempt.
     unsigned inputs = 0;
-    bool matched_ack = false;
+    constexpr unsigned sequence = 1;
+    archer::CommandTracker tracker(1, 0, 0, sequence);
     try {
         if (!std::filesystem::create_directory(directory))
             throw std::runtime_error("Output directory must be new");
@@ -63,7 +65,7 @@ static int receive(io_service_t service, const std::filesystem::path& directory,
                 }
             }
             if (!output) throw std::runtime_error("Expected USB2 H2C endpoint 0x07 absent");
-            auto command = archer::diagnostic_log_disable(0);
+            auto command = archer::diagnostic_log_disable(sequence);
             std::ofstream tx(directory / "h2c-log-disable.bin", std::ios::binary);
             tx.write(reinterpret_cast<const char*>(command.data()), command.size());
             tx.close();
@@ -75,6 +77,8 @@ static int receive(io_service_t service, const std::filesystem::path& directory,
             manifest.flush();
             if (status != kIOReturnSuccess) throw std::runtime_error("H2C write failed; no retry");
         }
+        for (unsigned round = 0; round < (diagnostic ? 3u : 1u); ++round) {
+        inputs = 0;
         for (unsigned pipe = 1; pipe <= endpoints; ++pipe) {
             UInt8 direction = 0, endpoint = 0, type = 0, interval = 0;
             UInt16 packet_size = 0;
@@ -91,26 +95,23 @@ static int receive(io_service_t service, const std::filesystem::path& directory,
             const bool timeout = status == kIOUSBTransactionTimeout || status == kIOReturnTimeout;
             auto& out = manifest;
             out << "{\"endpoint_address\":" << unsigned(endpoint | 0x80)
-                << ",\"pipe_reference\":" << pipe << ",\"status\":" << status
+                << ",\"round\":" << round << ",\"pipe_reference\":" << pipe << ",\"status\":" << status
                 << ",\"timeout\":" << (timeout ? "true" : "false")
                 << ",\"bytes\":" << (valid ? received : 0) << "}\n";
             std::cout << "endpoint=0x" << std::hex << unsigned(endpoint | 0x80) << std::dec
                       << " status=" << status << " bytes=" << (valid ? received : 0) << '\n';
             if (valid) {
                 bytes.resize(received);
-                std::ofstream capture(directory / ("endpoint-" + std::to_string(endpoint | 0x80) + ".bin"),
+                std::ofstream capture(directory / ("endpoint-" + std::to_string(endpoint | 0x80) + "-round-" + std::to_string(round) + ".bin"),
                                       std::ios::binary);
                 capture.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
                 if (!capture) throw std::runtime_error("Cannot save RX bytes");
                 try {
                     const auto packets = archer::decode_usb_rx_be(bytes);
                     for (const auto& packet : packets) {
-                        if (diagnostic && packet.c2h && packet.c2h->category == 1 &&
-                            packet.c2h->command_class == 0 && packet.c2h->function == 0) {
-                            const auto ack = archer::decode_receive_ack(bytes.data() + packet.payload_offset, packet.payload_bytes);
-                            matched_ack = ack.category == 1 && ack.command_class == 0 &&
-                                ack.function == 0 && ack.sequence == 0;
-                            std::cout << "log_disable_receive_ack=" << (matched_ack ? "success" : "mismatch") << '\n';
+                        if (diagnostic && packet.c2h) {
+                            const bool matched = tracker.observe(bytes.data() + packet.payload_offset, packet.payload_bytes);
+                            std::cout << "ack_matches_command=" << (matched ? "yes" : "no") << '\n';
                         }
                         std::cout << "rx_type=" << packet.packet_type
                                   << " payload_bytes=" << packet.payload_bytes
@@ -118,9 +119,21 @@ static int receive(io_service_t service, const std::filesystem::path& directory,
                     }
                 } catch (const std::invalid_argument& error) {
                     std::cerr << "Raw bytes retained; BE RX decode failed: " << error.what() << '\n';
+                    if (diagnostic) throw std::runtime_error("Invalid diagnostic event");
                 }
                 if (result != 2) result = 0;
             } else if (!timeout && status != kIOReturnSuccess) result = 2;
+        }
+        if (inputs != 2) throw std::runtime_error("Incomplete receive inventory");
+        if (diagnostic && tracker.received && tracker.completion) break;
+        }
+        if (diagnostic) {
+            manifest << "{\"result\":\"command_tracking\",\"sequence\":" << sequence
+                     << ",\"received\":" << (tracker.received ? "true" : "false")
+                     << ",\"completion_code\":";
+            if (tracker.completion) manifest << *tracker.completion;
+            else manifest << "null";
+            manifest << "}\n";
         }
         manifest.flush();
         if (!manifest || inputs != 2) throw std::runtime_error("Incomplete receive inventory");
@@ -130,7 +143,10 @@ static int receive(io_service_t service, const std::filesystem::path& directory,
     status = (*usb)->USBInterfaceClose(usb);
     (*usb)->Release(usb);
     if (status != kIOReturnSuccess) { std::cerr << "USBInterfaceClose failed\n"; return 2; }
-    if (diagnostic && result != 2 && !matched_ack) return 4;
+    if (diagnostic && result != 2) {
+        if (tracker.completion) return *tracker.completion == 0 ? 0 : 5;
+        return tracker.received ? 6 : 4;
+    }
     return result;
 }
 int main(int argc, char** argv) {

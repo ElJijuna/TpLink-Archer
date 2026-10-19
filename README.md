@@ -68,3 +68,7 @@ El adaptador recibió un LOG_CFG H2C de diagnóstico por USB y devolvió un
 REC_ACK C2H coincidente en el Mac ARM. Captura real y límites en
 `research/bulk-command-observation.json` y `research/FIRMWARE_CHANNEL.md`.
 Se confirmó recepción del comando; todavía no hay radio, escaneo ni conexión.
+
+El seguimiento de comandos ya validó físicamente REC_ACK y DONE_ACK exitoso
+para LOG_CFG, rechazando un ACK pendiente de otra secuencia. Véase
+`research/bulk-completion-observation.json`. Aún falta inicializar la radio.

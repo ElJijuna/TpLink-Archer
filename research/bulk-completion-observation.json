@@ -1,0 +1,32 @@
+{
+  "command": "LOG_CFG disable",
+  "sequence": 1,
+  "receipt_ack": true,
+  "completion_code": 0,
+  "discarded_stale_completion_sequence": 0,
+  "bulk_writes": 1,
+  "receive_rounds": 3,
+  "hci_opt_ctrl_restored": "0x001004fd",
+  "artifacts": [
+    {
+      "path": "artifacts/bulk-tracker-stage11.jsonl",
+      "sha256": "2f0ba54ea6f497e008aa6ea6c6291d58da751df76ab6df0a15a2d0f92b8ef264"
+    },
+    {
+      "path": "artifacts/bulk-tracker-stage11/receive.jsonl",
+      "sha256": "aa147985313b07a115ca143f7dadfd8f3eabf05f60481b85abae4a592899ba3e"
+    },
+    {
+      "path": "tests/fixtures/log-disable-stage11-round-0.bin",
+      "sha256": "a7e35e5283734c55dc51b19b94b40e543cba3aeaf9756cd4c6e7b8ad24400cfd"
+    },
+    {
+      "path": "tests/fixtures/log-disable-stage11-round-1.bin",
+      "sha256": "74bd0d8776d232554b44c9061b8779fb475e7f75921a189903a721598296c475"
+    },
+    {
+      "path": "tests/fixtures/log-disable-stage11-round-2.bin",
+      "sha256": "18752c32ab85de56a453e3d2a67e7841a975cf03fabb0f211fa645e84b517667"
+    }
+  ]
+}
