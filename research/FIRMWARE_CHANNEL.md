@@ -128,3 +128,29 @@ transaction isolation. A production transport needs shared sequence ownership,
 stale-event draining and a bounded wraparound policy before additional commands.
 The current round-robin synchronous reader can wait on idle endpoint 0x88;
 a later asynchronous transport should service both pipes without that delay.
+
+## Stage 12: durable sequence ownership across executions
+
+The diagnostic now holds an exclusive ledger lock before opening the register
+bus, reserves and fsyncs each sequence before transmission, and never recycles
+a reserved value after timeout or failure. The ledger is
+`artifacts/37ad-0104-sequences.bin` relative to the project working directory.
+Keep that file and use the same project working directory for this adapter;
+deleting it, changing directories, or running a different transport outside
+this ledger invalidates its cross-process sequence guarantee. There is no
+automatic reset, wraparound, epoch renewal or production device-serial binding.
+Sequences 0/1 are reserved for the preceding experiments. After the remaining
+254 values are used, the tool fails closed; continuous indefinite operation
+still needs a proven reset/epoch protocol.
+
+`--diagnostic-log-disable PREFIX` now sends two commands sequentially, stopping
+on the first failure. Output folders are `PREFIX-command-0` and
+`PREFIX-command-1`. Each command is transmitted once. The same ledger remains
+locked throughout the pair, and WLAN IO remains inside the restoration window.
+
+Physical ARM tests completed sequences 2 and 3, then a separate process
+completed 4 and 5 using the same ledger. All four had matching REC_ACK,
+DONE_ACK and return code 0. The command continues to disable log components;
+these tests do not exercise radio operation. Evidence:
+`session-stage12-evidence.json`. Tests cover reopen persistence, competing
+owner rejection, exhaustion without wrap, corrupt data and symlink rejection.

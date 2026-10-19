@@ -1,0 +1,89 @@
+{
+  "commands_completed": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "same_ledger_across_processes": true,
+  "efuse_physical_map_acquired": false,
+  "radio_initialized": false,
+  "artifacts": [
+    {
+      "path": "artifacts/bulk-session-reopen-stage12-command-0/endpoint-132-round-0.bin",
+      "sha256": "e67d242a2aab70af86955c3079718ecf9c78423ed672f1ade25383a4e8934b54"
+    },
+    {
+      "path": "artifacts/bulk-session-reopen-stage12-command-0/endpoint-132-round-1.bin",
+      "sha256": "b98554c9b8087e49bdc858343c8638243a79af7eb2aed4b65d403dfde23d2cf9"
+    },
+    {
+      "path": "artifacts/bulk-session-reopen-stage12-command-0/h2c-log-disable.bin",
+      "sha256": "9cf4d3568a470108580c65881600d091acda09381902c55eebd38b7f1196ed53"
+    },
+    {
+      "path": "artifacts/bulk-session-reopen-stage12-command-0/receive.jsonl",
+      "sha256": "27c764c79793d45eac72cbeb734eacbcfe9031a6d0b0768986aedb607403a763"
+    },
+    {
+      "path": "artifacts/bulk-session-reopen-stage12-command-1/endpoint-132-round-0.bin",
+      "sha256": "ec294e11a89c4c0b8a022d7360fd101fec44b15e0383ebbd9097e11de7f10a46"
+    },
+    {
+      "path": "artifacts/bulk-session-reopen-stage12-command-1/endpoint-132-round-1.bin",
+      "sha256": "14caf5910e9f72f3a3b9a1e1fc642c1c549e64e68de6b423d142ad4658a14e6b"
+    },
+    {
+      "path": "artifacts/bulk-session-reopen-stage12-command-1/h2c-log-disable.bin",
+      "sha256": "99b6c255517e227200543e19dfdc31aff3849f5916faf7030dffa30f7b1ab4ac"
+    },
+    {
+      "path": "artifacts/bulk-session-reopen-stage12-command-1/receive.jsonl",
+      "sha256": "85b43128d257299c0973a6d2735e6b10c5289cfe0baa6991bdb45fe245f8cb8c"
+    },
+    {
+      "path": "artifacts/bulk-session-reopen-stage12.jsonl",
+      "sha256": "1a3deec100b86f6f5861da53fbb36ee9d2b045a3c7a4b74a995d1e20480eef02"
+    },
+    {
+      "path": "artifacts/bulk-session-stage12-command-0/endpoint-132-round-0.bin",
+      "sha256": "d2f0a70d0ebff00b55647808fe63df27e543e261800c2aac962971b330b2135f"
+    },
+    {
+      "path": "artifacts/bulk-session-stage12-command-0/endpoint-132-round-1.bin",
+      "sha256": "fdbf6602c75e7cfa1f202c590a4a7bea8c03b7a5e4b2b2f461bb3c26b9fd04fb"
+    },
+    {
+      "path": "artifacts/bulk-session-stage12-command-0/h2c-log-disable.bin",
+      "sha256": "d21cad99cb27decbc2754089eacde56dcd5905dd8d6278cf4837b643da25b777"
+    },
+    {
+      "path": "artifacts/bulk-session-stage12-command-0/receive.jsonl",
+      "sha256": "3a066599254ad0342ec64b259a1f34771bc6130fae4394fc75a796fddafe9944"
+    },
+    {
+      "path": "artifacts/bulk-session-stage12-command-1/endpoint-132-round-0.bin",
+      "sha256": "b6fdb8350d529d03fa4b424acffc6956965ea8e9f69e2ce3c8223b5f59b3257f"
+    },
+    {
+      "path": "artifacts/bulk-session-stage12-command-1/endpoint-132-round-1.bin",
+      "sha256": "327a50df86b1c825280970a08f7d4f2f93746f2756410a502069a7327de64e31"
+    },
+    {
+      "path": "artifacts/bulk-session-stage12-command-1/h2c-log-disable.bin",
+      "sha256": "cf5f66884481677099d57edf761ad2cbda36ef271bc00bcd631ca384ff3920f0"
+    },
+    {
+      "path": "artifacts/bulk-session-stage12-command-1/receive.jsonl",
+      "sha256": "9495c67ee3e348717f770a5ce8e9f0ea6b79d44a7f82ef51ef243fd3e243da46"
+    },
+    {
+      "path": "artifacts/bulk-session-stage12.jsonl",
+      "sha256": "6318f599a110825c9e07bf7075a8e1a807d72205ca570549e90ea18a8351f8fa"
+    },
+    {
+      "path": "artifacts/radio-preflight-stage12.jsonl",
+      "sha256": "57f52ed6e049a1232b5018045637d8b2e0aac2ec4cdb0e8377d2f09fd5844063"
+    }
+  ]
+}

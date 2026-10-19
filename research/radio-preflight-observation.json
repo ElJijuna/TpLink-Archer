@@ -1,0 +1,8 @@
+{
+  "autoload_status_bit": true,
+  "usb_mac_nonzero": true,
+  "usb_mac_not_broadcast": true,
+  "usb_mac_unicast": true,
+  "usb_mac_sha256": "c30ad27bdd4f91925300a5f6550e5333c29b8608885d4de134fe4b97378ce1bb",
+  "radio_initialized": false
+}

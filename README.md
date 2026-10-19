@@ -72,3 +72,12 @@ Se confirmó recepción del comando; todavía no hay radio, escaneo ni conexión
 El seguimiento de comandos ya validó físicamente REC_ACK y DONE_ACK exitoso
 para LOG_CFG, rechazando un ACK pendiente de otra secuencia. Véase
 `research/bulk-completion-observation.json`. Aún falta inicializar la radio.
+
+### Sesiones y preparación de radio
+
+La prueba bulk completa dos comandos y conserva las secuencias entre procesos
+en `artifacts/37ad-0104-sequences.bin`. Ejecutar desde este proyecto y conservar
+ese archivo: no hay reciclaje automático al agotar las 256 secuencias. Se
+validaron físicamente las secuencias 2–5 con retorno 0. El decodificador efuse
+offline y los requisitos pendientes están en `research/RADIO_BRINGUP.md`.
+La radio todavía no se ha inicializado.

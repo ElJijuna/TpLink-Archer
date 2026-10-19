@@ -21,6 +21,8 @@ int main(int argc, char** argv) {
                                          0x8c08u, 0x8c10u, 0x9008u, 0x9010u,
                                          0xb000u, 0xb010u, 0x10000u, 0x8d00u, 0x9100u})
                         (void)bus.read(address, 4);
+                    (void)bus.read(0x000a, 2);
+                    for (auto address : {0x4078u, 0x407au, 0x407cu}) (void)bus.read(address, 2);
                     for (unsigned i = 0; i < 5; ++i) (void)bus.read(0x8c40 + 4*i, 4);
                     for (unsigned i = 0; i < 13; ++i) (void)bus.read(0x9040 + 4*i, 4);
                 })

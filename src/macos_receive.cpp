@@ -5,8 +5,10 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <memory>
 #include "archer/firmware_channel.hpp"
 #include "archer/command_tracker.hpp"
+#include "archer/sequence_ledger.hpp"
 #include "archer/macos_register_bus.hpp"
 
 static long number(io_registry_entry_t device, CFStringRef key) {
@@ -20,7 +22,7 @@ static long number(io_registry_entry_t device, CFStringRef key) {
     return result;
 }
 // Passive mode reads once per pipe; diagnostic mode sends once and reads bounded rounds.
-static int receive(io_service_t service, const std::filesystem::path& directory, bool diagnostic = false) {
+static int receive(io_service_t service, const std::filesystem::path& directory, bool diagnostic = false, unsigned sequence = 0) {
     IOCFPlugInInterface** plugin = nullptr;
     SInt32 score = 0;
     auto status = IOCreatePlugInInterfaceForService(service, kIOUSBInterfaceUserClientTypeID,
@@ -40,7 +42,6 @@ static int receive(io_service_t service, const std::filesystem::path& directory,
     }
     int result = 3; // No data during this bounded attempt.
     unsigned inputs = 0;
-    constexpr unsigned sequence = 1;
     archer::CommandTracker tracker(1, 0, 0, sequence);
     try {
         if (!std::filesystem::create_directory(directory))
@@ -180,6 +181,8 @@ int main(int argc, char** argv) {
     int result = 2;
     try {
         if (window) {
+            std::unique_ptr<archer::SequenceLedger> ledger;
+            if (diagnostic) ledger = std::make_unique<archer::SequenceLedger>("artifacts/37ad-0104-sequences.bin");
             MacRegisterBus bus;
             (void)archer::query_phy_capabilities_with_io_window(bus, [&] {
                 if (diagnostic) {
@@ -189,7 +192,14 @@ int main(int argc, char** argv) {
                     if (!(bus.read(0x7880, 4) & 1))
                         throw std::runtime_error("HCI TX DMA disabled");
                 }
-                result = receive(selected, argv[2], diagnostic);
+                if (diagnostic) {
+                    // Keep this ledger for the adapter; do not delete it between runs.
+                    for (unsigned command = 0; command < 2; ++command) {
+                        const auto sequence = ledger->reserve();
+                        result = receive(selected, std::filesystem::path(argv[2]).string() + "-command-" + std::to_string(command), true, sequence);
+                        if (result != 0) break;
+                    }
+                } else result = receive(selected, argv[2]);
             });
         } else result = receive(selected, argv[1]);
     } catch (const std::exception& error) {

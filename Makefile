@@ -11,7 +11,10 @@ build/firmware-channel-test: tests/firmware_channel_test.cpp include/archer/firm
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/register-mailbox-test: tests/register_mailbox_test.cpp include/archer/register_mailbox.hpp tests/fixtures/phy-cap-part0.bin | build
 	$(CXX) $(CXXFLAGS) $< -o $@
-test: build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+build/sequence-ledger-test: tests/sequence_ledger_test.cpp include/archer/sequence_ledger.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+	./build/sequence-ledger-test
 	./build/usb-request-test
 	./build/usb-descriptors-test
 	./build/firmware-channel-test
