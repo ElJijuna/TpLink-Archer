@@ -1,0 +1,53 @@
+{
+  "firmware_sha256": "4340bc322912f30f1793bb57a1747c23b15e40db2df628d6687d1ddf722f2828",
+  "aid": 26931,
+  "rfe": 1,
+  "cv": 1,
+  "executable": false,
+  "hardware_writes_performed": false,
+  "limitations": [
+    "No MAC/BB power initialization",
+    "No gain table decoder",
+    "No RF access or firmware table-store transport",
+    "No firmware/runtime compatibility validation"
+  ],
+  "tables": [
+    {
+      "name": "BB_REG",
+      "target": "bb_tbl",
+      "mode": "bb",
+      "headline_pairs": 4,
+      "selected_target": 65537,
+      "selected_pairs": 174,
+      "delay_microseconds": 0,
+      "note": "Counts include decoded actions; no native execution backend exists"
+    },
+    {
+      "name": "RADIO_A",
+      "target": "rf_radio[1]",
+      "mode": "rf_v1",
+      "headline_pairs": 4,
+      "selected_target": 65537,
+      "selected_pairs": 1085,
+      "delay_microseconds": 0
+    },
+    {
+      "name": "RADIO_B",
+      "target": "rf_radio[0]",
+      "mode": "rf_v1",
+      "headline_pairs": 4,
+      "selected_target": 65537,
+      "selected_pairs": 1083,
+      "delay_microseconds": 0
+    },
+    {
+      "name": "RF_NCTL",
+      "target": "rf_nctl",
+      "mode": "bb",
+      "headline_pairs": 0,
+      "selected_target": null,
+      "selected_pairs": 1200,
+      "delay_microseconds": 0
+    }
+  ]
+}

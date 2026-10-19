@@ -1,0 +1,34 @@
+{
+  "sources": [
+    "https://raw.githubusercontent.com/torvalds/linux/master/drivers/net/wireless/realtek/rtw89/phy.c",
+    "https://raw.githubusercontent.com/torvalds/linux/master/drivers/net/wireless/realtek/rtw89/phy.h"
+  ],
+  "source_revision_pinned": false,
+  "hardware_writes_performed": false,
+  "artifacts": [
+    {
+      "path": "artifacts/rtw89-phy.c",
+      "sha256": "c443be8a679f3f5dd0a330ab814ebda4411338f0cbe6cd556e0c31129aa9209b"
+    },
+    {
+      "path": "artifacts/rtw89-phy.h",
+      "sha256": "f65766bba11e5d432ee48b6f4aeffcf67bd6f9532f285da9b6fce16e25d654ce"
+    },
+    {
+      "path": "artifacts/phy-plan-stage16.json",
+      "sha256": "54fe2e965d6972a5380595e1db91002605d5340c17bcc944f973cc7231abbd53"
+    },
+    {
+      "path": "artifacts/phy-reference-stage16.cpp",
+      "sha256": "49b417018cb198b05b37fcea8b4884444e479479cac8bf835ad7af0b0ca76eaa"
+    },
+    {
+      "path": "research/phy-table-reference-check.json",
+      "sha256": "dc53c8485514a33d436c2cb55ebe516d409bbdc973d3518586137c9c57dc1095"
+    },
+    {
+      "path": "artifacts/rtw8922a_fw-1.bin",
+      "sha256": "4340bc322912f30f1793bb57a1747c23b15e40db2df628d6687d1ddf722f2828"
+    }
+  ]
+}

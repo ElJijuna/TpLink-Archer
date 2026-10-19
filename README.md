@@ -103,3 +103,10 @@ El lector XTAL-SI obtuvo AID 0x6933 y revisión analógica 1. La selección
 offline ya filtra tablas por esa identidad y conserva sus índices de radio.
 `make identity-universal` construye el lector Intel/ARM. Falta implementar
 el intérprete de condiciones de tablas antes de aplicar registros RF.
+
+### Intérprete PHY offline
+
+`tools/phy_table.py` resuelve condiciones y retardos para RFE 1/CV 1. Sus
+selecciones coinciden, par por par y en orden, con las funciones originales
+Linux ejecutadas sin hardware. El plan todavía no escribe registros RF ni
+inicializa la radio. Véase `research/phy-table-reference-check.json`.

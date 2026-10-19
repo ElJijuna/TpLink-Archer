@@ -1,0 +1,25 @@
+{
+  "method": "Compiled original headline and branch interpreter bodies with isolated type/macro stubs; no hardware callbacks",
+  "results": [
+    {
+      "table": "BB_REG",
+      "selected_pairs": 174,
+      "exact_source_order_match": true
+    },
+    {
+      "table": "RADIO_A",
+      "selected_pairs": 1085,
+      "exact_source_order_match": true
+    },
+    {
+      "table": "RADIO_B",
+      "selected_pairs": 1083,
+      "exact_source_order_match": true
+    },
+    {
+      "table": "RF_NCTL",
+      "selected_pairs": 1200,
+      "exact_source_order_match": true
+    }
+  ]
+}

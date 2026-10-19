@@ -170,3 +170,43 @@ Its download was not executed: automatic approval review failed because of
 an account usage limit, rather than deciding that the action was unsafe.
 No alternate network path or approval bypass was attempted. Local selection,
 regression tests and evidence recording were completed using available files.
+
+## Stage 16: condition-aware PHY table interpreter
+
+The previously blocked source download succeeded after the user's request to
+continue. Retained upstream phy.c/phy.h are hash-bound in
+`phy-table-plan-evidence.json`; no approval bypass or alternate download path
+was used. They are not yet pinned to a Git commit.
+
+`python3 tools/phy_table.py artifacts/rtw8922a_fw-1.bin 0x6933 1 1`
+now resolves headline priorities and IF/ELIF/CHECK/ELSE/END using the original
+Linux algorithm for physical AID 0x6933, RFE 1, digital CV 1. It emits an
+offline action plan and rejects unsupported/nested/malformed programs rather
+than attempting writes. BB delay sentinels and BYPASS_CR_DATA are decoded.
+RF-v1 only treats address 0xfe as a delay, unlike the older generic RF
+callback; addresses 0xfd..0xf9 remain RF writes in this mode. The planner also
+marks RF entries at addresses >=0x100 for the later firmware-store path.
+
+The chosen headline is 0x00010001. Selected action counts:
+BB=174, RADIO_A=1085, RADIO_B=1083, NCTL=1200. Gain table entries are excluded
+because their callback interprets structured gain fields rather than flat BB
+writes. The full plan is local at `artifacts/phy-plan-stage16.json`; a compact
+tracked summary is `phy-table-plan-observation.json`.
+
+Independent check: compiled the original `rtw89_phy_sel_headline` and
+`rtw89_phy_init_reg` bodies from the downloaded source with minimal type/macro
+stubs and a recording callback. Every selected address/value pair and its
+order match this Python interpreter for all four real tables. Retained harness:
+`artifacts/phy-reference-stage16.cpp`; results:
+`phy-table-reference-check.json`. This is algorithm parity on the retained
+package, not verification of register accessibility or radio behavior.
+
+Seven C++ suites and 35 Python tests pass. Cases include exact and fallback
+headline priority, ELIF selection, skipped ELSE, post-branch common writes,
+BB versus RF-v1 delay semantics, bypass handling and malformed branches.
+No table has been executed and no RF setting was changed.
+
+Next: implement the structured gain decoder and map BB/RF access semantics,
+including RF-v1 address selection and firmware register-store commands. MAC
+normal initialization, firmware compatibility and calibration completion still
+need validation before this offline plan can become a hardware bring-up path.
