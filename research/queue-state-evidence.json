@@ -1,0 +1,27 @@
+{
+  "artifacts": [
+    {
+      "path": "artifacts/queues-stage9.jsonl",
+      "sha256": "646e98bc3cdb3f61132a41e0fbfd87efda9d72228f8489bc891a00c5e1148a90"
+    },
+    {
+      "path": "artifacts/queues-stage9.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/rtw89-mac.c",
+      "sha256": "cd760d4e9f6037f6de5cb2d567e4d522e45c033346cb70ce6aa12558f4d41c95"
+    },
+    {
+      "path": "artifacts/rtw89-mac_be.c",
+      "sha256": "7b78b2791f45cadd25fa46113200fadc9d954ddc47c50b88458fd299d5ea1fa1"
+    },
+    {
+      "path": "artifacts/rtw89-reg.h",
+      "sha256": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d"
+    }
+  ],
+  "hci_before": "0x1004fd",
+  "hci_after": "0x1004fd",
+  "queue_configuration_written": false
+}

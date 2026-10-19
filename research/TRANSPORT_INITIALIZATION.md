@@ -89,3 +89,35 @@ The candidate is unit-tested for total memory accounting, region boundary,
 H2C/C2H encoding, download-layout comparison, unsupported page sizes,
 misalignment, field overflow and invalid min/max quotas. Full bring-up still
 requires a defined quiesce/transition path and HCI preload/flow control setup.
+
+## Stage 9: ready DLE managers and existing H2C quotas
+
+The physical `--inspect-transport` mode now reads WDE/PLE initialization status
+and all eighteen quota registers. `tools/queue_state.py` decodes the captured
+trace without hardware access; results and hashes are in
+`queue-state-observation.json` and `queue-state-evidence.json`.
+
+Both initialization status registers read 3: queue and buffer managers report
+ready according to the source masks. PLE H2C quota reads 0x0b5f0100 (minimum
+256, maximum 2911 pages); C2H reads 0x00200010 (minimum 16, maximum 32).
+This existing boot configuration differs from normal USB2 SCC and from the
+complete Linux DLFW quota table. Therefore the earlier packet-buffer field
+match must not be interpreted as proof of an exact Linux download profile.
+WDE WCPU quota reads 6, whose decoded minimum exceeds its zero maximum;
+this anomaly is retained and must be understood before repartitioning.
+
+Correction to the earlier next-step proposal: normal DLE repartition is not
+established as a prerequisite for a diagnostic bulk command. The existing
+H2C/C2H quotas and ready flags warrant investigating a supported H2C command
+first. No queue configuration was changed during this stage, and WLAN IO
+returned to its initial value. Bulk execution remains unvalidated.
+
+A second source correction: `rtw89_mac_preload_init` returns immediately on
+USB because `is_qta_poh` is true only for PCIe. The offline DLE plan's generic
+preload prerequisite has been narrowed accordingly. HCI flow control remains
+a separate requirement to inspect; do not copy PCIe preload writes into USB.
+
+The Linux full initialization path performs DLE download-mode setup, firmware
+CPU/download operations, system initialization, then normal TRX/DLE setup.
+It does not establish an arbitrary live transition from this observed resident
+firmware state. We have not reset that CPU or uploaded firmware.

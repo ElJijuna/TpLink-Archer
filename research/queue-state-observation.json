@@ -1,0 +1,139 @@
+{
+  "wde_ready": true,
+  "ple_ready": true,
+  "quotas": {
+    "wde": [
+      {
+        "index": 0,
+        "address": 35904,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 1,
+        "address": 35908,
+        "minimum": 6,
+        "maximum": 0
+      },
+      {
+        "index": 2,
+        "address": 35912,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 3,
+        "address": 35916,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 4,
+        "address": 35920,
+        "minimum": 0,
+        "maximum": 0
+      }
+    ],
+    "ple": [
+      {
+        "index": 0,
+        "address": 36928,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 1,
+        "address": 36932,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 2,
+        "address": 36936,
+        "minimum": 16,
+        "maximum": 32
+      },
+      {
+        "index": 3,
+        "address": 36940,
+        "minimum": 256,
+        "maximum": 2911
+      },
+      {
+        "index": 4,
+        "address": 36944,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 5,
+        "address": 36948,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 6,
+        "address": 36952,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 7,
+        "address": 36956,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 8,
+        "address": 36960,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 9,
+        "address": 36964,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 10,
+        "address": 36968,
+        "minimum": 1,
+        "maximum": 1
+      },
+      {
+        "index": 11,
+        "address": 36972,
+        "minimum": 0,
+        "maximum": 0
+      },
+      {
+        "index": 12,
+        "address": 36976,
+        "minimum": 0,
+        "maximum": 0
+      }
+    ]
+  },
+  "quota_anomalies": [
+    {
+      "engine": "wde",
+      "index": 1,
+      "address": 35908,
+      "minimum": 6,
+      "maximum": 0
+    }
+  ],
+  "h2c": {
+    "index": 3,
+    "address": 36940,
+    "minimum": 256,
+    "maximum": 2911
+  },
+  "c2h": {
+    "index": 2,
+    "address": 36936,
+    "minimum": 16,
+    "maximum": 32
+  }
+}

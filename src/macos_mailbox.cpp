@@ -19,8 +19,10 @@ int main(int argc, char** argv) {
                     for (auto address : {0x6000u, 0x6004u, 0x7880u, 0x8400u,
                                          0x8404u, 0x8420u, 0x8430u, 0x8434u,
                                          0x8c08u, 0x8c10u, 0x9008u, 0x9010u,
-                                         0xb000u, 0xb010u, 0x10000u})
+                                         0xb000u, 0xb010u, 0x10000u, 0x8d00u, 0x9100u})
                         (void)bus.read(address, 4);
+                    for (unsigned i = 0; i < 5; ++i) (void)bus.read(0x8c40 + 4*i, 4);
+                    for (unsigned i = 0; i < 13; ++i) (void)bus.read(0x9040 + 4*i, 4);
                 })
                 : archer::query_phy_capabilities(bus);
             std::cout << "{\"result\":\"phy_cap_part0\",\"rx_streams\":" << cap.rx_streams

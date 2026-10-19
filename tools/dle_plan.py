@@ -46,7 +46,7 @@ def candidate():
                                'validate firmware mode transition',
                                'disable DLE, enable clocks, configure layout and quotas',
                                'enable DLE and poll WDE/PLE readiness',
-                               'initialize preload and HCI flow control before traffic'],
+                               'initialize USB HCI flow control before traffic (PCIe preload is skipped)'],
                 limitation='DLE candidate only; not a complete MAC or H2C initialization sequence')
 
 
