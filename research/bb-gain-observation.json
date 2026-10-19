@@ -1,0 +1,20 @@
+{
+  "input_pairs": 412,
+  "decoded_fields": 1110,
+  "field_groups": {
+    "lna_gain": 322,
+    "lna_op1db": 168,
+    "rpl_ofst_160": 176,
+    "rpl_ofst_20": 24,
+    "rpl_ofst_40": 48,
+    "rpl_ofst_80": 88,
+    "tia_gain": 92,
+    "tia_lna_op1db": 192
+  },
+  "ignored_reasons": {
+    "bypass": 16,
+    "external_fem_not_applicable": 48
+  },
+  "register_candidate_count": 0,
+  "hardware_writes_performed": false
+}

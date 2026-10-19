@@ -110,3 +110,10 @@ el intérprete de condiciones de tablas antes de aplicar registros RF.
 selecciones coinciden, par por par y en orden, con las funciones originales
 Linux ejecutadas sin hardware. El plan todavía no escribe registros RF ni
 inicializa la radio. Véase `research/phy-table-reference-check.json`.
+
+### Ganancias BE y acceso RF-v2
+
+`tools/bb_gain.py` decodifica las ganancias estructuradas; los arrays coinciden
+con los callbacks originales Linux en 1512 posiciones. El helper C++
+`include/archer/rf_access.hpp` calcula direcciones y comandos RF-v2/HWSI sin
+ejecutarlos. La inicialización física BB/RF sigue pendiente.

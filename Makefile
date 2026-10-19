@@ -15,7 +15,8 @@ build/sequence-ledger-test: tests/sequence_ledger_test.cpp include/archer/sequen
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/efuse-reader-test: tests/efuse_reader_test.cpp include/archer/efuse_reader.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
-test: build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+test: build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+	./build/rf-access-test
 	./build/xtal-identity-test
 	./build/efuse-reader-test
 	./build/sequence-ledger-test
@@ -50,4 +51,7 @@ efuse-universal: | build
 identity-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_identity.cpp -framework IOKit -framework CoreFoundation -o build/archer-identity-universal
 build/xtal-identity-test: tests/xtal_identity_test.cpp include/archer/xtal_identity.hpp tests/fixtures/xtal-identity.bin | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+build/rf-access-test: tests/rf_access_test.cpp include/archer/rf_access.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@

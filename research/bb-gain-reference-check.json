@@ -1,0 +1,7 @@
+{
+  "method": "Original BE gain callbacks compiled with isolated type/macro stubs; complete zero-initialized arrays compared",
+  "array_cells_compared": 1512,
+  "decoded_fields": 1110,
+  "exact_match": true,
+  "hardware_access": false
+}

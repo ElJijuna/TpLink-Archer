@@ -210,3 +210,50 @@ Next: implement the structured gain decoder and map BB/RF access semantics,
 including RF-v1 address selection and firmware register-store commands. MAC
 normal initialization, firmware compatibility and calibration completion still
 need validation before this offline plan can become a hardware bring-up path.
+
+## Stage 17: structured BE gains and physical RF-v2 encoding
+
+Added `tools/bb_gain.py MFW.bin AID RFE`. The real package contains 412 gain
+entries. BE decoding creates 1110 final signed fields for LNA/TIA gain,
+OP1DB and RPL offsets. Sixteen bypass records are intentionally ignored by
+the source callback; 48 external-FEM entries are not applicable to RFE=1.
+None of these selected records requests a register write. BE configuration
+kind 15 is represented separately as a masked BB write candidate, not silently
+interpreted as gain data; the actual table does not use this kind.
+
+Compared the full zero-initialized output arrays against the original BE gain
+callbacks compiled with minimal standalone type/macro definitions. All 1512
+array positions match, including zero/unset positions and all decoded fields.
+Results: `bb-gain-reference-check.json`; summary: `bb-gain-observation.json`.
+The reference harness and full decoded arrays remain local artifacts, hash-bound
+in `rf-access-stage17-evidence.json`.
+
+Important distinction: the RF table callback named config_rf_reg_v1 is used
+for table delay/store semantics, but RTL8922A's chip operations select
+read_rf_v2/write_rf_v2 for actual physical access. The new pure C++ header
+`include/archer/rf_access.hpp` models this latter access without issuing I/O:
+
+- BE BB logical registers map to device addresses with base 0x20000.
+- RF selector bit 16 set: direct path uses RF bases 0xe000/0xf000,
+  low-byte RF address shifted by 2, 20-bit masked access through BB space.
+- Selector clear: analog HWSI full writes wait for bit 29 clear at logical
+  0x2c24/0x2d24, then encode RF data in bits 27:8 and address in bits 7:0
+  into logical 0x2ae0/0x2be0.
+
+The helper rejects paths beyond A/B, unsupported address bits, values wider
+than 20 bits and unaligned BB addresses. It only plans full RF writes; masked
+RF writes require the documented read/modify/write protocol, which is not
+implemented. No native RF executor, busy polling backend, or BB-power
+transition is provided yet, so these plans cannot accidentally write hardware.
+
+Eight C++ suites and 39 Python tests pass. New cases cover signed gain fields,
+path/bandwidth selection, RPL halves and overwrites, ignored FEM data, malformed
+gain types, direct RF address mapping, analog payload encoding and bounds.
+The source files were fetched from master and hash-bound; revision pinning is
+still needed before distributing an adapted driver.
+
+Next required work: implement bounded hardware BB/RF access with explicit
+power-state prerequisites, then normal MAC/BB initialization and firmware RF
+parameter-store commands. Only after those are validated can the selected
+tables and calibration be applied. There is still no radio initialization,
+scan, association or usable network interface.
