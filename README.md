@@ -48,3 +48,10 @@ repetir la prueba acotada con restauración del acceso WLAN. La prueba física
 ARM obtuvo respuesta PHY_CAP por registros, pero ambos endpoints bulk IN
 agotaron su tiempo sin datos. Véase `research/bulk-io-window-observation.json`.
 Todavía falta validar la inicialización y los comandos del transporte bulk.
+
+### Estado de inicialización USB/MAC
+
+`archer-mailbox-universal --inspect-transport` inspecciona las colas dentro de
+la ventana WLAN. La prueba física confirma HCI/HAXI DMA habilitados, pero
+agregación RX y CMAC deshabilitados. El mapa y las limitaciones están en
+`research/TRANSPORT_INITIALIZATION.md`; no se modificaron registros DMA.

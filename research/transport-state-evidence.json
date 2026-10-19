@@ -1,0 +1,37 @@
+{
+  "artifacts": [
+    {
+      "path": "artifacts/transport-stage7.jsonl",
+      "sha256": "507df8bc8ff89474ed43da73298355955d99e4f206165f2e965a67c815ccdbe7"
+    },
+    {
+      "path": "artifacts/transport-stage7.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/rtw89-usb.c",
+      "sha256": "858b8771c585a65fe5b1498c1d98e786134ee3c46b18985924310a24c1a6d80e"
+    },
+    {
+      "path": "artifacts/rtw89-usb.h",
+      "sha256": "dc2a33fc80eedc6aa07422b0b44527669c8723df9fe2096722fe756a3b69c93e"
+    },
+    {
+      "path": "artifacts/rtw89-mac_be.c",
+      "sha256": "7b78b2791f45cadd25fa46113200fadc9d954ddc47c50b88458fd299d5ea1fa1"
+    },
+    {
+      "path": "artifacts/rtw89-reg.h",
+      "sha256": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d"
+    },
+    {
+      "path": "artifacts/rtw8922au.c",
+      "sha256": "8281d447225706cb770a53983a57a8a07e814e77d85f72360de1ca1873d846f5"
+    }
+  ],
+  "hci_opt_ctrl_before": "0x001004fd",
+  "hci_opt_ctrl_after": "0x001004fd",
+  "host_counter_before": "0x22",
+  "host_counter_after": "0x33",
+  "bulk_out_sent": false
+}

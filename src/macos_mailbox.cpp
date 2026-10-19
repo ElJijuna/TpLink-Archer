@@ -1,8 +1,8 @@
 #include "archer/macos_register_bus.hpp"
 int main(int argc, char** argv) {
     const std::string mode = argc == 2 ? argv[1] : "--inspect";
-    if (argc > 2 || (mode != "--inspect" && mode != "--query-phy-cap" && mode != "--query-with-io-window")) {
-        std::cerr << "Usage: archer-mailbox [--inspect | --query-phy-cap | --query-with-io-window]\n"; return 2;
+    if (argc > 2 || (mode != "--inspect" && mode != "--query-phy-cap" && mode != "--query-with-io-window" && mode != "--inspect-transport")) {
+        std::cerr << "Usage: archer-mailbox [--inspect | --query-phy-cap | --query-with-io-window | --inspect-transport]\n"; return 2;
     }
     try {
         MacRegisterBus bus;
@@ -12,8 +12,16 @@ int main(int argc, char** argv) {
                 (void)bus.read(address,4);
             for (auto address : {0x7160u,0x7164u,0x1f5u}) (void)bus.read(address,1);
         } else {
-            const auto cap = mode == "--query-with-io-window"
-                ? archer::query_phy_capabilities_with_io_window(bus)
+            const auto cap = (mode == "--query-with-io-window" || mode == "--inspect-transport")
+                ? archer::query_phy_capabilities_with_io_window(bus, [&] {
+                    if (mode != "--inspect-transport") return;
+                    // Observations only: no DMA/queue configuration writes.
+                    for (auto address : {0x6000u, 0x6004u, 0x7880u, 0x8400u,
+                                         0x8404u, 0x8420u, 0x8430u, 0x8434u,
+                                         0x8c08u, 0x8c10u, 0x9008u, 0x9010u,
+                                         0xb000u, 0xb010u, 0x10000u})
+                        (void)bus.read(address, 4);
+                })
                 : archer::query_phy_capabilities(bus);
             std::cout << "{\"result\":\"phy_cap_part0\",\"rx_streams\":" << cap.rx_streams
                       << ",\"tx_streams\":" << cap.tx_streams

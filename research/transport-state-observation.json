@@ -1,0 +1,23 @@
+{
+  "registers": {
+    "rx_aggregation": "0x00000000",
+    "rx_aggregation_1": "0x40000000",
+    "hci_functions": "0x00000007",
+    "dmac_functions": "0xffff4e80",
+    "dmac_clocks": "0xffffffff",
+    "wde_packet_buffer": "0x00000000",
+    "ple_packet_buffer": "0x0b701a01",
+    "haxi_config": "0x00080436",
+    "haxi_stop": "0x80000000",
+    "cmac_functions": "0x00000000"
+  },
+  "hci_tx_dma_enabled": true,
+  "hci_rx_dma_enabled": true,
+  "rx_aggregation_enabled": false,
+  "cmac_enabled": false,
+  "haxi_dma_mode_code": 4,
+  "haxi_tx_dma_enabled": true,
+  "haxi_rx_dma_enabled": true,
+  "wde_free_page_count": 0,
+  "ple_free_page_count": 2928
+}
