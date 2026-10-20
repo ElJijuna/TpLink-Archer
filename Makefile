@@ -15,7 +15,8 @@ build/sequence-ledger-test: tests/sequence_ledger_test.cpp include/archer/sequen
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/efuse-reader-test: tests/efuse_reader_test.cpp include/archer/efuse_reader.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
-test: build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+test: build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+	./build/hwsi-window-test
 	./build/installer-media-test
 	./build/storage-eject-test
 	./build/bb-window-test
@@ -82,4 +83,7 @@ scsi-eject-universal: | build
 optical-eject-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_optical_eject.cpp -framework IOKit -framework CoreFoundation -o build/archer-optical-eject-universal
 build/installer-media-test: tests/installer_media_test.cpp include/archer/installer_media.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+build/hwsi-window-test: tests/hwsi_window_test.cpp include/archer/hwsi_window.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@

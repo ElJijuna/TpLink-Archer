@@ -120,20 +120,29 @@ ejecutarlos. La inicialización física BB/RF sigue pendiente.
 
 ### Estado físico BB y backend RF
 
-`archer-identity-universal --bb-state` confirmó BB en reset y HWSI inaccesible.
-El backend `include/archer/rf_transport.hpp` rechaza operaciones en ese estado
-y tiene polling y limpieza acotados, verificados con un bus simulado. Aún
-falta habilitar e inicializar BB antes de probar operaciones RF físicas.
+La prueba temporal ya permite leer los registros BB sin valores de acceso
+inválido. La consulta PHY_CAP y la identidad AID 0x6933 responden. La lectura
+RF por HWSI aún agota el plazo: ni los controles de la tabla seleccionada ni
+el reloj BB de 640 MHz bastaron para resolverla. Todos los controles
+temporales se restauraron con lectura de verificación.
 
-### Prueba temporal de habilitación BB
+`make bb-probe-universal mailbox-state-universal` construye las herramientas.
+`archer-bb-probe-universal --inspect-prerequisites` obtiene una captura fija
+de controles dentro de la ventana BB temporal, sin lanzar comandos RF. Las
+opciones `--table-hwsi-control` y `--clock-hwsi-control` son experimentos
+explícitos, con valores iniciales restringidos y restauración. No constituyen
+una inicialización BB/RF completa.
 
-`make bb-probe-universal mailbox-state-universal` construye la prueba BB y
-el inspector de buzón sin envío de comandos. El último intento BB se detuvo
-antes de cambiar BB: PHY_CAP agotó su plazo y dejó H2C pendiente. Se solicitó
-reconectar físicamente el adaptador antes de retomar la prueba. Evidencia en
-`research/bb-window-attempt-observation.json`.
+El siguiente paso requiere establecer el estado BBMCU y la correspondencia
+entre fuentes y firmware antes de implementar la secuencia completa.
+Resultados: `research/bringup-stage23-observation.json` y
+`research/hwsi-stage24-observation.json`. Aún no hay escaneo ni conexión Wi-Fi.
 
 ### Recuperación después de reconectar
+
+Estado actual: el dispositivo volvió a Wi-Fi `37ad:0104`; la causa exacta
+del cambio no quedó establecida. Los párrafos siguientes registran los
+intentos previos en modo instalador.
 
 El adaptador reapareció como CD virtual Realtek `0bda:1a2b` (DISK), no como
 Wi-Fi `37ad:0104`. Los helpers experimentales de expulsión compilan, pero

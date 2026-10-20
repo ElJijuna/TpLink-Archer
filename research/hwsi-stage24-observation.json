@@ -1,0 +1,99 @@
+{
+  "stage": 24,
+  "date": "2026-10-20",
+  "device": "37ad:0104 RTL8922A, AID 0x6933, RFE 1, CV 1",
+  "hypotheses": [
+    {
+      "change": "HWSI controls 0x39000 -> 0x08039000 on paths A/B",
+      "basis": "selected BB table pair indices 240/241",
+      "result": "latched, but path A RF address 0 completion timed out",
+      "restoration": "both original values verified"
+    },
+    {
+      "change": "BBCLK bit 2 (0x1a -> 0x1e), plus same HWSI table controls",
+      "basis": "rtw8922a_bb_postinit sets B_CLK_640M before RF init",
+      "result": "latched, but path A RF address 0 completion timed out",
+      "restoration": "clock and both HWSI original values verified"
+    }
+  ],
+  "prerequisites_snapshot": {
+    "0xd0": "0x1",
+    "0x84": "0x80f30003",
+    "0x20000": "0x1a",
+    "0x20704": "0x601e0d02",
+    "0x22adc": "0x39000",
+    "0x22bdc": "0x39000",
+    "0x22c24": "0x0",
+    "0x22d24": "0x0"
+  },
+  "limits": [
+    "Bit 27 semantic name unknown; table value alone is insufficient",
+    "No successful RF read; path B not attempted after path A timeout",
+    "No full BB, BBMCU, radio table or firmware upload performed",
+    "No new REA decompilation performed; this stage compares existing source and runtime USB traces"
+  ],
+  "next_steps": [
+    {
+      "task": "Pin source/firmware pairing and determine resident BBMCU firmware state",
+      "reason": "rtw8922a bbmcu_nr=1; partial MAC init deliberately performs BB preinit before firmware download"
+    },
+    {
+      "task": "Model BB preinit and postinit in exact order with recovery boundaries",
+      "reason": "reset release alone omits BB MCU control initialization, BB table, TX power unit, gain handling and postinit"
+    },
+    {
+      "task": "Establish prerequisites before executing full BB/RF initialization",
+      "reason": "isolated HWSI and clock settings did not complete RF reads"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "artifacts/bb-hwsi-stage24.jsonl",
+      "sha256": "7f491634a5e2f32909334ce7ab9af57a5742df8f3ac8628862bd28a50ccea47e"
+    },
+    {
+      "path": "artifacts/bb-hwsi-stage24.stderr",
+      "sha256": "78298ee021cd841fa953a222937595551f95ec93103b2226ddd5bcb84fc14c6c"
+    },
+    {
+      "path": "artifacts/bb-prerequisites-stage24.jsonl",
+      "sha256": "47243d53b9863e04e120ece40edb593c380a794a9961f65a9863358dd92866c8"
+    },
+    {
+      "path": "artifacts/bb-prerequisites-stage24.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/bb-clock-hwsi-stage24.jsonl",
+      "sha256": "7675aa4116ab9053ac85c8549e9a9c805ed6f2d304ce9911ca97aade41dee112"
+    },
+    {
+      "path": "artifacts/bb-clock-hwsi-stage24.stderr",
+      "sha256": "78298ee021cd841fa953a222937595551f95ec93103b2226ddd5bcb84fc14c6c"
+    },
+    {
+      "path": "artifacts/rtw89-phy.c",
+      "sha256": "c443be8a679f3f5dd0a330ab814ebda4411338f0cbe6cd556e0c31129aa9209b"
+    },
+    {
+      "path": "artifacts/rtw8922a.c",
+      "sha256": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535"
+    },
+    {
+      "path": "artifacts/rtw89-reg.h",
+      "sha256": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d"
+    },
+    {
+      "path": "artifacts/rtw89-core.c",
+      "sha256": "131e39c92f0ac60ca3a9e581a692b7689c3ed6d0042ca1980a83cb0064aab211"
+    },
+    {
+      "path": "artifacts/rtw89-mac.c",
+      "sha256": "cd760d4e9f6037f6de5cb2d567e4d522e45c033346cb70ce6aa12558f4d41c95"
+    },
+    {
+      "path": "artifacts/phy-plan-stage16.json",
+      "sha256": "54fe2e965d6972a5380595e1db91002605d5340c17bcc944f973cc7231abbd53"
+    }
+  ]
+}

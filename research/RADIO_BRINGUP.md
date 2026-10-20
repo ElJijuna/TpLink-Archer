@@ -492,3 +492,44 @@ source before further hardware RF commands. Do not extend timeouts or apply
 whole radio tables without evidence. Twelve C++ suites and 39 Python tests
 pass; native helper builds for Intel and ARM. Evidence hashes and limits:
 `bringup-stage23-observation.json`.
+
+
+## Stage 24 — Bounded HWSI control and BB clock hypotheses
+
+Compared local Linux source and selected BB table against stage 23. BB table
+pairs 240/241 program logical 0x2adc/0x2bdc to 0x08039000, whereas live
+controls were 0x39000. The meaning of bit 27 is not named in the register
+header. Added an explicit temporary control window, guarded against any
+other baseline, with restoration on success, callback failure and partial
+write failure. The physical candidate latched but RF path A address 0 still
+timed out. Both controls restored to 0x39000 with readback.
+
+A separate prerequisite snapshot read BBCLK=0x1a, asynchronous reset register
+0x20704=0x601e0d02, MEM_PWR_CTRL=1, and HWSI status A/B=0. BBCLK bit 2 was
+clear. The source's bb_postinit sets B_CLK_640M before RF initialization. A
+second explicit experiment enabled only that clock bit alongside the same
+HWSI controls. All candidate values latched, but RF completion again stayed
+clear. Clock 0x1a, HWSI controls, FEN=0, DMAC=0 and WLAN IO=0x001004fd were
+restored and verified. Path B RF was not attempted after path A failure.
+
+These changes are insufficient individually/as tested together; they do not
+establish that either change is unnecessary in a complete initialization.
+The experiment does not initialize BBMCU, upload firmware, apply a full BB
+or radio table, select a channel or transmit.
+
+Reference order in rtw89_core_start is MAC preinit, optional BB preinit
+(no-BBMCU chips), BB AFE, MAC init, BB table/gain setup, BB postinit, RF setup.
+RTL8922A has bbmcu_nr=1; rtw89_mac_partial_init invokes BB preinit before
+firmware download where requested, explicitly to avoid touching registers
+affecting a later download. Its BB preinit includes reset sequencing,
+memory sleep controls and BBMCU initialization registers. Therefore copying
+that routine into the current resident-firmware diagnostic is not yet a
+validated recovery path. Source/firmware pairing and resident BBMCU state
+must be established first.
+
+CLI options: `--inspect-prerequisites` reads the fixed control snapshot
+inside the temporary BB window and sends no RF command;
+`--table-hwsi-control` and `--clock-hwsi-control` are explicit experiments,
+not production initialization. The default probe remains unchanged.
+Thirteen C++ suites and 39 Python tests pass. Evidence and hashes:
+`hwsi-stage24-observation.json`.
