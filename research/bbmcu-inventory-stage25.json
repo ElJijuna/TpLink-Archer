@@ -1,0 +1,172 @@
+{
+  "container_sha256": "4340bc322912f30f1793bb57a1747c23b15e40db2df628d6687d1ddf722f2828",
+  "cv": 1,
+  "normal_firmware_candidate": {
+    "sha256": "82d9493a4fab74d49fb65b2928a66a74b6bcde923508cd0fff65c7283cf297af",
+    "bytes": 385680,
+    "header_version": 1,
+    "cut_byte": 2,
+    "version": "0.35.41.0",
+    "commit_id": "6cb38ab7",
+    "header_bytes": 176,
+    "dynamic_header_bytes": 80,
+    "part_size": 2020,
+    "sections": [
+      {
+        "index": 0,
+        "type": 2,
+        "download_address": 537919488,
+        "file_offset": 176,
+        "payload_bytes": 352960,
+        "stored_bytes": 352960,
+        "checksum_bytes": 0,
+        "flags": 33907392,
+        "metadata": 44800,
+        "reserved": 0,
+        "sha256": "a1c5495fbfe4e243b3c95c00e96d74d73d539c192d25c604766d71203ddf2fa6"
+      },
+      {
+        "index": 1,
+        "type": 1,
+        "download_address": 539007928,
+        "file_offset": 353136,
+        "payload_bytes": 31768,
+        "stored_bytes": 31768,
+        "checksum_bytes": 0,
+        "flags": 16808984,
+        "metadata": 4096,
+        "reserved": 0,
+        "sha256": "46d3f2fb389140a14c3fdd46c7dbbad8ca034d8ecbbd25146ffdc081f1313e7f"
+      },
+      {
+        "index": 2,
+        "type": 9,
+        "download_address": 539005880,
+        "file_offset": 384904,
+        "payload_bytes": 776,
+        "stored_bytes": 776,
+        "checksum_bytes": 0,
+        "flags": 150995720,
+        "metadata": 256,
+        "reserved": 0,
+        "sha256": "996de596c26f2e1803415607ded50cd5515ac633682c4ac735947c9a8550d48f"
+      }
+    ],
+    "validation": "structure_only",
+    "signature_verified": false,
+    "hardware_compatibility_verified": false
+  },
+  "bbmcu_candidates": [
+    {
+      "element_id": 0,
+      "name": "BBMCU0",
+      "header_offset": 1332752,
+      "cv_minimum": 1,
+      "aid_metadata": 0,
+      "image": {
+        "sha256": "5a89eca4758bc4535c3202ecf2b15b067507ea8731b981b631b539c20744eb2d",
+        "bytes": 33560,
+        "header_version": 1,
+        "cut_byte": 1,
+        "version": "0.1.0.0",
+        "commit_id": "86ec27bf",
+        "header_bytes": 80,
+        "dynamic_header_bytes": 0,
+        "part_size": 2020,
+        "sections": [
+          {
+            "index": 0,
+            "type": 10,
+            "download_address": 409174016,
+            "file_offset": 80,
+            "payload_bytes": 32768,
+            "stored_bytes": 32768,
+            "checksum_bytes": 0,
+            "flags": 167804928,
+            "metadata": 536870912,
+            "reserved": 0,
+            "sha256": "d906485060ef1d35e067a658ce7034263d498ec73015856549744799362a80fa"
+          },
+          {
+            "index": 1,
+            "type": 9,
+            "download_address": 540027392,
+            "file_offset": 32848,
+            "payload_bytes": 712,
+            "stored_bytes": 712,
+            "checksum_bytes": 0,
+            "flags": 150995656,
+            "metadata": 0,
+            "reserved": 0,
+            "sha256": "c504efd85769873bcc2efdc12ef7033a6a9d1cf99ec523bbddcf7e28735a9fc5"
+          }
+        ],
+        "validation": "structure_only",
+        "signature_verified": false,
+        "hardware_compatibility_verified": false
+      },
+      "selected": true
+    },
+    {
+      "element_id": 0,
+      "name": "BBMCU0",
+      "header_offset": 1366352,
+      "cv_minimum": 0,
+      "aid_metadata": 0,
+      "image": {
+        "sha256": "7ce12d68dd9c4de5dd00a381902a5e7454d0efb593fd144895aa398f6fbc2f11",
+        "bytes": 33560,
+        "header_version": 1,
+        "cut_byte": 1,
+        "version": "0.1.0.0",
+        "commit_id": "041c5e37",
+        "header_bytes": 80,
+        "dynamic_header_bytes": 0,
+        "part_size": 2020,
+        "sections": [
+          {
+            "index": 0,
+            "type": 10,
+            "download_address": 409174016,
+            "file_offset": 80,
+            "payload_bytes": 32768,
+            "stored_bytes": 32768,
+            "checksum_bytes": 0,
+            "flags": 167804928,
+            "metadata": 536870912,
+            "reserved": 0,
+            "sha256": "10e65a3dbe6cd7751f71739c6c790a684e1d876920d65c40c5c13a58f375603b"
+          },
+          {
+            "index": 1,
+            "type": 9,
+            "download_address": 540027392,
+            "file_offset": 32848,
+            "payload_bytes": 712,
+            "stored_bytes": 712,
+            "checksum_bytes": 0,
+            "flags": 150995656,
+            "metadata": 0,
+            "reserved": 0,
+            "sha256": "7c36c17b181ac571b11bd1272bcaed3f0508f77b605cf4b28e8f7ce2ff7298e1"
+          }
+        ],
+        "validation": "structure_only",
+        "signature_verified": false,
+        "hardware_compatibility_verified": false
+      },
+      "selected": false
+    }
+  ],
+  "selected_mcus": [
+    0
+  ],
+  "resident_firmware_identity": null,
+  "hardware_compatibility_verified": false,
+  "hardware_writes_performed": false,
+  "limitations": [
+    "File selection is not proof of resident firmware identity or BBMCU execution",
+    "Signatures and checksums have not been verified",
+    "Source and firmware commits are independently pinned, not a verified pair"
+  ]
+}

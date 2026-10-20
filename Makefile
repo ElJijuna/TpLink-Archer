@@ -15,7 +15,8 @@ build/sequence-ledger-test: tests/sequence_ledger_test.cpp include/archer/sequen
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/efuse-reader-test: tests/efuse_reader_test.cpp include/archer/efuse_reader.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
-test: build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+test: build/firmware-state-test build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+	./build/firmware-state-test
 	./build/hwsi-window-test
 	./build/installer-media-test
 	./build/storage-eject-test
@@ -86,4 +87,10 @@ build/installer-media-test: tests/installer_media_test.cpp include/archer/instal
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 build/hwsi-window-test: tests/hwsi_window_test.cpp include/archer/hwsi_window.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+.PHONY: firmware-state-universal
+firmware-state-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_firmware_state.cpp -framework IOKit -framework CoreFoundation -o build/archer-firmware-state-universal
+build/firmware-state-test: tests/firmware_state_test.cpp include/archer/firmware_state.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@

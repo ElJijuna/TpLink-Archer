@@ -533,3 +533,50 @@ inside the temporary BB window and sends no RF command;
 not production initialization. The default probe remains unchanged.
 Thirteen C++ suites and 39 Python tests pass. Evidence and hashes:
 `hwsi-stage24-observation.json`.
+
+
+## Stage 25 — Pinned sources/firmware and read-only BBMCU controls
+
+Pinned the Linux snapshots to commit
+`c03c1a14507dfaf8b856c2608f9ac216021fc222`. Files compared against the pinned
+URLs are recorded individually in `linux-source-pin-stage25.json`; this does
+not pin unlisted files. Pinned the firmware container to linux-firmware
+commit `a2dcb924f0897368b0b4f305cbf9808cdda90ce0`; bytes match the existing
+SHA-256 4340bc322912f30f1793bb57a1747c23b15e40db2df628d6687d1ddf722f2828.
+These two pins are independently verified, not a verified hardware/firmware pair.
+
+Added `archer-firmware-state-universal`, a read-only USB register inspector.
+It acquires the normal project lock, checks chip 0x71, and reads only
+0x1e0/0x84/0xd0 after the chip ID. It does not open a WLAN IO window, submit
+mailbox commands, write controls, reset a CPU or upload firmware. Values:
+FW_CTRL=0x0c000000, FEN=0x80f30000, MEM_PWR_CTRL=1. BBMCU0 boot-ready and
+its two reset-release bits are clear. Memory sleep bit 17 is clear. All CPU
+firmware-download enable bits are clear. This proves control state only,
+not resident image identity, successful download history or MCU liveness.
+The Linux download checker treats a cleared download-enable bit as pass
+within its own download procedure; applying that test alone here would
+overstate what is known.
+
+Added offline `tools/bbmcu.py`: strict v1 image inspection and the reference
+BBMCU selection rule (first suitable CV in file order, independently per MCU).
+It preserves the callback's lack of AID filtering; register-table AID rules
+are not silently reused. For physical CV=1, the selected BBMCU0 is CV-minimum
+1, version 0.1.0.0, image commit 86ec27bf, SHA-256
+5a89eca4758bc4535c3202ecf2b15b067507ea8731b981b631b539c20744eb2d.
+The alternate CV-minimum 0 image is not selected. The normal type-1 non-MP
+image for CV=1 is 0.35.41.0. Those are file candidates only; the resident
+version remains unknown. The source obtains its printed version from the
+host image header, which does not supply a resident-version query.
+
+Reproduce:
+`make firmware-state-universal` and run the result from the project root;
+`python3 tools/bbmcu.py artifacts/rtw8922a_fw-1.bin 1` inventories the file
+without extraction or upload. Fourteen C++ suites and 42 Python tests pass;
+new coverage checks CV ordering, per-MCU first match, no invented AID filter,
+malformed images and independent status-bit decoding. Evidence:
+`firmware-state-stage25-observation.json` and `bbmcu-inventory-stage25.json`.
+
+Next implementation boundary is an explicit cold-start/download state
+machine, not further isolated RF retries: BBMCU preinit precedes download,
+then main and BBMCU readiness, BB setup and postinit precede RF. CPU resets
+and firmware upload have not been implemented or run in this stage.

@@ -1,0 +1,73 @@
+{
+  "repository": "torvalds/linux",
+  "commit": "c03c1a14507dfaf8b856c2608f9ac216021fc222",
+  "files": [
+    {
+      "file": "artifacts/rtw89-fw.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/fw.c",
+      "sha256": "acc4188f0829051ce67ad7dbcdff6819523948a291702279c3b555d0ed1d840c",
+      "matches_local": true
+    },
+    {
+      "file": "artifacts/rtw89-fw.h",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/fw.h",
+      "sha256": "d73c8eff7cf97ecc2096b72415a1130cc45d8719c909f5435b26d3bd71cf96e4",
+      "matches_local": true
+    },
+    {
+      "file": "artifacts/rtw89-reg.h",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/reg.h",
+      "sha256": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d",
+      "matches_local": true
+    },
+    {
+      "file": "artifacts/rtw8922a.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/rtw8922a.c",
+      "sha256": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535",
+      "matches_local": true
+    },
+    {
+      "file": "artifacts/rtw89-mac.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/mac.c",
+      "sha256": "cd760d4e9f6037f6de5cb2d567e4d522e45c033346cb70ce6aa12558f4d41c95",
+      "matches_local": true
+    },
+    {
+      "file": "artifacts/rtw89-mac_be.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/mac_be.c",
+      "sha256": "7b78b2791f45cadd25fa46113200fadc9d954ddc47c50b88458fd299d5ea1fa1",
+      "matches_local": true
+    },
+    {
+      "file": "artifacts/rtw89-phy.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/phy.c",
+      "sha256": "c443be8a679f3f5dd0a330ab814ebda4411338f0cbe6cd556e0c31129aa9209b",
+      "matches_local": true
+    },
+    {
+      "file": "artifacts/rtw89-core.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/core.c",
+      "sha256": "131e39c92f0ac60ca3a9e581a692b7689c3ed6d0042ca1980a83cb0064aab211",
+      "matches_local": true
+    },
+    {
+      "file": "artifacts/rtw89-core.h",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/core.h",
+      "sha256": "13fcfa34fdea89773a9bbb5a6fe95d2bf95464eb1f4d759e5d39cb2ce48167af",
+      "matches_local": true
+    },
+    {
+      "file": "artifacts/rtw89-mac.h",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/mac.h",
+      "sha256": "c9578eab79cddef3f5ee1ee1144b3dddc68c490bb79429a51fca75126772f3fd",
+      "matches_local": true
+    },
+    {
+      "file": "artifacts/rtw89-phy.h",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/phy.h",
+      "sha256": "f65766bba11e5d432ee48b6f4aeffcf67bd6f9532f285da9b6fce16e25d654ce",
+      "matches_local": true
+    }
+  ],
+  "firmware_pairing_verified": false
+}

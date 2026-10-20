@@ -1,0 +1,8 @@
+{
+  "repository": "kernel-firmware/linux-firmware",
+  "firmware_pairing_verified": false,
+  "commit": "a2dcb924f0897368b0b4f305cbf9808cdda90ce0",
+  "url": "https://gitlab.com/kernel-firmware/linux-firmware/-/raw/a2dcb924f0897368b0b4f305cbf9808cdda90ce0/rtw89/rtw8922a_fw-1.bin",
+  "sha256": "4340bc322912f30f1793bb57a1747c23b15e40db2df628d6687d1ddf722f2828",
+  "matches_local": true
+}

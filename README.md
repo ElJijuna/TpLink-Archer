@@ -133,10 +133,22 @@ opciones `--table-hwsi-control` y `--clock-hwsi-control` son experimentos
 explícitos, con valores iniciales restringidos y restauración. No constituyen
 una inicialización BB/RF completa.
 
-El siguiente paso requiere establecer el estado BBMCU y la correspondencia
-entre fuentes y firmware antes de implementar la secuencia completa.
+La lectura independiente de controles confirma BBMCU0 en reset y boot-ready
+desactivado. Las fuentes y el archivo firmware ya tienen commits fijados; la
+versión residente sigue desconocida. El siguiente paso es implementar una
+secuencia explícita de arranque/carga, incluyendo BBMCU.
 Resultados: `research/bringup-stage23-observation.json` y
 `research/hwsi-stage24-observation.json`. Aún no hay escaneo ni conexión Wi-Fi.
+
+### Inspección de firmware y BBMCU
+
+`make firmware-state-universal` construye un inspector de cuatro registros,
+sin escrituras ni comandos de buzón. Ejecuta
+`./build/archer-firmware-state-universal` desde la raíz del proyecto.
+`python3 tools/bbmcu.py artifacts/rtw8922a_fw-1.bin 1` selecciona y valida
+estructuralmente los candidatos del archivo para CV=1: principal 0.35.41.0 y
+BBMCU0 0.1.0.0. No los carga ni los identifica como firmware residente.
+Véase `research/firmware-state-stage25-observation.json`.
 
 ### Recuperación después de reconectar
 

@@ -1,0 +1,56 @@
+{
+  "stage": 25,
+  "date": "2026-10-20",
+  "hardware_writes_performed": false,
+  "register_reads": [
+    "0xfc",
+    "0x1e0",
+    "0x84",
+    "0xd0"
+  ],
+  "firmware_control": {
+    "raw": "0x0c000000",
+    "status_field": 3,
+    "download_enable_bits": "all clear; not a BBMCU liveness test"
+  },
+  "fen": {
+    "raw": "0x80f30000",
+    "bb0_boot_ready": false,
+    "bb0_ip_reset_released": false,
+    "bb0_platform_reset_released": false
+  },
+  "memory_control": {
+    "raw": "0x1",
+    "bb0_memory_sleep": false
+  },
+  "resident_firmware_version": null,
+  "findings": [
+    "BBMCU0 reset/boot controls are inactive at the time of the read",
+    "Main firmware version in the Linux reference is parsed from the host image header, not a resident-version response",
+    "Linux file candidate selection for physical CV=1 chooses main 0.35.41.0 and BBMCU0 0.1.0.0 commit 86ec27bf",
+    "Both source snapshots and firmware bytes match pinned upstream commits; that does not establish pairing with resident firmware"
+  ],
+  "next_boundary": "Implement and verify an explicit cold-start/download state machine covering BBMCU preinit, main+BBMCU loading, readiness, BB tables and postinit. The currently resident firmware must not be assumed to include the selected BBMCU image.",
+  "evidence": [
+    {
+      "path": "artifacts/firmware-state-stage25.jsonl",
+      "sha256": "e9fee8de050489f6d2047ffa88940f0aa1f8692bacac6ae5c3c0969b2bb1d761"
+    },
+    {
+      "path": "artifacts/firmware-state-stage25.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/linux-source-pin-stage25.json",
+      "sha256": "6350c0042c69dfdbebbefeffb6205777c248b2d6115c3f3a835ad21177b13f5a"
+    },
+    {
+      "path": "research/linux-firmware-pin-stage25.json",
+      "sha256": "f691d79a01c36637f57ac1b45385b201693f5897b8def2ae6021fc00e2e7ebc4"
+    },
+    {
+      "path": "research/bbmcu-inventory-stage25.json",
+      "sha256": "6a646e8af8c71f866a0f5a95ab49365596168d93cd6bbcaae940ffee036a843f"
+    }
+  ]
+}
