@@ -30,6 +30,8 @@ int main(){
     assert(fixture.gcount()==3);
     const auto actual=archer::read_chip_identity(physical);
     assert(actual.revision==1 && actual.analog_revision==1 && actual.analog_id==0x6933);
+    Bus power;for(auto offset:{0x2du,0x2eu,0x80u,0x81u,0x90u,0xa1u,0xe0u,0xe1u})assert(archer::read_xtal_power_byte(power,offset)==0x89);assert(power.writes==8);
+    rejects([&]{archer::read_xtal_identity_byte(power,0x90);});rejects([&]{archer::read_xtal_power_byte(power,0xfd);});rejects([&]{archer::read_xtal_power_byte(power,0);});assert(power.writes==8);
     Bus busy;busy.control=0x80000000;rejects([&]{archer::read_chip_identity(busy);});assert(!busy.writes);
     Bus invalid;rejects([&]{archer::read_xtal_identity_byte(invalid,0);});assert(!invalid.writes);
     Bus timeout;timeout.timeout=true;rejects([&]{archer::read_chip_identity(timeout);});assert(timeout.pauses==6 && timeout.writes==1);

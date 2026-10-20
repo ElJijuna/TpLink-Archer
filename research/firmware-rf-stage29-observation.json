@@ -1,0 +1,174 @@
+{
+  "stage": 29,
+  "date": "2026-10-20",
+  "milestone": "Experimental main+BBMCU0 loading and RF read completion",
+  "milestone_validated_on": "current macOS ARM host with37ad:0104/CV1/AID6933/RFE1",
+  "intel": "universal executable compiled, no Intel hardware test",
+  "recovery": {
+    "optical_eject": "accepted by user root helper",
+    "bot_reset_and_clear_halts": "successful",
+    "allow_removal_response": "18-byte sense-shaped packet; no CSW validation or eject submission",
+    "wifi_identity_later_observed": "37ad:0104",
+    "transition_cause": "not established"
+  },
+  "entry_state": {
+    "dcpu_read8": "0xef",
+    "dcpu_read16": "0xbeef",
+    "dcpu_read32": "0xdeadbeef before any CPU reset",
+    "xtal": {
+      "0xe0": "0",
+      "0xe1": "0x52",
+      "0x90": "0x90",
+      "0x80": "0xc6",
+      "0x81": "0xc6"
+    },
+    "isolation": "0xc29e"
+  },
+  "rf_diagnostics": {
+    "power_subsequence_only": "HWSI completion timeout; power controls restored",
+    "power_and_selected_bb_table": "both paths completed; BB/power snapshots restored",
+    "loaded_firmware_repeat_reads": [
+      {
+        "result": "rf_read",
+        "path": 0,
+        "address": 0,
+        "value": 0
+      },
+      {
+        "result": "rf_read",
+        "path": 0,
+        "address": 5,
+        "value": 0
+      },
+      {
+        "result": "rf_read",
+        "path": 0,
+        "address": 24,
+        "value": 0
+      },
+      {
+        "result": "rf_read",
+        "path": 0,
+        "address": 66,
+        "value": 127
+      },
+      {
+        "result": "rf_read",
+        "path": 1,
+        "address": 0,
+        "value": 0
+      },
+      {
+        "result": "rf_read",
+        "path": 1,
+        "address": 5,
+        "value": 0
+      },
+      {
+        "result": "rf_read",
+        "path": 1,
+        "address": 24,
+        "value": 0
+      },
+      {
+        "result": "rf_read",
+        "path": 1,
+        "address": 66,
+        "value": 127
+      }
+    ]
+  },
+  "firmware_load": {
+    "profile": "explicit experimental USB profile with no DCPU register write",
+    "main": {
+      "version": "0.35.41.0",
+      "image_sha256": "82d9493a4fab74d49fb65b2928a66a74b6bcde923508cd0fff65c7283cf297af",
+      "packets": 193
+    },
+    "bbmcu0": {
+      "version": "0.1.0.0",
+      "image_sha256": "5a89eca4758bc4535c3202ecf2b15b067507ea8731b981b631b539c20744eb2d",
+      "packets": 19
+    },
+    "main_completion_control": "0x04000822 (WLAN download-enable cleared)",
+    "bbmcu_completion_control": "0x0c000022 (BBMCU0 download-enable cleared, final status3)",
+    "post_boot_phy_cap": "response received, RX/TX streams2, antennas2/2",
+    "final_reset_controls": "BBMCU0 boot-ready/IP-reset-release/platform-reset-release bits all set",
+    "persistent_diagnostic_ledger_reset": false
+  },
+  "limits": [
+    "Loaded image identities are host image hashes plus ROM completion, not a resident-version query or signature readback",
+    "DCPU omission is an explicit experimental USB profile validated on this unit; its hardware absence/cause remains unresolved",
+    "Cleared download flags and host boot-ready do not independently prove every BBMCU subsystem is live",
+    "RF0/5/0x18 returned0 and0x42 returned127; no calibration/temperature accuracy claim",
+    "Only selected BB table and reset/clock postinit subset applied; no full BB gain, radio tables or RF calibration",
+    "No scan, association, transmit/receive network data or DriverKit integration",
+    "Energy window restored analog controls; this is a diagnostic, not a continuously powered production driver"
+  ],
+  "tests": {
+    "cpp_suites": 17,
+    "python_tests": 46
+  },
+  "evidence": [
+    {
+      "path": "artifacts/mode-switch-stage29.jsonl",
+      "sha256": "9cff64800e7eeca255b76c16716d7185559263b226068c556a3783d6262a0f4e"
+    },
+    {
+      "path": "artifacts/mode-switch-stage29.stderr",
+      "sha256": "e91b19f3b94c49ce5d1b1c51d4bad78c912a607e11b54c51c123b905e592fff7"
+    },
+    {
+      "path": "artifacts/boot-access-followup-stage29.jsonl",
+      "sha256": "5349e88db6adae9fc612235eee7abfe261f69683febac11ad33466d5ef95c044"
+    },
+    {
+      "path": "artifacts/rf-power-stage29.jsonl",
+      "sha256": "7b263a6c586a39c3d50a2d522d6ce092e3b6771570c721ebca1000109cf24c2c"
+    },
+    {
+      "path": "artifacts/rf-power-stage29.stderr",
+      "sha256": "78298ee021cd841fa953a222937595551f95ec93103b2226ddd5bcb84fc14c6c"
+    },
+    {
+      "path": "artifacts/rf-power-bb-table-stage29.jsonl",
+      "sha256": "9776eb3e9a90e2598e7118169b4b00581bded6731586d488bff75ff19c0f1577"
+    },
+    {
+      "path": "artifacts/rf-profile-stage29.jsonl",
+      "sha256": "8094fd0026a447697dcec4fa27123c1907d2df570ae8e86110277b5e86169c7e"
+    },
+    {
+      "path": "artifacts/firmware-boot-usb-stage29.jsonl",
+      "sha256": "7419e5651831fcc963b98e4e59ef1b05057ba3a97617a2bd6b1a72fee5bf0983"
+    },
+    {
+      "path": "artifacts/firmware-boot-usb-stage29.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/firmware-after-stage29.jsonl",
+      "sha256": "e18d19acaaed97f9440b9c0ad58e96e80c9f68dadb85676b6f29ad4df08aedb1"
+    },
+    {
+      "path": "artifacts/mailbox-after-stage29.jsonl",
+      "sha256": "dcc4f677ade8e28fa3f23c5540ccd6b44d445da88371e8a114ff88994bf0b24c"
+    },
+    {
+      "path": "artifacts/rf-loaded-stage29.jsonl",
+      "sha256": "df49366cb19e4b3e5742e7d752cce8aa078fc36c2d272952c3cd7ba1683d48cd"
+    },
+    {
+      "path": "artifacts/rf-loaded-stage29.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/archer-firmware-boot-stage29",
+      "sha256": "91927ba743113dd7c8f48c5d2f8d370fc2286f85ad6bf468d393ad333fd31182"
+    },
+    {
+      "path": "artifacts/boot_payload.hpp",
+      "sha256": "4e7bc1e3da4b5c258c97eae7f9473622bc8b4e61ae84a3c2567922780b90b02a"
+    }
+  ]
+}

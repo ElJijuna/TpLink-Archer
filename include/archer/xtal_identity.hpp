@@ -2,9 +2,11 @@
 #include "archer/register_mailbox.hpp"
 namespace archer {
 struct ChipIdentity { unsigned revision, analog_revision, analog_id; };
-inline unsigned read_xtal_identity_byte(RegisterBus& bus, unsigned offset) {
-    if(offset!=0x41 && offset!=0xfd && offset!=0xfe)
-        throw std::invalid_argument("Only identity XTAL-SI reads are supported");
+namespace detail {
+inline unsigned read_xtal_profile_byte(RegisterBus& bus, unsigned offset) {
+    if(offset!=0x41 && offset!=0xfd && offset!=0xfe && offset!=0x2d && offset!=0x2e &&
+       offset!=0x80 && offset!=0x81 && offset!=0x90 && offset!=0xa1 && offset!=0xe0 && offset!=0xe1)
+        throw std::invalid_argument("Unsupported XTAL-SI read profile offset");
     const auto initial=bus.read(0x270,4);
     if(initial==0xeaeaeaea || initial==0xdeadbeef || (initial&(1u<<31)))
         throw std::runtime_error("XTAL-SI inaccessible or busy; no command sent");
@@ -15,12 +17,22 @@ inline unsigned read_xtal_identity_byte(RegisterBus& bus, unsigned offset) {
             throw std::runtime_error("XTAL-SI became inaccessible");
         if(!(status&(1u<<31))) {
             if((status&255)!=offset || ((status>>24)&3)!=1 || ((status>>28)&7)!=0)
-                throw std::runtime_error("XTAL-SI reply identity mismatch");
+                throw std::runtime_error("XTAL-SI reply selector mismatch");
             return (status>>8)&255;
         }
         bus.pause();
     }
-    throw std::runtime_error("XTAL-SI identity timeout; no retry or reset");
+    throw std::runtime_error("XTAL-SI read timeout; no retry or reset");
+}
+} // namespace detail
+inline unsigned read_xtal_identity_byte(RegisterBus& bus,unsigned offset) {
+    if(offset!=0x41&&offset!=0xfd&&offset!=0xfe)throw std::invalid_argument("Only identity XTAL-SI reads supported");
+    return detail::read_xtal_profile_byte(bus,offset);
+}
+inline unsigned read_xtal_power_byte(RegisterBus& bus,unsigned offset) {
+    if(offset!=0x2d&&offset!=0x2e&&offset!=0x80&&offset!=0x81&&offset!=0x90&&offset!=0xa1&&offset!=0xe0&&offset!=0xe1)
+        throw std::invalid_argument("Only fixed XTAL-SI power reads supported");
+    return detail::read_xtal_profile_byte(bus,offset);
 }
 inline ChipIdentity read_chip_identity(RegisterBus& bus) {
     if((bus.read(0xfc,4)&255)!=0x71 || ((bus.read(0x3f0,4)>>16)&0x3ff)!=0x220)

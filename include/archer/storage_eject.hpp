@@ -21,6 +21,9 @@ inline unsigned installer_csw(const std::array<std::uint8_t,13>& csw,bool eject)
     if(csw[12]>1)throw std::runtime_error("Storage phase error");
     return csw[12];
 }
+inline bool installer_fixed_sense(const std::uint8_t* bytes,std::size_t size) {
+    return bytes&&size==18&&(bytes[0]&0x7f)==0x70&&bytes[7]==10;
+}
 inline unsigned installer_csw_packet(const std::uint8_t* bytes,std::size_t size,bool eject) {
     if(!bytes || size!=13)throw std::runtime_error("Invalid storage CSW transfer size");
     // BOT section 5.3.3 requires an exactly 13-byte CSW.

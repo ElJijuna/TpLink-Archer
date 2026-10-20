@@ -620,3 +620,134 @@ firmware-download-plan-stage26.json. Product-level remaining work is in
 ROADMAP.md; the current blocker is still a complete cold-start executor and
 BB/RF readiness, followed by data path, association/authentication and macOS
 network integration. Offline packet preparation is not a successful boot.
+
+
+## Stage 27 — Native boot attempt stopped at inaccessible DCPU platform control
+
+Implemented a native Intel/ARM boot runner with a compile-bound bundle.
+`tools/boot_bundle.py` verifies the exact Linux firmware SHA-256, selects
+CV1 main+BBMCU0, prepares the 212 frames and 174 selected BB writes. The
+native executable has no arbitrary firmware-path or register-write option.
+It acquires interface0 endpoint0x07 and the project ledger lock, verifies AID
+and rereads the four-byte security profile before boot. It does not reset
+the persistent diagnostic sequence ledger.
+
+The boot orchestration reuses the already-ready USB HCI/HAXI/DLE transport,
+prepares BBMCU0 using the source's 0x30000 MCU address offset, clears firmware
+calibration delay, and begins the reference CPU-reset sequence. This is not
+a general power-on/MAC/DLE initializer. It has bounded polling, separate
+main/BBMCU completion masks, explicit ROM failure checks and no transfer
+retry. The post-download diagnostic would enable BB, apply the selected BB
+table, release boot/reset controls, enable the clock and read RF address0 on
+each path. Full BB gain/TX power/postinit/calibration is not implemented.
+
+Physical attempt: fresh security read returned ffffffff. BBMCU preinit writes
+completed; CPU reset began, platform hold was set and WCPU_FW_CTRL cleared
+from 0x0c000000 to0. The next read of DCPU_PLATFORM_ENABLE 0x888 returned
+0xdeadbeef. The sentinel guard stopped before writing that register or
+sending any firmware frame. No main/BBMCU image, BB table or RF command was
+sent. WLAN IO enable was restored, but no claim of old firmware recovery is
+made after CPU reset. Physical reconnect was requested. A later read-only
+USB inventory contained neither target Wi-Fi nor installer IDs.
+
+The initial runner probed this RMW target too late. It now probes all boot
+RMW targets before BBMCU mutation/CPU reset and explicitly guards existing
+HCI/HAXI mode, stopped channels, address mode and DLE readiness. A regression
+test reproduces 0x888=deadbeef and requires zero writes. The inspector has
+`--inspect-boot-access` for bounded byte/word/dword reads of that register and
+fixed transport controls inside a temporary WLAN IO window. This diagnostic
+requires recovery to the original ready firmware state first.
+
+Offline LLVM disassembly of the exact Windows SYS found an immediate0x888
+at VA0x1403e3285 in the routine beginning0x1403e30d0; subsequent instructions
+read, OR bit0 and write via the context's operation pointers. This agrees
+with the Linux operation but proves neither runtime execution nor access
+readiness on this hardware. Native REA session inspection reported no open
+target, Ghidra unconfigured; the previously observed Hopper license expiry
+remains unresolved. No new REA decompilation or provider installation was
+performed. The retained assembly excerpt and source artifact hashes are in
+firmware-boot-stage27-observation.json.
+
+Fifteen C++ suites and 46 Python tests pass, including boot order, timeout,
+ROM rejection, disconnect without retry and inaccessible-register preflight.
+The milestone remains incomplete: firmware download and RF success have
+not been observed. Next: verify recovery, inspect boot access widths and
+resolve DCPU/transport prerequisites before another reset attempt.
+
+The pending boot-access inspector also reads a fixed XTAL-SI power profile
+(0x2d/2e/80/81/90/a1/e0/e1), isolation/debug and DMAC function/clock
+controls. These are read commands only (0x81000000|offset at0x270), with
+bounded waits and selector verification; no analog write mode is exposed.
+This will compare the actual entry state with the power-on prerequisites
+rather than inferring power readiness from DLE queues alone. The identity
+read API retains its original three-offset restriction.
+
+A further bounded static Windows trace resolved read32 through140427e40,
+1401eb4b0,14022b65c,1401cf820 and140004040; write32 through140427ea0,
+1401eb4e0,14022b720 and1401cf940. The USB leaves use request05, low16 value,
+high8 index and length4. The resolved wrappers do not remap0x888 or recover
+from its sentinel. A higher access-state guard returns eaeaeaea on rejection.
+The callback installation is conditional and final framework calls indirect,
+so this does not establish the executed Windows branch or all framework
+behavior. It does corroborate our register request shape. Exact address
+chains and bounded assembly excerpts are retained in stage27 evidence.
+
+
+## Stage 29 — Experimental main/BBMCU download and RF response validated
+
+After the user's guarded optical eject, Wi-Fi was initially absent. The
+installer interface opened; BOT reset and clear-halt IN/OUT succeeded, but
+allow-removal again returned the18-byte sense-shaped packet. No valid CSW
+or direct eject command was observed. Wi-Fi37ad:0104 later reappeared; the
+precise transition cause remains unknown. The helper now permits at most
+one additional read after a fixed sense-shaped packet and still requires a
+13-byte matching-tag CSW. This follow-up path was not physically exercised
+because the installer had already disappeared when that build was run.
+
+Fresh pre-reset diagnostics read DCPU888 as ef/beef/deadbeef at byte/word/
+dword widths. XTAL PLL e0=0, e1=52, ANAPAR90=90, RFC80/81=c6 and isolation
+control=c29e. Thus DCPU was inaccessible already at entry, while analog
+power configuration differed from the reference power-on sequence.
+
+Implemented a restricted masked XTAL power writer and a temporary power
+window. It applies the reference PLL, pad, RFC, SRAM and CV1 isolation
+subsequence with readback, journaling every attempted change before writing
+and restoring fields in reverse order. It exposes no arbitrary analog
+address or OTP programming mode. Power alone still timed out. A separate
+BB table window first snapshots every unique selected table address and
+rejects inaccessible baselines, then applies174 ordered BB writes. Every
+changed unique address is restored and checked even on callback failure.
+With power+BB table, HWSI completed on both RF paths. A repeated profile read
+0/5/18/42 on both paths:0,0,0,127. This proves completion/address-dependent
+responses, not calibrated temperature or channel state.
+
+Prepared an explicitly named experimental USB boot profile that omits DCPU
+register access entirely. It still requires the known USB/HAXI/DLE entry
+profile, exact image hashes, target identity, current default security
+selector, bounded handshakes and ROM error checks. The default boot path
+continues to require accessible DCPU and fails before reset otherwise.
+Omission is an experimentally validated profile on this unit, not a claim
+that all RTL8922A variants lack DCPU or that the underlying cause is known.
+No signature requirement or ROM error is bypassed.
+
+Physical boot succeeded with `--boot-usb-no-dcpu`:193 normal frames and19
+BBMCU0 frames returned USB success. After main data FW_CTRL=04000822
+(WLAN download-enable clear); after BBMCU0 FW_CTRL=0c000022 (BBMCU0 bit
+clear, final initialization field3). BB boot/reset bits were released, the
+selected BB table and reset/clock postinit subset applied, and RF0 completed
+on both paths. Fresh PHY_CAP after the load responded with2 RX/TX streams
+and2/2 antennas. `--verify-loaded-rf` then completed all eight RF reads
+without CPU reset or another image upload. The executed loader binary is
+retained/hash-bound in stage29 evidence.
+
+The milestone is validated as a diagnostic on the current ARM Mac. Intel
+is compile-only. Image versions identify the transmitted, hash-bound host
+images, not an independent resident-version query. BBMCU download completion
+and host boot-ready do not independently prove every MCU subsystem's
+liveness. Full gain/radio tables, calibration, channel selection, network
+data path and DriverKit remain outside this validated result. Analog power
+controls are restored after diagnosis; this is not a continuously powered
+network driver. The persistent diagnostic sequence ledger was not reset.
+
+Seventeen C++ suites and46 Python tests pass. Evidence and complete limits:
+`firmware-rf-stage29-observation.json`.

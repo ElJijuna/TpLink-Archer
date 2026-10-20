@@ -1,5 +1,11 @@
 # Archer USB — investigación y base de controlador
 
+**Estado actual:** carga experimental de firmware principal + BBMCU0 y
+lecturas RF validadas en el Mac ARM actual. El ejecutable compila para
+Intel/ARM. Todavía no hay escaneo, asociación ni interfaz de red.
+Evidencia: [research/firmware-rf-stage29-observation.json](research/firmware-rf-stage29-observation.json).
+
+
 Proyecto experimental para TP-Link USB `37ad:0104`, con destino macOS Intel/Apple Silicon y Linux posteriormente.
 
 **Estado: diagnóstico y protocolo USB parcial. Todavía no es un controlador Wi-Fi funcional.** No instala extensiones. `--read-startup-state` consulta tres registros documentados (0xF0, 0xFC y 0x1E0). El diagnóstico básico solo consulta IORegistry; `--read-chip-info` envía una única lectura USB del registro 0xFC, sin escrituras ni carga de firmware.
@@ -186,3 +192,30 @@ python3 tools/firmware_download.py artifacts/rtw8922a_fw-1.bin 1 artifacts/efuse
 Genera metadatos y hashes de 193 paquetes principales y 19 BBMCU; no reinicia
 CPU ni envía firmware. El estado completo y criterios pendientes están en
 [research/ROADMAP.md](research/ROADMAP.md).
+
+### Ejecutor experimental de arranque
+
+`make firmware-boot-universal` genera un bundle ligado al hash del firmware y
+compila el ejecutor Intel/ARM. `--boot-and-read-rf` intenta reiniciar CPU y
+cargar principal+BBMCU0 sobre el transporte USB ya preparado; todavía no es
+un inicializador general MAC/DLE. El primer intento se detuvo en el acceso
+DCPU 0x888, después del reset y antes de enviar firmware. Se requiere
+recuperar el dispositivo antes de otro intento. El ejecutor actualizado
+comprueba ese acceso antes de cualquier reset.
+
+`archer-firmware-state-universal --inspect-boot-access` inspecciona los anchos
+de acceso DCPU y controles fijos de transporte cuando el firmware original
+está listo. Evidencia: `research/firmware-boot-stage27-observation.json`.
+El hito de firmware/BBMCU y respuesta RF aún no está completado.
+
+### Verificación del hito de firmware/RF
+
+`make firmware-boot-universal bb-probe-universal` construye las herramientas
+ligadas al firmware de referencia. El perfil experimental validado es
+`./build/archer-firmware-boot-universal --boot-usb-no-dcpu`; requiere el estado
+inicial USB/HAXI conocido y no reintenta cargas. Una vez cargado,
+`--verify-loaded-rf` comprueba cuatro registros por ruta sin reset ni recarga.
+La ruta predeterminada sigue rechazando DCPU inaccesible antes del reset.
+No se debe repetir el arranque sobre un dispositivo ya inicializado: sus
+precondiciones lo rechazan. Consulte las limitaciones y estado final en el
+informe de etapa29; los apartados anteriores conservan la investigación.

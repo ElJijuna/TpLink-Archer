@@ -1,0 +1,97 @@
+{
+  "stage": 27,
+  "date": "2026-10-20",
+  "milestone_complete": false,
+  "attempt": {
+    "target": "37ad:0104 CV1 AID6933",
+    "security": "ffffffff read fresh",
+    "bbmcu_preinit": "register writes submitted successfully",
+    "cpu_reset": "started; WCPU_FW_CTRL cleared from0x0c000000 to0",
+    "failure": "DCPU_PLATFORM_ENABLE physical0x888 read32=0xdeadbeef",
+    "firmware_packets_sent": 0,
+    "bb_table_applied": false,
+    "rf_reads_attempted": 0,
+    "wlan_io_enable_restored": true,
+    "old_firmware_restored": false
+  },
+  "recovery": "Physical reconnect requested. Later read-only inventory did not contain37ad:0104 or0bda:1a2b at capture time. No further boot attempt made.",
+  "implementation_changes_after_attempt": [
+    "Probe all RMW boot targets including0x888 before BBMCU setup/CPU reset",
+    "Guard reuse of existing HCI/HAXI mode and DLE queues rather than assuming general cold-start readiness",
+    "Added read-width diagnostic for DCPU using1/2/4 bytes; not yet executed",
+    "Compile-bound trusted firmware bundle; no native arbitrary firmware file argument"
+  ],
+  "source_limits": [
+    "Pinned Linux and static Windows assembly both contain DCPU enable operation",
+    "Presence in source/assembly does not prove runtime execution or access readiness on this USB adapter",
+    "No new native REA decompilation: Ghidra not configured, prior Hopper license expiry unresolved",
+    "Full MAC/DLE cold-start configuration and complete BB gain/postinit are not implemented in this attempt"
+  ],
+  "evidence": [
+    {
+      "path": "artifacts/firmware-before-stage27.jsonl",
+      "sha256": "e9fee8de050489f6d2047ffa88940f0aa1f8692bacac6ae5c3c0969b2bb1d761"
+    },
+    {
+      "path": "artifacts/firmware-boot-stage27.jsonl",
+      "sha256": "6542d68ba71e1a194b385cdd0c0f579a2bea0a04873107822a89de6a83ec2e02"
+    },
+    {
+      "path": "artifacts/firmware-boot-stage27.stderr",
+      "sha256": "97162268f56a4bfc3c63de24921128af528f95009246c7dc74a35fc163ffd07f"
+    },
+    {
+      "path": "artifacts/firmware-after-stage27.stderr",
+      "sha256": "6bac004d90f3ea42bc791d3599d996bfe138039ef0abe28f7c7f6cb5b619432b"
+    },
+    {
+      "path": "artifacts/usb-after-boot-stage27.txt",
+      "sha256": "b13ff85c6706f7221dd765dc8bb4595085234bbbd67db72235f3b3de07e09051"
+    },
+    {
+      "path": "artifacts/dcpu-assembly-stage27.txt",
+      "sha256": "2b04de3e5db7d9ee6cdbd01d5c83ee64535b16984cd9562a31541986b4a2357e"
+    },
+    {
+      "path": "artifacts/boot_payload.hpp",
+      "sha256": "4e7bc1e3da4b5c258c97eae7f9473622bc8b4e61ae84a3c2567922780b90b02a"
+    },
+    {
+      "path": "artifacts/windows-usb-callbacks-stage27.txt",
+      "sha256": "7d910bc3679f8c89076d148187f6d253a8517417897f4e5bba1b9ca543e8def0"
+    }
+  ],
+  "independent_review": {
+    "conclusion": "Native vendor-request address and32-bit width match the Linux DCPU operation; no evidence supports changing access width/address or skipping the sentinel.",
+    "next": "Read DCPU before any BBMCU/reset mutations on freshly recovered device; compare before/after only with justified prerequisites.",
+    "power_prerequisites": "Ready HCI/DLE does not independently establish every DCPU power-domain prerequisite."
+  },
+  "historical_transport_comparison": {
+    "trace": "artifacts/transport-stage7.jsonl",
+    "dmac_func": "0xffff4e80",
+    "reference_bit_not_set": "B_BE_DLE_DATACPUIO_EN bit8",
+    "limit": "Historical snapshot only; no proven causal link with DCPU address accessibility. Inspect fresh state before any change."
+  },
+  "windows_static_usb_trace": {
+    "method": "LLVM offline disassembly, no execution",
+    "read32_chain": [
+      "140427e40",
+      "1401eb4b0",
+      "14022b65c",
+      "1401cf820",
+      "140004040",
+      "140002074"
+    ],
+    "write32_chain": [
+      "140427ea0",
+      "1401eb4e0",
+      "14022b720",
+      "1401cf940",
+      "140004040"
+    ],
+    "encoding": "request0x05, value=address&0xffff, index=(address>>16)&0xff, length4",
+    "guard_failure_value": "0xeaeaeaea",
+    "conclusion": "Resolved USB leaves and wrappers use the same address/width as the native helper; no DCPU-specific recovery found within this slice.",
+    "limits": "Conditional installer branch and final WDF calls remain indirect; no proof of the executed Windows path."
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "stage": 28,
+  "reconnect_observation": "Installer Realtek0bda:1a2b DISK; Wi-Fi37ad:0104 absent",
+  "cpu_reset": false,
+  "firmware_uploaded": false,
+  "boot_access_profile_executed": false,
+  "mode_switch": {
+    "open_and_seize_status": "0xe00002c5 (exclusive access)",
+    "bot_reset_sent": false,
+    "scsi_command_sent": false
+  },
+  "optical_medium": {
+    "verified_node": "/dev/disk16",
+    "major": 1,
+    "minor": 44
+  },
+  "authentication": "sudo -n requires password; user asked to run identity-guarded optical helper in their Terminal",
+  "evidence": [
+    {
+      "path": "artifacts/usb-stage28.txt",
+      "sha256": "360b2f20ebc4f6a7908c61c03cf8cc9867857b8003d9c54d8a8792981004a24a"
+    },
+    {
+      "path": "artifacts/boot-access-stage28.stderr",
+      "sha256": "6bac004d90f3ea42bc791d3599d996bfe138039ef0abe28f7c7f6cb5b619432b"
+    },
+    {
+      "path": "artifacts/mode-switch-stage28.jsonl",
+      "sha256": "584294677f96b492eb05e71d8f085c63e835dc74d35aa7506f8d66d32ea419f7"
+    },
+    {
+      "path": "artifacts/mode-switch-stage28.stderr",
+      "sha256": "0061722139d3d3b34b94214d9a4255293a431177589d1b6d68032ee17876bcdd"
+    }
+  ]
+}

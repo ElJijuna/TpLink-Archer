@@ -13,6 +13,8 @@ int main(){
     assert(archer::installer_csw_packet(packet.data(),13,true)==1);
     bool oversized=false;try{archer::installer_csw_packet(packet.data(),512,true);}catch(const std::runtime_error&){oversized=true;}assert(oversized);
     const std::array<std::uint8_t,18> sense{0x70,0,5,0,0,0,0,10,0,0,0,0,0x20,0,0,0,0,0};
+    assert(archer::installer_fixed_sense(sense.data(),sense.size()));
+    assert(!archer::installer_fixed_sense(sense.data(),13));
     bool not_csw=false;try{archer::installer_csw_packet(sense.data(),sense.size(),false);}catch(const std::runtime_error&){not_csw=true;}assert(not_csw);
     packet[13]=1;bool padding=false;try{archer::installer_csw_packet(packet.data(),512,true);}catch(const std::runtime_error&){padding=true;}assert(padding);
     bool short_read=false;try{archer::installer_csw_packet(packet.data(),12,true);}catch(const std::runtime_error&){short_read=true;}assert(short_read);

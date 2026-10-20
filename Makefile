@@ -15,7 +15,10 @@ build/sequence-ledger-test: tests/sequence_ledger_test.cpp include/archer/sequen
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/efuse-reader-test: tests/efuse_reader_test.cpp include/archer/efuse_reader.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
-test: build/firmware-state-test build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+test: build/bb-table-window-test build/rf-power-test build/firmware-boot-test build/firmware-state-test build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+	./build/bb-table-window-test
+	./build/rf-power-test
+	./build/firmware-boot-test
 	./build/firmware-state-test
 	./build/hwsi-window-test
 	./build/installer-media-test
@@ -66,7 +69,8 @@ build/rf-transport-test: tests/rf_transport_test.cpp include/archer/rf_transport
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 bb-probe-universal: | build
-	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_bb_probe.cpp -framework IOKit -framework CoreFoundation -o build/archer-bb-probe-universal
+	python3 tools/boot_bundle.py
+	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/macos_bb_probe.cpp -framework IOKit -framework CoreFoundation -o build/archer-bb-probe-universal
 build/bb-window-test: tests/bb_window_test.cpp include/archer/bb_window.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 
@@ -93,4 +97,17 @@ build/hwsi-window-test: tests/hwsi_window_test.cpp include/archer/hwsi_window.hp
 firmware-state-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_firmware_state.cpp -framework IOKit -framework CoreFoundation -o build/archer-firmware-state-universal
 build/firmware-state-test: tests/firmware_state_test.cpp include/archer/firmware_state.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+.PHONY: firmware-boot-universal
+firmware-boot-universal: | build
+	python3 tools/boot_bundle.py
+	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/macos_firmware_boot.cpp -framework IOKit -framework CoreFoundation -o build/archer-firmware-boot-universal
+build/firmware-boot-test: tests/firmware_boot_test.cpp include/archer/firmware_boot.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+build/rf-power-test: tests/rf_power_test.cpp include/archer/rf_power.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+build/bb-table-window-test: tests/bb_table_window_test.cpp include/archer/bb_table_window.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@

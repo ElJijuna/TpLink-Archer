@@ -97,6 +97,8 @@ int main(int argc,char** argv){
             status=(*usb)->WritePipeTO(usb,out,cbw.data(),cbw.size(),500,1000);
             std::cout<<"{\"operation\":\""<<(eject?"eject":"allow_removal")<<"\",\"status\":"<<status<<"}"<<std::endl;
             if(status)throw std::runtime_error("Storage command submission failed; no retry");
+            unsigned code=0;bool matched=false;
+            for(unsigned packet=0;packet<2;++packet){
             std::array<std::uint8_t,512> response{};UInt32 received=response.size();
             status=(*usb)->ReadPipeTO(usb,in,response.data(),&received,500,1000);
             std::cout<<"{\"operation\":\"csw\",\"status\":"<<status<<",\"requested_bytes\":512,\"bytes\":"<<(status?0:received)<<"}"<<std::endl;
@@ -106,7 +108,13 @@ int main(int argc,char** argv){
             const char* hex="0123456789abcdef";
             for(unsigned i=0;i<received;++i)std::cout<<hex[response[i]>>4]<<hex[response[i]&15];
             std::cout<<"\"}"<<std::endl;
-            auto code=archer::installer_csw_packet(response.data(),received,eject);
+            // Preserve the unexpected sense-shaped packet, then read once more.
+            // It never counts as completion and no CBW is resubmitted.
+            if(packet==0&&archer::installer_fixed_sense(response.data(),received))continue;
+            code=archer::installer_csw_packet(response.data(),received,eject);matched=true;break;
+            }
+            if(unconfirmed)break;
+            if(!matched)throw std::runtime_error("No matching CSW after bounded status reads");
             std::cout<<"{\"csw_code\":"<<code<<"}"<<std::endl;
             if(eject&&code)throw std::runtime_error("Device rejected eject");
         }
