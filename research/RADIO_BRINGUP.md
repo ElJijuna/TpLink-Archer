@@ -580,3 +580,43 @@ Next implementation boundary is an explicit cold-start/download state
 machine, not further isolated RF retries: BBMCU preinit precedes download,
 then main and BBMCU readiness, BB setup and postinit precede RF. CPU resets
 and firmware upload have not been implemented or run in this stage.
+
+
+## Stage 26 — Firmware security selection and offline download packets
+
+Added a fixed efuse profile for only physical 0x1580–0x1583, the security
+selection region used by rtw89_efuse_read_fw_secure_be. It reuses the existing
+read-mode engine and restoration, rejects invalid profiles, and sends only
+one efuse address/read command. `--security-only` does not issue PHY_CAP;
+it uses the guarded WLAN IO window. The hardware read returned ffffffff.
+The reference decoder's 0xffff crypto selector takes its default path, rather
+than recognizing a configured secure-boot selection. This is not proof of
+cryptographic signature validity or ROM acceptance. No efuse programming
+mode, CPU reset or firmware upload was performed. All controlled fields
+and WLAN IO were restored with readbacks.
+
+Added tools/firmware_download.py. It requires the exact four-byte default
+security profile and both CV-selected images. It prepares the static v1
+header without the dynamic extension; header H2C category 1/class 3/function
+0 has neither receipt nor completion ACK, and cold-start candidate sequence
+0 is not incremented by this offline preparation. Section bytes (including
+any stored checksum) are fragmented by the image's 2020-byte part size, with
+BE USB type 14 descriptors, not live H2C command wrappers. USB transfers
+exactly divisible by 512 get four zero padding bytes, reflected in the
+descriptor length. The generator exposes no USB executor or live sequence
+ledger manipulation. MSSC/key substitution remains unsupported and fails
+in the strict image parser.
+
+The selected normal image produces 193 USB packets / 390240 bytes; BBMCU0
+produces 19 / 34024 bytes. The tracked plan contains metadata and packet
+hashes, not firmware bytes. Tests cover header stripping, descriptor fields,
+raw section reconstruction across chunk boundaries, checksum-byte retention,
+USB padding, input limits and rejection of unknown security selections.
+Fourteen C++ suites and 46 Python tests pass. Native efuse helper compiles
+for Intel/ARM; the physical read was performed on the current ARM machine.
+
+Evidence: firmware-download-stage26-evidence.json and
+firmware-download-plan-stage26.json. Product-level remaining work is in
+ROADMAP.md; the current blocker is still a complete cold-start executor and
+BB/RF readiness, followed by data path, association/authentication and macOS
+network integration. Offline packet preparation is not a successful boot.

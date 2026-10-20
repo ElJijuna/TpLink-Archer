@@ -3,8 +3,11 @@
 #include <chrono>
 #include <vector>
 namespace archer {
-struct EfuseMaps { std::vector<std::uint8_t> physical, phycap; };
-inline EfuseMaps read_ddv_efuse(RegisterBus& bus) {
+enum class EfuseProfile { board, firmware_security };
+struct EfuseMaps { std::vector<std::uint8_t> physical, phycap, security; };
+inline EfuseMaps read_ddv_efuse(RegisterBus& bus, EfuseProfile profile=EfuseProfile::board) {
+    if(profile!=EfuseProfile::board && profile!=EfuseProfile::firmware_security)
+        throw std::runtime_error("Unsupported efuse read profile");
     if ((bus.read(0xfc,4)&255) != 0x71 || ((bus.read(0xf0,4)>>12)&15) != 1 ||
         ((bus.read(0x3f0,4)>>16)&0x3ff) != 0x220)
         throw std::runtime_error("Unsupported chip revision or inactive power state");
@@ -52,8 +55,8 @@ inline EfuseMaps read_ddv_efuse(RegisterBus& bus) {
             }
             return bytes;
         };
-        maps.physical=dump(0,0x1300);
-        maps.phycap=dump(0x1700,0x38);
+        if(profile==EfuseProfile::firmware_security)maps.security=dump(0x1580,4);
+        else {maps.physical=dump(0,0x1300);maps.phycap=dump(0x1700,0x38);}
     } catch (...) { failure=std::current_exception(); }
     // Try every cleanup step even when a preceding restoration transfer fails.
     std::string restoration;

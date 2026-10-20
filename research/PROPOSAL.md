@@ -6,11 +6,13 @@ App SwiftUI → canal de control autorizado → extensión DriverKit → transpo
 
 La app administrará escaneo, asociación y credenciales en Keychain. NetworkingDriverKit publicaría una interfaz Ethernet sobre el enlace inalámbrico; esta integración debe demostrarse antes de construir la interfaz final. No hay promesa de integración con el menú Wi-Fi nativo.
 
-El módulo C++ codifica solicitudes y valida descriptores; el diagnóstico IOUSBLib ya realiza una lectura de registro. Falta implementar transporte USB DriverKit, secuencias de energía, lectura de identidad/chip-cut/efuse, carga de firmware, MAC/BB/RF, colas TX/RX, eventos firmware, gestión 802.11 y autenticación WPA2. NDIS de Windows y mac80211 de Linux no son componentes trasladables directamente a DriverKit.
+El módulo C++ codifica solicitudes y valida descriptores; el diagnóstico IOUSBLib ya realiza una lectura de registro. Identidad, revisión y efuse ya se leen en el equipo ARM actual; también hay intercambios diagnósticos con firmware. Falta implementar transporte USB DriverKit, arranque/carga coordinada de firmware principal y BBMCU, MAC/BB/RF completos, colas de datos TX/RX, eventos firmware, gestión 802.11 y autenticación WPA2. NDIS de Windows y mac80211 de Linux no son componentes trasladables directamente a DriverKit.
+
+Estado actualizado y desglose del trabajo restante: [ROADMAP.md](ROADMAP.md).
 
 ## Hitos con criterios de salida
 
-1. **Identidad y evidencia (parcial):** INF exacto y familia confirmados; pendiente identificar revisión física y fijar commit de fuentes Linux antes de una adaptación.
+1. **Identidad y evidencia (validado en el equipo actual):** INF exacto, revisión física, AID y RFE confirmados; fuentes y firmware de referencia fijados por commit/hash. La identidad del firmware residente sigue desconocida.
 2. **Transporte (parcial):** endpoints reales recuperados y lectura de registro 0xFC verificada con IOUSBLib; falta el transporte DriverKit con control de errores, desconexión y cancelación. Ninguna escritura de prueba a registros desconocidos.
 3. **Inicialización (parcial):** dos imágenes de firmware extraídas y delimitadas con REA; estado de firmware y bits de revisión leídos por USB. Cabeceras H2C, envoltura USB y parser RX-C2H implementados offline; recepción bulk probada sin datos. Intercambio activo H2C-C2H por registros verificado con GET_FEATURE; acceso WLAN temporal y restauración verificados. Pendiente confirmar selección de imagen y versión ejecutada, validar comandos bulk y portar inicialización MAC/PHY y datos regulatorios de placa. Validar chip-cut y procedencia del firmware. El nombre de una cadena de firmware no permite extraer su imagen con seguridad.
 4. **Enlace:** escaneo pasivo, asociación 2,4/5 GHz y WPA2; demostrar tráfico bidireccional antes de publicar una interfaz de red. Respetar país, canales y potencia de placa.

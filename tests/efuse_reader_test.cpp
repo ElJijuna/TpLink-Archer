@@ -30,6 +30,11 @@ int main() {
     assert(maps.physical.size()==0x1300 && maps.phycap.size()==0x38);
     assert(success.commands==0x1300/4+0x38/4);
     assert(maps.phycap[0]==0 && maps.phycap[1]==0x17);
+    Bus sec;const auto security=archer::read_ddv_efuse(sec,archer::EfuseProfile::firmware_security);sec.restored();
+    assert(sec.commands==1 && security.physical.empty() && security.phycap.empty());
+    assert((security.security==std::vector<std::uint8_t>{0x80,0x15,0,0}));
+    Bus sec_timeout;sec_timeout.timeout=true;rejects([&]{archer::read_ddv_efuse(sec_timeout,archer::EfuseProfile::firmware_security);});sec_timeout.restored();assert(sec_timeout.commands==1);
+    Bus bad_profile;rejects([&]{archer::read_ddv_efuse(bad_profile,static_cast<archer::EfuseProfile>(9));});assert(!bad_profile.commands);
     Bus timeout;timeout.timeout=true;rejects([&]{archer::read_ddv_efuse(timeout);});timeout.restored();assert(timeout.commands==1);
     Bus failed;failed.fail_data=true;rejects([&]{archer::read_ddv_efuse(failed);});failed.restored();
     Bus cleanup;cleanup.fail_data=true;cleanup.fail_burst_restore=true;

@@ -172,3 +172,17 @@ La expulsión óptica fue aceptada, pero el adaptador volvió a DISK. El helper
 USB directo ahora descubre los endpoints reales 0x84/0x05; aún falta probar
 su apertura desde Terminal con sudo. Un status 0 de expulsión no confirma
 el cambio de modo: debe reaparecer `37ad:0104`.
+
+### Preparación de carga y trabajo pendiente
+
+`./build/archer-efuse-universal --security-only NUEVO_DIRECTORIO` lee solo
+cuatro bytes de selección de seguridad efuse, sin programación OTP. El
+resultado físico actual es `ff ff ff ff`. El preparador offline se reproduce:
+
+```sh
+python3 tools/firmware_download.py artifacts/rtw8922a_fw-1.bin 1 artifacts/efuse-security-stage26/firmware-security.bin
+```
+
+Genera metadatos y hashes de 193 paquetes principales y 19 BBMCU; no reinicia
+CPU ni envía firmware. El estado completo y criterios pendientes están en
+[research/ROADMAP.md](research/ROADMAP.md).

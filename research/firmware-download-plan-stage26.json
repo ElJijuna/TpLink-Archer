@@ -1,0 +1,1601 @@
+{
+  "container_sha256": "4340bc322912f30f1793bb57a1747c23b15e40db2df628d6687d1ddf722f2828",
+  "cv": 1,
+  "images": [
+    {
+      "name": "normal",
+      "container_offset": 317672,
+      "image_sha256": "82d9493a4fab74d49fb65b2928a66a74b6bcde923508cd0fff65c7283cf297af",
+      "version": "0.35.41.0",
+      "part_size": 2020,
+      "header_bytes_sent": 96,
+      "sections": [
+        {
+          "index": 0,
+          "type": 2,
+          "download_address": 537919488,
+          "file_offset": 176,
+          "payload_bytes": 352960,
+          "stored_bytes": 352960,
+          "checksum_bytes": 0,
+          "flags": 33907392,
+          "metadata": 44800,
+          "reserved": 0,
+          "sha256": "a1c5495fbfe4e243b3c95c00e96d74d73d539c192d25c604766d71203ddf2fa6"
+        },
+        {
+          "index": 1,
+          "type": 1,
+          "download_address": 539007928,
+          "file_offset": 353136,
+          "payload_bytes": 31768,
+          "stored_bytes": 31768,
+          "checksum_bytes": 0,
+          "flags": 16808984,
+          "metadata": 4096,
+          "reserved": 0,
+          "sha256": "46d3f2fb389140a14c3fdd46c7dbbad8ca034d8ecbbd25146ffdc081f1313e7f"
+        },
+        {
+          "index": 2,
+          "type": 9,
+          "download_address": 539005880,
+          "file_offset": 384904,
+          "payload_bytes": 776,
+          "stored_bytes": 776,
+          "checksum_bytes": 0,
+          "flags": 150995720,
+          "metadata": 256,
+          "reserved": 0,
+          "sha256": "996de596c26f2e1803415607ded50cd5515ac633682c4ac735947c9a8550d48f"
+        }
+      ],
+      "packet_count": 193,
+      "packets": [
+        {
+          "index": 0,
+          "kind": "header",
+          "section": null,
+          "usb_bytes": 128,
+          "sha256": "1923f57421f86d1847cb01df1873d7bc676746ba0f63c5a970cb179a81a97098"
+        },
+        {
+          "index": 1,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "244603b7f8ebebd3ff4dacf60ba8940b41f866a304ea41241cb550dc645a4ba4"
+        },
+        {
+          "index": 2,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "3d4d515f5f2eb66d61243307e74b071a4d25d4e9c3d5a29a9de658c28df962e1"
+        },
+        {
+          "index": 3,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "17cc666ad7a3cc68184a4bc3215bb301ea4e84376eb123d94c52aac30fa54364"
+        },
+        {
+          "index": 4,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "be1c2ab4c79da922830fcbbf4f99db7aa48ecbfa65545f0206ccb59b808e8a5c"
+        },
+        {
+          "index": 5,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "b77f6eafcb9b92a51adab608050bc73a1989eef3dc17546e74a52240dc6f9709"
+        },
+        {
+          "index": 6,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "869c83f1e88578a5cad43d7a8ec12e0f52a238912c76fbd158d0a18daf575b8e"
+        },
+        {
+          "index": 7,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "842f2b2d3536abe4784861a820a508d36232e9719fe5713b7a6a40f99ed48fad"
+        },
+        {
+          "index": 8,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "eb3f939ab9a323e88b6287caf84dcb35395f844ce1ed896179badf442e4dba07"
+        },
+        {
+          "index": 9,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "d40159aef608db59189066aed3c5fb61d1b45a7fa8c5e66eb36b2490b62610a7"
+        },
+        {
+          "index": 10,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "5c11686c02e2ff0ac362093ed1d3670a18c36a95da30abd3fa216e2ec1ab063d"
+        },
+        {
+          "index": 11,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "5d507790b19e67df3473f09ead4e31cf05105df28f9da0efbfcf62d2f9d7fe9b"
+        },
+        {
+          "index": 12,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "699ddd41f743a6384dc6107d621a49dd904a5c91d51d8d7b333a7be687a7ad1e"
+        },
+        {
+          "index": 13,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "e3f4500ab4c5146289644f52662ba380b68fe567fded8b82362a9bad4d42b81b"
+        },
+        {
+          "index": 14,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "00b3b677d4e848608250801ccee322d02eed7215d1d59c88d26487f3b0732467"
+        },
+        {
+          "index": 15,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "9aabc549b9520059a954fc19e1622c1353c4e8b26229d7f4b7ec8aa23bfe48f7"
+        },
+        {
+          "index": 16,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "a250646e2a042fb99113a49218f705e8441952515cca40226a75e340cc499e8b"
+        },
+        {
+          "index": 17,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "79406f9ffc93bc8eff1ff8da9e6abdaf532c52cf3e03acd6b2599a8358b6c6b1"
+        },
+        {
+          "index": 18,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "30deb280c442445b3d9bb990862bebaaa3a2736669d0f362dc950610fcf23ea8"
+        },
+        {
+          "index": 19,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "92fbff2fc66807fe60146eadcb09c3d0d386c567ccd674431cae2dabad80dd1e"
+        },
+        {
+          "index": 20,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "6e27a719816dea4530a1201c5949984e0d71db480ff2346cd1a712bbfb17c647"
+        },
+        {
+          "index": 21,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "3242bb7cafa3c1d384baf92948ca001d41c5e7cccb8db1c3eeb63d51511d8f3d"
+        },
+        {
+          "index": 22,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "e173c0405fb457774ec9ac6a084c5b5a81c2d9b04aca9180be5666185eb7a4e0"
+        },
+        {
+          "index": 23,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "bf0315f6569659abd84bb5e979c424284add812ee1b00f97acc12e18550720bc"
+        },
+        {
+          "index": 24,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "9dc7a04535a780fa1e2ccc36805953de91a02cd1cb0e5fed42d7a376fb034c09"
+        },
+        {
+          "index": 25,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "f2c4133ca92ce66e0891160b9086df5a5619d96102de69e1c4ed161c7777a756"
+        },
+        {
+          "index": 26,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "55c28ff64021568a0cd8840a1bcdc35ee81c4d2e2a34e86819d691d4da90b1ba"
+        },
+        {
+          "index": 27,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "fbd70ef839215015a3041ccdbbbf42224e099a709409cf2dc8503c1177bcaaae"
+        },
+        {
+          "index": 28,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "482cd9f98604e835f7c36787e7b772272faac672b77ed55cdeb3d247caefc90f"
+        },
+        {
+          "index": 29,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "1acaca475aba4ca25a086f619795a3fde7b63cf0ac1414d63c2f9f86e7cbba73"
+        },
+        {
+          "index": 30,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "484815a40e53c7773b17f691018983030365a9faa318c164b23acec6f5814f49"
+        },
+        {
+          "index": 31,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "8a38f8a7c1a06bc2e12e875be2990e3d7898e104332e3f555cb7d87160a65a49"
+        },
+        {
+          "index": 32,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "f0c016933c3cf8f4a51ebd2c60590cd429aff59a264062c4dbb00d77e71518e7"
+        },
+        {
+          "index": 33,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "46834c2d7402339cdcd2a4d6cbfb200dbbdaa5aeaa28085054e30808e51f860d"
+        },
+        {
+          "index": 34,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "af147a28d5869d2c79abfb12d3d87c421832fbd2fc8e867cfa15de5b4f85c7ec"
+        },
+        {
+          "index": 35,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "e54a4caf2e01f1650c9fb38c1c74e54f0f30417b5896115f3343625fea648251"
+        },
+        {
+          "index": 36,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "d9ceb236bed297fc2470a8f065a06d9e27a460a219308a18b3bb678fbc1778a5"
+        },
+        {
+          "index": 37,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ca8be6ccb709bd39e8662ec78aaedb50aa22c708c7dd21d88d5a0c9c43d5e962"
+        },
+        {
+          "index": 38,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "348cd26e46684ab766c61b3b8d21e94240bfbad92f280a18718a81f58a51362c"
+        },
+        {
+          "index": 39,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "393dce0e2b1c6e8a238e41faab0ed77a49e91e8e87ffc85e2af8fb6a3d15bee7"
+        },
+        {
+          "index": 40,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "815aec251ee009af6a8950e92fec66ad85102772d6e94a55b30c5f3aee69c669"
+        },
+        {
+          "index": 41,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "4123cdc5f3f7b475c16f19f2994a9feeee7a2e77c4c5312384c040b9a05a36d1"
+        },
+        {
+          "index": 42,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "499a9f90224055df8208181236312317bb3633a7dba98ec60761bf07fadce1a4"
+        },
+        {
+          "index": 43,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "f2525f5af1079980e81da7f0930c3919169a3993ed859fd61a9108b32adaaa8c"
+        },
+        {
+          "index": 44,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "35f5ccb02e8ee5b1b25ad7cae3d295701e1293f855c11fe9045679875ac398b1"
+        },
+        {
+          "index": 45,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "3974e2abe8897f49fdce251dcfa29872304d5e7aa9a4a849aafba7486c3ca7c1"
+        },
+        {
+          "index": 46,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "39a7bbe5f5a8d6bf36d1f0ff0c41cfa20cf72af443b2d6db3190f03cbdec1ea0"
+        },
+        {
+          "index": 47,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "5c55bb679a72710d3a87b9a077d511121fb355d075526cd1c6262e93d9019a6f"
+        },
+        {
+          "index": 48,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "450ba2e6ea874cf08056358f948520d006421b435f4aa3c55a306f6a1ca7750c"
+        },
+        {
+          "index": 49,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "bbd08eb68c07c45e7f4f341db58d2fdb196a3020160cbfb554189cb7fffba7f6"
+        },
+        {
+          "index": 50,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "5d28929b3324311af3f2abafcaa8dce49ae9df97f065ce8834d7bc43a7fc9259"
+        },
+        {
+          "index": 51,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "d642af676ac58051c45dbf8af82ce8617e7629d26d0210d0cb94ce48511f44ff"
+        },
+        {
+          "index": 52,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ab165a34f6cafbae5bea243b4e893596d5c809eb39ae5008288fc5d3a0a8c414"
+        },
+        {
+          "index": 53,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "64453ecefbefd07771c0d735beb5b2609bcc91a09b72dba78b8ba3663837a5b8"
+        },
+        {
+          "index": 54,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "4750253d39a5b74e8a4748fb0b01cb0a24576fb2eba770830a7b38eb2c89013c"
+        },
+        {
+          "index": 55,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "8f5c6a6115386b990ae6bc0c15dba190efc4115773fb9c0fd9221c8111cbd2cc"
+        },
+        {
+          "index": 56,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "5f1373ab48298dfb2a7de0e10be7bd688803394f821b8d55a7f055124bfdcacd"
+        },
+        {
+          "index": 57,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "bc076356082c00219aaee376d17cfb3eca578374ec29c1aa1802c198447d9b90"
+        },
+        {
+          "index": 58,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ff26400d7c4eabcb0670400bdbc50dacbe319def1253d19f32a862353f0fd362"
+        },
+        {
+          "index": 59,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ef64c8f75d3ccf41bb30ef2e6658c19f0e59e22943ab35c5cdd149badca8155e"
+        },
+        {
+          "index": 60,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "5ced01b5e3241a969922326c8257d8de5b67832df75dc07d5ce2853f8012a608"
+        },
+        {
+          "index": 61,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ad14f44441e66728df87e3626230fa764675ddc90a7e23b2a3126657868635c1"
+        },
+        {
+          "index": 62,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "1fd01ec730ccd8319301f03ada265f69e79278637b40624f38c81d2f38d729c8"
+        },
+        {
+          "index": 63,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "3f993d5d20836f251390088029215131416217973f2138257c94fbdc156847ff"
+        },
+        {
+          "index": 64,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "521dbcd71a927f5476aa7d4541839d87165ca04a5bb29ebd9aaf69c1a4119d52"
+        },
+        {
+          "index": 65,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "4619c6a2f36979ad44b87f414a70347710b07ceb3bbfb58dcdb04079e032df15"
+        },
+        {
+          "index": 66,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "d76ecb9fe5e3cdf0029f0f0e185dc8560d35ea79130e6aacc636a37487ddec87"
+        },
+        {
+          "index": 67,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "064bb64ee7b4e8934332064774db8d3fc8f921d1d9b890010d6752a33b3b1aa2"
+        },
+        {
+          "index": 68,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "88efbd16aa574a57afe48bb057355e7618958211670e3c23d65f6de5017728b9"
+        },
+        {
+          "index": 69,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "37d6c983cc6b193e4f0516e9548558d7b16b0a79a322ade8bdd4c152e285ad45"
+        },
+        {
+          "index": 70,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "684c8f25d92acf788710f43407b426049bf6130f1ddff5eae9e11fb8dc6b9dea"
+        },
+        {
+          "index": 71,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "162e3ce11abe161d58483f70ccd946491a817f4fd161f4c4d90f67c7ff92dcc0"
+        },
+        {
+          "index": 72,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "9d99574e41d1264146e51c7ccf5090a8d8838af2dcf269a8bad56d739f9b8ed7"
+        },
+        {
+          "index": 73,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "3d23ab30803c7be7efd43d285a5bf91828a91625da0c167ba5d40141e73c9b65"
+        },
+        {
+          "index": 74,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "a7791a9cc2de87612052a71a3a79933e3bbada141d5f264070e07d0b9405a15d"
+        },
+        {
+          "index": 75,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ec4684175dd952247b54a5f9c55422ef391e3376847e263a810780df11b0796d"
+        },
+        {
+          "index": 76,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "7a71388b7cfb5601c046cd0a081d6f7b8ae89b3f7f1f749b858371b7c2cf4f33"
+        },
+        {
+          "index": 77,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "0d0783ec7a99684472ab8eb6cf94c447f88e09c613aa752e1adfa401edb38205"
+        },
+        {
+          "index": 78,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "db4dc72c7801a132b2ba7b1a8f011a60010f86ea371f49306e038f33623950bc"
+        },
+        {
+          "index": 79,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "c37cb6b08fe3214455947bc20180aa9bb519ec922e4c5dbe8d1424778f73217d"
+        },
+        {
+          "index": 80,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "b4ff3c615157da005c06ceb533d9c78db511d03ce8a3f0c8d7aed1501c60fffb"
+        },
+        {
+          "index": 81,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "90f7bbf6deb468434515d72ae25aad8dee4acc51048c9a087db94a09cbe5385d"
+        },
+        {
+          "index": 82,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "a162c6d894b185ceada05dc0464746b7b86a87bb6e340cbcfba94d01753151f0"
+        },
+        {
+          "index": 83,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "7b256edfa431f640546a9477e9dc2f354f1c5e84b0f2ade6626e47706ddb883d"
+        },
+        {
+          "index": 84,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "97dbe830ebf3416ef65eb22988c70e94ecae2e896698b7ea0d1ec306694f22d1"
+        },
+        {
+          "index": 85,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ea237d884fc96f9ecf453a66e9eb633b7a0e980ff5c7ee1d09d2bd4f3d753c32"
+        },
+        {
+          "index": 86,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "914be155754da7fde420fb973f502a4f4cf964f8866cda51ac23a9cdab054285"
+        },
+        {
+          "index": 87,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "cc66e4fddccdf32c1cf65f40742a43fca627c611cf92eec72ed5c448dc44f4f1"
+        },
+        {
+          "index": 88,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "1c6453b11008f6547cfb2b4d9c24f061ee8b11210d6e42252229fb71b83d61bf"
+        },
+        {
+          "index": 89,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "6d9d3393a3efa067e5331d0eac925d233ea1cb2f9204ca2aa7d6ca24e640514e"
+        },
+        {
+          "index": 90,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "6fd34e30d0ca194b5ab41c08075a2d1cd6f5fa454b2052f895833c61275bf11c"
+        },
+        {
+          "index": 91,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "46d353fb737e1ecf7ab9929672414f964ac029f3c04a4c4e5077d0b4f05ab33c"
+        },
+        {
+          "index": 92,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "adc4b273f33c4726a8a2049ebc3554ad372d6f969d72c25f7e3309bbcadc05ac"
+        },
+        {
+          "index": 93,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "0c0db5ef3e049fa92878f5ee4557750ce08f005f53430f063a9e922a45f03931"
+        },
+        {
+          "index": 94,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "81927f16f1ba30ae6bec3bbeb9ef445340d3eec1a6e603bbbf424be88898a613"
+        },
+        {
+          "index": 95,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ebf2ae322bf5dab8944f3c181c36fc59c695b5962cdb63422ccf5ebf405d0f7e"
+        },
+        {
+          "index": 96,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "886c85e34419a9ce31cc518b2a113d49d2de32667e7397438616e57ef8356fdb"
+        },
+        {
+          "index": 97,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "6b4bdff456d11d886f7f515bdc03e46c46212cf125ae06502ad4abf5344d6dba"
+        },
+        {
+          "index": 98,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "3d2974d4d4d8a13ac2c8f792676b0d1232ef2c7215e3cd5f7a9447f28f4b896e"
+        },
+        {
+          "index": 99,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "31baa481f00611b6744295e1581ad668c6099f4a510fa33bb2b615fe50f53612"
+        },
+        {
+          "index": 100,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "8cbcc6b7ce34529c8c816a9a1f509e4e80cb3bf12c62d8ef694612e26a3f8430"
+        },
+        {
+          "index": 101,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "98827eea7d75481c74bac38b94790ef5ac80262208f74ccda8a61eb71dd84ae5"
+        },
+        {
+          "index": 102,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "65adc9b1c13315e59daf4289da11ef82989df5fb8ededa6ffabd18130ab044aa"
+        },
+        {
+          "index": 103,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "1d04fdb63ac5a4bd9039ef8a9aee632b1d2c472b242a319d246b0a902e614d02"
+        },
+        {
+          "index": 104,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "9678afeefe95cd5c1dd9a3aa6ee68830d8b790c095cc72384dd22379ce402da1"
+        },
+        {
+          "index": 105,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "47ddb0e5220259d085c4ab2e1c904b41d8158e538bb7fecbed6b73e06275153e"
+        },
+        {
+          "index": 106,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "c1d37fb4a6a7eb22da9e54e9162a9332449f7fae24f660798fa6ffea71293a21"
+        },
+        {
+          "index": 107,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "78fc72ad00ecda2e1449db9013552ae6713dd89e1974e4978eb2f61c4aeaf29f"
+        },
+        {
+          "index": 108,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "bccd3df2eb0e10200eb74cb4e8aa5515248e4524e6210d21587588030037dfa1"
+        },
+        {
+          "index": 109,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "420616bb236e5e4a22999c1472e6522e54b3f3e113a36bbcf804d711be954782"
+        },
+        {
+          "index": 110,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "3b7bdeeb65494be6db8607ab103d13c4e53a93349ca1e19c16daf8cc688e8017"
+        },
+        {
+          "index": 111,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "e9290a7c4684899d235b3ddf300cfd29fadc6354ffbd962d3ff4ea7c3d39d2ee"
+        },
+        {
+          "index": 112,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "69d023f5f5ae27e03e51874db1b2c2d5b09be4d375bdc786a14d169d25d4d4ba"
+        },
+        {
+          "index": 113,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "e6f005401332258bbf82dd8c2295a38d2c06961db813ab793eebac931e54b86d"
+        },
+        {
+          "index": 114,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "bec2087fa390cb30da1b6336792d5f73a3abc7ca7543c407af58eb9619a041d8"
+        },
+        {
+          "index": 115,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "f791443a759b784f7feb01cc56f070e43cfdeee115d2678d43962c1a4b709cb5"
+        },
+        {
+          "index": 116,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "90e64654abdcd498bf9b8b17a6ee1797edc49c08d98ca6663f753ff81736a52e"
+        },
+        {
+          "index": 117,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "1580709639134ab1a5cf9df1845e677997b489326ebd2d99fee41eb9e098a433"
+        },
+        {
+          "index": 118,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "6911766daa9a5206577203d7df7c44c374c9e0306d82aa09a17a80760b102e8d"
+        },
+        {
+          "index": 119,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "3d7a27fd5d462d2c9243013f9cf888e9ac0330d4ed93b5e64cf156fc6dfda4a9"
+        },
+        {
+          "index": 120,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "91b684eb172a7b5a4e6e2dc6abe089371ea6ccfe0ae1dca4fbd2573be29cb30c"
+        },
+        {
+          "index": 121,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ae3c79d619fad59a8da2c6bf893ad2a79d8b1b3dad7868d25ca653f5a3fafdf6"
+        },
+        {
+          "index": 122,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "689b379d824ffbf360602eacc60ff642a50a9f2d9050341dd83ddf16e185c909"
+        },
+        {
+          "index": 123,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "5ffc57149e97ddb5733241d91741bd9ec22461594a1cac62efe331aa8d622aa6"
+        },
+        {
+          "index": 124,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "fa0f9dfd663b6f7d83d2ec157a179e15a852e2dd6f739d84928ba18ec231a02f"
+        },
+        {
+          "index": 125,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "369193df8db0d29af82763cbfb1374f2c47d93564d90120f08f382b0d731d03f"
+        },
+        {
+          "index": 126,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "e768b351b790ecc29bfed615a6048fc30bca33d3d61dbed73160a551431d3537"
+        },
+        {
+          "index": 127,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "5cf28d3c52ce59897a0dda139d165a9dfcd4e1e5a300e1e730f1a38f901cabe0"
+        },
+        {
+          "index": 128,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "397d50275e746cb7e3b3040453df94a5c55d4d5497341b19f8c9fbe5277a0a4e"
+        },
+        {
+          "index": 129,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "3556aefc81677b842eaa7ca358f723b08eedd19652b3b7ff86b293151f287aeb"
+        },
+        {
+          "index": 130,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "884e866a1691667ea04a468bf1d2f7ab1ff229a5191cd38cf037101567e03ab1"
+        },
+        {
+          "index": 131,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "052a219889567fc11f01a67724bf9a92f14e7d82d924d8727f2a7ae6524fd00d"
+        },
+        {
+          "index": 132,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "cab0f02a60c47ff7b5c89b14f6e10d5a41423338ee740bc294f48278940d84a9"
+        },
+        {
+          "index": 133,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "e56cc7cd7b0c0247a65957f994c0e1c6fe1908bde030eac03c7365c2f7924374"
+        },
+        {
+          "index": 134,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "d1578e6a5ed65ed86bae5f01cf0114b742f4ea97f11ae85716eeb6652a5697e1"
+        },
+        {
+          "index": 135,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "21c043773b854319a93185d6e670485a981e7d4dfaf3ee45ebed4e9091bf7520"
+        },
+        {
+          "index": 136,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "a6396e4d5b23026358072ac8f1922c1caa0ceae33814d6f40afeb294cbd24a23"
+        },
+        {
+          "index": 137,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "abaf216374765e60c48b952e0c30da89a165954b6e718dc0d61f36dea4ed5b22"
+        },
+        {
+          "index": 138,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "f7b6740b841e875bef52ee12a3df55a1991095cc4c571a2bc173b02f2de12556"
+        },
+        {
+          "index": 139,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "03222eb0933c45960c959a9512ff460f3a514323b50835c20d3c95626d0977cb"
+        },
+        {
+          "index": 140,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "4e2c87fc1f4d7d78aef246dda5a9591c6c4d05557085aafdfa8241d8b9bcb8e8"
+        },
+        {
+          "index": 141,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ded4ee26b112735de4f916d53c097f261fddb321f650f4afa6cae4c62819fb37"
+        },
+        {
+          "index": 142,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "130a41dd3f1f5fa09067df96dd81fab8d6316828df3ecc2e6015f3ea9be644ba"
+        },
+        {
+          "index": 143,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "4b7bdd572b35ac360c4b6ca473d9f9dc67463d46aa996092e33b5a1f7ac9851c"
+        },
+        {
+          "index": 144,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "6df085fd44e6fd66e7f7a906b307809f205f50e0443423f17070fb3e1e87c325"
+        },
+        {
+          "index": 145,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "90e8d19a5d1484ab580d90adde4be6182b1a83d9da631ccbb68f9e08359945e7"
+        },
+        {
+          "index": 146,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "82358d561abe5bc5af0ab3b2aeb49a22bee17e88c073606eb40317b3c1b04b11"
+        },
+        {
+          "index": 147,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "f2e293db6209d69e2057fc847e58ff12be4d1c7c68128beee480c4d0c0520ddc"
+        },
+        {
+          "index": 148,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "6fffe499e6a0538f339abe59ba6206ba019de17cafb16a2a315a93813515412c"
+        },
+        {
+          "index": 149,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "1c97f025638558c5322f535b6cdb7b542260b8824348813479eea20a4bd04620"
+        },
+        {
+          "index": 150,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "779dcea3fb3577ae772fbb0232da0aa321395f651b7f4bcf04e673e50594d06e"
+        },
+        {
+          "index": 151,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "7aca006a84d7a0b4219543dcc8bfe0e26442cc3e0c129a8d3fd3e8e426d2669b"
+        },
+        {
+          "index": 152,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "a512f107aaa287c5839ef1c885f8e6025087a7f8b532d2146e815f68cda30a9a"
+        },
+        {
+          "index": 153,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "3292a269f57ff2eaf5215dd240c47f1714bdbd9f072e5b82756972b2b403a913"
+        },
+        {
+          "index": 154,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "916335756096cf99da8ae1e2b0e8331bde8d856fe5b80a61790455b8d7fcb410"
+        },
+        {
+          "index": 155,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "b06d43cf8c4af2cf2d7e3bb4b932d8f1899663c1361f0c37da67aad4b72b6baf"
+        },
+        {
+          "index": 156,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "648fc7b5b314ef15b714e8d72f824cbe1eed17f185a382e23f07617392cd9219"
+        },
+        {
+          "index": 157,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "7b9d419a8f5031c28dd1c42e2d1fb69c29843f9b6869d05ac76ba7890f82b984"
+        },
+        {
+          "index": 158,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ac0b2dbb38cccf85a239e92d24ede7a4511b2e3ec025b249349acc11c724efb9"
+        },
+        {
+          "index": 159,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "dfb3ded708137df0bf77c4fcd10504e6a1036b505ee344b74668d22f7abcc828"
+        },
+        {
+          "index": 160,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "37e153c4df6ddb3ba1bb00c44f2bb069109c041002bec63f4765f1f8ae1610ce"
+        },
+        {
+          "index": 161,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "c11e79f13e7162d64a6eee4e4840383730428398116f74b4c0879d72da8a9623"
+        },
+        {
+          "index": 162,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "fa7e98de1ed3e6512bf55c8853e801e393eb0468cab1445f9bd3db0e76f600fb"
+        },
+        {
+          "index": 163,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "d7c1c907788c0382b2005a7b37658224da8092a99c34e88de2169505ab4a1e66"
+        },
+        {
+          "index": 164,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "37c997aed55caeaa00acd9a92b0045dca215c8c924794db6eaa29d73ee91dbaf"
+        },
+        {
+          "index": 165,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "6f043608aefb20a4b155cef214e8608a766ccde393aeedbd57d3ea26d36b3406"
+        },
+        {
+          "index": 166,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "06b983767ece634b656879c550042e49a0af52ea9cb0b38ca9761bf2f6446698"
+        },
+        {
+          "index": 167,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ca7f5325b93b466e3e05383980116057c15dc5409dcb8545bb1ddbb1626f0c7a"
+        },
+        {
+          "index": 168,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "7886bdcf1fb9adbbfdf54f0b421a24a13afc61f202f22b8d1fc0e7dcc9252f4b"
+        },
+        {
+          "index": 169,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "fd09e24197fd81f88f0ebf633819a88deed2ce16e50dce74a84a7348e9ef2f64"
+        },
+        {
+          "index": 170,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "87a40baf0724700ba11dd86c79886842c5a6fa54dda7f9b94bf1494ed042725a"
+        },
+        {
+          "index": 171,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "b17fbb6281ffa96d5cde4a89475cf8b477b85e573ca878c0a26051e2f13f3717"
+        },
+        {
+          "index": 172,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "c4e48e593b2065c3fb472d4ade1d9f8f19cc76bec51c94fad7dc3bd2e93cdc5c"
+        },
+        {
+          "index": 173,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "ec9043a4c0709ac7ab427d19b6cfe180b1dd8cad4ce179eac7bea38d8d2f0661"
+        },
+        {
+          "index": 174,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "a3b1e26f16ffda18d1b0ec15219ac08510107a7ee5eb4dcfbeaaf401ed704326"
+        },
+        {
+          "index": 175,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 1504,
+          "sha256": "eb1397e8b78e850eb110d122516f3470bcd6f3b15aaefeb9c9bdfefa50d247a8"
+        },
+        {
+          "index": 176,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "96dda6731c6c50e9499f7420e5d1ec28374a228545fbd404cc8c56acae1330a7"
+        },
+        {
+          "index": 177,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "59ba3fdc1ce81a765213e80bdbac32d8a36f1611dd397ff6d558720144d71194"
+        },
+        {
+          "index": 178,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "1f3a3375c36ab6a16efa90819b7b2ae6365b70c6bd20b93aae3e68cc62df9c52"
+        },
+        {
+          "index": 179,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "043455f087ecf285bb5adde7ccd795dcb68b14c6d3da0dc67a752c3150ee7d2c"
+        },
+        {
+          "index": 180,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "bd4ef41ee7f964e9dde04f4ffdfb934172b466b06e009193c3b123b1e633eb2f"
+        },
+        {
+          "index": 181,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "ba83a02f9d0ed22932669144f951149cf1c9899448c9e928afddb37abd9f15c4"
+        },
+        {
+          "index": 182,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "10d099cc4ed84eeab2cc241d3e89694ffe72e56280007123cf6dcbc0e94389f4"
+        },
+        {
+          "index": 183,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "b6ddb05062c64e71faf6c0be37a9989222d87883644f4631a62cf0a9f48bf517"
+        },
+        {
+          "index": 184,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "7d2f0dd0b2bf22c7c25ccb9d3372148a201db928e5c3d2bdea41d45e6b0cc2c1"
+        },
+        {
+          "index": 185,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "85640c41b9887e937dc83313023c639d30f39f69dc5559893185c488e7161f53"
+        },
+        {
+          "index": 186,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "85640c41b9887e937dc83313023c639d30f39f69dc5559893185c488e7161f53"
+        },
+        {
+          "index": 187,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "0d2bf915e8d6646a7c3892c543055313008512eaecae98e96dad774909521a94"
+        },
+        {
+          "index": 188,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "a6592e5cbac4809f88357633d54caa49c694d15127418a94180e296aed1a9ee2"
+        },
+        {
+          "index": 189,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "6097f74d0359d47bae5b267a18b2eecbdf51a84d4a1998d51d2a3f8ddeb86c57"
+        },
+        {
+          "index": 190,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 2044,
+          "sha256": "d17100a845c0c8d4bd0fb6e5541f8cee0454d51191c52d5b9c4f04a966101198"
+        },
+        {
+          "index": 191,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 1492,
+          "sha256": "ba369365e8754d5c3c12e53f31c256957c71901817fc6ce60296c8d30fa3108c"
+        },
+        {
+          "index": 192,
+          "kind": "section",
+          "section": 2,
+          "usb_bytes": 800,
+          "sha256": "ac6c27f3c400d578b0e55c62c9b2819d5925ed6df697c115ac666787f38e3869"
+        }
+      ]
+    },
+    {
+      "name": "bbmcu0",
+      "container_offset": 1332784,
+      "image_sha256": "5a89eca4758bc4535c3202ecf2b15b067507ea8731b981b631b539c20744eb2d",
+      "version": "0.1.0.0",
+      "part_size": 2020,
+      "header_bytes_sent": 80,
+      "sections": [
+        {
+          "index": 0,
+          "type": 10,
+          "download_address": 409174016,
+          "file_offset": 80,
+          "payload_bytes": 32768,
+          "stored_bytes": 32768,
+          "checksum_bytes": 0,
+          "flags": 167804928,
+          "metadata": 536870912,
+          "reserved": 0,
+          "sha256": "d906485060ef1d35e067a658ce7034263d498ec73015856549744799362a80fa"
+        },
+        {
+          "index": 1,
+          "type": 9,
+          "download_address": 540027392,
+          "file_offset": 32848,
+          "payload_bytes": 712,
+          "stored_bytes": 712,
+          "checksum_bytes": 0,
+          "flags": 150995656,
+          "metadata": 0,
+          "reserved": 0,
+          "sha256": "c504efd85769873bcc2efdc12ef7033a6a9d1cf99ec523bbddcf7e28735a9fc5"
+        }
+      ],
+      "packet_count": 19,
+      "packets": [
+        {
+          "index": 0,
+          "kind": "header",
+          "section": null,
+          "usb_bytes": 112,
+          "sha256": "a2b028be07022c8c4968ad4805a38cd16216de77ef317342a22bc0f601510f24"
+        },
+        {
+          "index": 1,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "3024a90addb47930faebab49495b9d545c07c49272be8d2c7a4dad725f6829ef"
+        },
+        {
+          "index": 2,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "b05d2e66a35b93826c8a17e2c06ec95ed9ace1a948eadf6042f4a5fb259fef58"
+        },
+        {
+          "index": 3,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "9f9fcabda43638954c1428100c11fdf78f0c820c13b2db4a56f6aed8ca156a1a"
+        },
+        {
+          "index": 4,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "65c5c92960ff981b9a62bb3576c65836cf6e6fef792546f532bf4ca11f6bfb9f"
+        },
+        {
+          "index": 5,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "4d2d32cf3e9518cabe1169b86e42dc5ec86805367e9c17bc475490f0ed636a60"
+        },
+        {
+          "index": 6,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "e3bb943a06c66863e2c0aa032f08759805a3e0cab2456d66d3af03818021da5d"
+        },
+        {
+          "index": 7,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "aefc47b463901e5145654441d3e6a4e8222f80562bc50dafd8ca1b9110f5961f"
+        },
+        {
+          "index": 8,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "bbe60af3f540ef9501cbe9e0ea32743327968bd7cfb4b176b57a457271809f3f"
+        },
+        {
+          "index": 9,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "128146c45dd44b060403f765bd795ab33e932df587f7f91652968a95ad7dc1d3"
+        },
+        {
+          "index": 10,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "f62b688b60a42ecd2d4f8f1b0baf778e3f5dffb5642d17c0e34b92f4dba65de0"
+        },
+        {
+          "index": 11,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "06fe3b572df68f05491a14a0f4f234f71b05608a74c0bb28594cdddeb4ea56ea"
+        },
+        {
+          "index": 12,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "a3f98e93c72ba064e11d3fe55c20bd515a95a175a8d50dc59a40f5637b23cc17"
+        },
+        {
+          "index": 13,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "85640c41b9887e937dc83313023c639d30f39f69dc5559893185c488e7161f53"
+        },
+        {
+          "index": 14,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "85640c41b9887e937dc83313023c639d30f39f69dc5559893185c488e7161f53"
+        },
+        {
+          "index": 15,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "85640c41b9887e937dc83313023c639d30f39f69dc5559893185c488e7161f53"
+        },
+        {
+          "index": 16,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 2044,
+          "sha256": "85640c41b9887e937dc83313023c639d30f39f69dc5559893185c488e7161f53"
+        },
+        {
+          "index": 17,
+          "kind": "section",
+          "section": 0,
+          "usb_bytes": 472,
+          "sha256": "a934ee026d7732f86cc3dd1e89c9f458141b45382466f4942b04ff76b4170de9"
+        },
+        {
+          "index": 18,
+          "kind": "section",
+          "section": 1,
+          "usb_bytes": 736,
+          "sha256": "b6bfdb798d0e3ef1295db2a0694d53df87c70f258f00892f3b237d1f287f4cf4"
+        }
+      ]
+    }
+  ],
+  "security_selector": "0xffff (default path in pinned Linux decoder)",
+  "executable": false,
+  "hardware_writes_performed": false,
+  "required_order": [
+    "verify target/power/identity and exclusive ownership",
+    "prepare MAC transport and BBMCU before firmware reset",
+    "hold/reset CPU and enable WLAN+BBMCU0 download",
+    "poll H2C ready; send normal header; poll download path ready",
+    "send normal sections; poll WLAN download-enable clear",
+    "poll H2C ready; send BBMCU0 header; poll download path ready",
+    "send BBMCU0 sections; poll BBMCU0 download-enable clear",
+    "wait final firmware initialization and establish new sequence lifecycle",
+    "initialize BB tables/gain/postinit, then RF"
+  ],
+  "limitations": [
+    "No native USB upload, CPU reset or MAC/BBMCU preinit executor",
+    "Header sequence 0 is a cold-start candidate only, never a live H2C reservation",
+    "Default efuse selector does not cryptographically verify firmware",
+    "Device ROM acceptance, pairing and recovery remain untested"
+  ]
+}
