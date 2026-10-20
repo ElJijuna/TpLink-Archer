@@ -299,3 +299,196 @@ Next: implement the documented MAC/BB-enable boundary and account for BB MCU
 and normal firmware/MAC initialization before using this RF backend. Current
 resident firmware readiness alone did not initialize BB. Do not interpret this
 stage as a working radio, scan or network interface.
+
+## Stage 19: temporary BB-enable diagnostic and firmware-response blocker
+
+Added `make bb-probe-universal` / `build/archer-bb-probe-universal`.
+The diagnostic locks the adapter, confirms PHY_CAP and AID 0x6933, then is
+prepared to release PHY0 BB reset and set DMAC_SYS_CR32B=0x7ff97ff9 according
+to rtw8922a_mac_enable_bb_rf. Its temporary window accepts only the observed
+uninitialized state, validates latched controls and restores BB reset before
+the original DMAC value. Callback/transfer failures still attempt both control
+restorations. This is not the full firmware/BB-MCU/MAC initialization sequence,
+and restoring control bits does not promise restoration of internal BB state.
+No RF configuration writes are exposed: the callback only inspects HWSI and
+attempts RF register-0 reads if accessible.
+
+The physical attempt on this date never entered that BB window. Its initial
+GET_FEATURE/PHY_CAP mailbox query timed out. Thus no BB reset, DMAC configuration
+or RF command was submitted. Hardware ID, power and firmware-state bits still
+matched the earlier snapshot, demonstrating that firmware state=3 alone does
+not establish a responsive command processor.
+
+Refactored `with_wlan_io_window` from the PHY_CAP query wrapper so that an
+active mailbox can be inspected without submitting another firmware request.
+New `archer-mailbox-state-universal` showed H2C control=1, C2H control=0,
+firmware-owned counter=0x24 and host-owned counter=0x2d: the request remained
+pending. Old C2H data was not acknowledged or treated as a new reply.
+The inspection wrote only the WLAN IO access bit and restored it to its
+original 0x001004fd register value. It neither retried the request nor cleared
+the trigger/counters or reset the adapter. Evidence:
+`bb-window-attempt-observation.json`.
+
+A physical USB disconnect/reconnect was requested to restore a responsive
+baseline before continuing the BB experiment. This is an observed runtime
+blocker rather than a signing, compilation or test failure. Keep the sequence
+ledger; a reconnect is not authorization to recycle old sequence numbers.
+After reconnection, inspect fresh state and confirm a new PHY_CAP response
+before running the temporary BB diagnostic.
+
+Ten C++ suites and 39 Python tests pass. Window tests cover callback failure,
+partial configuration transfer failure, cleanup failure continuation, preservation
+of unrelated reset bits and refusal of unknown/preinitialized states. Generic
+WLAN-window tests prove inspection of a pending mailbox sends no new mailbox
+command. Relevant native tools compile for both Intel and ARM.
+
+## Stage 20: reconnect exposes the installer CD mode
+
+After the user confirmed physical reconnection, 37ad:0104 was absent. Instead,
+IORegistry reported Realtek DISK 0bda:1a2b at location 0x02100000. Its optical
+media is RTK Driver Storage Media, LUN 0, disk16, 74661888 bytes, not writable.
+The probe stopped before register access because the expected Wi-Fi ID was
+absent. This is a mode-switch/recovery boundary, not a failed BB-enable result.
+
+The upstream USB_ModeSwitch StandardEject sequence uses allow-removal followed
+by START STOP UNIT with LOEJ=1/START=0, with no block-data transfer. Added pure
+CBW/CSW encoders and an experimental native helper restricted to one
+0bda:1a2b SCSI/Bulk-Only USB2 installer interface and endpoints 0x0b/0x8a.
+Its normal and seize opens both failed with kIOReturnExclusiveAccess before
+sending storage commands. It does not terminate/unload the storage driver.
+Exit 3 means eject was submitted but response unavailable; enumeration must
+independently establish Wi-Fi mode even if command status succeeds.
+
+A second experimental helper traverses the optical medium's ancestors to
+verify the Realtek USB identity and attempts the native MMC/SCSI interface.
+The direct Type05 matching attempt found no registered service; traversal from
+IOCDMedia found it, but the MMC client creation was unavailable. No SCSI task
+executed. These tools compile for Intel/ARM, but mode switching remains
+unvalidated and they are not integrated into normal probe/driver startup.
+
+System recovery attempts: diskutil could not resolve disk16; direct raw-media
+open was denied; noninteractive sudo reported authentication required. No
+password was requested or captured by the agent. The user was asked to run
+`sudo diskutil eject /dev/disk16` in Terminal and report the result. That disk
+identifier was verified for this observation only; rediscover it after any
+further USB/device changes before repeating manually.
+
+Evidence: `reconnect-mode-observation.json`. Eleven C++ suites and 39 Python
+tests pass. New checks cover zero-length/LUN-0 CBW fields, allow-removal/eject
+opcodes, CSW signatures/tags/residue and phase errors. No mode-switch command,
+BB enable, RF configuration, firmware upload or disk-data write succeeded in
+this stage. Keep the existing sequence ledger when the adapter returns.
+
+References used for the recovery command semantics:
+https://github.com/NetworkManager/usb_modeswitch/blob/master/usb_modeswitch.c
+https://www.draisberghof.de/usb_modeswitch/bb/viewtopic.php?t=3010
+
+## Stage 21: optical ioctl recovery helper
+
+The user reported that authenticated `diskutil eject /dev/disk16` also failed
+to find the disk. Fresh IORegistry inspection still identified the same
+read-only RTK Driver Storage Media, BSD disk16, major 1/minor 44, under the
+Realtek 0bda:1a2b ancestor. Disk Arbitration resolution is therefore not a
+usable recovery method in the current observed environment.
+
+Added `make optical-eject-universal` and a guarded native helper:
+`build/archer-optical-eject-universal --inspect | --eject-installer`.
+Inspection succeeded on ARM. The eject operation has NOT been executed or
+validated yet; it requires the user to authenticate with sudo in Terminal.
+
+The helper discovers IOCDMedia dynamically, checks its exact RTK installer
+name and Realtek USB ancestor, requires one matching whole/removable/read-only
+medium, validates the BSD disk identifier, and opens only that block-device
+path with read-only/nonblocking/no-follow flags. It verifies fstat device
+numbers and USB ancestry again before issuing the macOS DKIOCEJECT ioctl.
+No arbitrary path argument, SCSI write, block-data write, USB driver unload,
+firmware command or BB configuration is exposed. An accepted ioctl still needs
+independent confirmation that USB Wi-Fi ID 37ad:0104 reappeared.
+
+The implementation uses the SDK's sys/disk.h DKIOCEJECT definition. It avoids
+Disk Arbitration for discovery/dispatch, but kernel eject support or privileges
+can still prevent it from succeeding. Any ioctl error is surfaced without a
+forced unmount, alternative write-mode open, retry or device reset.
+
+The manual command, run from the project root, is:
+`sudo ./build/archer-optical-eject-universal --eject-installer`.
+Unlike the earlier manual diskutil command, this does not hardcode disk16 and
+will rediscover/revalidate the device after subsequent USB changes. Do not
+remove the sequence ledger during recovery.
+
+Twelve C++ suites and 39 Python tests pass. New pure tests cover supported BSD
+identifiers and refusal of partitions, raw/arbitrary paths, writable media,
+nonremovable media and non-whole media. The native helper compiles for Intel
+and ARM; only discovery has been executed against hardware. Evidence:
+`optical-eject-observation.json`.
+
+## Stage 22: accepted optical eject did not restore Wi-Fi
+
+The user reported DKIOCEJECT status 0. Subsequent inspection found a new
+IORegistry device instance at the same port, but still Realtek DISK
+0bda:1a2b. This proves reenumeration, not a switch to network ID 37ad:0104.
+The latter remains absent, so no WLAN/register/BB command was attempted.
+
+Improved `archer-mode-switch-universal --inspect` to read the cached device
+configuration descriptor without opening the kernel-owned storage interface.
+The real 32-byte descriptor is retained as a regression fixture. It reports
+08/06/50 interface 0, bulk IN 0x84 and OUT 0x05, 512-byte packets. This replaces
+the earlier unverified 0x8a/0x0b endpoint assumption taken from other Realtek
+models. Eject mode now discovers exactly one bulk IN and OUT pipe after open;
+it does not assume endpoint numbers from a different chip.
+
+The upstream USB_ModeSwitch StandardEject reference defines allow-removal and
+START STOP UNIT packets. Also inspected the already-downloaded vendor
+WifiAutoInstallSrv.exe with LLVM's offline PE disassembler. Routine 0x402466
+contains a branch building a six-byte SCSI CDB with opcode 0x1b and byte 4=2,
+then IOCTL 0x4d014. This corroborates the CDB format but does not prove that
+branch executes on this adapter. Another branch uses IOCTL 0x74808. No Windows
+code was executed. Native REA decompilation was not performed: Ghidra is not
+configured and the previously observed Hopper license expiry is unresolved.
+
+An administrator launch through the macOS authorization dialog failed before
+USB access while opening the sequence ledger; that build did not include
+underlying errno. The ledger is intact. Added errno diagnostics; no alternate
+ledger or permission changes were used to evade the failure. The validated
+way to supply a fresh test result is to run from the user's Terminal:
+`sudo ./build/archer-mode-switch-universal --eject-installer`.
+This direct USB experiment is not yet proven to acquire the kernel-owned
+interface even as root. If it remains exclusive, stop and retain the failure;
+do not repeatedly eject, alter global storage drivers or invent vendor commands.
+
+Twelve C++ suites and 39 Python tests pass. Added physical storage descriptor
+replay. Eject mode compiles for Intel/ARM; full mode switching remains blocked.
+Evidence: `installer-switch-stage22-evidence.json`. The original kernel
+optical helper continues to report only eject acceptance, never Wi-Fi success.
+
+
+## Stage 23 — Wi-Fi mode recovered; BB accessible, RF read incomplete
+
+The user's 0xe00002e8 CSW read result is an overrun. A subsequent
+512-byte receive captured 18 bytes (`700005000000000a00000000200000000000`),
+with fixed-format SCSI sense shape, not a matching CSW. Its originating
+transaction is unknown. The helper stopped before eject. CSW parsing now
+requires exactly 13 bytes as specified by BOT section 5.3.3; padded transfers
+are rejected. Regression coverage includes the observed sense packet.
+
+Added explicit `--reset-bot-eject-installer`: class/interface request
+21/ff/0000/0000/0000, then clear HALT on bulk IN and OUT in that order,
+per [USB BOT sections 3.1 and 5.3.4](https://www.usb.org/sites/default/files/usbmassbulk_10.pdf).
+It retains target and endpoint guards and bounded calls. Hardware execution
+of this option stopped at target selection because the installer had already
+disappeared; neither reset nor CBW was sent. The adapter was then observed
+as 37ad:0104. Causality of the mode transition remains unestablished.
+
+Fresh startup reads confirmed chip 0x71, digital revision 1, firmware field 3.
+The BB probe completed PHY_CAP and AID 0x6933 checks, entered the temporary
+BB window, and read HWSI status A/B=0 and controls A/B=0x39000. These no
+longer returned inaccessible sentinels. Path A RF address 0 did not set the
+completion bit within six bounded polls. Path B was not attempted. Cleanup
+verified HWSI latch low bits cleared, FEN restored to 0, DMAC to 0 and WLAN
+IO to 0x001004fd. This establishes BB register access, not functional RF.
+
+Next: establish missing HWSI/RF initialization prerequisites from reference
+source before further hardware RF commands. Do not extend timeouts or apply
+whole radio tables without evidence. Twelve C++ suites and 39 Python tests
+pass; native helper builds for Intel and ARM. Evidence hashes and limits:
+`bringup-stage23-observation.json`.

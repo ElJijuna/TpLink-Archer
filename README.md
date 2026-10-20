@@ -124,3 +124,30 @@ ejecutarlos. La inicialización física BB/RF sigue pendiente.
 El backend `include/archer/rf_transport.hpp` rechaza operaciones en ese estado
 y tiene polling y limpieza acotados, verificados con un bus simulado. Aún
 falta habilitar e inicializar BB antes de probar operaciones RF físicas.
+
+### Prueba temporal de habilitación BB
+
+`make bb-probe-universal mailbox-state-universal` construye la prueba BB y
+el inspector de buzón sin envío de comandos. El último intento BB se detuvo
+antes de cambiar BB: PHY_CAP agotó su plazo y dejó H2C pendiente. Se solicitó
+reconectar físicamente el adaptador antes de retomar la prueba. Evidencia en
+`research/bb-window-attempt-observation.json`.
+
+### Recuperación después de reconectar
+
+El adaptador reapareció como CD virtual Realtek `0bda:1a2b` (DISK), no como
+Wi-Fi `37ad:0104`. Los helpers experimentales de expulsión compilan, pero
+macOS bloqueó el acceso antes de enviar comandos. Se solicitó expulsión con
+permisos de administrador del CD virtual identificado. No se ha validado aún
+el cambio de modo; véase `research/reconnect-mode-observation.json`.
+
+Si `diskutil` no encuentra el CD virtual, el helper experimental
+`build/archer-optical-eject-universal --inspect` lo redescubre por IORegistry.
+Su opción `--eject-installer` requiere sudo y usa DKIOCEJECT sobre el medio
+Realtek verificado. La inspección está validada; la expulsión administrativa
+todavía no se ha ejecutado ni ha confirmado el retorno al modo Wi-Fi.
+
+La expulsión óptica fue aceptada, pero el adaptador volvió a DISK. El helper
+USB directo ahora descubre los endpoints reales 0x84/0x05; aún falta probar
+su apertura desde Terminal con sudo. Un status 0 de expulsión no confirma
+el cambio de modo: debe reaparecer `37ad:0104`.

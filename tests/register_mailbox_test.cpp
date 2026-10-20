@@ -60,6 +60,16 @@ int main() {
     FakeBus inaccessible; inaccessible.registers[0x7160] = 0xea;
     rejects([&] { (void)archer::query_phy_capabilities(inaccessible); });
     assert(inaccessible.writes.empty());
+    FakeBus inspect_only; inspect_only.registers[0x74] = 0x1004fd;
+    inspect_only.registers[0x7160] = 1; // Pending request must not be overwritten.
+    bool inspected = false;
+    archer::with_wlan_io_window(inspect_only,[&] {
+        inspected = true;
+        assert(inspect_only.read(0x7160,1)==1);
+    });
+    assert(inspected && inspect_only.registers[0x74]==0x1004fd);
+    assert(inspect_only.writes.size()==2);
+    for(const auto& write:inspect_only.writes) assert(std::get<0>(write)==0x74);
     FakeBus gated; gated.registers[0x74] = 0x1004fd;
     (void)archer::query_phy_capabilities_with_io_window(gated);
     assert(gated.registers[0x74] == 0x1004fd && gated.writes.size() == 10);

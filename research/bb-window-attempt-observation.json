@@ -1,0 +1,40 @@
+{
+  "result": "PHY_CAP prerequisite timed out before BB callback",
+  "bb_window_executed": false,
+  "rf_commands_submitted": 0,
+  "mailbox_state_after_timeout": {
+    "result": "mailbox_state",
+    "h2c_control": 1,
+    "c2h_control": 0
+  },
+  "firmware_own_counter": "0x24",
+  "host_own_counter": "0x2d",
+  "hci_opt_ctrl_restored": "0x001004fd",
+  "recovery_action_requested": "Physical disconnect/reconnect; no automatic command retry or USB reset performed",
+  "artifacts": [
+    {
+      "path": "artifacts/bb-window-stage19.jsonl",
+      "sha256": "2245e2be1921cda95e10da0c59df5b7f2fc06c302a5f37279ad3cc4531fdd012"
+    },
+    {
+      "path": "artifacts/bb-window-stage19.stderr",
+      "sha256": "9ebfe749323f6e94cac417c770a8d12b4bf30458e903bb97f8f74aefa07942ab"
+    },
+    {
+      "path": "artifacts/post-timeout-stage19.jsonl",
+      "sha256": "52c81722cdd56aea7283dbbcd8e00f1944704faf25d1e5defcf2eb75b7909808"
+    },
+    {
+      "path": "artifacts/active-mailbox-stage19.jsonl",
+      "sha256": "678af6f41e423e9110ff258a40efe3d3222cd5370b048fe5c8523f79f8400ffd"
+    },
+    {
+      "path": "artifacts/active-mailbox-stage19.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/rtw8922a.c",
+      "sha256": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535"
+    }
+  ]
+}

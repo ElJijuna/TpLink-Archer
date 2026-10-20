@@ -1,0 +1,60 @@
+{
+  "wifi_id_present": false,
+  "observed_usb": {
+    "vendor": "0x0bda",
+    "product": "0x1a2b",
+    "name": "DISK",
+    "location": "0x02100000"
+  },
+  "optical_media": {
+    "name": "RTK Driver Storage Media",
+    "bsd_name": "disk16",
+    "bytes": 74661888,
+    "writable": false
+  },
+  "recovery": {
+    "usb_normal_open": "exclusive access error 0xe00002c5",
+    "usb_seize": "exclusive access error 0xe00002c5",
+    "diskutil_eject": "Failed to find disk",
+    "scsi_client": "MMC client unavailable",
+    "raw_media_open": "permission denied",
+    "sudo_noninteractive": "password required"
+  },
+  "storage_commands_sent": 0,
+  "bb_or_rf_configuration_written": false,
+  "user_action_requested": "sudo diskutil eject /dev/disk16",
+  "artifacts": [
+    {
+      "path": "artifacts/bb-window-reconnected-stage19.stderr",
+      "sha256": "1d76327c1b8cbd960b766d395f908820e9956c0931ef32fb05c5ce9eaaf32027"
+    },
+    {
+      "path": "artifacts/mode-switch-stage20.stderr",
+      "sha256": "9d336148c2f8c0aad587e9976128cff7ad0c7bc39982dfb5ae026a134edaa50a"
+    },
+    {
+      "path": "artifacts/mode-switch-exclusive-stage20.jsonl",
+      "sha256": "584294677f96b492eb05e71d8f085c63e835dc74d35aa7506f8d66d32ea419f7"
+    },
+    {
+      "path": "artifacts/mode-switch-exclusive-stage20.stderr",
+      "sha256": "0061722139d3d3b34b94214d9a4255293a431177589d1b6d68032ee17876bcdd"
+    },
+    {
+      "path": "artifacts/scsi-eject-stage20.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/scsi-eject-stage20.stderr",
+      "sha256": "413b07426f758199e7c7df4f80bf31b1db0f3d652678e76494e0b5a95e892adb"
+    },
+    {
+      "path": "artifacts/scsi-eject-media-stage20.log",
+      "sha256": "e4aeede56d645c819a0cc858485c7102ba3f209a3324616c94854b3566b38827"
+    },
+    {
+      "path": "artifacts/scsi-eject-media-stage20.stderr",
+      "sha256": "3a9cd6dd60d0f9039a7ad9d6c39d92af72da185424459afce0141e1bb38c09e7"
+    }
+  ]
+}

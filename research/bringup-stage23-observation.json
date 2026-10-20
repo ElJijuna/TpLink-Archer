@@ -1,0 +1,55 @@
+{
+  "stage": 23,
+  "date": "2026-10-20",
+  "observations": {
+    "previous_csw_status": "0xe00002e8 (overrun)",
+    "expanded_read_hex": "700005000000000a00000000200000000000",
+    "expanded_read_interpretation": "18-byte fixed-format SCSI sense shape, not a CSW; originating transaction unknown",
+    "bot_recovery_attempt": "Stopped at device selection; installer absent. No reset or storage commands submitted by this attempt.",
+    "device": "37ad:0104, 802.11be WLAN Adapter",
+    "mode_switch_causality": "Not established",
+    "chip_low_id": "0x71",
+    "digital_revision": 1,
+    "firmware_status_field": 3,
+    "phy_cap_query": "completed",
+    "analog_id": "0x6933",
+    "bb_window": "entered; FEN=3, DMAC=0x7ff97ff9",
+    "hwsi_status_a_b": [
+      0,
+      0
+    ],
+    "hwsi_control_a_b": [
+      "0x39000",
+      "0x39000"
+    ],
+    "rf_read": "path A address 0 timed out; path B not attempted",
+    "cleanup": "HWSI latch low bits clear verified; FEN restored 0, DMAC restored 0, WLAN IO original 0x001004fd verified",
+    "next": "Establish missing RF/HWSI initialization prerequisites from reference source before another hardware RF operation"
+  },
+  "evidence": [
+    {
+      "path": "artifacts/mode-switch-packet-stage23.jsonl",
+      "sha256": "ecce803e619078f9f6954aa08187e11d14ddce3303176f707ae10df5a893986b"
+    },
+    {
+      "path": "artifacts/mode-switch-reset-stage23.stderr",
+      "sha256": "3f94c136ede7318e13bf3d6e014913eeb69aa68e123e91d0b5c265ce8d1ba309"
+    },
+    {
+      "path": "artifacts/usb-stage23.txt",
+      "sha256": "533b10a26252220e890747051419606af9f988be97682f6364df9798687f04fd"
+    },
+    {
+      "path": "artifacts/startup-stage23.jsonl",
+      "sha256": "e52076e4549e5e1e0775321d9ee4ad2a23193f58e77a12cf3110086e9ddc6291"
+    },
+    {
+      "path": "artifacts/bb-probe-stage23.jsonl",
+      "sha256": "49f2557c9f65cc0a56277e4ac37a8e227d24f3d7c9d34066cc2a10dc8e4b0f88"
+    },
+    {
+      "path": "artifacts/bb-probe-stage23.stderr",
+      "sha256": "78298ee021cd841fa953a222937595551f95ec93103b2226ddd5bcb84fc14c6c"
+    }
+  ]
+}

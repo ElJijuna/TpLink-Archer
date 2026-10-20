@@ -63,8 +63,7 @@ inline PhysicalCapabilities query_phy_capabilities(RegisterBus& bus) {
 }
 // rtw8922a_pwr_on_func enables HCI_WLAN_IO and waits for IO_ST.
 // This diagnostic window restores only the enable bit, preserving other fields.
-inline PhysicalCapabilities query_phy_capabilities_with_io_window(RegisterBus& bus,
-    const std::function<void()>& while_enabled = {}) {
+inline void with_wlan_io_window(RegisterBus& bus, const std::function<void()>& while_enabled) {
     if ((bus.read(0xfc, 4) & 255) != 0x71 ||
         ((bus.read(0x3f0, 4) >> 16) & 0x3ff) != 0x220 ||
         ((bus.read(0x1e0, 4) >> 26) & 15) != 3)
@@ -75,7 +74,6 @@ inline PhysicalCapabilities query_phy_capabilities_with_io_window(RegisterBus& b
         throw std::runtime_error("HCI control register is inaccessible");
     const bool change = !(original & enable);
     std::exception_ptr failure;
-    std::optional<PhysicalCapabilities> result;
     try {
         if (change) bus.write(0x74, 4, original | enable);
         bool ready = false;
@@ -87,8 +85,7 @@ inline PhysicalCapabilities query_phy_capabilities_with_io_window(RegisterBus& b
             bus.pause();
         }
         if (!ready) throw std::runtime_error("WLAN IO enable did not become ready");
-        result = query_phy_capabilities(bus);
-        if (while_enabled) while_enabled();
+        while_enabled();
     } catch (...) { failure = std::current_exception(); }
     if (change) {
         try {
@@ -103,6 +100,14 @@ inline PhysicalCapabilities query_phy_capabilities_with_io_window(RegisterBus& b
         }
     }
     if (failure) std::rethrow_exception(failure);
+}
+inline PhysicalCapabilities query_phy_capabilities_with_io_window(RegisterBus& bus,
+    const std::function<void()>& while_enabled = {}) {
+    std::optional<PhysicalCapabilities> result;
+    with_wlan_io_window(bus,[&] {
+        result=query_phy_capabilities(bus);
+        if(while_enabled)while_enabled();
+    });
     return *result;
 }
 }

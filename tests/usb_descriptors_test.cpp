@@ -41,5 +41,12 @@ int main() {
         endpoint.input() ? ++inputs : ++outputs;
     }
     assert(inputs == 2 && outputs == 7);
+    std::ifstream installer("tests/fixtures/0bda-1a2b-usb2-config.bin",std::ios::binary);
+    assert(installer.good());
+    std::vector<std::uint8_t> storage{std::istreambuf_iterator<char>(installer),{}};
+    const auto storage_config=archer::parse_configuration(storage.data(),storage.size());
+    assert(storage_config.endpoints.size()==2);
+    assert(storage_config.endpoints[0].address==0x84 && storage_config.endpoints[1].address==0x05);
+    for(const auto& endpoint:storage_config.endpoints)assert(endpoint.bulk() && endpoint.max_packet_size==512);
     std::cout << "USB descriptor validation: OK\n";
 }

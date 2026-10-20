@@ -1,0 +1,53 @@
+{
+  "user_reported_ioctl_eject_status": 0,
+  "post_eject_wifi_id_present": false,
+  "post_eject_usb_id": "0bda:1a2b",
+  "observed_storage_endpoints": [
+    "0x84",
+    "0x05"
+  ],
+  "storage_interface": "08/06/50",
+  "packet_size": 512,
+  "windows_static_observation": {
+    "method": "LLVM PE disassembly; not REA decompilation and not runtime execution",
+    "routine": "0x402466",
+    "cdb_opcode_instruction": "0x4024fe",
+    "cdb_loej_instruction": "0x402502",
+    "ioctl_instruction": "0x402506",
+    "ioctl": "0x4d014",
+    "cdb": "1b0000000200",
+    "runtime_branch_execution_proven": false
+  },
+  "admin_launch_result": "Failed before USB access: cannot open sequence ledger; underlying errno was not available in that build",
+  "root_mode_switch_succeeded": false,
+  "artifacts": [
+    {
+      "path": "artifacts/installer-config-stage22.jsonl",
+      "sha256": "acddfb7349160d7b64c2ebff9df6a40ff7626987e5cd874a37d007ed66751427"
+    },
+    {
+      "path": "tests/fixtures/0bda-1a2b-usb2-config.bin",
+      "sha256": "45393b41dc25f90e7b478b187228e84433dece333b2ea23b5cd75aed15972cef"
+    },
+    {
+      "path": "artifacts/windows/app/WifiAutoInstallSrv.exe",
+      "sha256": "50b02474125f96644239b77303f6bdbba7939fb8e8642296ba221375d2e7e03b"
+    },
+    {
+      "path": "artifacts/autoinstall-pe-stage22.txt",
+      "sha256": "a15a07abd94ec6b9e17dfc4aeaa16709c740e284ee8db9c297bab345afa16380"
+    },
+    {
+      "path": "artifacts/autoinstall-assembly-stage22.txt",
+      "sha256": "7d9253db2ed40e352010b8795d4670facc44a7123cf6fc62c291fb4365874d8b"
+    },
+    {
+      "path": "artifacts/usb_modeswitch-reference.c",
+      "sha256": "5af0ef41f8a91ceb3cccfc3f26f1869dcabcdf02e092a4394e0922d7392cfed8"
+    },
+    {
+      "path": "artifacts/mode-switch-admin-stage22.stderr",
+      "sha256": "ae9bae0ec21da820d3545f057bc409528f7bdf27ee0aac7145902435e0983545"
+    }
+  ]
+}

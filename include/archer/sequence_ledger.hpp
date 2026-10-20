@@ -2,6 +2,7 @@
 #include <array>
 #include <algorithm>
 #include <cerrno>
+#include <cstring>
 #include <fcntl.h>
 #include <sys/file.h>
 #include <sys/stat.h>
@@ -16,7 +17,7 @@ class SequenceLedger {
 public:
     explicit SequenceLedger(const std::string& path) {
         fd_ = open(path.c_str(), O_RDWR | O_CREAT | O_NOFOLLOW, 0600);
-        if (fd_ < 0) throw std::runtime_error("Cannot open sequence ledger");
+        if (fd_ < 0) throw std::runtime_error(std::string("Cannot open sequence ledger: ")+std::strerror(errno));
         struct stat info{};
         if (fstat(fd_, &info) != 0 || !S_ISREG(info.st_mode) || info.st_nlink != 1) {
             close(fd_); fd_ = -1;

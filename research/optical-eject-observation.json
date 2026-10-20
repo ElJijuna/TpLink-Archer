@@ -1,0 +1,25 @@
+{
+  "verified_medium": {
+    "usb_id": "0bda:1a2b",
+    "name": "RTK Driver Storage Media",
+    "bsd_path": "/dev/disk16",
+    "major": 1,
+    "minor": 44,
+    "whole": true,
+    "removable": true,
+    "writable": false
+  },
+  "inspection_executed": true,
+  "administrator_eject_executed": false,
+  "firmware_or_bb_changes": false,
+  "artifacts": [
+    {
+      "path": "artifacts/optical-inspect-stage21.jsonl",
+      "sha256": "934ee45b54f65c060888be6fb4508b5d7e5daf3012d7c8d2fc91c3733b27c4cc"
+    },
+    {
+      "path": "artifacts/optical-inspect-stage21.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}
