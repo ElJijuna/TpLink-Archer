@@ -1,0 +1,16 @@
+{
+  "registers": {
+    "0x84": "0x80f30000",
+    "0x842c": "0x0",
+    "0x22c24": "0xeaeaeaea",
+    "0x22d24": "0xdeadbeef",
+    "0x22adc": "0xdeadbeef",
+    "0x22bdc": "0xdeadbeef"
+  },
+  "bb_reset_released": false,
+  "bb_phy0_dmac_configuration_present": false,
+  "rf_access_permitted": false,
+  "hci_initial": "0x1004fd",
+  "hci_final": "0x1004fd",
+  "rf_commands_submitted": 0
+}

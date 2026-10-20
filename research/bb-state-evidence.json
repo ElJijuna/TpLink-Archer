@@ -1,0 +1,25 @@
+{
+  "artifacts": [
+    {
+      "path": "artifacts/bb-state-stage18.jsonl",
+      "sha256": "98752939fff633e9ef72a8d207db8b8a58910eee0de7f379b4aa3b9931153fae"
+    },
+    {
+      "path": "artifacts/bb-state-stage18.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/rtw89-phy.c",
+      "sha256": "c443be8a679f3f5dd0a330ab814ebda4411338f0cbe6cd556e0c31129aa9209b"
+    },
+    {
+      "path": "artifacts/rtw8922a.c",
+      "sha256": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535"
+    },
+    {
+      "path": "artifacts/rtw89-reg.h",
+      "sha256": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d"
+    }
+  ],
+  "backend_hardware_execution_validated": false
+}

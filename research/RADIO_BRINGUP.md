@@ -257,3 +257,45 @@ power-state prerequisites, then normal MAC/BB initialization and firmware RF
 parameter-store commands. Only after those are validated can the selected
 tables and calibration be applied. There is still no radio initialization,
 scan, association or usable network interface.
+
+## Stage 18: physical BB-state check and bounded RF transport
+
+`archer-identity-universal --bb-state` now reads reset, DMAC BB and HWSI
+control/status registers inside the verified WLAN IO window. Physical ARM
+observation: FEN_RST_ENABLE low reset-release bits are clear and
+DMAC_SYS_CR32B=0. HWSI addresses returned 0xeaeaeaea/0xdeadbeef. The source's
+normal BB-enable prerequisites are absent. WLAN IO returned to 0x001004fd.
+These reads do not mean that any analog RF read or write succeeded; none was
+requested. Evidence: `bb-state-observation.json`, `bb-state-evidence.json`.
+
+The new `include/archer/rf_transport.hpp` provides a bounded RF-v2 transport
+over RegisterBus, with no power/reset enabling behavior. Before RF commands,
+it requires observed chip ID, active system state, WLAN IO enable/status,
+BB reset release, cleared BB isolation and the expected PHY0 DMAC field.
+Unclocked/inaccessible register sentinels fail closed. This conservative
+prerequisite policy is not a complete MAC/BB readiness definition.
+
+Analog reads use HWSI-v2: check command latch/idle, select control mode 1,
+encode the eight-bit address, trigger read, wait for RDONE and read the 20-bit
+value. Polling is bounded to six attempts separated by the bus pause (10 ms
+on the native bus, intentionally slower than kernel microsecond polling).
+Poll bits are cleared on completion, timeout and transfer exceptions. Command
+address/trigger latches are not restored, matching the source cleanup boundary.
+Cleanup failure is reported explicitly.
+
+Full-write submission supports direct RF masked updates preserving upper bits,
+and analog HWSI writes after idle polling. It does not claim write completion
+or calibration. Masked analog writes are not exposed. No native CLI exposes
+arbitrary RF writes, and this backend has only been exercised against the
+simulated RegisterBus; physical RF execution remains unvalidated.
+
+Nine C++ suites and 39 Python tests pass. The new transport tests cover direct
+and analog encoding, upper-bit preservation, reset/isolation/DMAC/WLAN guards,
+busy timeouts, inaccessible status, read completion timeout and transfer-failure
+cleanup. Native identity inspection and the transport test compile for Intel
+and ARM; hardware inspection was ARM only.
+
+Next: implement the documented MAC/BB-enable boundary and account for BB MCU
+and normal firmware/MAC initialization before using this RF backend. Current
+resident firmware readiness alone did not initialize BB. Do not interpret this
+stage as a working radio, scan or network interface.

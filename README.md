@@ -117,3 +117,10 @@ inicializa la radio. Véase `research/phy-table-reference-check.json`.
 con los callbacks originales Linux en 1512 posiciones. El helper C++
 `include/archer/rf_access.hpp` calcula direcciones y comandos RF-v2/HWSI sin
 ejecutarlos. La inicialización física BB/RF sigue pendiente.
+
+### Estado físico BB y backend RF
+
+`archer-identity-universal --bb-state` confirmó BB en reset y HWSI inaccesible.
+El backend `include/archer/rf_transport.hpp` rechaza operaciones en ese estado
+y tiene polling y limpieza acotados, verificados con un bus simulado. Aún
+falta habilitar e inicializar BB antes de probar operaciones RF físicas.
