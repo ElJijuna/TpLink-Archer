@@ -1,5 +1,11 @@
 # Offline RTL8922A TSSI NORMAL payload preparation
 
+Stage42 follow-up: the zero-initialized Linux host trim state has now been
+proven through the allocation chain, and the separate typed route in
+`tx_rfk.hpp` has executed TSSI SCAN/NORMAL with bound board/tracking data.
+See [STAGE42.md](STAGE42.md) and [TX_RFK.md](TX_RFK.md). The original general
+send guard remains closed; alignment-state success semantics remain unknown.
+
 `include/archer/tssi_protocol.hpp` ports the signed DE/group interpolation and thermal-table construction for firmware0.35.41.0 into a pure offline300-byte payload builder. It does not transmit H2C and does not lift the existing TSSI guard in `rfk_protocol.hpp`.
 
 ## Concrete inputs available

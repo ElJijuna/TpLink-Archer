@@ -5,7 +5,7 @@ struct ChipIdentity { unsigned revision, analog_revision, analog_id; };
 namespace detail {
 inline unsigned read_xtal_profile_byte(RegisterBus& bus, unsigned offset) {
     if(offset!=0x41 && offset!=0xfd && offset!=0xfe && offset!=0x2d && offset!=0x2e &&
-       offset!=0x80 && offset!=0x81 && offset!=0x90 && offset!=0xa1 && offset!=0xe0 && offset!=0xe1)
+       offset!=0x80 && offset!=0x81 && offset!=0x90 && offset!=0xa1 && offset!=0xe0 && offset!=0xe1 && offset!=0xd1 && offset!=0x16)
         throw std::invalid_argument("Unsupported XTAL-SI read profile offset");
     const auto initial=bus.read(0x270,4);
     if(initial==0xeaeaeaea || initial==0xdeadbeef || (initial&(1u<<31)))
@@ -30,7 +30,7 @@ inline unsigned read_xtal_identity_byte(RegisterBus& bus,unsigned offset) {
     return detail::read_xtal_profile_byte(bus,offset);
 }
 inline unsigned read_xtal_power_byte(RegisterBus& bus,unsigned offset) {
-    if(offset!=0x2d&&offset!=0x2e&&offset!=0x80&&offset!=0x81&&offset!=0x90&&offset!=0xa1&&offset!=0xe0&&offset!=0xe1)
+    if(offset!=0x2d&&offset!=0x2e&&offset!=0x80&&offset!=0x81&&offset!=0x90&&offset!=0xa1&&offset!=0xe0&&offset!=0xe1&&offset!=0xd1&&offset!=0x16)
         throw std::invalid_argument("Only fixed XTAL-SI power reads supported");
     return detail::read_xtal_profile_byte(bus,offset);
 }

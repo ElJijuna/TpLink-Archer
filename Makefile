@@ -22,6 +22,12 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/dmac-init-test
 	./build/hfc-init-test
 	./build/rfk-log-test
+	./build/channel-bus-test
+	./build/cmac-init-test
+	./build/channel-power-test
+	./build/trx-path-test
+	./build/tx-rfk-test
+	./build/tx-rfk-physical-test
 	./build/mac-reset-test
 	./build/bb-postinit-test
 	./build/radio-init-test
@@ -160,3 +166,25 @@ build/hfc-init-test: tests/hfc_init_test.cpp include/archer/hfc_init.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/rfk-log-test: tests/rfk_log_test.cpp include/archer/rfk_log.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
+
+test: build/channel-bus-test build/cmac-init-test build/channel-power-test build/trx-path-test build/tx-rfk-test
+build/channel-bus-test: tests/channel_bus_test.cpp include/archer/channel_bus.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/cmac-init-test: tests/cmac_init_test.cpp include/archer/cmac_init.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/channel-power-test: tests/channel_power_test.cpp include/archer/channel_power.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/trx-path-test: tests/trx_path_test.cpp include/archer/trx_path.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/tx-rfk-test: tests/tx_rfk_test.cpp include/archer/tx_rfk.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/tx-rfk-physical-test
+build/tx-rfk-physical-test: tests/tx_rfk_physical_test.cpp include/archer/tx_rfk.hpp $(wildcard tests/fixtures/*-stage42-usb.bin) | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+.PHONY: cmac-init-universal tx-calibrate-universal
+cmac-init-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_cmac_init.cpp -framework IOKit -framework CoreFoundation -o build/archer-cmac-init-universal
+tx-calibrate-universal: | build
+	python3 tools/channel_bundle.py
+	python3 tools/tx_calibration_bundle.py
+	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/macos_tx_calibrate.cpp -framework IOKit -framework CoreFoundation -o build/archer-tx-calibrate-universal

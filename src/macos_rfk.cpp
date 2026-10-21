@@ -87,7 +87,7 @@ int main(int argc,char** argv){
         const archer::RfkFirmwareVersion version{0,35,41,0};
         if(std::string(argv[1])=="--adda-pre-dack")archer::enable_adda_power(bus);
         archer::RfkPreNotifyV1 initial;
-        initial.mlo_mode=0x2002; // MLO_2_PLUS_0_2RF; zeroed initial MCC slots.
+        initial.mlo_mode=1; // Explicit SCC/no-DBCC profile; zeroed initial MCC slots.
         command(archer::RfkCommand::pre_notify,archer::rfk_pre_notify_payload(version,initial),20);
         command(archer::RfkCommand::dack,archer::rfk_dack_payload(version,0),2000);
         if(std::string(argv[1])=="--initial-rfk")

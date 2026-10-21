@@ -1,5 +1,12 @@
 # Intended channel 1 / 20 MHz setup
 
+Stage42 follow-up: the fixed native research coordinator now applies these
+plans with real bound gains/trim and the complete diagnostic WW power vector;
+see [STAGE42.md](STAGE42.md). Statements below about missing coordination
+describe the original pure-plan pass. The generic `initialize_channel1`
+entry point remains closed because it does not accept bound board/power data;
+the implemented fixed coordinator is `src/macos_tx_calibrate.cpp`.
+
 Status: MAC/BB/RF tuning subplans implemented; complete coordinator blocked before I/O. `include/archer/channel_init.hpp` defines an intended
 PHY0/MAC0 SCC 2.4GHz primary/center channel1, 2412MHz, 20MHz context. It is not
 an applied-channel token. Its initializer always rejects until the complete

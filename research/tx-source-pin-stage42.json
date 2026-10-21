@@ -1,0 +1,41 @@
+{
+  "commit": "c03c1a14507dfaf8b856c2608f9ac216021fc222",
+  "files": [
+    {
+      "path": "artifacts/mac80211-main.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/net/mac80211/main.c",
+      "sha256": "de553e5322cff805514ddf7494be96ba42464df5a517b93f2ebb49a5c74ce779"
+    },
+    {
+      "path": "artifacts/cfg80211-core.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/net/wireless/core.c",
+      "sha256": "a1e6ebc52f7634585e5c7e8cb29b2e106de5af12da68cf9e5ed0794ad94fcb9a"
+    },
+    {
+      "path": "artifacts/rtw89-coex.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/coex.c",
+      "sha256": "7e9785539dc9098217e3f1fc01b28bddbb6f6ed3b6b622f3465bb5beacebfefa"
+    },
+    {
+      "path": "artifacts/rtw89-sar.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/sar.c",
+      "sha256": "5641d1a9384bbb2a988f7cf644fa35296e4f6800cd42047da6a49cd7bc58db96"
+    },
+    {
+      "path": "artifacts/rtw89-sar.h",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/sar.h",
+      "sha256": "e135ce148d1e36a9c683476a87b43a8a9b9b568bb33add270c0de7b86edf8147"
+    },
+    {
+      "path": "artifacts/rtw8851b_rfk.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/rtw8851b_rfk.c",
+      "sha256": "4ca49ba0e08ebffda9777141c954e22ecb7f656cb770c6249d885529ac914338"
+    }
+  ],
+  "historical_fw_header": {
+    "path": "artifacts/rtw89-fw-wireless-next-8f7aa3d.h",
+    "repository": "wireless/wireless-next",
+    "commit": "8f7aa3d3c7323f4ca2768a9e74ebbe359c4f8f88",
+    "sha256": "bae6675fc95c3f6edd348aaa78c2bbb5cc7768f1961a91fb95ff49624aa9e345"
+  }
+}

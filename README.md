@@ -1,12 +1,14 @@
 # Archer USB — investigación y base de controlador
 
-**Estado actual:** firmware principal + BBMCU0, DLE USB2/SCC, HFC,
-inicialización parcial de MAC, tablas de radio A/B y NCTL probados en el Mac ARM.
-DACK y RXDCK iniciales terminan con estado OK e informes detallados sin flags
-de fallo; RXDCK informa canal1/20MHz en ambas rutas. Los ejecutables compilan
-para Intel/ARM; falta validación física en Intel. Todavía no hay escaneo,
-asociación ni interfaz de red, ni calibración completa de transmisión.
-Evidencia: [research/mac-radio-rfk-stage34-observation.json](research/mac-radio-rfk-stage34-observation.json).
+**Estado actual:** CMAC0 completo para el perfil USB2/SCC, DLE/HFC/DMAC,
+tablas de radio y secuencia TXGAPK/IQK/TSSI/DPK ejecutados en el Mac ARM.
+La repetición desde firmware recargado terminó con respuestas OK de todos
+los comandos y RXDCK final limpio. IQK y TXGAPK reportan éxito; DPK no muestra
+timeouts/overflow, pero su máscara de estado y los estados de alineación TSSI
+siguen sin interpretación definitiva. No se afirma calidad RF plenamente validada.
+TX de red queda pausado; todavía no hay escaneo, asociación ni interfaz de red.
+Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
+Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 
 
 Proyecto experimental para TP-Link USB `37ad:0104`, con destino macOS Intel/Apple Silicon y Linux posteriormente.

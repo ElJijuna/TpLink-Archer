@@ -1,0 +1,226 @@
+{
+  "date": "2026-10-21",
+  "hardware": {
+    "usb": "37ad:0104",
+    "chip": "RTL8922A CV1",
+    "aid": "0x6933",
+    "rfe": 1,
+    "host_tested": "macOS Apple Silicon",
+    "transport": "USB2 480Mbps"
+  },
+  "profile": {
+    "phy": 0,
+    "mac": 0,
+    "dbcc": false,
+    "mlo_mode": 1,
+    "mlo_mode_name": "MLO_DBCC_NOT_SUPPORT",
+    "selection": "explicit research SCC override; not inferred BE default",
+    "channel": 1,
+    "band": "2GHz",
+    "bandwidth_mhz": 20,
+    "regd": "WW / source-unconfigured diagnostic",
+    "sar": "source NONE",
+    "antenna_regd_enabled": 0,
+    "btc": "deliberately uninitialized host profile; not production coexistence",
+    "network_tx_paused": true
+  },
+  "cold_replay": {
+    "radio_init_exit": 0,
+    "initial_rfk_exit": 0,
+    "tx_rfk_exit": 0,
+    "firmware_main": "0.35.41.0",
+    "bbmcu0": "0.1.0.0",
+    "resident_identity_independent": false
+  },
+  "initialization": {
+    "cmac_init_be": "all selected RTL8922A CV1 USB2 SCC stages executed, CAM polls completed",
+    "bb_sethw_writes": 12,
+    "trx_ab_two_stream_writes": 55,
+    "bb_channel_writes": 133,
+    "world_power_writes": 197,
+    "board_trim": "real captured PA/PAD fields applied/read back",
+    "rfk_pll": "e1 |= f8; d1 &= ~60; XTAL16 |=38"
+  },
+  "tx_commands": [
+    {
+      "rfk_command": 8,
+      "sequence": 59,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 0,
+      "sequence": 60,
+      "tssi_scan": true
+    },
+    {
+      "rfk_command": 8,
+      "sequence": 61,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 4,
+      "sequence": 62,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 1,
+      "sequence": 63,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 0,
+      "sequence": 64,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 3,
+      "sequence": 65,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 6,
+      "sequence": 66,
+      "tssi_scan": false
+    }
+  ],
+  "outcomes": {
+    "txgapk": {
+      "terminal": "OK",
+      "legacy_report_bytes": 84,
+      "is_txgapk_ok": 1,
+      "failcodes": null
+    },
+    "iqk": {
+      "terminal": "OK",
+      "report_bytes": 184,
+      "tx_fail": [
+        0,
+        0
+      ],
+      "rx_fail": [
+        0,
+        0
+      ],
+      "channel_matches": true
+    },
+    "tssi": {
+      "scan_terminal": "OK",
+      "normal_terminal": "OK",
+      "report_bytes": 56,
+      "alignment_state": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alignment_semantics_validated": false
+    },
+    "dpk": {
+      "terminal": "OK",
+      "report_bytes": 34,
+      "path_status": [
+        4,
+        4
+      ],
+      "timeout": [
+        0,
+        0
+      ],
+      "rxbb_overflow": [
+        0,
+        0
+      ],
+      "channel_matches": true,
+      "path_success_semantics_validated": false
+    },
+    "post_tx_rxdck": {
+      "terminal": "OK",
+      "channel": [
+        1,
+        1
+      ],
+      "band": [
+        0,
+        0
+      ],
+      "bandwidth": [
+        0,
+        0
+      ],
+      "timeout": [
+        0,
+        0
+      ]
+    },
+    "all_commands_completed": true,
+    "all_calibration_quality_validated": false
+  },
+  "corrections": [
+    "CMAC full selected source branch integrated",
+    "RFK PLL and BB/AFE sethw source steps added",
+    "SCC MLO mode corrected from prior experimental 0x2002 to coherent accepted mode1",
+    "B analog RF18 remains informational; selected SYN A and both digital RF18 match channel1",
+    "historical TXGAPK84 and IQK184 report layouts supported without inventing newer fields",
+    "unsupported DPK path_ok==1 assumption removed; unknown semantics preserved"
+  ],
+  "limitations": [
+    "no EVM/spectral/power laboratory validation",
+    "DPK path bitmap and TSSI alignment state semantics unresolved",
+    "coexistence uninitialized research profile only",
+    "network scheduler remains paused; no network interface/association",
+    "no Intel hardware or Linux transport validation",
+    "experimental USB firmware boot still explicitly omits unavailable DCPU0x888"
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/iqk-stage42-usb.bin",
+      "origin": "artifacts/tx-rfk-stage42/rx-7.bin",
+      "sha256": "d02df2cfdce0c47773fdaf33fb52a24ec7e217d9d82d5efcc45195b6bf43a882"
+    },
+    {
+      "path": "tests/fixtures/dpk-stage42-usb.bin",
+      "origin": "artifacts/tx-rfk-stage42/rx-12.bin",
+      "sha256": "8eeccb1a4ba69a9b86a1b382d22b4ddc2f03285077c6dec80dfc1c5274439183"
+    },
+    {
+      "path": "tests/fixtures/tssi-stage42-usb.bin",
+      "origin": "artifacts/tx-rfk-stage42/rx-9.bin",
+      "sha256": "8e7007d71d620c5df616ddd4a826c5e6a7e57ae31ffe45176759ec4d82fb98ed"
+    },
+    {
+      "path": "tests/fixtures/txgapk-stage42-usb.bin",
+      "origin": "artifacts/tx-rfk-stage42/rx-5.bin",
+      "sha256": "0d67d59652d09d3e4c0cb5a9bcdb5b4fdbb3cbe95e8d452c98fdf20f31d568b7"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "artifacts/archer-radio-init-stage42",
+      "sha256": "dcbe4fae42734f9de31ab062ecd132b4606bc071b30bae9bcb15d0165eea40ea"
+    },
+    {
+      "path": "artifacts/archer-rfk-stage42",
+      "sha256": "3dbe4a82e440b84634ef7ba150a817d8e6b8f930cc90ea1f672995abd85ca3f2"
+    },
+    {
+      "path": "artifacts/archer-tx-calibrate-stage42",
+      "sha256": "e371164daed067fef89befee4a40637005f306894facb1d631232bf11f30ab34"
+    },
+    {
+      "path": "artifacts/radio-init-stage42.jsonl",
+      "sha256": "e7792da370fbf4cf537a386364f322ec9b9405a9af47f2ec31ba085ee3bc4366"
+    },
+    {
+      "path": "artifacts/rfk-stage42.jsonl",
+      "sha256": "111e7c5ccfd4a7ad92fc3ce5ffddb7a9cb6e7bb59cf3093df6514db238f5562c"
+    },
+    {
+      "path": "artifacts/tx-rfk-stage42.jsonl",
+      "sha256": "2e469aa4d41a35f542c915d5085f6d8d538f3b23a5e517783c6591e56fc04eb1"
+    },
+    {
+      "path": "artifacts/tests-stage42-final.txt",
+      "sha256": "34eecdd93eca2c7ebcb99e8478c4ded09b0326b24c63def682af15f73d744053"
+    }
+  ]
+}

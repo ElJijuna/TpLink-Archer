@@ -1,0 +1,13 @@
+# RTL8922A CV1 USB2 SCC CMAC0 initialization
+
+`include/archer/cmac_init.hpp` ports the complete selected `cmac_init_be()` call chain from Linux commit `c03c1a14507dfaf8b856c2608f9ac216021fc222`, retained as `artifacts/rtw89-mac_be.c` lines 1187–1840. Constants are resolved from the pinned `rtw89-reg.h`; chip response-rate selector comes from `rtw8922a_rrsr_cfgs`. This is source reconstruction, not new REA binary evidence.
+
+The selected profile is RTL8922A CV1, CMAC0, USB2, SCC. It runs scheduler, address CAM, RX filtering, NAV, spatial reuse, TMAC, TRXPTCL, RMAC/BA CAM, response CSI pages, CMAC common settings, PTCL, and CMAC DMA, in Linux order. The source CCA stage is a no-op. PCIe `is_qta_poh()` branches and preload are false for USB. RTL8922D and CAV-only operations are excluded by the checked identity.
+
+`CmacInitInputs` contains real source-selected DLE metadata: PLE free pages 2059, page bytes 256, CMAC0 RX minimum quota 463, MPDU reserved pages 1, CSI reserved pages 56. The resulting maximum receive MPDU field is 23 units of 512 bytes, CSI start packet ID 2060 and reserved count field 57. RX filter defaults are the source `DEFAULT_BE_RX_FLTR`, not a fabricated permissive sniffer mask.
+
+The caller must hold exclusive initialization ownership with traffic producers stopped, and must already have applied the source USB2 SCC DLE/HFC/DMAC setup and CMAC0 enable. The executor checks chip ID/CV, shared CMAC enables, CMAC0 function/clock bits and PLE readiness before its first write. It does not establish traffic quiescence itself. Address CAM clear polls at 1 us up to 2000 us; BA CAM reset up to 1000 us. The delay callback must actually delay at least 1 us. Register errors or timeouts stop immediately and require lifecycle recovery/reset: this sequence has no generic rollback.
+
+The executor intentionally does not impose write/readback equality on source writes (self-clearing CAM controls in particular). Bounded CAM completion is checked. Initialization reaching its end is evidence of the sequence executing, not a claim of WLAN association or packet exchange. CMAC error interrupt masks, firmware normal-operation settings, station CAM population and interface/port configuration are outside `cmac_init_be()` and still belong to their respective driver lifecycle stages.
+
+Validation: compile with `clang++ -std=c++17 -Wall -Wextra -Werror -Iinclude tests/cmac_init_test.cpp`, then run. Tests cover source-selected CSI/RX/DMA values, all operation widths/masks, prerequisite failure before writes, address CAM timeout stopping before RX configuration, and BA CAM timeout stopping before RMAC writes. No hardware access was performed by this scoped worker.

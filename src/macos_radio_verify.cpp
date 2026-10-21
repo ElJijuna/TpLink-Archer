@@ -8,7 +8,7 @@ int main(){
     archer::with_wlan_io_window(bus,[&]{
         archer::BeRfTransport rf(bus);
         bool expected=true;
-        for(unsigned p=0;p<2;++p)for(auto a:{0u,5u,0x18u,0x10018u,0x42u}){
+        for(unsigned p=0;p<2;++p)for(auto a:{0u,5u,0x18u,0x10018u,0x42u,0xa0u}){
             const auto value=rf.read_full(p,a);
             std::cout<<"{\"result\":\"rf_read\",\"path\":"<<p<<",\"address\":"<<a<<",\"value\":"<<value<<"}"<<std::endl;
             // RF0 mode changes asynchronously after NCTL/firmware startup.

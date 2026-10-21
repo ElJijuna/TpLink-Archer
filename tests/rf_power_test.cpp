@@ -17,6 +17,9 @@ struct Bus:archer::RegisterBus {
 };
 template<class F>void rejects(F f){bool caught=false;try{f();}catch(const std::exception&){caught=true;}assert(caught);}
 int main(){
+    Bus pll;pll.x[0x41]=0;pll.x[0xfd]=0x33;pll.x[0xfe]=0x69;pll.x[0xd1]=0xff;pll.x[0x16]=0;
+    archer::initialize_rfk_pll(pll);
+    assert(pll.x[0xe1]==0xfa && pll.x[0xd1]==0x9f && pll.x[0x16]==0x38);
     Bus adda;adda.r[0x84]=0x80f30007;adda.r[0x244]=0xffffffff;adda.r[0x16]=0;
     archer::enable_adda_power(adda);
     assert(adda.r[0x84]==0x80c30007 && adda.r[0x16]==0xc && adda.r[0x244]==0xefffffff);

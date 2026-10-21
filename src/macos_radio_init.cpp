@@ -6,6 +6,9 @@
 #include "archer/rfk_protocol.hpp"
 #include "archer/hfc_init.hpp"
 #include "archer/dmac_init.hpp"
+#include "archer/cmac_init.hpp"
+#include "archer/channel_bus.hpp"
+#include "archer/trx_path.hpp"
 #include "boot_payload.hpp"
 #include "radio_payload.hpp"
 #include <fstream>
@@ -40,6 +43,8 @@ int main(int argc,char** argv){
         const auto cut=archer::initialize_usb2_scc_dmac_remainder(bus,{true,true,true,archer::DmacReservedMpduInfo{2059,256,1,18}},[]{delay_us(1);});
         std::cout<<"{\"result\":\"dmac_cut_control\",\"requested\":554567152,\"effective\":"<<cut<<"}"<<std::endl;
         archer::enable_cmac0(bus);
+        archer::initialize_usb2_scc_cmac0(bus,{true},[]{delay_us(1);});
+        (void)archer::pause_cmac0_scheduler(bus);
         bus.write(0x84,1,bus.read(0x84,1)|3);bus.write(0x842c,4,0x7ff97ff9);
         for(auto [a,v]:trusted_bb_table)bus.write(a,4,v);
         archer::apply_bb_init_plan(bus,archer::rtl8922a_bb_postinit_plan(),delay_us);
@@ -47,6 +52,9 @@ int main(int argc,char** argv){
         archer::initialize_radio_tables(bus,trusted_radio_tables,sequences,[&](const auto& f){usb.send(f);},delay_us,
             [](unsigned path,unsigned count){std::cout<<"{\"radio_path\":"<<path<<",\"entries\":"<<count<<"}"<<std::endl;});
         std::cout<<"{\"phase\":\"nctl\"}"<<std::endl;
+        for(const auto& op:archer::rtl8922a_scc_bb_sethw_plan())
+            archer::channel_bus_write(bus,op.address,op.mask,op.value);
+        archer::initialize_rfk_pll(bus);
         archer::apply_bb_init_plan(bus,archer::be_nctl_preinit_plan(),delay_us);
         (void)archer::check_be_nctl(bus,delay_us,100);
         archer::apply_bb_init_plan(bus,nctl,delay_us);
@@ -58,8 +66,10 @@ int main(int argc,char** argv){
         std::cout<<"{\"result\":\"scc_radio_nctl_applied\",\"calibration_complete\":false}"<<std::endl;
     };
     if(std::string(argv[1])!="--cold-scc-radio") {
-        for(const auto [a,v]:std::vector<std::pair<unsigned,unsigned>>{{0xe0,3},{0x90,0x6f},{0x80,0xeb},{0x81,0xeb},{0xe1,0x52}})
+        for(const auto [a,v]:std::vector<std::pair<unsigned,unsigned>>{{0xe0,3},{0x90,0x6f},{0x80,0xeb},{0x81,0xeb}})
             if(archer::read_xtal_power_byte(bus,a)!=v)throw std::runtime_error("Powered profile mismatch before reset");
+        const auto pll=archer::read_xtal_power_byte(bus,0xe1);
+        if(pll!=0x52 && pll!=0xfa)throw std::runtime_error("Powered PLL profile mismatch before reset");
         initialize();
     } else archer::with_rf_power_window(bus,initialize,true);
     });

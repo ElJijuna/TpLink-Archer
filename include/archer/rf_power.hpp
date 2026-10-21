@@ -19,7 +19,7 @@ inline void enable_adda_power(RegisterBus& bus) {
     set(0x84,4,0x300000,0);
 }
 inline void write_xtal_power_masked(RegisterBus& bus,unsigned offset,unsigned value,unsigned mask) {
-    unsigned allowed=offset==0xe0?3:offset==0xe1?0x60:offset==0x90||offset==0x80||offset==0x81?255:
+    unsigned allowed=offset==0xe0?3:offset==0xe1?0xf8:offset==0xd1?0x60:offset==0x16?0x38:offset==0x90||offset==0x80||offset==0x81?255:
         offset==0x2d||offset==0x2e?0x40:offset==0xa1?2:0;
     if(!mask||(mask&~allowed)||value>255)throw std::invalid_argument("Unsupported XTAL power write");
     const auto before=read_xtal_power_byte(bus,offset);
@@ -34,6 +34,15 @@ inline void write_xtal_power_masked(RegisterBus& bus,unsigned offset,unsigned va
     }
     if(!done)throw std::runtime_error("XTAL power write timeout");
     if(read_xtal_power_byte(bus,offset)!=expected)throw std::runtime_error("XTAL power field did not latch");
+}
+inline void initialize_rfk_pll(RegisterBus& bus) {
+    const auto id=read_chip_identity(bus);
+    if(id.revision!=1 || id.analog_id!=0x6933 || (bus.read(0x74,4)&0x90000000)!=0x90000000)
+        throw std::runtime_error("RFK PLL requires bound CV1 analog identity and WLAN IO");
+    // rtw8922a_rfk_pll_init, called by phy_dm_init -> rfk_hw_init.
+    write_xtal_power_masked(bus,0xe1,0xf8,0xf8);
+    write_xtal_power_masked(bus,0xd1,0,0x60);
+    write_xtal_power_masked(bus,0x16,0x38,0x38);
 }
 // Fixed power-on subsequence from RTL8922A, then restoration in reverse order.
 // Diagnostic only: no CPU reset, firmware download, channel selection or RF table.
