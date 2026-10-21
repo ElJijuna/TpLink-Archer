@@ -1,5 +1,24 @@
 # Archer USB — investigación y base de controlador
 
+## Checklist resumido — avance estimado: **40 %**
+
+Actualizado: **2026-10-21**, etapa42. Objetivo: controlador Wi-Fi funcional
+para macOS ARM/Intel, con Linux posteriormente.
+
+- [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
+- [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
+- [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
+- [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
+- [ ] Ruta completa de datos Wi-Fi TX/RX — **0/15**.
+- [ ] Escaneo, asociación y seguridad Wi-Fi — **0/15**.
+- [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
+- [ ] Validación física en Mac Intel — **0/5**.
+- [ ] Implementación y validación en Linux — **0/5**.
+
+**40/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
+no del tiempo restante. Compilar para Intel no equivale a validarlo físicamente.
+El adaptador todavía no ofrece conexión Wi-Fi utilizable.
+
 **Estado actual:** CMAC0 completo para el perfil USB2/SCC, DLE/HFC/DMAC,
 tablas de radio y secuencia TXGAPK/IQK/TSSI/DPK ejecutados en el Mac ARM.
 La repetición desde firmware recargado terminó con respuestas OK de todos
