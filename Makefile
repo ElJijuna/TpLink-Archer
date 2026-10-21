@@ -15,7 +15,18 @@ build/sequence-ledger-test: tests/sequence_ledger_test.cpp include/archer/sequen
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/efuse-reader-test: tests/efuse_reader_test.cpp include/archer/efuse_reader.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
-test: build/bb-table-window-test build/rf-power-test build/firmware-boot-test build/firmware-state-test build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test build/bb-postinit-test build/radio-init-test build/dle-init-test build/rfk-protocol-test build/bb-table-window-test build/rf-power-test build/firmware-boot-test build/firmware-state-test build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
+	./build/channel-init-test
+	./build/tssi-protocol-test
+	./build/channel-transition-test
+	./build/dmac-init-test
+	./build/hfc-init-test
+	./build/rfk-log-test
+	./build/mac-reset-test
+	./build/bb-postinit-test
+	./build/radio-init-test
+	./build/dle-init-test
+	./build/rfk-protocol-test
 	./build/bb-table-window-test
 	./build/rf-power-test
 	./build/firmware-boot-test
@@ -110,4 +121,42 @@ build/rf-power-test: tests/rf_power_test.cpp include/archer/rf_power.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 
 build/bb-table-window-test: tests/bb_table_window_test.cpp include/archer/bb_table_window.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+build/radio-init-test: tests/radio_init_test.cpp include/archer/radio_init.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/dle-init-test: tests/dle_init_test.cpp include/archer/dle_init.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/rfk-protocol-test: tests/rfk_protocol_test.cpp include/archer/rfk_protocol.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+build/bb-postinit-test: tests/bb_postinit_test.cpp include/archer/bb_postinit.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+.PHONY: radio-init-universal
+radio-init-universal: | build
+	python3 tools/boot_bundle.py
+	python3 tools/radio_bundle.py
+	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/macos_radio_init.cpp -framework IOKit -framework CoreFoundation -o build/archer-radio-init-universal
+
+build/mac-reset-test: tests/mac_reset_test.cpp include/archer/mac_reset.hpp include/archer/dle_init.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+build/channel-init-test: tests/channel_init_test.cpp include/archer/channel_init.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/tssi-protocol-test: tests/tssi_protocol_test.cpp include/archer/tssi_protocol.hpp include/archer/rfk_protocol.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+.PHONY: rfk-universal radio-verify-universal
+rfk-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_rfk.cpp -framework IOKit -framework CoreFoundation -o build/archer-rfk-universal
+radio-verify-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_radio_verify.cpp -framework IOKit -framework CoreFoundation -o build/archer-radio-verify-universal
+
+test: build/channel-transition-test build/dmac-init-test build/hfc-init-test build/rfk-log-test
+build/channel-transition-test: tests/channel_transition_test.cpp include/archer/channel_transition.hpp include/archer/channel_init.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/dmac-init-test: tests/dmac_init_test.cpp include/archer/dmac_init.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/hfc-init-test: tests/hfc_init_test.cpp include/archer/hfc_init.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/rfk-log-test: tests/rfk_log_test.cpp include/archer/rfk_log.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@

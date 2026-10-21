@@ -1,0 +1,115 @@
+{
+  "device": {
+    "usb_vid": "37ad",
+    "usb_pid": "0104",
+    "silicon": "RTL8922A CV1",
+    "analog_id": "6933",
+    "rfe": 1,
+    "transport": "USB2 480Mbps",
+    "host_tested": "macOS Apple Silicon"
+  },
+  "firmware": {
+    "main": "0.35.41.0",
+    "bbmcu0": "0.1.0.0",
+    "identity_basis": "compile-bound images downloaded in this experiment; not independent resident-version readback"
+  },
+  "applied": {
+    "dle": "USB2 SCC WDE508 PLE2059",
+    "hfc": {
+      "public_pages": 492,
+      "h2c_full_condition_requested": 1,
+      "h2c_full_condition_effective": 0,
+      "control_profile_difference": "0x400"
+    },
+    "dmac_remainder": {
+      "shared_cmac_enable": "0x40000007",
+      "sta_scheduler_and_mlo_polls": "passed",
+      "mpdu_cut_requested": "0x210e05f0",
+      "mpdu_cut_effective": "0x200e05f0"
+    },
+    "radio_a_entries": 1085,
+    "radio_b_entries": 1083,
+    "bb_table_writes": 174,
+    "nctl_entries": 1200
+  },
+  "rfk": {
+    "sequence_numbers": {
+      "pre_notify": 28,
+      "dack": 29,
+      "rxdck": 30
+    },
+    "pre_notify": "terminal OK",
+    "dack": {
+      "terminal": "OK",
+      "timeout_flags": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "dack_fail": 0
+    },
+    "rxdck": {
+      "terminal": "OK",
+      "band": [
+        0,
+        0
+      ],
+      "bandwidth": [
+        0,
+        0
+      ],
+      "channel": [
+        1,
+        1
+      ],
+      "timeout": [
+        0,
+        0
+      ]
+    },
+    "scope": "initial late-init receive/converter calibrations; not channel TX calibration",
+    "report_correlation": "serialized commands with pre-drain; C2H state prefix has no sequence/command/PHY, four extension bytes retained opaque"
+  },
+  "corrections": {
+    "adda": "clear 0x244 bit28; set 0x16 bits3:2; clear 0x84 bits21:20",
+    "prior_dack_failures": "stage30 MSBK3/DRCK1, stage31 MSBK3/DRCK0; fresh load + completed HFC/DMAC + tables produced clear flags",
+    "late_reports": "RXDCK detailed log can follow terminal OK; runner waits for both"
+  },
+  "not_completed": [
+    "complete CMAC trx_init",
+    "channel gain/efuse/trim/power transaction coordinator",
+    "TXGAPK/IQK/DPK/TSSI runtime calibration",
+    "scan/association/network interface",
+    "physical testing on Intel or Linux"
+  ],
+  "evidence": [
+    {
+      "path": "artifacts/archer-radio-init-stage32e",
+      "sha256": "8a9589f83e3f46525afb5fd3462f840b50b0b3172bb595db285f08495d718704"
+    },
+    {
+      "path": "artifacts/radio-init-stage32e.jsonl",
+      "sha256": "4d3aba46cb4d895e368e3ba360482a9ad5b05b22bebaa0a805235846d8e1500a"
+    },
+    {
+      "path": "artifacts/archer-rfk-stage34",
+      "sha256": "368afb6bf1533c08eb2878cd157248a917ce34e9d606ae0179775dd4a8851867"
+    },
+    {
+      "path": "artifacts/rfk-stage34.jsonl",
+      "sha256": "a505424e1d6b9bcdcbb0bb1f3908420ce2959982bd248dde8925280762d78ff7"
+    },
+    {
+      "path": "tests/fixtures/dack-clean-stage34-usb.bin",
+      "sha256": "b2cf9fd866d1b344a10ea878e9ef310d0ded5bbfc439d979a5d9a641f35d941d"
+    },
+    {
+      "path": "tests/fixtures/rxdck-clean-stage34-usb.bin",
+      "sha256": "3ff532f73c94820a99ad83b669a7eeb2edd6813db90c309ab9051295ce7035d0"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "commit": "c03c1a14507dfaf8b856c2608f9ac216021fc222",
+  "files": [
+    {
+      "path": "artifacts/rtw8922a_rfk.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/rtw8922a_rfk.c",
+      "sha256": "0cab67fdbe2f7a780b818212022e2a6c94be18f6b278abca03bef20e08ffe257"
+    },
+    {
+      "path": "artifacts/rtw8922a_rfk.h",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/rtw8922a_rfk.h",
+      "sha256": "11889f7404cf8a88d3228d48874621e59d426db6354600c8150de517c4fc2db9"
+    },
+    {
+      "path": "artifacts/rtw89-core.c",
+      "url": "https://raw.githubusercontent.com/torvalds/linux/c03c1a14507dfaf8b856c2608f9ac216021fc222/drivers/net/wireless/realtek/rtw89/core.c",
+      "sha256": "131e39c92f0ac60ca3a9e581a692b7689c3ed6d0042ca1980a83cb0064aab211"
+    }
+  ]
+}

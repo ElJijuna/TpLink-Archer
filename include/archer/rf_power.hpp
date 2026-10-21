@@ -2,6 +2,22 @@
 #include "archer/xtal_identity.hpp"
 #include <vector>
 namespace archer {
+// rtw8922a_pwr_on_func: prerequisites for the converter calibration clocks.
+// Leaves the documented power-on state active; never toggles MCU resets.
+inline void enable_adda_power(RegisterBus& bus) {
+    if((bus.read(0xfc,4)&255)!=0x71 || ((bus.read(0xf0,4)>>12)&15)!=1 ||
+       (bus.read(0x74,4)&0x90000000)!=0x90000000)
+        throw std::runtime_error("ADDA power requires active RTL8922A CV1 IO");
+    auto set=[&](unsigned a,unsigned width,unsigned mask,unsigned value){
+        const auto old=bus.read(a,width);
+        if(old==0xdeadbeef || old==0xeaeaeaea)throw std::runtime_error("ADDA power control inaccessible");
+        bus.write(a,width,(old&~mask)|value);
+        if((bus.read(a,width)&mask)!=value)throw std::runtime_error("ADDA power control did not latch");
+    };
+    set(0x244,4,1u<<28,0);
+    set(0x16,1,0xc,0xc);
+    set(0x84,4,0x300000,0);
+}
 inline void write_xtal_power_masked(RegisterBus& bus,unsigned offset,unsigned value,unsigned mask) {
     unsigned allowed=offset==0xe0?3:offset==0xe1?0x60:offset==0x90||offset==0x80||offset==0x81?255:
         offset==0x2d||offset==0x2e?0x40:offset==0xa1?2:0;
@@ -21,7 +37,7 @@ inline void write_xtal_power_masked(RegisterBus& bus,unsigned offset,unsigned va
 }
 // Fixed power-on subsequence from RTL8922A, then restoration in reverse order.
 // Diagnostic only: no CPU reset, firmware download, channel selection or RF table.
-inline void with_rf_power_window(RegisterBus& bus,const std::function<void()>& inspect) {
+inline void with_rf_power_window(RegisterBus& bus,const std::function<void()>& inspect,bool keep_enabled_on_success=false) {
     if((bus.read(0xfc,4)&255)!=0x71||((bus.read(0xf0,4)>>12)&15)!=1||
        ((bus.read(0x3f0,4)>>16)&0x3ff)!=0x220||(bus.read(0x74,4)&0x90000000)!=0x90000000)
         throw std::runtime_error("RF power prerequisites missing");
@@ -52,6 +68,7 @@ inline void with_rf_power_window(RegisterBus& bus,const std::function<void()>& i
         mmio(0xcc,1,4,4);mmio(0,2,0x100,0x100);mmio(0,2,0x8000,0);bus.pause();mmio(0,2,0x4000,0);mmio(0xcc,1,4,0);
         inspect();
     }catch(...){failure=std::current_exception();}
+    if(!failure&&keep_enabled_on_success)return;
     std::string errors;
     for(auto i=undo.rbegin();i!=undo.rend();++i){try{(*i)();}catch(const std::exception& e){errors+=std::string(e.what())+"; ";}}
     if(!errors.empty())throw std::runtime_error("RF power restoration failed: "+errors);

@@ -5,47 +5,8 @@
 #include "archer/rf_transport.hpp"
 #include "archer/rf_power.hpp"
 #include "boot_payload.hpp"
-class BootUsb {
-    IOUSBInterfaceInterface300** usb=nullptr;bool opened=false;UInt8 output=0;
-public:
-    BootUsb(){
-        io_iterator_t iterator=0;
-        if(IOServiceGetMatchingServices(kIOMainPortDefault,IOServiceMatching("IOUSBHostInterface"),&iterator))throw std::runtime_error("Cannot enumerate boot USB");
-        io_service_t selected=0;unsigned matches=0;
-        while(auto service=IOIteratorNext(iterator)){
-            if(mac_usb_number(service,CFSTR("idVendor"))==0x37ad&&mac_usb_number(service,CFSTR("idProduct"))==0x0104&&mac_usb_number(service,CFSTR("bInterfaceNumber"))==0){
-                ++matches;if(!selected){selected=service;continue;}
-            }
-            IOObjectRelease(service);
-        }
-        IOObjectRelease(iterator);
-        if(matches!=1){if(selected)IOObjectRelease(selected);throw std::runtime_error("Expected one boot interface");}
-        IOCFPlugInInterface** plugin=nullptr;SInt32 score=0;
-        auto status=IOCreatePlugInInterfaceForService(selected,kIOUSBInterfaceUserClientTypeID,kIOCFPlugInInterfaceID,&plugin,&score);
-        IOObjectRelease(selected);
-        if(status||!plugin)throw std::runtime_error("Cannot create boot USB client");
-        auto q=(*plugin)->QueryInterface(plugin,CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID300),reinterpret_cast<LPVOID*>(&usb));
-        IODestroyPlugInInterface(plugin);
-        if(q||!usb)throw std::runtime_error("Boot interface unavailable");
-        try{
-            status=(*usb)->USBInterfaceOpen(usb);if(status)throw std::runtime_error("Cannot acquire boot USB interface");opened=true;
-            UInt8 count=0;if((*usb)->GetNumEndpoints(usb,&count)||count!=9)throw std::runtime_error("Unexpected boot endpoints");
-            for(UInt8 pipe=1;pipe<=count;++pipe){
-                UInt8 dir=0,ep=0,type=0,interval=0;UInt16 packet=0;
-                if((*usb)->GetPipeProperties(usb,pipe,&dir,&ep,&type,&packet,&interval))throw std::runtime_error("Cannot inspect boot pipes");
-                if(dir==kUSBOut&&ep==7&&type==kUSBBulk&&packet==512){if(output)throw std::runtime_error("Ambiguous boot output");output=pipe;}
-            }
-            if(!output)throw std::runtime_error("USB2 endpoint 0x07 absent");
-        }catch(...){close();throw;}
-    }
-    void close(){if(usb){if(opened)(*usb)->USBInterfaceClose(usb);(*usb)->Release(usb);usb=nullptr;}}
-    ~BootUsb(){close();}
-    void send(const std::vector<std::uint8_t>& frame){
-        auto status=(*usb)->WritePipeTO(usb,output,const_cast<std::uint8_t*>(frame.data()),frame.size(),500,1000);
-        std::cout<<"{\"operation\":\"firmware_bulk_write\",\"bytes\":"<<frame.size()<<",\"status\":"<<status<<"}"<<std::endl;
-        if(status)throw std::runtime_error("Firmware write failed; no retry");
-    }
-};
+#include "archer/macos_bulk.hpp"
+using BootUsb=MacBulkChannel;
 int main(int argc,char** argv){
     const bool verify_loaded=argc==2&&std::string(argv[1])=="--verify-loaded-rf";
     const bool usb_no_dcpu=argc==2&&std::string(argv[1])=="--boot-usb-no-dcpu";
