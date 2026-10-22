@@ -7,8 +7,8 @@
 #include <filesystem>
 #include <fstream>
 int main(int argc,char** argv){
- if(argc!=3 || (std::string(argv[1])!="--receive-channel1" && std::string(argv[1])!="--receive-channel1-reset-counters" && std::string(argv[1])!="--diagnostic-rmac-channel1")){
-    std::cerr<<"Usage: archer-passive-rx {--receive-channel1|--receive-channel1-reset-counters|--diagnostic-rmac-channel1} NEW_DIRECTORY\n";return 2;
+ if(argc!=3 || (std::string(argv[1])!="--receive-channel1" && std::string(argv[1])!="--receive-channel1-reset-counters" && std::string(argv[1])!="--diagnostic-rmac-channel1" && std::string(argv[1])!="--diagnostic-bc-clear" && std::string(argv[1])!="--diagnostic-sniffer" && std::string(argv[1])!="--diagnostic-response-engine")){
+    std::cerr<<"Usage: archer-passive-rx {--receive-channel1|--receive-channel1-reset-counters|--diagnostic-rmac-channel1|--diagnostic-bc-clear|--diagnostic-sniffer|--diagnostic-response-engine} NEW_DIRECTORY\n";return 2;
  }
  try{
     const std::filesystem::path directory=argv[2];
@@ -30,7 +30,8 @@ int main(int argc,char** argv){
             const auto snapshot=[&](const char* phase){
                 // Source RTL8922A PMAC map, BB aperture +0x20000; no clear/reset.
                 for(unsigned a:{0x7880u,0x8400u,0x8404u,0x8914u,0x8938u,0x9058u,
-                    0x10c00u,0x10c84u,0x11400u,0x11404u,0x20730u,0x20e24u,0x22e10u,0x22e14u,
+                    0x10c00u,0x10c84u,0x11400u,0x11404u,0x20704u,0x20980u,0x20988u,0x20994u,0x209a4u,
+                    0x20730u,0x20e24u,0x22e10u,0x22e14u,
                     0x20e64u,0x20e60u,0x20e5cu,0x20e58u}){
                     const auto v=archer::channel_bus_read(bus,a);
                     std::cout<<"{\"operation\":\"rx_snapshot\",\"phase\":\""<<phase
@@ -70,7 +71,10 @@ int main(int argc,char** argv){
                 }
             }
             snapshot("after");
-        },std::string(argv[1])=="--diagnostic-rmac-channel1");
+        },std::string(argv[1])=="--diagnostic-rmac-channel1",
+            std::string(argv[1])=="--diagnostic-bc-clear"?archer::RxAcceptance::broadcast_bit_clear:
+            std::string(argv[1])=="--diagnostic-sniffer"?archer::RxAcceptance::sniffer:
+            std::string(argv[1])=="--diagnostic-response-engine"?archer::RxAcceptance::response_engine:archer::RxAcceptance::broadcast);
         if(archer::channel_bus_read(bus,0x10398)&0x3ffff)
             throw std::runtime_error("TX scheduler no longer paused");
     });

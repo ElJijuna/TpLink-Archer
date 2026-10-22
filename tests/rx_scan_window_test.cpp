@@ -17,6 +17,12 @@ int main(){
  b.r[0x11400]=0x20f3e000;auto diagnostic_original=b.r;
  archer::with_passive_rx_window(b,[&]{assert(b.r[0x11400]==0x20f3e001);},true);
  assert(b.r==diagnostic_original);original=b.r;
+ for(auto mode:{archer::RxAcceptance::broadcast_bit_clear,archer::RxAcceptance::sniffer}){
+   archer::with_passive_rx_window(b,[&]{assert((b.r[0x11420]&0x7bff)==(mode==archer::RxAcceptance::sniffer?5u:0u));},false,mode);
+   assert(b.r==original);
+ }
+ archer::with_passive_rx_window(b,[&]{assert(b.r[0x10000]&0x80);assert(!(b.r[0x10398]&0x3ffff));},false,archer::RxAcceptance::response_engine);
+ assert(b.r==original);
  rejects([&]{archer::with_passive_rx_window(b,[]{throw std::runtime_error("receive failed");});});assert(b.r==original);
  for(unsigned i=1;i<=5;++i){Bus f;auto saved=f.r;f.fail=i;rejects([&]{archer::with_passive_rx_window(f,[]{});});assert(f.r==saved);}
  Bus sixth;sixth.r[0x11400]=0x20f3e000;auto saved=sixth.r;sixth.fail=6;

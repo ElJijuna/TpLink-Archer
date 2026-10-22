@@ -2,17 +2,23 @@
 #include "archer/channel_bus.hpp"
 #include <array>
 namespace archer {
-// Fixed MAC0 diagnostic window, not the Linux scan lifecycle. No retune/TX.
+enum class RxAcceptance { broadcast, broadcast_bit_clear, sniffer, response_engine };
+// Fixed MAC0 diagnostic window, not the Linux scan lifecycle. No retune or
+// host TX submission. response_engine can permit automatic hardware responses.
 inline void with_passive_rx_window(RegisterBus& bus,const std::function<void()>& receive,
-    bool diagnostic_enable_rmac_channel=false) {
+    bool diagnostic_enable_rmac_channel=false,RxAcceptance acceptance=RxAcceptance::broadcast) {
+    if(acceptance!=RxAcceptance::broadcast && acceptance!=RxAcceptance::broadcast_bit_clear && acceptance!=RxAcceptance::sniffer && acceptance!=RxAcceptance::response_engine)
+        throw std::invalid_argument("Unknown RX acceptance diagnostic");
     if((channel_bus_read(bus,0xfc)&255)!=0x71 ||
        !(channel_bus_read(bus,0x10000)&0x40000000) ||
        (channel_bus_read(bus,0x10398)&0x3ffff))
         throw std::runtime_error("Passive RX requires RTL8922A CMAC0 with TX paused");
     constexpr std::array<unsigned,6> addr{0x10000,0x11424,0x1142c,0x11428,0x11420,0x11400};
     constexpr std::array<unsigned,6> mask{0x80,0xffff,0xffff,0xffff,0x7bff,1};
-    // Disable response-packet engine; reject control/data; admit beacon/probe response.
-    constexpr std::array<unsigned,6> value{0,0,0,0x120,4,1};
+    // Normally disable response engine; explicit diagnostic can enable it.
+    // Reject control/data; admit beacon/probe response (sniffer effect is empirical).
+    const std::array<unsigned,6> value{acceptance==RxAcceptance::response_engine?0x80u:0u,0,0,0x120,
+        acceptance==RxAcceptance::broadcast_bit_clear?0u:acceptance==RxAcceptance::sniffer?5u:4u,1};
     const unsigned count=diagnostic_enable_rmac_channel?6:5;
     std::array<unsigned,6> saved{};
     for(unsigned i=0;i<count;++i)saved[i]=channel_bus_read(bus,addr[i]);

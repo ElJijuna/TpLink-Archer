@@ -1,0 +1,237 @@
+{
+  "stage": 48,
+  "scope": "single-condition RX diagnostics; no host TX submissions",
+  "observations": {
+    "stage48a": {
+      "result": {
+        "result": "passive_rx_window_restored",
+        "transfers": 0,
+        "normal_packets": 0,
+        "beacons": 0,
+        "probe_responses": 0,
+        "descriptor_errors": 0,
+        "unparsed": 0,
+        "network_tx_paused": true
+      },
+      "after": {
+        "0x7880": 7,
+        "0x8400": 4294921856,
+        "0x8404": 4294967295,
+        "0x8914": 0,
+        "0x8938": 85,
+        "0x9058": 98893881,
+        "0x10c00": 0,
+        "0x10c84": 0,
+        "0x11400": 552853504,
+        "0x11404": 786543,
+        "0x20730": 2,
+        "0x20e24": 585,
+        "0x22e10": 3218848,
+        "0x22e14": 12321111,
+        "0x20e64": 1048640,
+        "0x20e60": 655362,
+        "0x20e5c": 0,
+        "0x20e58": 0
+      },
+      "ple": [
+        {
+          "operation": "ple_snapshot",
+          "phase": "before",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after_counter_reset",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        }
+      ]
+    },
+    "stage48b": {
+      "result": {
+        "result": "passive_rx_window_restored",
+        "transfers": 0,
+        "normal_packets": 0,
+        "beacons": 0,
+        "probe_responses": 0,
+        "descriptor_errors": 0,
+        "unparsed": 0,
+        "network_tx_paused": true
+      },
+      "after": {
+        "0x7880": 7,
+        "0x8400": 4294921856,
+        "0x8404": 4294967295,
+        "0x8914": 0,
+        "0x8938": 85,
+        "0x9058": 98893881,
+        "0x10c00": 0,
+        "0x10c84": 0,
+        "0x11400": 552853504,
+        "0x11404": 786543,
+        "0x20730": 2,
+        "0x20e24": 636,
+        "0x22e10": 5446828,
+        "0x22e14": 15335922,
+        "0x20e64": 1703987,
+        "0x20e60": 458755,
+        "0x20e5c": 0,
+        "0x20e58": 0
+      },
+      "ple": [
+        {
+          "operation": "ple_snapshot",
+          "phase": "before",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after_counter_reset",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        }
+      ]
+    },
+    "stage48c": {
+      "result": {
+        "result": "passive_rx_window_restored",
+        "transfers": 0,
+        "normal_packets": 0,
+        "beacons": 0,
+        "probe_responses": 0,
+        "descriptor_errors": 0,
+        "unparsed": 0,
+        "network_tx_paused": true
+      },
+      "after": {
+        "0x7880": 7,
+        "0x8400": 4294921856,
+        "0x8404": 4294967295,
+        "0x8914": 0,
+        "0x8938": 85,
+        "0x9058": 98893881,
+        "0x10c00": 0,
+        "0x10c84": 0,
+        "0x11400": 552853504,
+        "0x11404": 786543,
+        "0x20704": 1612582146,
+        "0x20980": 21072,
+        "0x20988": 1010581760,
+        "0x20994": 0,
+        "0x209a4": 0,
+        "0x20730": 2,
+        "0x20e24": 855,
+        "0x22e10": 7018590,
+        "0x22e14": 12517697,
+        "0x20e64": 1572909,
+        "0x20e60": 131075,
+        "0x20e5c": 0,
+        "0x20e58": 0
+      },
+      "ple": [
+        {
+          "operation": "ple_snapshot",
+          "phase": "before",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after_counter_reset",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        }
+      ]
+    },
+    "stage48d": {
+      "result": {
+        "result": "passive_rx_window_restored",
+        "transfers": 0,
+        "normal_packets": 0,
+        "beacons": 0,
+        "probe_responses": 0,
+        "descriptor_errors": 0,
+        "unparsed": 0,
+        "network_tx_paused": true
+      },
+      "after": {
+        "0x7880": 7,
+        "0x8400": 4294921856,
+        "0x8404": 4294967295,
+        "0x8914": 0,
+        "0x8938": 85,
+        "0x9058": 98893881,
+        "0x10c00": 0,
+        "0x10c84": 0,
+        "0x11400": 552853504,
+        "0x11404": 786543,
+        "0x20704": 1612582146,
+        "0x20980": 21072,
+        "0x20988": 1010581760,
+        "0x20994": 0,
+        "0x209a4": 0,
+        "0x20730": 2,
+        "0x20e24": 564,
+        "0x22e10": 2168357,
+        "0x22e14": 15925503,
+        "0x20e64": 1310762,
+        "0x20e60": 393220,
+        "0x20e5c": 0,
+        "0x20e58": 0
+      },
+      "ple": [
+        {
+          "operation": "ple_snapshot",
+          "phase": "before",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after_counter_reset",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        }
+      ]
+    }
+  },
+  "files": {
+    "artifacts/passive-rx-stage48a.jsonl": "b16e847ff45a9ee9cc8d10139b9ae919f1b57bb91a8926c214aa7be17866e3ef",
+    "artifacts/passive-rx-stage48a.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/passive-rx-stage48b.jsonl": "64306c310a226244c352010923d2e55f05a30c03c882321828923dedfd8bdd17",
+    "artifacts/passive-rx-stage48b.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/passive-rx-stage48c.jsonl": "1b24fc6059f96c39216889f1a3f54ccc23f5e26efffde8beb093e92e052f8a02",
+    "artifacts/passive-rx-stage48c.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/passive-rx-stage48d.jsonl": "0be7a9619c23eea364222b21aa04d3d2cd259c41f6bf5b7eb48c17f6bac0e752",
+    "artifacts/passive-rx-stage48d.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/archer-passive-rx-stage48d": "3ba30148d0f37f9e3716553c53c8a213786960e669803f5257cd82d5c8c3e45c",
+    "artifacts/tests-stage48-final.txt": "cf8fb5ab3ee007ce4d3d873d41d1860c68142054a65866e41351522605b44d03"
+  },
+  "limitation": "Exact executable retained for stage48d only; earlier iterations have traces without retained executable."
+}
