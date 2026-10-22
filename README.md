@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **40 %**
 
-Actualizado: **2026-10-21**, etapa43. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-21**, etapa44. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -35,6 +35,11 @@ de 124 bytes sin errores de descriptor y con cabecera sin convertir. Esto
 valida el análisis de esa captura; falta recepción reproducible con CMAC
 actual, validación de tramas y escaneo pasivo. El avance permanece en **40 %**.
 Detalles: [research/STAGE43.md](research/STAGE43.md).
+
+Etapa44: parser offline de beacons/probe-responses con límites de cabecera e
+información variable, probado con tramas sintéticas. FCS requiere política
+explícita; todavía falta comprobar recepción pasiva con CMAC actual.
+Detalles y uso: [research/STAGE44.md](research/STAGE44.md).
 
 
 Proyecto experimental para TP-Link USB `37ad:0104`, con destino macOS Intel/Apple Silicon y Linux posteriormente.

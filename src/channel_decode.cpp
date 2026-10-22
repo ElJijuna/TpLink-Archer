@@ -1,18 +1,26 @@
 #include "archer/rx_descriptor.hpp"
+#include "archer/beacon.hpp"
 #include <fstream>
 #include <iostream>
 #include <iterator>
 
 int main(int argc, char** argv) {
-    if (argc != 2) { std::cerr << "Usage: archer-decode RX_TRANSFER_FILE\n"; return 2; }
+    if (argc != 2 && argc != 3) { std::cerr << "Usage: archer-decode RX_TRANSFER_FILE [--fcs-appended|--fcs-stripped]\n"; return 2; }
     try {
+        auto fcs=archer::RxFcsPolicy::unknown;
+        if(argc==3){
+            const std::string option=argv[2];
+            if(option=="--fcs-appended")fcs=archer::RxFcsPolicy::appended;
+            else if(option=="--fcs-stripped")fcs=archer::RxFcsPolicy::stripped;
+            else throw std::invalid_argument("Unknown FCS option");
+        }
         std::ifstream file(argv[1], std::ios::binary | std::ios::ate);
         if (!file || file.tellg() < 0 || file.tellg() > 1024 * 1024)
             throw std::runtime_error("Expected readable RX transfer of at most 1 MiB");
         file.seekg(0);
         std::vector<std::uint8_t> bytes{std::istreambuf_iterator<char>(file), {}};
         if (file.bad()) throw std::runtime_error("RX file read failed");
-        auto packets = archer::decode_be_rx_metadata(bytes);
+        auto packets = archer::decode_be_rx_metadata(bytes,fcs);
         for (const auto& metadata : packets) {
             const auto& packet = metadata.packet;
             std::cout << "{\"descriptor_offset\":" << packet.descriptor_offset
@@ -28,7 +36,20 @@ int main(int argc, char** argv) {
                           << ",\"header_converted\":";
                 if (metadata.header_converted) std::cout << (*metadata.header_converted ? "true" : "false");
                 else std::cout << "null";
-                std::cout << ",\"fcs_policy\":\"unknown\"";
+                std::cout << ",\"fcs_policy\":\"" << (fcs==archer::RxFcsPolicy::unknown ? "unknown" :
+                    fcs==archer::RxFcsPolicy::appended ? "appended" : "stripped") << "\"";
+                if(fcs!=archer::RxFcsPolicy::unknown && metadata.normal_80211_candidate()){
+                    try {
+                        const auto beacon=archer::decode_rx_beacon(bytes,metadata);
+                        std::cout << ",\"management_kind\":\"" << (beacon.probe_response ? "probe_response" : "beacon")
+                                  << "\",\"ssid_bytes\":" << beacon.ssid.size()
+                                  << ",\"interval_tu\":" << beacon.interval_tu;
+                        if(beacon.advertised_ds_channel)
+                            std::cout << ",\"advertised_ds_channel\":" << *beacon.advertised_ds_channel;
+                    }catch(const std::invalid_argument&){
+                        std::cout << ",\"management_kind\":null";
+                    }
+                }
             }
             if (packet.c2h) std::cout << ",\"category\":" << packet.c2h->category
                                     << ",\"class\":" << packet.c2h->command_class

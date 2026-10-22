@@ -5,7 +5,7 @@ namespace archer {
 // Unknown remains unknown: callers must not silently strip four payload bytes.
 enum class RxFcsPolicy { unknown, appended, stripped };
 struct BeRxMetadata {
-    RxPacket packet;
+    RxPacket packet{};
     unsigned descriptor_bytes=0, metadata_bytes=0;
     unsigned frame_type=0, mac_id=0, security_type=0;
     unsigned bandwidth_code=0, rate_code=0, gi_ltf_code=0, ppdu_type=0, ppdu_count=0;
