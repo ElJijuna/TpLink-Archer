@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **40 %**
 
-Actualizado: **2026-10-21**, etapa45. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-21**, etapa46. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -45,6 +45,12 @@ Etapa45: ventana RX probada físicamente durante cinco segundos en ARM:
 filtros y motor de respuestas restaurados, TX pausado, **0 transferencias**.
 Falta localizar el bloqueo del recorrido RX; avance **40 %**.
 Evidencia: [research/STAGE45.md](research/STAGE45.md).
+
+Etapa46: contadores PHY reiniciados y medidos físicamente: **CCK376,
+OFDM31 y HT5 paquetes con CRC correcto** durante cinco segundos, pero
+**0 transferencias USB**. La radio decodifica tráfico; falta aislar el bloqueo
+posterior en RMAC/DLE/despacho/USB. Avance **40 %**.
+Evidencia: [research/STAGE46.md](research/STAGE46.md).
 
 
 Proyecto experimental para TP-Link USB `37ad:0104`, con destino macOS Intel/Apple Silicon y Linux posteriormente.

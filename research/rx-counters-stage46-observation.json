@@ -1,0 +1,314 @@
+{
+  "stage": 46,
+  "result": {
+    "result": "passive_rx_window_restored",
+    "transfers": 0,
+    "normal_packets": 0,
+    "beacons": 0,
+    "probe_responses": 0,
+    "descriptor_errors": 0,
+    "unparsed": 0,
+    "network_tx_paused": true
+  },
+  "counter_reset": true,
+  "counter_history_discarded": true,
+  "files": {
+    "artifacts/archer-passive-rx-stage46b": "5f7c3cacaa9bb4cbd48377bb975604fd0339d74cb7634a6b3455799564f69b24",
+    "artifacts/passive-rx-stage46.jsonl": "f1452979391a49604bfddb4e38b7ed8eaf9082119a83902b880b8b844b7a4e3e",
+    "artifacts/passive-rx-stage46.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/passive-rx-stage46b.jsonl": "e59ae582f9f6d8544516d052a7c5018d6b3ce328200b9c946aaada8a68c2a9b2",
+    "artifacts/passive-rx-stage46b.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tests-stage46-final.txt": "977340aacadf008b5ed8592f893610359a9b72deda3641df1de15f0a7bb202b3"
+  },
+  "snapshots": [
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 30848,
+      "value": 7
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 33792,
+      "value": 4294921856
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 33796,
+      "value": 4294967295
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 35092,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 35128,
+      "value": 85
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 36952,
+      "value": 98893881
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 68608,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 68740,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 132912,
+      "value": 2
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 134692,
+      "value": 65535
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 142864,
+      "value": 4294967295
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 142868,
+      "value": 4294967295
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 134756,
+      "value": 4294967295
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 134752,
+      "value": 4294967295
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 134748,
+      "value": 83493008
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "before",
+      "address": 134744,
+      "value": 1769809
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 30848,
+      "value": 7
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 33792,
+      "value": 4294921856
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 33796,
+      "value": 4294967295
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 35092,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 35128,
+      "value": 85
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 36952,
+      "value": 98893881
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 68608,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 68740,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 132912,
+      "value": 2
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 134692,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 142864,
+      "value": 5
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 142868,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 134756,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 134752,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 134748,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after_counter_reset",
+      "address": 134744,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 30848,
+      "value": 7
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 33792,
+      "value": 4294921856
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 33796,
+      "value": 4294967295
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 35092,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 35128,
+      "value": 85
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 36952,
+      "value": 98893881
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 68608,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 68740,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 132912,
+      "value": 2
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 134692,
+      "value": 681
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 142864,
+      "value": 2890827
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 142868,
+      "value": 15597944
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 134756,
+      "value": 2031647
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 134752,
+      "value": 393221
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 134748,
+      "value": 0
+    },
+    {
+      "operation": "rx_snapshot",
+      "phase": "after",
+      "address": 134744,
+      "value": 0
+    }
+  ],
+  "limitation": "Stage46a executable was not retained; stage46b executable is retained with exact hash."
+}

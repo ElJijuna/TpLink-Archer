@@ -20,6 +20,7 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/rx-descriptor-test
 	./build/beacon-test
 	./build/rx-scan-window-test
+	./build/rx-counters-test
 	./build/tssi-protocol-test
 	./build/channel-transition-test
 	./build/dmac-init-test
@@ -187,6 +188,9 @@ build/tx-rfk-physical-test: tests/tx_rfk_physical_test.cpp include/archer/tx_rfk
 test: build/rx-descriptor-test
 test: build/beacon-test
 test: build/rx-scan-window-test
+test: build/rx-counters-test
+build/rx-counters-test: tests/rx_counters_test.cpp include/archer/rx_counters.hpp include/archer/channel_bus.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
 build/rx-scan-window-test: tests/rx_scan_window_test.cpp include/archer/rx_scan_window.hpp include/archer/channel_bus.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/beacon-test: tests/beacon_test.cpp include/archer/beacon.hpp include/archer/rx_descriptor.hpp include/archer/firmware_channel.hpp | build
