@@ -7,6 +7,8 @@
 #include "archer/physts_window.hpp"
 #include "archer/beacon.hpp"
 #include "archer/usb_rx_aggregation.hpp"
+#include "archer/ple_probe.hpp"
+#include "archer/rx_counters.hpp"
 #include <filesystem>
 #include <fstream>
 class ContextReservation {
@@ -93,7 +95,27 @@ int main(int argc,char** argv){
                 for(unsigned i=0;i<6;++i)command();
                 std::cout<<"{\"phase\":\"context_sequence_ready\",\"dmac_submission_only\":true}"<<std::endl;
                 std::exception_ptr capture_error;
-                try{const auto end=std::chrono::steady_clock::now()+std::chrono::seconds(5);while(std::chrono::steady_clock::now()<end){receive(0,true);receive(1,true);if(session.phase()==archer::ContextPhase::uncertain)throw std::runtime_error("Late context error");}}
+                try{
+                    archer::reset_rx_diagnostic_counters(bus);
+                    const auto start=std::chrono::steady_clock::now(),end=start+std::chrono::seconds(5);
+                    const auto snapshot=[&]{
+                        constexpr std::array<unsigned,10> addresses{0x114f4,0x10c00,0x10c84,0x8914,0x20e24,0x22e14,0x20e64,0x20e60,0x7880,0x10000};
+                        std::array<unsigned,10> values{};
+                        for(unsigned i=0;i<addresses.size();++i)values[i]=archer::channel_bus_read(bus,addresses[i]);
+                        const auto empty=archer::ple_debug_read(bus,7,0),quota=archer::ple_debug_read(bus,1,6);
+                        const auto ms=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-start).count();
+                        std::cout<<"{\"operation\":\"rx_path_snapshot\",\"elapsed_ms\":"<<ms<<",\"values\":[";
+                        for(unsigned i=0;i<values.size();++i){if(i)std::cout<<',';std::cout<<values[i];}
+                        std::cout<<"],\"ple_group0_empty\":"<<empty<<",\"quota6_raw\":"<<quota<<"}"<<std::endl;
+                    };
+                    snapshot();auto next=start+std::chrono::milliseconds(250);
+                    while(std::chrono::steady_clock::now()<end){
+                        receive(0,true);receive(1,true);
+                        if(session.phase()==archer::ContextPhase::uncertain)throw std::runtime_error("Late context error");
+                        if(std::chrono::steady_clock::now()>=next){snapshot();next=std::chrono::steady_clock::now()+std::chrono::milliseconds(250);}
+                    }
+                    snapshot();
+                }
                 catch(...){capture_error=std::current_exception();}
                 if(session.phase()==archer::ContextPhase::ready){session.begin_removal();for(unsigned i=0;i<3;++i)command();}
                 if(capture_error)std::rethrow_exception(capture_error);

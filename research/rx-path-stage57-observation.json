@@ -1,0 +1,53 @@
+{
+  "stage": 57,
+  "date": "2026-10-22",
+  "files": {
+    "artifacts/archer-context-rx-stage57": "0cae504fbe59423c2e2ac54b7d9cdc08c1f1e785366a9dec83ae58c20a20aa8d",
+    "artifacts/context-rx-stage57.jsonl": "8950898de14ff1918fe6e4737c6df16a6d73ba33ab89703f1e1e63795df3586a",
+    "artifacts/context-rx-stage57.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/rx-path-stage57-summary.json": "04ecda52d2ba3f6fb5b9535fb773cd64079d787fe254686e44844ac0e9afb133",
+    "artifacts/passive-rx-stage57-baseline.jsonl": "0c560510624562f0140d6f61433aa208d5de660cd3a644bf902aeee7c35af40c",
+    "artifacts/passive-rx-stage57-baseline.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/radio-init-stage57-recovery.jsonl": "0f0b8c49eb33bef78b117df0599e2eea4d361b7efe42e9695d0df84356306ebe",
+    "artifacts/radio-init-stage57-recovery.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/rfk-stage57-recovery.jsonl": "b4cd1bbfe06acd809ce2997dadafeb7517b48782ad1ad35b08037b0ee6943139",
+    "artifacts/rfk-stage57-recovery.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tx-rfk-stage57-recovery.jsonl": "0ce9778831bf4b53bd9340e9df0d720a3c6fa8a4b8dfa92b5e2bd78626cc4ab9",
+    "artifacts/tx-rfk-stage57-recovery.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/passive-rx-stage57-recovered.jsonl": "96e4adfbd64b1b8e8893eefbe94c71e2c25b1bcdba781f8e299a668cff3b8245",
+    "artifacts/passive-rx-stage57-recovered.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tests-stage57.txt": "141b0b0a78098ae45e0cc20c2153a42d5a3b3e0091c2b603be06815941b52c10",
+    "artifacts/archer-radio-init-stage42": "dcbe4fae42734f9de31ab062ecd132b4606bc071b30bae9bcb15d0165eea40ea",
+    "artifacts/archer-rfk-stage42": "3dbe4a82e440b84634ef7ba150a817d8e6b8f930cc90ea1f672995abd85ca3f2",
+    "artifacts/archer-tx-calibrate-stage42": "e371164daed067fef89befee4a40637005f306894facb1d631232bf11f30ab34"
+  },
+  "rx_path_summary": {
+    "samples": 21,
+    "elapsed_ms": 5018,
+    "phy_crc_ok_delta": {
+      "cck": 0,
+      "ofdm": 0,
+      "ht": 0
+    },
+    "rmac_timeout_flags_or": 89,
+    "rx_dma_flags_or": 0,
+    "rx_dma_flags1_or": 0,
+    "host_rx_stop_samples": 0,
+    "hci_rx_disabled_samples": 0,
+    "cmac_rx_disabled_samples": 0,
+    "ple_group0_nonempty_samples": 0,
+    "quota6_peak_used": 0,
+    "limitation": "Sequential sampled reads, not continuous or atomic; no inferred RMAC packet count"
+  },
+  "recovered_phy_crc_ok_final": {
+    "cck": 349,
+    "ofdm": 49,
+    "ht": 0
+  },
+  "limits": [
+    "RMAC flags already present at first sample: no proven transition/time of onset.",
+    "No per-command PHY measurement before context creation.",
+    "Recovered base: context removed, no fresh context run after recovery.",
+    "DPK/TSSI quality semantics still unresolved."
+  ]
+}
