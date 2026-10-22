@@ -1,0 +1,34 @@
+{
+  "stage": 51,
+  "result": {
+    "result": "passive_rx_window_restored",
+    "transfers": 0,
+    "normal_packets": 0,
+    "beacons": 0,
+    "probe_responses": 0,
+    "descriptor_errors": 0,
+    "unparsed": 0,
+    "network_tx_paused": true
+  },
+  "port_reads": [
+    122907,
+    122907,
+    122887,
+    122887,
+    122887,
+    122887,
+    122887,
+    122907
+  ],
+  "port_fields_restored": true,
+  "role_commands_sent": false,
+  "files": {
+    "artifacts/archer-passive-rx-stage51b": "ff4f0578773db0cec9232f9e0b8775688fa1ea2dab892f9ba73a415c2b30fdc5",
+    "artifacts/passive-rx-stage51.jsonl": "4f7ee3ee822710e0c0cb0f1afc843b72d79cc77d105d73a58515431a0ab41df0",
+    "artifacts/passive-rx-stage51.stderr": "cde7f1672d1f6158b2cd571e40e66bcd338124cc6a4069a384c9ee394cfb0a92",
+    "artifacts/passive-rx-stage51b.jsonl": "f8319662daee13c65576dae9c6e20fe365d46b9fb56ff40548003a3b0cd69e80",
+    "artifacts/passive-rx-stage51b.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tests-stage51-final.txt": "0733bac2bcc84ab999d36677901b961fc137a67ee4db9f15481ce1d6a8efda39"
+  },
+  "limitation": "First stage51 executable not retained; its trace records a guard refusal before port writes. Stage51b exact executable retained."
+}
