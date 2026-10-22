@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **40 %**
 
-Actualizado: **2026-10-22**, etapa58. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-22**, etapa59. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -113,6 +113,12 @@ Etapa58: desde la base recuperada, PHY siguió recibiendo tras cada comando
 y después de retirar el contexto. No se reprodujo la parada anterior ni se
 aisló su causa. RX USB normal continúa en0. Avance **40 %**.
 Detalles: [research/STAGE58.md](research/STAGE58.md).
+
+Etapa59: observados flags PHYINFO0e, CMAC40 y dispatcher c0, presentes
+desde antes del contexto, sin bits nuevos. PHY sigue contando CRC correctos,
+pero RX USB normal continúa0. Preflight sin H2C corregido y reserva liberada
+sin reutilizar secuencias. Avance **40 %**.
+Detalles: [research/STAGE59.md](research/STAGE59.md).
 
 
 Proyecto experimental para TP-Link USB `37ad:0104`, con destino macOS Intel/Apple Silicon y Linux posteriormente.

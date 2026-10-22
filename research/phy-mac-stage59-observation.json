@@ -1,0 +1,424 @@
+{
+  "stage": 59,
+  "date": "2026-10-22",
+  "files": {
+    "artifacts/archer-context-rx-stage59b": "d02ab91732e9c69dde0ac96f015709719e02d5d63972517a47546d6bd8d1dbf5",
+    "artifacts/context-rx-stage59.jsonl": "1405da9c19f6130b992691726a5afb4c9bc7f8de37c6f1a7bf1b660705ed0bf6",
+    "artifacts/context-rx-stage59.stderr": "3ea3fb7935768d4ac7d679faa75ffd708ddb650f231dbfdc18bb1a675a520ce3",
+    "artifacts/context-rx-stage59b.jsonl": "0d9061f90fbadaad62ac540624f95b1c70819b6c72e94323d31204712f065380",
+    "artifacts/context-rx-stage59b.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/phy-mac-stage59-summary.json": "f8b3ab5ec03a8a71f24e0a1fd149935fca2e856a7268006668c7dc38bc6d295a",
+    "artifacts/tests-stage59b.txt": "928fac6f7cb72cec65bd5140e063379368ab1168e3596700f4b16b619d672526"
+  },
+  "summary": {
+    "samples": 21,
+    "elapsed_ms": 5016,
+    "phy_crc_ok_delta": {
+      "cck": 403,
+      "ofdm": 95,
+      "ht": 7
+    },
+    "rmac_timeout_flags_or": 89,
+    "rx_dma_flags_or": 0,
+    "rx_dma_flags1_or": 0,
+    "host_rx_stop_samples": 0,
+    "hci_rx_disabled_samples": 0,
+    "cmac_rx_disabled_samples": 0,
+    "ple_group0_nonempty_samples": 0,
+    "quota6_peak_used": 0,
+    "limitation": "Sequential sampled reads, not continuous or atomic; no inferred RMAC packet count",
+    "phy_mac": {
+      "samples": 16,
+      "rmac_flags_observed": [
+        89
+      ],
+      "rmac_new_bits_after_first": 0,
+      "phyinfo_flags_observed": [
+        14
+      ],
+      "cmac_flags_observed": [
+        64
+      ],
+      "dispatcher_flags_or": [
+        192,
+        0,
+        0
+      ],
+      "loopback_enabled_samples": 0,
+      "phy_interface_disabled_samples": 0,
+      "drop_nondma_ppdu_samples": 0,
+      "haxi_dma_mode_codes": [
+        4
+      ],
+      "haxi_rx_disabled_samples": 0,
+      "haxi_master_stopped_samples": 0,
+      "limitation": "Read-only sampled flags, no clearing: repeated same-bit events cannot be dated or counted"
+    }
+  },
+  "status_snapshots": [
+    {
+      "operation": "phy_mac_status",
+      "phase": "before_windows",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        0,
+        552853504,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532351
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_aggregation",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        524288,
+        552853504,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532351
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_port",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        0,
+        552853504,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532351
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_physts",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        0,
+        552853504,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532351
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_phy_report",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        524288,
+        552853520,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532351
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_filters",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        0,
+        552853520,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532223
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_command_0",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        0,
+        552853520,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532223
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_command_1",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        655360,
+        552853520,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532223
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_command_2",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        524288,
+        552853520,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532223
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_command_3",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        655360,
+        552853520,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532223
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_command_4",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        655360,
+        552853520,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532223
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_command_5",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        0,
+        552853520,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532223
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_command_6",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        524288,
+        552853520,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532223
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_command_7",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        0,
+        552853520,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532223
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_command_8",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        0,
+        552853520,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532223
+      ]
+    },
+    {
+      "operation": "phy_mac_status",
+      "phase": "after_windows",
+      "values": [
+        64,
+        14,
+        2097152,
+        89,
+        1023,
+        0,
+        524288,
+        552853504,
+        5253124,
+        197385,
+        525366,
+        2147483648,
+        192,
+        0,
+        0,
+        4026532351
+      ]
+    }
+  ],
+  "results": [
+    {
+      "result": "context_cleanup_acknowledged",
+      "transfers": 8,
+      "normal_packets": 0,
+      "beacons": 0,
+      "network_tx_paused": true,
+      "initial_macid_pause_measured": false
+    }
+  ],
+  "first_attempt_no_h2c": true,
+  "preflight_release_evidence": "context-stage59-preflight-release.json"
+}

@@ -3,6 +3,39 @@ import json
 import sys
 
 
+def summarize_phy_mac(records):
+    rows = [r for r in records if r.get('operation') == 'phy_mac_status']
+    if not rows or len(rows) > 100:
+        raise ValueError('Expected 1..100 PHY/MAC status samples')
+    for r in rows:
+        if not isinstance(r.get('phase'), str) or not r['phase']:
+            raise ValueError('Missing status phase')
+        if not isinstance(r.get('values'), list) or len(r['values']) != 16:
+            raise ValueError('Incomplete PHY/MAC status')
+        for v in r['values']:
+            if type(v) is not int or not 0 <= v <= 0xffffffff or v in (0xdeadbeef, 0xeaeaeaea):
+                raise ValueError('Invalid PHY/MAC status value')
+    values = [r['values'] for r in rows]
+    dispatcher = [0, 0, 0]
+    new = 0
+    for v in values:
+        new |= v[3] & ~values[0][3]
+        for i in range(3):
+            dispatcher[i] |= v[12+i]
+    return dict(samples=len(rows), rmac_flags_observed=sorted({v[3] for v in values}),
+                rmac_new_bits_after_first=new,
+                phyinfo_flags_observed=sorted({v[1] for v in values}),
+                cmac_flags_observed=sorted({v[0] for v in values}),
+                dispatcher_flags_or=dispatcher,
+                loopback_enabled_samples=sum(bool(v[8] & 1) for v in values),
+                phy_interface_disabled_samples=sum(not bool(v[15] & 0x20) for v in values),
+                drop_nondma_ppdu_samples=sum(bool(v[9] & 4) for v in values),
+                haxi_dma_mode_codes=sorted({(v[10] >> 8) & 7 for v in values}),
+                haxi_rx_disabled_samples=sum(not bool(v[10] & 0x20) for v in values),
+                haxi_master_stopped_samples=sum(bool(v[10] & 0x80) for v in values),
+                limitation='Read-only sampled flags, no clearing: repeated same-bit events cannot be dated or counted')
+
+
 def summarize(records):
     samples = [r for r in records if r.get('operation') == 'rx_path_snapshot']
     if not 2 <= len(samples) <= 100:
@@ -42,4 +75,8 @@ if __name__ == '__main__':
     if len(sys.argv) != 2:
         raise SystemExit('Usage: rx_path_report.py TRACE.jsonl')
     with open(sys.argv[1]) as stream:
-        print(json.dumps(summarize([json.loads(line) for line in stream]), indent=2))
+        records = [json.loads(line) for line in stream]
+    report = summarize(records)
+    if any(r.get('operation') == 'phy_mac_status' for r in records):
+        report['phy_mac'] = summarize_phy_mac(records)
+    print(json.dumps(report, indent=2))

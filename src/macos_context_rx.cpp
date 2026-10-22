@@ -50,6 +50,11 @@ int main(int argc,char** argv){
         // Only this investigation has initialized firmware/CAM; no previous
         // context sender has run. Lock records ownership from this first run.
         ContextReservation reservation;
+        bool submission_attempted=false;
+        struct UnusedReservationGuard {
+            ContextReservation& reservation;bool& attempted;
+            ~UnusedReservationGuard(){if(!attempted)try{reservation.clean();}catch(...){} }
+        } unused_guard{reservation,submission_attempted};
         std::array<unsigned,9> sequences{};for(auto& seq:sequences)seq=ledger.reserve();
         // Diagnostic locally administered address, never a discovered BSSID.
         const archer::UnlinkedCamContext context{{2,0,0,0x89,0x22,0xa1},0,0,0,0};
@@ -86,6 +91,12 @@ int main(int argc,char** argv){
             std::cout<<"{\"operation\":\"context_phy_phase\",\"phase\":\""<<phase<<"\",\"values\":[";
             for(unsigned i=0;i<values.size();++i){if(i)std::cout<<',';std::cout<<values[i];}
             std::cout<<"],\"rf_mode_a\":"<<((a>>16)&15)<<",\"rf_mode_b\":"<<((b>>16)&15)<<"}"<<std::endl;
+            constexpr std::array<unsigned,16> status_addresses{0x10164,0x110fc,0x110f8,0x114f4,0x114f8,0x110c0,0x110f4,0x11400,0x11020,0x9c00,0xb000,0xb010,0x8804,0x8808,0x880c,0x10000};
+            std::array<unsigned,16> status{};
+            for(unsigned i=0;i<status.size();++i)status[i]=archer::channel_bus_read(bus,status_addresses[i]);
+            std::cout<<"{\"operation\":\"phy_mac_status\",\"phase\":\""<<phase<<"\",\"values\":[";
+            for(unsigned i=0;i<status.size();++i){if(i)std::cout<<',';std::cout<<status[i];}
+            std::cout<<"]}"<<std::endl;
         };
         measure("before_windows");
         const auto command=[&]{
@@ -96,7 +107,7 @@ int main(int argc,char** argv){
             if(!file)throw std::runtime_error("Context TX capture write failed");
             std::cout<<"{\"operation\":\"context_send\",\"step\":"<<step<<",\"sequence\":"<<sequences[step]<<",\"ack_policy\":"<<unsigned(policy)<<"}"<<std::endl;
             try{
-                usb.send(frame);session.sent_successfully();
+                submission_attempted=true;usb.send(frame);session.sent_successfully();
                 const auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(5);
                 while(session.step()==step&&session.phase()!=archer::ContextPhase::uncertain&&std::chrono::steady_clock::now()<deadline){receive(0,true);receive(1,true);}
                 if(session.step()==step&&session.phase()!=archer::ContextPhase::uncertain)session.mark_transport_uncertain();
