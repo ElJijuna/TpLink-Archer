@@ -1,0 +1,101 @@
+{
+  "stage": 60,
+  "date": "2026-10-22",
+  "files": {
+    "artifacts/archer-context-rx-stage60": "dee78af5eda1f01a28476b31a5bead4c38dc302ed5e8f7413f8c8471d30d915e",
+    "artifacts/context-rx-stage60.jsonl": "b342a9c54d2fb3332aced9eda90bde7f4f0dbbad04b92d4c1f7fcb889536a04b",
+    "artifacts/context-rx-stage60.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/bulk-receive-stage60-summary.json": "3a1bc0ac16e6839d6a11e77487cfddebb14b7a0e26552d8f84643947964ad36c",
+    "artifacts/rx-path-stage60-summary.json": "a37c20ba8d95962701109058e4d3df9826f4690fd4ec4c1f7dff33f964065dd9",
+    "artifacts/tests-stage60.txt": "8c149b288b4ac88f05a0b3dbddea0d428a3bb19607cfd91a10114e19abdf333d",
+    "artifacts/rtw89-usb.c": "858b8771c585a65fe5b1498c1d98e786134ee3c46b18985924310a24c1a6d80e",
+    "artifacts/rtw89-usb.h": "dc2a33fc80eedc6aa07422b0b44527669c8723df9fe2096722fe756a3b69c93e",
+    "include/archer/macos_bulk.hpp": "ee28b9fc15adc41bc179982cec2a6e015b7e0b45fd170ee11198011aa3772c71",
+    "tools/bulk_receive_report.py": "07ee189d7bcd3e54a52d2afcdf0216abf3ac0cec1b33af15ef75325bf15d4371",
+    "tests/test_bulk_receive_report.py": "d215249a866549ce1f5d5f37961178a34108425ccdef94f003e3abe88987e2ab",
+    "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/IOKit.framework/Headers/usb/IOUSBLib.h": "16acc674ebc759d00904e8ae1cd2137b5f814d54fe237c5193cf6549131d542a"
+  },
+  "bulk": {
+    "endpoints": {
+      "0x84": {
+        "reads": 400,
+        "successes": 8,
+        "valid_bytes": 288,
+        "timeouts": 392,
+        "other_errors": 0,
+        "error_size_unchanged": 392
+      },
+      "0x88": {
+        "reads": 400,
+        "successes": 0,
+        "valid_bytes": 0,
+        "timeouts": 400,
+        "other_errors": 0,
+        "error_size_unchanged": 400
+      }
+    },
+    "limitation": "No bytes counted from failed reads; telemetry does not prove absence of device-side data or data-toggle synchronization"
+  },
+  "rx_path": {
+    "samples": 21,
+    "elapsed_ms": 5014,
+    "phy_crc_ok_delta": {
+      "cck": 450,
+      "ofdm": 109,
+      "ht": 6
+    },
+    "rmac_timeout_flags_or": 89,
+    "rx_dma_flags_or": 0,
+    "rx_dma_flags1_or": 0,
+    "host_rx_stop_samples": 0,
+    "hci_rx_disabled_samples": 0,
+    "cmac_rx_disabled_samples": 0,
+    "ple_group0_nonempty_samples": 0,
+    "quota6_peak_used": 0,
+    "limitation": "Sequential sampled reads, not continuous or atomic; no inferred RMAC packet count",
+    "phy_mac": {
+      "samples": 16,
+      "rmac_flags_observed": [
+        89
+      ],
+      "rmac_new_bits_after_first": 0,
+      "phyinfo_flags_observed": [
+        14
+      ],
+      "cmac_flags_observed": [
+        64
+      ],
+      "dispatcher_flags_or": [
+        192,
+        0,
+        0
+      ],
+      "loopback_enabled_samples": 0,
+      "phy_interface_disabled_samples": 0,
+      "drop_nondma_ppdu_samples": 0,
+      "haxi_dma_mode_codes": [
+        4
+      ],
+      "haxi_rx_disabled_samples": 0,
+      "haxi_master_stopped_samples": 0,
+      "limitation": "Read-only sampled flags, no clearing: repeated same-bit events cannot be dated or counted"
+    }
+  },
+  "result": [
+    {
+      "result": "context_cleanup_acknowledged",
+      "transfers": 8,
+      "normal_packets": 0,
+      "beacons": 0,
+      "network_tx_paused": true,
+      "initial_macid_pause_measured": false
+    }
+  ],
+  "reservation_after": "CLEAN",
+  "validation": {
+    "cpp_suites": 49,
+    "python_tests": 55,
+    "universal_build": true,
+    "physical_platform": "Mac ARM"
+  }
+}

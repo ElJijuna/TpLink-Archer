@@ -2,7 +2,7 @@
 #include "archer/macos_register_bus.hpp"
 #include <vector>
 class MacBulkChannel {
-    IOUSBInterfaceInterface300** usb=nullptr;bool opened=false;UInt8 output=0;std::vector<UInt8> inputs;
+    IOUSBInterfaceInterface300** usb=nullptr;bool opened=false;UInt8 output=0;std::vector<UInt8> inputs,input_addresses;
 public:
     MacBulkChannel(){
         io_iterator_t iterator=0;
@@ -29,7 +29,7 @@ public:
             for(UInt8 pipe=1;pipe<=count;++pipe){
                 UInt8 dir=0,ep=0,type=0,interval=0;UInt16 packet=0;
                 if((*usb)->GetPipeProperties(usb,pipe,&dir,&ep,&type,&packet,&interval))throw std::runtime_error("Cannot inspect boot pipes");
-                if(dir==kUSBIn&&type==kUSBBulk&&packet==512&&(ep==4||ep==8))inputs.push_back(pipe);
+                if(dir==kUSBIn&&type==kUSBBulk&&packet==512&&(ep==4||ep==8)){inputs.push_back(pipe);input_addresses.push_back(ep|0x80);}
                 if(dir==kUSBOut&&ep==7&&type==kUSBBulk&&packet==512){if(output)throw std::runtime_error("Ambiguous boot output");output=pipe;}
             }
             if(inputs.size()!=2)throw std::runtime_error("Expected two firmware input pipes");
@@ -47,7 +47,15 @@ public:
         if(index>=inputs.size()||!timeout_ms||timeout_ms>1000)throw std::invalid_argument("Invalid bulk receive bound");
         std::vector<std::uint8_t> bytes(20480);UInt32 size=bytes.size();
         auto status=(*usb)->ReadPipeTO(usb,inputs[index],bytes.data(),&size,timeout_ms,timeout_ms);
-        if(status==kIOUSBTransactionTimeout||status==kIOReturnTimeout)return {};
+        const bool timeout=status==kIOUSBTransactionTimeout||status==kIOReturnTimeout;
+        std::cout<<"{\"operation\":\"bulk_receive_result\",\"input_index\":"<<index
+                 <<",\"pipe\":"<<unsigned(inputs[index])<<",\"endpoint\":"<<unsigned(input_addresses[index])
+                 <<",\"requested_bytes\":"<<bytes.size()<<",\"reported_size\":"<<size
+                 <<",\"size_valid\":"<<(status==0?"true":"false")<<",\"timeout\":"<<(timeout?"true":"false")
+                 <<",\"status\":"<<status<<"}"<<std::endl;
+        // SDK ReadPipeTO contract: on error size is unchanged and buffer invalid.
+        // Never reinterpret timeout contents as a partial, valid USB transfer.
+        if(timeout)return {};
         if(status||size>bytes.size())throw std::runtime_error("Firmware receive failed");
         bytes.resize(size);return bytes;
     }
