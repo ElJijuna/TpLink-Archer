@@ -1,0 +1,15 @@
+{
+  "stage": 52,
+  "source_commit": "c03c1a14507dfaf8b856c2608f9ac216021fc222",
+  "hardware_commands_sent": false,
+  "runtime_compatibility_validated": false,
+  "files": {
+    "artifacts/linux-ieee80211-eht-stage52.h": "3301a09629b7efafe791abcbc9346c7b20a515dc1e254826f03e71c602052f5e",
+    "artifacts/rtw89-cam-stage52.c": "f04c11ea7153cd056408984a8b6fb6b2579dc6cbd364a596885b52d36f440b63",
+    "artifacts/rtw89-cam-stage52.h": "3d8f72a4fd1c560f69e01ca372ab1be69ee0345ee9c2890da0c27986271a26c9",
+    "artifacts/rtw89-fw.c": "acc4188f0829051ce67ad7dbcdff6819523948a291702279c3b555d0ed1d840c",
+    "artifacts/rtw89-fw.h": "d73c8eff7cf97ecc2096b72415a1130cc45d8719c909f5435b26d3bd71cf96e4",
+    "artifacts/rtw89-core.h": "13fcfa34fdea89773a9bbb5a6fe95d2bf95464eb1f4d759e5d39cb2ce48167af",
+    "artifacts/tests-stage52-final.txt": "de851cb01df9094bc2cac736c2dbbe9cb38b33439e48213926a5bd43127fc9b3"
+  }
+}

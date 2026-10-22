@@ -26,6 +26,8 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/physts-window-test
 	./build/port-rx-window-test
 	./build/interface-role-test
+	./build/interface-join-test
+	./build/interface-cam-test
 	./build/tssi-protocol-test
 	./build/channel-transition-test
 	./build/dmac-init-test
@@ -199,6 +201,12 @@ test: build/phy-report-window-test
 test: build/physts-window-test
 test: build/port-rx-window-test
 test: build/interface-role-test
+test: build/interface-join-test
+test: build/interface-cam-test
+build/interface-cam-test: tests/interface_cam_test.cpp include/archer/interface_cam.hpp include/archer/interface_role.hpp include/archer/firmware_channel.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/interface-join-test: tests/interface_join_test.cpp include/archer/interface_role.hpp include/archer/command_tracker.hpp include/archer/firmware_channel.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
 build/interface-role-test: tests/interface_role_test.cpp include/archer/interface_role.hpp include/archer/firmware_channel.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/port-rx-window-test: tests/port_rx_window_test.cpp include/archer/port_rx_window.hpp include/archer/channel_bus.hpp | build
