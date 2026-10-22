@@ -3,8 +3,7 @@
 namespace archer {
 enum class StationRoleAction : unsigned { create=0, remove=1 };
 enum class StationCapability : unsigned { legacy=0, he=1, eht=2 };
-// Offline source reconstruction only. Does not initialize port, CAM, tables,
-// join-info or ACK lifecycle, and is not wired to a hardware sender.
+// Source-derived codec. No I/O here; the context executor owns lifecycle/ACKs.
 inline std::vector<std::uint8_t> encode_unlinked_station_role(unsigned sequence,
     unsigned mac_id,unsigned port,StationRoleAction action){
     if(mac_id>255 || port>4 || (action!=StationRoleAction::create && action!=StationRoleAction::remove))

@@ -1,0 +1,258 @@
+{
+  "stage": 55,
+  "date": "2026-10-22",
+  "source_commit": "c03c1a14507dfaf8b856c2608f9ac216021fc222",
+  "observations": {
+    "stage55": {
+      "results": [
+        {
+          "result": "context_cleanup_acknowledged",
+          "transfers": 8,
+          "normal_packets": 0,
+          "beacons": 0,
+          "network_tx_paused": true,
+          "initial_macid_pause_measured": false
+        }
+      ],
+      "sends": [
+        {
+          "operation": "context_send",
+          "step": 0,
+          "sequence": 67,
+          "ack_policy": 0
+        },
+        {
+          "operation": "context_send",
+          "step": 1,
+          "sequence": 68,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 2,
+          "sequence": 69,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 3,
+          "sequence": 70,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 4,
+          "sequence": 71,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 5,
+          "sequence": 72,
+          "ack_policy": 2
+        },
+        {
+          "operation": "context_send",
+          "step": 6,
+          "sequence": 73,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 7,
+          "sequence": 74,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 8,
+          "sequence": 75,
+          "ack_policy": 0
+        }
+      ],
+      "ack_transitions": [
+        {
+          "operation": "context_ack",
+          "step_before": 0,
+          "step_after": 1
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 1,
+          "step_after": 2
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 2,
+          "step_after": 3
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 3,
+          "step_after": 4
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 4,
+          "step_after": 5
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 6,
+          "step_after": 7
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 7,
+          "step_after": 8
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 8,
+          "step_after": 9
+        }
+      ]
+    },
+    "stage55b": {
+      "results": [
+        {
+          "result": "context_cleanup_acknowledged",
+          "transfers": 8,
+          "normal_packets": 0,
+          "beacons": 0,
+          "network_tx_paused": true,
+          "initial_macid_pause_measured": false
+        }
+      ],
+      "sends": [
+        {
+          "operation": "context_send",
+          "step": 0,
+          "sequence": 76,
+          "ack_policy": 0
+        },
+        {
+          "operation": "context_send",
+          "step": 1,
+          "sequence": 77,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 2,
+          "sequence": 78,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 3,
+          "sequence": 79,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 4,
+          "sequence": 80,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 5,
+          "sequence": 81,
+          "ack_policy": 2
+        },
+        {
+          "operation": "context_send",
+          "step": 6,
+          "sequence": 82,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 7,
+          "sequence": 83,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 8,
+          "sequence": 84,
+          "ack_policy": 0
+        }
+      ],
+      "ack_transitions": [
+        {
+          "operation": "context_ack",
+          "step_before": 0,
+          "step_after": 1
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 1,
+          "step_after": 2
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 2,
+          "step_after": 3
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 3,
+          "step_after": 4
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 4,
+          "step_after": 5
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 6,
+          "step_after": 7
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 7,
+          "step_after": 8
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 8,
+          "step_after": 9
+        }
+      ]
+    }
+  },
+  "files": {
+    "artifacts/archer-context-rx-stage55b": "57461a237326cd276ae25f716f53426331cb63c806626b72aa210ca575b7d76e",
+    "artifacts/context-rx-stage55.jsonl": "639bdc68c34fe7d855d927fbdefb18ac01313db8bf7089f176c88046e105ddb7",
+    "artifacts/context-rx-stage55.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/context-rx-stage55b.jsonl": "73575f4f948f86f61ef5d705d23784e6d8f6bf0293115891e131f8ffec08392b",
+    "artifacts/context-rx-stage55b.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/context-stage55-device.jsonl": "18e6a1ed39e26212dee8599387292aa69a8347e66fc797f4ad0111a21a97067e",
+    "artifacts/tests-stage55-replay-final.txt": "481a4238dce2a8fae2277d09fbe8560d090533e0a8195e4db405e42a00c6433b",
+    "tests/fixtures/context-ack-stage55-rx-0.bin": "ec248dbf7e18d647f773e8cd8b1fbac696199ac9718d8103cc8b2d73736d524e",
+    "tests/fixtures/context-ack-stage55-rx-1.bin": "aec6b643cbeb67701ca2eb2e4ec982e585e7ed9125085e247ef1d060b40ef4a1",
+    "tests/fixtures/context-ack-stage55-rx-2.bin": "bc35124e7bc445dfc99ef2fe786d8ceb0ee4b9d744cd6ef296f0762dbe46159e",
+    "tests/fixtures/context-ack-stage55-rx-3.bin": "7b53578ff43b878dad60feca6f039cce55a0a31761b257e6846055fdb1135764",
+    "tests/fixtures/context-ack-stage55-rx-4.bin": "8480986b92639ca0fa6bd56ba9e3fe7e2e17be34c0ba6b0a18d336fa01cff0dd",
+    "tests/fixtures/context-ack-stage55-rx-5.bin": "e240e66f0f8240ff6b572e3d9173799f7d5283fc14e34a15c48cc0fc45d53071",
+    "tests/fixtures/context-ack-stage55-rx-6.bin": "2b0365d3cdbe067640c1f7ab3f5ccc3700cab8781895bb910ac027428a076ac2",
+    "tests/fixtures/context-ack-stage55-rx-7.bin": "2cca58d51d1ce94ec22aa104161714b4555a6337d8d94cf90b453905f9ea1073",
+    "tests/fixtures/context-ack-stage55b-rx-0.bin": "13d54b022a08b49d59de50350fbe60e05749c5872a7f1b9adf263b24222f15c5",
+    "tests/fixtures/context-ack-stage55b-rx-1.bin": "efc381759d266496be96fcef8ee47f0a46dbc83da9332d93465672b784ab1f82",
+    "tests/fixtures/context-ack-stage55b-rx-2.bin": "8c61ba40071774c80373b632e5879f6d0d7e173388f055ab3d53751b37e1a01e",
+    "tests/fixtures/context-ack-stage55b-rx-3.bin": "fc254f947a138b240fb1fe69e4a3b93ec2b753058e1809c2a0ee1372bb3bfb6b",
+    "tests/fixtures/context-ack-stage55b-rx-4.bin": "668d936e9dce25058fbb87dd2cf1edb2ac09f329310966ef47ca156e28260db7",
+    "tests/fixtures/context-ack-stage55b-rx-5.bin": "066814bdfe19bb2629f4a579437c01d6842c9ec01621e6cb36f074821e3a5511",
+    "tests/fixtures/context-ack-stage55b-rx-6.bin": "7d0e743b7dfbf0b4b26fb198e098b28622d2546c468d2c7a1205180aeb89b087",
+    "tests/fixtures/context-ack-stage55b-rx-7.bin": "6fa07a60ef640d5a64a953e88c665d0b61465dd88e50f76c956ee247b7aa34b1"
+  },
+  "limits": [
+    "Exact stage55b executable retained before execution; first stage55 executable not retained.",
+    "Initial MACID pause not measured; cleanup requested awake/unpaused.",
+    "DMAC source requests no ACK: submission only.",
+    "CLEAN is lifecycle policy result, not table/RF quality readback."
+  ]
+}

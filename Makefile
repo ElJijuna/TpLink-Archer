@@ -30,6 +30,7 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/interface-cam-test
 	./build/interface-tables-test
 	./build/interface-lifecycle-test
+	./build/interface-context-physical-test
 	./build/tssi-protocol-test
 	./build/channel-transition-test
 	./build/dmac-init-test
@@ -207,6 +208,9 @@ test: build/interface-join-test
 test: build/interface-cam-test
 test: build/interface-tables-test
 test: build/interface-lifecycle-test
+test: build/interface-context-physical-test
+build/interface-context-physical-test: tests/interface_context_physical_test.cpp include/archer/interface_lifecycle.hpp include/archer/interface_cam.hpp include/archer/interface_tables.hpp include/archer/interface_role.hpp include/archer/command_tracker.hpp $(wildcard tests/fixtures/context-ack-stage55*.bin) | build
+	$(CXX) $(CXXFLAGS) $< -o $@
 build/interface-lifecycle-test: tests/interface_lifecycle_test.cpp include/archer/interface_lifecycle.hpp include/archer/interface_cam.hpp include/archer/interface_tables.hpp include/archer/interface_role.hpp include/archer/command_tracker.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/interface-tables-test: tests/interface_tables_test.cpp include/archer/interface_tables.hpp include/archer/firmware_channel.hpp | build
@@ -235,6 +239,9 @@ build/rx-descriptor-test: tests/rx_descriptor_test.cpp include/archer/rx_descrip
 	$(CXX) $(CXXFLAGS) $< -o $@
 .PHONY: cmac-init-universal tx-calibrate-universal
 .PHONY: passive-rx-universal
+.PHONY: context-rx-universal
+context-rx-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-context-rx-universal
 passive-rx-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_passive_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-passive-rx-universal
 cmac-init-universal: | build

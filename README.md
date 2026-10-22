@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **40 %**
 
-Actualizado: **2026-10-22**, etapa54. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-22**, etapa55. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -91,6 +91,11 @@ Etapa54: coordinador del contexto estación implementado y probado offline:
 orden de nueve comandos, políticas ACK, retirada controlada y bloqueo ante
 resultado incierto. Falta ejecutor USB y validación física. Avance **40 %**.
 Detalles: [research/STAGE54.md](research/STAGE54.md).
+
+Etapa55: contexto estación ejecutado y retirado físicamente dos veces:
+**9 H2C y8 ACK por ejecución**, TX de red pausado y reserva final CLEAN.
+USB de control funciona; todavía **0 tramas Wi-Fi normales**. Avance **40 %**.
+Detalles y límites: [research/STAGE55.md](research/STAGE55.md).
 
 
 Proyecto experimental para TP-Link USB `37ad:0104`, con destino macOS Intel/Apple Silicon y Linux posteriormente.

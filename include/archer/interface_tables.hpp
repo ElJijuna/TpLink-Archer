@@ -16,7 +16,7 @@ inline std::vector<std::uint8_t> encode_station_macid_pause_sleep(unsigned seque
     }
     return encode_h2c(1,9,0x28,sequence,payload,true,false);
 }
-// Offline RTL8922A defaults, fw.c default_cmac_tbl_g7/default_dmac_tbl_v2.
+// RTL8922A defaults, fw.c default_cmac_tbl_g7/default_dmac_tbl_v2. No I/O here.
 // Both payloads: c0, w0..15, m0..15 =132 bytes. Not direct AX table I/O.
 inline std::vector<std::uint8_t> encode_default_station_cmac_g7(unsigned sequence,
     unsigned mac_id,bool tx_report_enabled){

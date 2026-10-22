@@ -7,7 +7,7 @@ struct UnlinkedCamContext {
     unsigned address_index=0,bssid_index=0,mac_id=0,port=0;
 };
 // Source RTL8922A addrcam_ver0 and firmware ADDR_CAM_V0 (<0.35.84).
-// Fixed NO_LINK/PHY0, zero BSSID, no keys/WoW/trigger/AID. Offline only.
+// Fixed NO_LINK/PHY0, zero BSSID, no keys/WoW/trigger/AID. No I/O in codec.
 inline std::vector<std::uint8_t> encode_unlinked_cam_v0(unsigned sequence,
     const UnlinkedCamContext& c,StationRoleAction action){
     bool any=false;unsigned hash=0;
