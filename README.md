@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **40 %**
 
-Actualizado: **2026-10-22**, etapa60. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-22**, etapa61. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -28,6 +28,13 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; todavía no hay escaneo, asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa61: recepción asíncrona persistente implementada y probada sobre ARM:
+ocho lecturas en 0x84 y una en 0x88, sin timeout USB. Recibió ocho ACK,
+pero ninguna trama normal; las nueve peticiones pendientes se cancelaron
+y drenaron antes de liberar buffers. PHY activa y contexto retirado.
+El avance permanece en40 %; falta contrastar la entrega RMAC/PLE/USB.
+Evidencia: [research/STAGE61.md](research/STAGE61.md).
 
 Etapa60: telemetría de lecturas USB confirma ocho ACK en 0x84 y cero
 tramas normales. Los 792 timeouts no aportan un tamaño válido según el

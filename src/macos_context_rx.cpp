@@ -29,14 +29,14 @@ public:
  ~ContextReservation(){if(fd>=0)close(fd);}
 };
 int main(int argc,char** argv){
- if(argc!=3||(std::string(argv[1])!="--run-owned-source-profile"&&std::string(argv[1])!="--run-owned-source-profile-usb-aggregation"&&std::string(argv[1])!="--run-owned-source-profile-usb-aggregation-all-management")){
-    std::cerr<<"Usage: archer-context-rx {--run-owned-source-profile|--run-owned-source-profile-usb-aggregation|--run-owned-source-profile-usb-aggregation-all-management} NEW_DIRECTORY\n";return 2;
+ if(argc!=3||(std::string(argv[1])!="--run-owned-source-profile"&&std::string(argv[1])!="--run-owned-source-profile-usb-aggregation"&&std::string(argv[1])!="--run-owned-source-profile-usb-aggregation-all-management"&&std::string(argv[1])!="--run-owned-source-profile-usb-aggregation-all-management-async")){
+    std::cerr<<"Usage: archer-context-rx {--run-owned-source-profile|--run-owned-source-profile-usb-aggregation|--run-owned-source-profile-usb-aggregation-all-management|--run-owned-source-profile-usb-aggregation-all-management-async} NEW_DIRECTORY\n";return 2;
  }
  try{
     archer::SequenceLedger ledger("artifacts/37ad-0104-sequences.bin");
     const std::filesystem::path dir=argv[2];
     if(!std::filesystem::create_directory(dir))throw std::runtime_error("Capture directory must be new");
-    MacRegisterBus bus;MacBulkChannel usb;
+    MacRegisterBus bus;MacBulkChannel usb(std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management-async");
     archer::with_wlan_io_window(bus,[&]{
         if((archer::channel_bus_read(bus,0xfc)&255)!=0x71 ||
            (archer::channel_bus_read(bus,0x1e0)&0xc00003f)!=0xc000022 ||
@@ -145,7 +145,7 @@ int main(int argc,char** argv){
                 catch(...){capture_error=std::current_exception();}
                 if(session.phase()==archer::ContextPhase::ready){session.begin_removal();for(unsigned i=0;i<3;++i)command();}
                 if(capture_error)std::rethrow_exception(capture_error);
-            },false,std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management"?archer::RxAcceptance::all_management:archer::RxAcceptance::broadcast_bit_clear);
+            },false,(std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management"||std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management-async")?archer::RxAcceptance::all_management:archer::RxAcceptance::broadcast_bit_clear);
         });});});};
         if(std::string(argv[1])!="--run-owned-source-profile")archer::with_usb_rx_aggregation(bus,run_context);
         else run_context();

@@ -1,0 +1,245 @@
+{
+  "stage": 61,
+  "date": "2026-10-22",
+  "files": {
+    "artifacts/archer-context-rx-stage61": "2fdf442e270b94d82a7a2deeec554e4e28f9ef2701e4494123043bc3d2ca72b0",
+    "build/archer-context-rx-universal": "2fdf442e270b94d82a7a2deeec554e4e28f9ef2701e4494123043bc3d2ca72b0",
+    "artifacts/context-rx-stage61.jsonl": "9515e1975ce6f80954d59bfd5381ea39cecf9da1129949ac9cb34d479b3ce016",
+    "artifacts/context-rx-stage61.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/rx-path-stage61-summary.json": "de6a4c5ef15335055861ac97ac6996bf2edb0d35613ea4e7d6a3350648ff2de7",
+    "artifacts/tests-stage61-final.txt": "8c149b288b4ac88f05a0b3dbddea0d428a3bb19607cfd91a10114e19abdf333d",
+    "artifacts/rtw89-usb.c": "858b8771c585a65fe5b1498c1d98e786134ee3c46b18985924310a24c1a6d80e",
+    "artifacts/rtw89-usb.h": "dc2a33fc80eedc6aa07422b0b44527669c8723df9fe2096722fe756a3b69c93e",
+    "include/archer/macos_bulk.hpp": "98678ad39d4b9fdac298216f8065b81b8ce9d839e675716e99a0492e6ece23a0",
+    "src/macos_context_rx.cpp": "2345aa6ea6b90a8cbaaff9c465717ff31266de907699bf58cdf48273ab19315c",
+    "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/IOKit.framework/Headers/usb/IOUSBLib.h": "16acc674ebc759d00904e8ae1cd2137b5f814d54fe237c5193cf6549131d542a"
+  },
+  "physical_platform": "Mac ARM",
+  "successes": 8,
+  "valid_bytes": 288,
+  "completions": [
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": 0,
+      "reported_size": 36,
+      "size_valid": true,
+      "stopping": false
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": 0,
+      "reported_size": 36,
+      "size_valid": true,
+      "stopping": false
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": 0,
+      "reported_size": 36,
+      "size_valid": true,
+      "stopping": false
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": 0,
+      "reported_size": 36,
+      "size_valid": true,
+      "stopping": false
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": 0,
+      "reported_size": 36,
+      "size_valid": true,
+      "stopping": false
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": 0,
+      "reported_size": 36,
+      "size_valid": true,
+      "stopping": false
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": 0,
+      "reported_size": 36,
+      "size_valid": true,
+      "stopping": false
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": 0,
+      "reported_size": 36,
+      "size_valid": true,
+      "stopping": false
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": -536870165,
+      "reported_size": 0,
+      "size_valid": false,
+      "stopping": true
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": -536870165,
+      "reported_size": 0,
+      "size_valid": false,
+      "stopping": true
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": -536870165,
+      "reported_size": 0,
+      "size_valid": false,
+      "stopping": true
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": -536870165,
+      "reported_size": 0,
+      "size_valid": false,
+      "stopping": true
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": -536870165,
+      "reported_size": 0,
+      "size_valid": false,
+      "stopping": true
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": -536870165,
+      "reported_size": 0,
+      "size_valid": false,
+      "stopping": true
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": -536870165,
+      "reported_size": 0,
+      "size_valid": false,
+      "stopping": true
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 132,
+      "status": -536870165,
+      "reported_size": 0,
+      "size_valid": false,
+      "stopping": true
+    },
+    {
+      "operation": "bulk_async_completion",
+      "endpoint": 136,
+      "status": -536870165,
+      "reported_size": 0,
+      "size_valid": false,
+      "stopping": true
+    }
+  ],
+  "lifecycle": [
+    {
+      "operation": "bulk_async_started",
+      "pending": 9,
+      "endpoint84_slots": 8,
+      "endpoint88_slots": 1,
+      "usb_timeout_ms": 0
+    },
+    {
+      "result": "context_cleanup_acknowledged",
+      "transfers": 8,
+      "normal_packets": 0,
+      "beacons": 0,
+      "network_tx_paused": true,
+      "initial_macid_pause_measured": false
+    },
+    {
+      "operation": "bulk_async_abort",
+      "pipe": 1,
+      "status": 0
+    },
+    {
+      "operation": "bulk_async_abort",
+      "pipe": 5,
+      "status": 0
+    },
+    {
+      "operation": "bulk_async_drained",
+      "pending": 0
+    }
+  ],
+  "rx_path": {
+    "samples": 20,
+    "elapsed_ms": 5001,
+    "phy_crc_ok_delta": {
+      "cck": 408,
+      "ofdm": 18,
+      "ht": 2
+    },
+    "rmac_timeout_flags_or": 89,
+    "rx_dma_flags_or": 0,
+    "rx_dma_flags1_or": 0,
+    "host_rx_stop_samples": 0,
+    "hci_rx_disabled_samples": 0,
+    "cmac_rx_disabled_samples": 0,
+    "ple_group0_nonempty_samples": 0,
+    "quota6_peak_used": 0,
+    "limitation": "Sequential sampled reads, not continuous or atomic; no inferred RMAC packet count",
+    "phy_mac": {
+      "samples": 16,
+      "rmac_flags_observed": [
+        89
+      ],
+      "rmac_new_bits_after_first": 0,
+      "phyinfo_flags_observed": [
+        14
+      ],
+      "cmac_flags_observed": [
+        64
+      ],
+      "dispatcher_flags_or": [
+        192,
+        0,
+        0
+      ],
+      "loopback_enabled_samples": 0,
+      "phy_interface_disabled_samples": 0,
+      "drop_nondma_ppdu_samples": 0,
+      "haxi_dma_mode_codes": [
+        4
+      ],
+      "haxi_rx_disabled_samples": 0,
+      "haxi_master_stopped_samples": 0,
+      "limitation": "Read-only sampled flags, no clearing: repeated same-bit events cannot be dated or counted"
+    }
+  },
+  "reservation_after": "CLEAN",
+  "validation": {
+    "cpp_suites": 49,
+    "python_tests": 55,
+    "universal_build": true
+  },
+  "limitations": [
+    "Physical unplug, queue saturation, allocation failures and undrained callbacks not tested",
+    "No normal Wi-Fi RX in this run",
+    "Independent control read on 0x88 is diagnostic, not a Linux source requirement"
+  ]
+}
