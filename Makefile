@@ -19,6 +19,7 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/channel-init-test
 	./build/rx-descriptor-test
 	./build/beacon-test
+	./build/rx-scan-window-test
 	./build/tssi-protocol-test
 	./build/channel-transition-test
 	./build/dmac-init-test
@@ -185,11 +186,17 @@ build/tx-rfk-physical-test: tests/tx_rfk_physical_test.cpp include/archer/tx_rfk
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/rx-descriptor-test
 test: build/beacon-test
+test: build/rx-scan-window-test
+build/rx-scan-window-test: tests/rx_scan_window_test.cpp include/archer/rx_scan_window.hpp include/archer/channel_bus.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
 build/beacon-test: tests/beacon_test.cpp include/archer/beacon.hpp include/archer/rx_descriptor.hpp include/archer/firmware_channel.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/rx-descriptor-test: tests/rx_descriptor_test.cpp include/archer/rx_descriptor.hpp include/archer/firmware_channel.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 .PHONY: cmac-init-universal tx-calibrate-universal
+.PHONY: passive-rx-universal
+passive-rx-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_passive_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-passive-rx-universal
 cmac-init-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_cmac_init.cpp -framework IOKit -framework CoreFoundation -o build/archer-cmac-init-universal
 tx-calibrate-universal: | build

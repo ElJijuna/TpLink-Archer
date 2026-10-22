@@ -1,0 +1,19 @@
+{
+  "stage": 45,
+  "result": {
+    "result": "passive_rx_window_restored",
+    "transfers": 0,
+    "normal_packets": 0,
+    "beacons": 0,
+    "probe_responses": 0,
+    "descriptor_errors": 0,
+    "unparsed": 0,
+    "network_tx_paused": true
+  },
+  "files": {
+    "artifacts/passive-rx-stage45.jsonl": "485c753845c7f7f36a8222da83a0a4b9fb16a83f0b55285f58504c55f8ab1ee6",
+    "artifacts/passive-rx-stage45.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tests-stage45-rx.txt": "da0e55ac44f6ccd3602288b64fdbbb12ae67a3b2cf43093a9eeca5c1132adccc",
+    "artifacts/archer-passive-rx-stage45": "3cf03cff0476a3021921ab8f6040e0a14c834d0453cf9c874f202421ec4a9e78"
+  }
+}
