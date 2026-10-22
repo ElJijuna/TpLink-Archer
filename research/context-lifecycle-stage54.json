@@ -1,0 +1,27 @@
+{
+  "stage": 54,
+  "date": "2026-10-22",
+  "source_commit": "c03c1a14507dfaf8b856c2608f9ac216021fc222",
+  "hardware_commands_sent": false,
+  "files": {
+    "include/archer/interface_lifecycle.hpp": "ad22e922f4fcdd32cc8c43b36e91bcf0ac2ca7bca2beabe34133b3db0e1dacbe",
+    "tests/interface_lifecycle_test.cpp": "add705a46ac8a65b89a402c4f2ee8d0274a5b68804d753586f6ea56f39e59289",
+    "artifacts/tests-stage54-final.txt": "aa765ae98efc3590d9d77a6df327cb3c3ed3d821e0a107bab1028b1220f8cb11"
+  },
+  "policies": {
+    "setup": [
+      "MACID unpause:receive",
+      "ROLE create:done",
+      "JOIN disconnected:done",
+      "CAM create:done",
+      "CMAC default:done",
+      "DMAC default:submission only"
+    ],
+    "removal": [
+      "ROLE remove:done",
+      "CAM invalidate:done",
+      "initial MACID pause/sleep:receive"
+    ],
+    "unknown_result": "block further commands; external recovery required"
+  }
+}

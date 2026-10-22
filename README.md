@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **40 %**
 
-Actualizado: **2026-10-22**, etapa53. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-22**, etapa54. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -86,6 +86,11 @@ Etapa53: tablas por MACID CMAC G7/DMAC V2 y pausa/sueño individual
 implementadas y probadas offline, con máscaras y políticas ACK de la fuente.
 Falta coordinarlas y validarlas físicamente. Avance **40 %**.
 Detalles: [research/STAGE53.md](research/STAGE53.md).
+
+Etapa54: coordinador del contexto estación implementado y probado offline:
+orden de nueve comandos, políticas ACK, retirada controlada y bloqueo ante
+resultado incierto. Falta ejecutor USB y validación física. Avance **40 %**.
+Detalles: [research/STAGE54.md](research/STAGE54.md).
 
 
 Proyecto experimental para TP-Link USB `37ad:0104`, con destino macOS Intel/Apple Silicon y Linux posteriormente.
