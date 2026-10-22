@@ -5,11 +5,17 @@
 #include "archer/rx_counters.hpp"
 #include "archer/ple_probe.hpp"
 #include "archer/phy_report_window.hpp"
+#include "archer/physts_window.hpp"
 #include <filesystem>
 #include <fstream>
 int main(int argc,char** argv){
- if(argc!=3 || (std::string(argv[1])!="--receive-channel1" && std::string(argv[1])!="--receive-channel1-reset-counters" && std::string(argv[1])!="--diagnostic-rmac-channel1" && std::string(argv[1])!="--diagnostic-bc-clear" && std::string(argv[1])!="--diagnostic-sniffer" && std::string(argv[1])!="--diagnostic-response-engine" && std::string(argv[1])!="--diagnostic-phy-report")){
-    std::cerr<<"Usage: archer-passive-rx {--receive-channel1|--receive-channel1-reset-counters|--diagnostic-rmac-channel1|--diagnostic-bc-clear|--diagnostic-sniffer|--diagnostic-response-engine|--diagnostic-phy-report} NEW_DIRECTORY\n";return 2;
+ const std::vector<std::string> modes{"--receive-channel1","--receive-channel1-reset-counters",
+    "--diagnostic-rmac-channel1","--diagnostic-bc-clear","--diagnostic-sniffer",
+    "--diagnostic-response-engine","--diagnostic-phy-report","--diagnostic-physts"};
+ if(argc!=3 || std::find(modes.begin(),modes.end(),argv[1])==modes.end()){
+    std::cerr<<"Usage: archer-passive-rx MODE NEW_DIRECTORY; MODE:";
+    for(const auto& mode:modes)std::cerr<<' '<<mode;
+    std::cerr<<'\n';return 2;
  }
  try{
     const std::filesystem::path directory=argv[2];
@@ -77,7 +83,9 @@ int main(int argc,char** argv){
             std::string(argv[1])=="--diagnostic-sniffer"?archer::RxAcceptance::sniffer:
             std::string(argv[1])=="--diagnostic-response-engine"?archer::RxAcceptance::response_engine:archer::RxAcceptance::broadcast);
         };
-        if(std::string(argv[1])=="--diagnostic-phy-report")archer::with_phy_report_window(bus,capture);
+        if(std::string(argv[1])=="--diagnostic-physts")
+            archer::with_physts_window(bus,[&]{archer::with_phy_report_window(bus,capture);});
+        else if(std::string(argv[1])=="--diagnostic-phy-report")archer::with_phy_report_window(bus,capture);
         else capture();
         if(archer::channel_bus_read(bus,0x10398)&0x3ffff)
             throw std::runtime_error("TX scheduler no longer paused");

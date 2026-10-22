@@ -23,6 +23,7 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/rx-counters-test
 	./build/ple-probe-test
 	./build/phy-report-window-test
+	./build/physts-window-test
 	./build/tssi-protocol-test
 	./build/channel-transition-test
 	./build/dmac-init-test
@@ -193,6 +194,9 @@ test: build/rx-scan-window-test
 test: build/rx-counters-test
 test: build/ple-probe-test
 test: build/phy-report-window-test
+test: build/physts-window-test
+build/physts-window-test: tests/physts_window_test.cpp include/archer/physts_window.hpp include/archer/channel_bus.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
 build/phy-report-window-test: tests/phy_report_window_test.cpp include/archer/phy_report_window.hpp include/archer/channel_bus.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/ple-probe-test: tests/ple_probe_test.cpp include/archer/ple_probe.hpp include/archer/channel_bus.hpp | build
