@@ -75,6 +75,19 @@ int main(int argc,char** argv){
         bool quiet=false;const auto drain=std::chrono::steady_clock::now()+std::chrono::seconds(3);
         while(std::chrono::steady_clock::now()<drain){const bool a=receive(0,false),b=receive(1,false);if(!a&&!b){quiet=true;break;}}
         if(!quiet)throw std::runtime_error("Input did not quiesce; no context command sent");
+        const auto measure=[&](const std::string& phase){
+            archer::reset_rx_diagnostic_counters(bus);
+            const auto end=std::chrono::steady_clock::now()+std::chrono::milliseconds(250);
+            while(std::chrono::steady_clock::now()<end){receive(0,true);receive(1,true);}
+            constexpr std::array<unsigned,11> addresses{0x22e14,0x20e64,0x20e60,0x84,0x20704,0x20520,0x20c3c,0x20980,0x209a4,0x114f4,0x10000};
+            std::array<unsigned,11> values{};
+            for(unsigned i=0;i<addresses.size();++i)values[i]=archer::channel_bus_read(bus,addresses[i]);
+            const auto a=rf.read_full(0,0),b=rf.read_full(1,0);
+            std::cout<<"{\"operation\":\"context_phy_phase\",\"phase\":\""<<phase<<"\",\"values\":[";
+            for(unsigned i=0;i<values.size();++i){if(i)std::cout<<',';std::cout<<values[i];}
+            std::cout<<"],\"rf_mode_a\":"<<((a>>16)&15)<<",\"rf_mode_b\":"<<((b>>16)&15)<<"}"<<std::endl;
+        };
+        measure("before_windows");
         const auto command=[&]{
             const auto step=session.step();const auto policy=session.ack_policy();
             const auto frame=archer::wrap_h2c_usb_be(session.issue());
@@ -88,10 +101,12 @@ int main(int argc,char** argv){
                 while(session.step()==step&&session.phase()!=archer::ContextPhase::uncertain&&std::chrono::steady_clock::now()<deadline){receive(0,true);receive(1,true);}
                 if(session.step()==step&&session.phase()!=archer::ContextPhase::uncertain)session.mark_transport_uncertain();
                 if(session.phase()==archer::ContextPhase::uncertain)throw std::runtime_error("Context command uncertain; no retry or automatic removal");
+                measure("after_command_"+std::to_string(step));
             }catch(...){if(session.step()==step&&session.phase()!=archer::ContextPhase::uncertain)session.mark_transport_uncertain();throw;}
         };
-        const auto run_context=[&]{archer::with_unlinked_port0_window(bus,[&]{archer::with_physts_window(bus,[&]{archer::with_phy_report_window(bus,[&]{
+        const auto run_context=[&]{measure("after_aggregation");archer::with_unlinked_port0_window(bus,[&]{measure("after_port");archer::with_physts_window(bus,[&]{measure("after_physts");archer::with_phy_report_window(bus,[&]{measure("after_phy_report");
             archer::with_passive_rx_window(bus,[&]{
+                measure("after_filters");
                 for(unsigned i=0;i<6;++i)command();
                 std::cout<<"{\"phase\":\"context_sequence_ready\",\"dmac_submission_only\":true}"<<std::endl;
                 std::exception_ptr capture_error;
@@ -123,6 +138,7 @@ int main(int argc,char** argv){
         });});});};
         if(std::string(argv[1])!="--run-owned-source-profile")archer::with_usb_rx_aggregation(bus,run_context);
         else run_context();
+        measure("after_windows");
         if(session.phase()!=archer::ContextPhase::cleanup_acknowledged || (archer::channel_bus_read(bus,0x10398)&0x3ffff))throw std::runtime_error("Context cleanup/TX pause not confirmed");
         reservation.clean();
         std::cout<<"{\"result\":\"context_cleanup_acknowledged\",\"transfers\":"<<transfers<<",\"normal_packets\":"<<normal<<",\"beacons\":"<<beacons<<",\"network_tx_paused\":true,\"initial_macid_pause_measured\":false}"<<std::endl;

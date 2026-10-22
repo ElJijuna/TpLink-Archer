@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **40 %**
 
-Actualizado: **2026-10-22**, etapa57. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-22**, etapa58. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -108,6 +108,11 @@ de contexto. La secuencia conocida de firmware/radio/calibración recuperó
 reconocida no garantiza PHY activa; falta aislar qué transición la detiene.
 Base recuperada, TX pausado y avance **40 %**.
 Detalles: [research/STAGE57.md](research/STAGE57.md).
+
+Etapa58: desde la base recuperada, PHY siguió recibiendo tras cada comando
+y después de retirar el contexto. No se reprodujo la parada anterior ni se
+aisló su causa. RX USB normal continúa en0. Avance **40 %**.
+Detalles: [research/STAGE58.md](research/STAGE58.md).
 
 
 Proyecto experimental para TP-Link USB `37ad:0104`, con destino macOS Intel/Apple Silicon y Linux posteriormente.

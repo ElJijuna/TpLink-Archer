@@ -1,0 +1,345 @@
+{
+  "stage": 58,
+  "date": "2026-10-22",
+  "phases": [
+    {
+      "operation": "context_phy_phase",
+      "phase": "before_windows",
+      "values": [
+        393243,
+        458759,
+        262144,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532351
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_aggregation",
+      "values": [
+        851979,
+        131076,
+        0,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532351
+      ],
+      "rf_mode_a": 1,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_port",
+      "values": [
+        458768,
+        196615,
+        65536,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532351
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_physts",
+      "values": [
+        851993,
+        131074,
+        0,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532351
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_phy_report",
+      "values": [
+        589836,
+        524299,
+        0,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532351
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_filters",
+      "values": [
+        655380,
+        131081,
+        131072,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532223
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_command_0",
+      "values": [
+        1048597,
+        196612,
+        0,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532223
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_command_1",
+      "values": [
+        393244,
+        196613,
+        65536,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532223
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_command_2",
+      "values": [
+        393233,
+        131081,
+        0,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532223
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_command_3",
+      "values": [
+        196620,
+        131074,
+        196608,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532223
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_command_4",
+      "values": [
+        327698,
+        393222,
+        65536,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532223
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_command_5",
+      "values": [
+        393229,
+        720901,
+        196608,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532223
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_command_6",
+      "values": [
+        327692,
+        1,
+        0,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532223
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_command_7",
+      "values": [
+        589847,
+        196610,
+        0,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532223
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_command_8",
+      "values": [
+        458761,
+        65537,
+        0,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532223
+      ],
+      "rf_mode_a": 3,
+      "rf_mode_b": 3
+    },
+    {
+      "operation": "context_phy_phase",
+      "phase": "after_windows",
+      "values": [
+        327700,
+        0,
+        0,
+        2160263175,
+        1612582146,
+        0,
+        675340735,
+        21072,
+        0,
+        89,
+        4026532351
+      ],
+      "rf_mode_a": 1,
+      "rf_mode_b": 3
+    }
+  ],
+  "results": [
+    {
+      "result": "context_cleanup_acknowledged",
+      "transfers": 8,
+      "normal_packets": 0,
+      "beacons": 0,
+      "network_tx_paused": true,
+      "initial_macid_pause_measured": false
+    }
+  ],
+  "summary": {
+    "samples": 21,
+    "elapsed_ms": 5008,
+    "phy_crc_ok_delta": {
+      "cck": 425,
+      "ofdm": 84,
+      "ht": 7
+    },
+    "rmac_timeout_flags_or": 89,
+    "rx_dma_flags_or": 0,
+    "rx_dma_flags1_or": 0,
+    "host_rx_stop_samples": 0,
+    "hci_rx_disabled_samples": 0,
+    "cmac_rx_disabled_samples": 0,
+    "ple_group0_nonempty_samples": 0,
+    "quota6_peak_used": 0,
+    "limitation": "Sequential sampled reads, not continuous or atomic; no inferred RMAC packet count"
+  },
+  "files": {
+    "artifacts/archer-context-rx-stage58": "c5ca7391f0f3a62af8f9f8c649a686d7892445715e28f015d204a0a3bf4b07c9",
+    "artifacts/context-rx-stage58.jsonl": "98cf02a190bb0ceb93de5d36b599f68ad3070dafedd467677c14ea23bdad7e84",
+    "artifacts/context-rx-stage58.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tests-stage58.txt": "bbffc31d3a94c0bf1805cdd9405a138e9360cf14c04bd71d41e13e4fea829f84",
+    "artifacts/rx-path-stage58-summary.json": "2dd3be121797d7f20025bb5de0aadc5625519e96d3ff93090cf703745861200c"
+  }
+}
