@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **40 %**
 
-Actualizado: **2026-10-21**, etapa48. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-21**, etapa49. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -61,6 +61,11 @@ Etapa48: contrastados A_BC, SNIFFER_MODE y motor de respuestas por separado;
 ninguno liberó RX USB. Controles BB consultados no muestran PMAC TX/RX grant
 activo ni reset asíncrono retenido. Se conserva evidencia y avance **40 %**.
 Detalles: [research/STAGE48.md](research/STAGE48.md).
+
+Etapa49: se contrastó PHY report de ocho bytes siguiendo la fuente; campos
+aplicados y restaurados, todavía **0 transferencias USB**. Se identificó
+inicialización PHY-status pendiente de portar. Avance **40 %**.
+Detalles: [research/STAGE49.md](research/STAGE49.md).
 
 
 Proyecto experimental para TP-Link USB `37ad:0104`, con destino macOS Intel/Apple Silicon y Linux posteriormente.

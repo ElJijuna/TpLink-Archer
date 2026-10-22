@@ -1,0 +1,47 @@
+{
+  "stage": 49,
+  "result": {
+    "result": "passive_rx_window_restored",
+    "transfers": 0,
+    "normal_packets": 0,
+    "beacons": 0,
+    "probe_responses": 0,
+    "descriptor_errors": 0,
+    "unparsed": 0,
+    "network_tx_paused": true
+  },
+  "files": {
+    "artifacts/archer-passive-rx-stage49": "88b8ce8461632224f517ed133f90809b2c0bb77ff44b3ce9ef1f95e1082e3452",
+    "artifacts/passive-rx-stage49.jsonl": "e770236acd5248baee2ba08d8cdc5f624bb56726f78819be87d4eae9902fefd1",
+    "artifacts/passive-rx-stage49.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tests-stage49.txt": "30956af3b0a95772817b85fbcb96562416e8fafe56366de69f53bd3a7227fbde",
+    "artifacts/rtw89-mac80211-stage49.c": "2e7844f1f981f7469e4367939319d71c55a13fff7d2589ff427f1bf003bf4775"
+  },
+  "reads": {
+    "0x11400": [
+      552853504,
+      552853504,
+      552853520,
+      552853520,
+      552853520,
+      552853520,
+      552853520,
+      552853504
+    ],
+    "0x11470": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0
+    ],
+    "0x11440": [
+      16842861,
+      16842861,
+      16842861
+    ]
+  }
+}
