@@ -9,6 +9,7 @@
 #include "archer/usb_rx_aggregation.hpp"
 #include "archer/ple_probe.hpp"
 #include "archer/rx_counters.hpp"
+#include "archer/rx_delivery_audit.hpp"
 #include <filesystem>
 #include <fstream>
 class ContextReservation {
@@ -98,6 +99,18 @@ int main(int argc,char** argv){
             for(unsigned i=0;i<status.size();++i){if(i)std::cout<<',';std::cout<<status[i];}
             std::cout<<"]}"<<std::endl;
         };
+        const auto audit=[&](const std::string& phase){
+            const auto values=archer::read_rx_delivery_audit(bus);
+            for(unsigned i=0;i<values.size();++i){
+                const auto& field=archer::rx_delivery_fields[i];
+                std::cout<<"{\"operation\":\"rx_delivery_audit\",\"phase\":\""<<phase
+                         <<"\",\"field\":\""<<field.name<<"\",\"address\":"<<field.address
+                         <<",\"width\":"<<field.width<<",\"mask\":"<<field.mask
+                         <<",\"source_value\":"<<field.source_value<<",\"value\":"<<values[i]
+                         <<",\"source_match\":"<<((values[i]&field.mask)==field.source_value?"true":"false")<<"}"<<std::endl;
+            }
+        };
+        audit("before_windows");
         measure("before_windows");
         const auto command=[&]{
             const auto step=session.step();const auto policy=session.ack_policy();
@@ -122,6 +135,7 @@ int main(int argc,char** argv){
                 std::cout<<"{\"phase\":\"context_sequence_ready\",\"dmac_submission_only\":true}"<<std::endl;
                 std::exception_ptr capture_error;
                 try{
+                    audit("context_ready");
                     archer::reset_rx_diagnostic_counters(bus);
                     const auto start=std::chrono::steady_clock::now(),end=start+std::chrono::seconds(5);
                     const auto snapshot=[&]{
@@ -150,6 +164,7 @@ int main(int argc,char** argv){
         if(std::string(argv[1])!="--run-owned-source-profile")archer::with_usb_rx_aggregation(bus,run_context);
         else run_context();
         measure("after_windows");
+        audit("after_windows");
         if(session.phase()!=archer::ContextPhase::cleanup_acknowledged || (archer::channel_bus_read(bus,0x10398)&0x3ffff))throw std::runtime_error("Context cleanup/TX pause not confirmed");
         reservation.clean();
         std::cout<<"{\"result\":\"context_cleanup_acknowledged\",\"transfers\":"<<transfers<<",\"normal_packets\":"<<normal<<",\"beacons\":"<<beacons<<",\"network_tx_paused\":true,\"initial_macid_pause_measured\":false}"<<std::endl;

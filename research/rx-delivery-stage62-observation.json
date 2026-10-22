@@ -1,0 +1,889 @@
+{
+  "stage": 62,
+  "date": "2026-10-22",
+  "physical_platform": "Mac ARM",
+  "files": {
+    "artifacts/archer-context-rx-stage62": "ee61e444112874b1a599932f03cdb8acf1890ed16ad50c2b3f471437c712a591",
+    "artifacts/context-rx-stage62.jsonl": "10d7bcc1579b188cc309d49929cef52a0c308632ab9509c796eb7a7df77b73d2",
+    "artifacts/context-rx-stage62.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/rx-path-stage62-summary.json": "eba6cc2fb36ad8d0025c88d5b15d455ffae7bd9a08a339e4edbaff6a7b6702f9",
+    "artifacts/tests-stage62.txt": "bd34fe9d5845545505b4a75ada4c2c452af5e653c89dbfd1a63282a36a9ce1bf",
+    "include/archer/rx_delivery_audit.hpp": "d83a8a956fcd9834adbd2304864f16a05d10ca8b6782647e8df74fb7d2b2056a",
+    "tests/rx_delivery_audit_test.cpp": "647d30f807caa429f1e965705221dce71817c54317160a4318addd5a365c4c42",
+    "src/macos_context_rx.cpp": "4612ca08a143231c7a904523eedc9529c973c6068599826c6131d756c200bbfc",
+    "artifacts/rtw89-mac_be.c": "7b78b2791f45cadd25fa46113200fadc9d954ddc47c50b88458fd299d5ea1fa1",
+    "artifacts/rtw89-usb.c": "858b8771c585a65fe5b1498c1d98e786134ee3c46b18985924310a24c1a6d80e",
+    "artifacts/rtw89-reg.h": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d",
+    "include/archer/dle_init.hpp": "5ee9f2c5a6f25f70d810a0629a9d5b83ddfc630a8421fe157fb8a52dbd80f560",
+    "include/archer/cmac_init.hpp": "64b54ca9cc6158f7fd5f9f64e597a39e6ee3afa78b2c3f0597ad8ffe21057eb7",
+    "include/archer/dmac_init.hpp": "9b180b4f0d64eb5a0a9e8ec95bd3d123fcd098484a7f8aaec17414d0bd6cff66"
+  },
+  "audits": {
+    "before_windows": [
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "shared_cmac",
+        "address": 57344,
+        "width": 4,
+        "mask": 1073741831,
+        "source_value": 1073741831,
+        "value": 1073741831,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "ple_ready",
+        "address": 37120,
+        "width": 4,
+        "mask": 3,
+        "source_value": 3,
+        "value": 3,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "ple_layout",
+        "address": 36872,
+        "width": 4,
+        "mask": 536837891,
+        "source_value": 134939650,
+        "value": 134939650,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "ple_qta0",
+        "address": 36928,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 30343631,
+        "value": 30343631,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "ple_qta6",
+        "address": 36952,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 98893881,
+        "value": 98893881,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "append_fcs",
+        "address": 39936,
+        "width": 4,
+        "mask": 1,
+        "source_value": 1,
+        "value": 197385,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "cut_amsdu",
+        "address": 40084,
+        "width": 4,
+        "mask": 4278190079,
+        "source_value": 537789936,
+        "value": 537789936,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "rx_header_conversion",
+        "address": 40128,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 8,
+        "value": 8,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "dispatcher_forward",
+        "address": 35128,
+        "width": 4,
+        "mask": 255,
+        "source_value": 85,
+        "value": 85,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "phy_interface",
+        "address": 65536,
+        "width": 4,
+        "mask": 32,
+        "source_value": 32,
+        "value": 4026532351,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "address_cam",
+        "address": 70708,
+        "width": 4,
+        "mask": 16711681,
+        "source_value": 8323073,
+        "value": 8323073,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "plcp_header_filter",
+        "address": 70660,
+        "width": 2,
+        "mask": 127,
+        "source_value": 111,
+        "value": 111,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "rmac_deadlock",
+        "address": 70658,
+        "width": 2,
+        "mask": 65522,
+        "source_value": 8434,
+        "value": 8435,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "plcp_length_source",
+        "address": 70932,
+        "width": 2,
+        "mask": 256,
+        "source_value": 256,
+        "value": 256,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "report_queue_ids",
+        "address": 68620,
+        "width": 4,
+        "mask": 2130444288,
+        "source_value": 338165760,
+        "value": 338165760,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "haxi_usb_receive",
+        "address": 45056,
+        "width": 4,
+        "mask": 1952,
+        "source_value": 1056,
+        "value": 525366,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "hci_dma_enable",
+        "address": 30848,
+        "width": 4,
+        "mask": 7,
+        "source_value": 7,
+        "value": 7,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "usb_aggregation0",
+        "address": 24576,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 2164203540,
+        "value": 0,
+        "source_match": false
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "usb_aggregation1",
+        "address": 24580,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 31,
+        "value": 1073741824,
+        "source_match": false
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "rx_filter_options",
+        "address": 70688,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 253182142,
+        "value": 253182142,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "management_filter",
+        "address": 70696,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 65535,
+        "value": 65535,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "control_filter",
+        "address": 70692,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 65535,
+        "value": 65535,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "data_filter",
+        "address": 70700,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 65535,
+        "value": 65535,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "before_windows",
+        "field": "busy_check_sequence",
+        "address": 70656,
+        "width": 2,
+        "mask": 32768,
+        "source_value": 32768,
+        "value": 57344,
+        "source_match": true
+      }
+    ],
+    "context_ready": [
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "shared_cmac",
+        "address": 57344,
+        "width": 4,
+        "mask": 1073741831,
+        "source_value": 1073741831,
+        "value": 1073741831,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "ple_ready",
+        "address": 37120,
+        "width": 4,
+        "mask": 3,
+        "source_value": 3,
+        "value": 3,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "ple_layout",
+        "address": 36872,
+        "width": 4,
+        "mask": 536837891,
+        "source_value": 134939650,
+        "value": 134939650,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "ple_qta0",
+        "address": 36928,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 30343631,
+        "value": 30343631,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "ple_qta6",
+        "address": 36952,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 98893881,
+        "value": 98893881,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "append_fcs",
+        "address": 39936,
+        "width": 4,
+        "mask": 1,
+        "source_value": 1,
+        "value": 197385,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "cut_amsdu",
+        "address": 40084,
+        "width": 4,
+        "mask": 4278190079,
+        "source_value": 537789936,
+        "value": 537789936,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "rx_header_conversion",
+        "address": 40128,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 8,
+        "value": 8,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "dispatcher_forward",
+        "address": 35128,
+        "width": 4,
+        "mask": 255,
+        "source_value": 85,
+        "value": 85,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "phy_interface",
+        "address": 65536,
+        "width": 4,
+        "mask": 32,
+        "source_value": 32,
+        "value": 4026532223,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "address_cam",
+        "address": 70708,
+        "width": 4,
+        "mask": 16711681,
+        "source_value": 8323073,
+        "value": 8323073,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "plcp_header_filter",
+        "address": 70660,
+        "width": 2,
+        "mask": 127,
+        "source_value": 111,
+        "value": 111,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "rmac_deadlock",
+        "address": 70658,
+        "width": 2,
+        "mask": 65522,
+        "source_value": 8434,
+        "value": 8435,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "plcp_length_source",
+        "address": 70932,
+        "width": 2,
+        "mask": 256,
+        "source_value": 256,
+        "value": 256,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "report_queue_ids",
+        "address": 68620,
+        "width": 4,
+        "mask": 2130444288,
+        "source_value": 338165760,
+        "value": 338165760,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "haxi_usb_receive",
+        "address": 45056,
+        "width": 4,
+        "mask": 1952,
+        "source_value": 1056,
+        "value": 525366,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "hci_dma_enable",
+        "address": 30848,
+        "width": 4,
+        "mask": 7,
+        "source_value": 7,
+        "value": 7,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "usb_aggregation0",
+        "address": 24576,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 2164203540,
+        "value": 2164203540,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "usb_aggregation1",
+        "address": 24580,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 31,
+        "value": 31,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "rx_filter_options",
+        "address": 70688,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 253182142,
+        "value": 253165568,
+        "source_match": false
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "management_filter",
+        "address": 70696,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 65535,
+        "value": 65535,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "control_filter",
+        "address": 70692,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 65535,
+        "value": 0,
+        "source_match": false
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "data_filter",
+        "address": 70700,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 65535,
+        "value": 0,
+        "source_match": false
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "context_ready",
+        "field": "busy_check_sequence",
+        "address": 70656,
+        "width": 2,
+        "mask": 32768,
+        "source_value": 32768,
+        "value": 57360,
+        "source_match": true
+      }
+    ],
+    "after_windows": [
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "shared_cmac",
+        "address": 57344,
+        "width": 4,
+        "mask": 1073741831,
+        "source_value": 1073741831,
+        "value": 1073741831,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "ple_ready",
+        "address": 37120,
+        "width": 4,
+        "mask": 3,
+        "source_value": 3,
+        "value": 3,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "ple_layout",
+        "address": 36872,
+        "width": 4,
+        "mask": 536837891,
+        "source_value": 134939650,
+        "value": 134939650,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "ple_qta0",
+        "address": 36928,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 30343631,
+        "value": 30343631,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "ple_qta6",
+        "address": 36952,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 98893881,
+        "value": 98893881,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "append_fcs",
+        "address": 39936,
+        "width": 4,
+        "mask": 1,
+        "source_value": 1,
+        "value": 197385,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "cut_amsdu",
+        "address": 40084,
+        "width": 4,
+        "mask": 4278190079,
+        "source_value": 537789936,
+        "value": 537789936,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "rx_header_conversion",
+        "address": 40128,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 8,
+        "value": 8,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "dispatcher_forward",
+        "address": 35128,
+        "width": 4,
+        "mask": 255,
+        "source_value": 85,
+        "value": 85,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "phy_interface",
+        "address": 65536,
+        "width": 4,
+        "mask": 32,
+        "source_value": 32,
+        "value": 4026532351,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "address_cam",
+        "address": 70708,
+        "width": 4,
+        "mask": 16711681,
+        "source_value": 8323073,
+        "value": 8323073,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "plcp_header_filter",
+        "address": 70660,
+        "width": 2,
+        "mask": 127,
+        "source_value": 111,
+        "value": 111,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "rmac_deadlock",
+        "address": 70658,
+        "width": 2,
+        "mask": 65522,
+        "source_value": 8434,
+        "value": 8435,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "plcp_length_source",
+        "address": 70932,
+        "width": 2,
+        "mask": 256,
+        "source_value": 256,
+        "value": 256,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "report_queue_ids",
+        "address": 68620,
+        "width": 4,
+        "mask": 2130444288,
+        "source_value": 338165760,
+        "value": 338165760,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "haxi_usb_receive",
+        "address": 45056,
+        "width": 4,
+        "mask": 1952,
+        "source_value": 1056,
+        "value": 525366,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "hci_dma_enable",
+        "address": 30848,
+        "width": 4,
+        "mask": 7,
+        "source_value": 7,
+        "value": 7,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "usb_aggregation0",
+        "address": 24576,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 2164203540,
+        "value": 0,
+        "source_match": false
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "usb_aggregation1",
+        "address": 24580,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 31,
+        "value": 1073741824,
+        "source_match": false
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "rx_filter_options",
+        "address": 70688,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 253182142,
+        "value": 253182142,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "management_filter",
+        "address": 70696,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 65535,
+        "value": 65535,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "control_filter",
+        "address": 70692,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 65535,
+        "value": 65535,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "data_filter",
+        "address": 70700,
+        "width": 4,
+        "mask": 4294967295,
+        "source_value": 65535,
+        "value": 65535,
+        "source_match": true
+      },
+      {
+        "operation": "rx_delivery_audit",
+        "phase": "after_windows",
+        "field": "busy_check_sequence",
+        "address": 70656,
+        "width": 2,
+        "mask": 32768,
+        "source_value": 32768,
+        "value": 57344,
+        "source_match": true
+      }
+    ]
+  },
+  "all_24_fields_restored": true,
+  "rx_path": {
+    "samples": 20,
+    "elapsed_ms": 5003,
+    "phy_crc_ok_delta": {
+      "cck": 708,
+      "ofdm": 29,
+      "ht": 0
+    },
+    "rmac_timeout_flags_or": 89,
+    "rx_dma_flags_or": 0,
+    "rx_dma_flags1_or": 0,
+    "host_rx_stop_samples": 0,
+    "hci_rx_disabled_samples": 0,
+    "cmac_rx_disabled_samples": 0,
+    "ple_group0_nonempty_samples": 0,
+    "quota6_peak_used": 0,
+    "limitation": "Sequential sampled reads, not continuous or atomic; no inferred RMAC packet count",
+    "phy_mac": {
+      "samples": 16,
+      "rmac_flags_observed": [
+        89
+      ],
+      "rmac_new_bits_after_first": 0,
+      "phyinfo_flags_observed": [
+        14
+      ],
+      "cmac_flags_observed": [
+        64
+      ],
+      "dispatcher_flags_or": [
+        192,
+        0,
+        0
+      ],
+      "loopback_enabled_samples": 0,
+      "phy_interface_disabled_samples": 0,
+      "drop_nondma_ppdu_samples": 0,
+      "haxi_dma_mode_codes": [
+        4
+      ],
+      "haxi_rx_disabled_samples": 0,
+      "haxi_master_stopped_samples": 0,
+      "limitation": "Read-only sampled flags, no clearing: repeated same-bit events cannot be dated or counted"
+    }
+  },
+  "result": [
+    {
+      "result": "context_cleanup_acknowledged",
+      "transfers": 8,
+      "normal_packets": 0,
+      "beacons": 0,
+      "network_tx_paused": true,
+      "initial_macid_pause_measured": false
+    }
+  ],
+  "reservation_after": "CLEAN",
+  "validation": {
+    "cpp_suites": 50,
+    "python_tests": 55,
+    "universal_build": true
+  },
+  "limitations": [
+    "Read-only comparison with selected source masks and three sampled phases",
+    "No normal Wi-Fi frames",
+    "Source-match is not proof of end-to-end RX operation",
+    "No physical Intel validation"
+  ]
+}

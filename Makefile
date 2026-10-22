@@ -21,6 +21,7 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/beacon-test
 	./build/rx-scan-window-test
 	./build/rx-counters-test
+	./build/rx-delivery-audit-test
 	./build/ple-probe-test
 	./build/phy-report-window-test
 	./build/physts-window-test
@@ -254,3 +255,7 @@ tx-calibrate-universal: | build
 	python3 tools/channel_bundle.py
 	python3 tools/tx_calibration_bundle.py
 	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/macos_tx_calibrate.cpp -framework IOKit -framework CoreFoundation -o build/archer-tx-calibrate-universal
+
+test: build/rx-delivery-audit-test
+build/rx-delivery-audit-test: tests/rx_delivery_audit_test.cpp include/archer/rx_delivery_audit.hpp include/archer/register_mailbox.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
