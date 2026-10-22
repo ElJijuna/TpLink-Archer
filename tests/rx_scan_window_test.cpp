@@ -14,6 +14,8 @@ int main(){
  Bus b;auto original=b.r;
  archer::with_passive_rx_window(b,[&]{assert(!(b.r[0x10000]&0x80));assert(b.r[0x11424]==0&&b.r[0x1142c]==0&&b.r[0x11428]==0x120);assert((b.r[0x11420]&0x7bff)==4);});
  assert(b.r==original);
+ archer::with_passive_rx_window(b,[&]{assert(b.r[0x11428]==0xffff);assert((b.r[0x11420]&0x7bff)==0);assert(b.r[0x11424]==0&&b.r[0x1142c]==0);},false,archer::RxAcceptance::all_management);
+ assert(b.r==original);
  b.r[0x11400]=0x20f3e000;auto diagnostic_original=b.r;
  archer::with_passive_rx_window(b,[&]{assert(b.r[0x11400]==0x20f3e001);},true);
  assert(b.r==diagnostic_original);original=b.r;

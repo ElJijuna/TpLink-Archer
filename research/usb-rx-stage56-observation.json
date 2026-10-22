@@ -1,0 +1,284 @@
+{
+  "stage": 56,
+  "date": "2026-10-22",
+  "source_commit": "c03c1a14507dfaf8b856c2608f9ac216021fc222",
+  "files": {
+    "artifacts/archer-context-rx-stage56": "b82d0b2b383b75a3aab8378d25fa5f5bcc7ab6e6d643a3548fb560a5fa81ee97",
+    "artifacts/archer-context-rx-stage56b": "837bb208a021c025ce6bcd441158f76192a07e9d43043414a6f8997465a4ebac",
+    "artifacts/context-rx-stage56.jsonl": "31d7a7d6aec94d2ae41aa8594ab7a1cc536ac8d1c31be6e728f6b46feb7052b6",
+    "artifacts/context-rx-stage56.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/context-rx-stage56b.jsonl": "b402bd3cde2ac2f8b46173a69c1ef3bc2e8b97a01dbe6a0a96db1fd9fc239622",
+    "artifacts/context-rx-stage56b.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tests-stage56b.txt": "08e1552cab6fdafb623cb3a3476279466be919dce407448f5aeedaf24261dbeb",
+    "artifacts/rtw89-usb.c": "858b8771c585a65fe5b1498c1d98e786134ee3c46b18985924310a24c1a6d80e",
+    "artifacts/rtw89-usb.h": "dc2a33fc80eedc6aa07422b0b44527669c8723df9fe2096722fe756a3b69c93e"
+  },
+  "observations": {
+    "stage56": {
+      "results": [
+        {
+          "result": "context_cleanup_acknowledged",
+          "transfers": 8,
+          "normal_packets": 0,
+          "beacons": 0,
+          "network_tx_paused": true,
+          "initial_macid_pause_measured": false
+        }
+      ],
+      "reads": {
+        "0x6000": [
+          0,
+          0,
+          2164203540,
+          2164203540,
+          0
+        ],
+        "0x6004": [
+          1073741824,
+          1073741824,
+          31,
+          31,
+          1073741824
+        ],
+        "0x11428": [
+          65535,
+          65535,
+          288,
+          288,
+          65535
+        ]
+      },
+      "sends": [
+        {
+          "operation": "context_send",
+          "step": 0,
+          "sequence": 85,
+          "ack_policy": 0
+        },
+        {
+          "operation": "context_send",
+          "step": 1,
+          "sequence": 86,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 2,
+          "sequence": 87,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 3,
+          "sequence": 88,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 4,
+          "sequence": 89,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 5,
+          "sequence": 90,
+          "ack_policy": 2
+        },
+        {
+          "operation": "context_send",
+          "step": 6,
+          "sequence": 91,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 7,
+          "sequence": 92,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 8,
+          "sequence": 93,
+          "ack_policy": 0
+        }
+      ],
+      "acks": [
+        {
+          "operation": "context_ack",
+          "step_before": 0,
+          "step_after": 1
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 1,
+          "step_after": 2
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 2,
+          "step_after": 3
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 3,
+          "step_after": 4
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 4,
+          "step_after": 5
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 6,
+          "step_after": 7
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 7,
+          "step_after": 8
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 8,
+          "step_after": 9
+        }
+      ]
+    },
+    "stage56b": {
+      "results": [
+        {
+          "result": "context_cleanup_acknowledged",
+          "transfers": 8,
+          "normal_packets": 0,
+          "beacons": 0,
+          "network_tx_paused": true,
+          "initial_macid_pause_measured": false
+        }
+      ],
+      "reads": {
+        "0x6000": [
+          0,
+          0,
+          2164203540,
+          2164203540,
+          0
+        ],
+        "0x6004": [
+          1073741824,
+          1073741824,
+          31,
+          31,
+          1073741824
+        ],
+        "0x11428": [
+          65535,
+          65535,
+          65535,
+          65535,
+          65535
+        ]
+      },
+      "sends": [
+        {
+          "operation": "context_send",
+          "step": 0,
+          "sequence": 94,
+          "ack_policy": 0
+        },
+        {
+          "operation": "context_send",
+          "step": 1,
+          "sequence": 95,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 2,
+          "sequence": 96,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 3,
+          "sequence": 97,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 4,
+          "sequence": 98,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 5,
+          "sequence": 99,
+          "ack_policy": 2
+        },
+        {
+          "operation": "context_send",
+          "step": 6,
+          "sequence": 100,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 7,
+          "sequence": 101,
+          "ack_policy": 1
+        },
+        {
+          "operation": "context_send",
+          "step": 8,
+          "sequence": 102,
+          "ack_policy": 0
+        }
+      ],
+      "acks": [
+        {
+          "operation": "context_ack",
+          "step_before": 0,
+          "step_after": 1
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 1,
+          "step_after": 2
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 2,
+          "step_after": 3
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 3,
+          "step_after": 4
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 4,
+          "step_after": 5
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 6,
+          "step_after": 7
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 7,
+          "step_after": 8
+        },
+        {
+          "operation": "context_ack",
+          "step_before": 8,
+          "step_after": 9
+        }
+      ]
+    }
+  }
+}
