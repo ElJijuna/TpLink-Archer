@@ -17,6 +17,7 @@ build/efuse-reader-test: tests/efuse_reader_test.cpp include/archer/efuse_reader
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test build/bb-postinit-test build/radio-init-test build/dle-init-test build/rfk-protocol-test build/bb-table-window-test build/rf-power-test build/firmware-boot-test build/firmware-state-test build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
 	./build/channel-init-test
+	./build/rx-descriptor-test
 	./build/tssi-protocol-test
 	./build/channel-transition-test
 	./build/dmac-init-test
@@ -61,7 +62,7 @@ universal: | build
 receive-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_receive.cpp -framework IOKit -framework CoreFoundation -o build/archer-receive-universal
 
-build/archer-decode: src/channel_decode.cpp include/archer/firmware_channel.hpp | build
+build/archer-decode: src/channel_decode.cpp include/archer/firmware_channel.hpp include/archer/rx_descriptor.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 decode: build/archer-decode
 
@@ -180,6 +181,9 @@ build/tx-rfk-test: tests/tx_rfk_test.cpp include/archer/tx_rfk.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/tx-rfk-physical-test
 build/tx-rfk-physical-test: tests/tx_rfk_physical_test.cpp include/archer/tx_rfk.hpp $(wildcard tests/fixtures/*-stage42-usb.bin) | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/rx-descriptor-test
+build/rx-descriptor-test: tests/rx_descriptor_test.cpp include/archer/rx_descriptor.hpp include/archer/firmware_channel.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 .PHONY: cmac-init-universal tx-calibrate-universal
 cmac-init-universal: | build

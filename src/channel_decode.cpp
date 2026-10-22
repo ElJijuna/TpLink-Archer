@@ -1,4 +1,4 @@
-#include "archer/firmware_channel.hpp"
+#include "archer/rx_descriptor.hpp"
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -12,12 +12,24 @@ int main(int argc, char** argv) {
         file.seekg(0);
         std::vector<std::uint8_t> bytes{std::istreambuf_iterator<char>(file), {}};
         if (file.bad()) throw std::runtime_error("RX file read failed");
-        auto packets = archer::decode_usb_rx_be(bytes);
-        for (const auto& packet : packets) {
+        auto packets = archer::decode_be_rx_metadata(bytes);
+        for (const auto& metadata : packets) {
+            const auto& packet = metadata.packet;
             std::cout << "{\"descriptor_offset\":" << packet.descriptor_offset
                       << ",\"payload_offset\":" << packet.payload_offset
                       << ",\"payload_bytes\":" << packet.payload_bytes
                       << ",\"packet_type\":" << packet.packet_type;
+            if (packet.packet_type == 0) {
+                std::cout << ",\"descriptor_bytes\":" << metadata.descriptor_bytes
+                          << ",\"crc_error\":" << (metadata.crc_error ? "true" : "false")
+                          << ",\"icv_error\":" << (metadata.icv_error ? "true" : "false")
+                          << ",\"rate_code\":" << metadata.rate_code
+                          << ",\"bandwidth_code\":" << metadata.bandwidth_code
+                          << ",\"header_converted\":";
+                if (metadata.header_converted) std::cout << (*metadata.header_converted ? "true" : "false");
+                else std::cout << "null";
+                std::cout << ",\"fcs_policy\":\"unknown\"";
+            }
             if (packet.c2h) std::cout << ",\"category\":" << packet.c2h->category
                                     << ",\"class\":" << packet.c2h->command_class
                                     << ",\"function\":" << packet.c2h->function;

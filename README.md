@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **40 %**
 
-Actualizado: **2026-10-21**, etapa42. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-21**, etapa43. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -28,6 +28,13 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; todavía no hay escaneo, asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa43: el decodificador RX ya expone errores CRC/ICV, tasa, ancho de banda
+y conversión de cabecera. Una captura anterior contiene un paquete normal
+de 124 bytes sin errores de descriptor y con cabecera sin convertir. Esto
+valida el análisis de esa captura; falta recepción reproducible con CMAC
+actual, validación de tramas y escaneo pasivo. El avance permanece en **40 %**.
+Detalles: [research/STAGE43.md](research/STAGE43.md).
 
 
 Proyecto experimental para TP-Link USB `37ad:0104`, con destino macOS Intel/Apple Silicon y Linux posteriormente.
