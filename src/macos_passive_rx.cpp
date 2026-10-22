@@ -3,11 +3,12 @@
 #include "archer/rx_scan_window.hpp"
 #include "archer/beacon.hpp"
 #include "archer/rx_counters.hpp"
+#include "archer/ple_probe.hpp"
 #include <filesystem>
 #include <fstream>
 int main(int argc,char** argv){
- if(argc!=3 || (std::string(argv[1])!="--receive-channel1" && std::string(argv[1])!="--receive-channel1-reset-counters")){
-    std::cerr<<"Usage: archer-passive-rx --receive-channel1[\u002dreset-counters] NEW_DIRECTORY\n";return 2;
+ if(argc!=3 || (std::string(argv[1])!="--receive-channel1" && std::string(argv[1])!="--receive-channel1-reset-counters" && std::string(argv[1])!="--diagnostic-rmac-channel1")){
+    std::cerr<<"Usage: archer-passive-rx {--receive-channel1|--receive-channel1-reset-counters|--diagnostic-rmac-channel1} NEW_DIRECTORY\n";return 2;
  }
  try{
     const std::filesystem::path directory=argv[2];
@@ -29,15 +30,25 @@ int main(int argc,char** argv){
             const auto snapshot=[&](const char* phase){
                 // Source RTL8922A PMAC map, BB aperture +0x20000; no clear/reset.
                 for(unsigned a:{0x7880u,0x8400u,0x8404u,0x8914u,0x8938u,0x9058u,
-                    0x10c00u,0x10c84u,0x20730u,0x20e24u,0x22e10u,0x22e14u,
+                    0x10c00u,0x10c84u,0x11400u,0x11404u,0x20730u,0x20e24u,0x22e10u,0x22e14u,
                     0x20e64u,0x20e60u,0x20e5cu,0x20e58u}){
                     const auto v=archer::channel_bus_read(bus,a);
                     std::cout<<"{\"operation\":\"rx_snapshot\",\"phase\":\""<<phase
                              <<"\",\"address\":"<<a<<",\"value\":"<<v<<"}"<<std::endl;
                 }
+                const auto empty=archer::ple_debug_read(bus,7,0);
+                const auto quota=archer::ple_debug_read(bus,1,6);
+                std::cout<<"{\"operation\":\"ple_snapshot\",\"phase\":\""<<phase
+                         <<"\",\"group0_empty\":"<<empty<<",\"quota6_raw\":"<<quota<<"}"<<std::endl;
+                for(unsigned q=0;q<32;++q)if(!(empty&(1u<<q))){
+                    const auto raw=archer::ple_debug_read(bus,6,q*2+1);
+                    std::cout<<"{\"operation\":\"ple_queue\",\"phase\":\""<<phase
+                             <<"\",\"queue\":"<<q<<",\"raw\":"<<raw
+                             <<",\"packet_count\":"<<(raw&0xfff)<<"}"<<std::endl;
+                }
             };
             snapshot("before");
-            if(std::string(argv[1])=="--receive-channel1-reset-counters"){
+            if(std::string(argv[1])!="--receive-channel1"){
                 archer::reset_rx_diagnostic_counters(bus);
                 snapshot("after_counter_reset");
             }
@@ -59,7 +70,7 @@ int main(int argc,char** argv){
                 }
             }
             snapshot("after");
-        });
+        },std::string(argv[1])=="--diagnostic-rmac-channel1");
         if(archer::channel_bus_read(bus,0x10398)&0x3ffff)
             throw std::runtime_error("TX scheduler no longer paused");
     });

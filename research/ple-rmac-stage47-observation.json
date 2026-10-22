@@ -1,0 +1,93 @@
+{
+  "stage": 47,
+  "files": {
+    "artifacts/archer-passive-rx-stage47b": "276176254e7d63263df5ce3f69d1991c30ca1cb2bcb2db0e4bfcda4aee5605d1",
+    "artifacts/passive-rx-stage47.jsonl": "72e17bca4a3ab19e9c1a2b76f4fd7b5ddbcc24cda043873fe344af83f7616e08",
+    "artifacts/passive-rx-stage47.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/passive-rx-stage47b.jsonl": "a8bd0bc6a60975d383c7578e2de98a326798d1b12bb09d0b778026f55020f887",
+    "artifacts/passive-rx-stage47b.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tests-stage47b.txt": "ea406490c1003b1d4538cda922691de0cf2faafa05562df87314b8f50c0694a4"
+  },
+  "observations": {
+    "stage47": {
+      "result": {
+        "result": "passive_rx_window_restored",
+        "transfers": 0,
+        "normal_packets": 0,
+        "beacons": 0,
+        "probe_responses": 0,
+        "descriptor_errors": 0,
+        "unparsed": 0,
+        "network_tx_paused": true
+      },
+      "ple_snapshots": [
+        {
+          "operation": "ple_snapshot",
+          "phase": "before",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after_counter_reset",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        }
+      ],
+      "rcr_reads": [
+        552853504,
+        552853504,
+        552853504
+      ]
+    },
+    "stage47b": {
+      "result": {
+        "result": "passive_rx_window_restored",
+        "transfers": 0,
+        "normal_packets": 0,
+        "beacons": 0,
+        "probe_responses": 0,
+        "descriptor_errors": 0,
+        "unparsed": 0,
+        "network_tx_paused": true
+      },
+      "ple_snapshots": [
+        {
+          "operation": "ple_snapshot",
+          "phase": "before",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after_counter_reset",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        },
+        {
+          "operation": "ple_snapshot",
+          "phase": "after",
+          "group0_empty": 4294967295,
+          "quota6_raw": 57
+        }
+      ],
+      "rcr_reads": [
+        552853504,
+        552853504,
+        552853505,
+        552853505,
+        552853505,
+        552853505,
+        552853505,
+        552853504
+      ]
+    }
+  },
+  "limitation": "Original stage47 executable not retained; retained stage47b includes explicit CH_EN diagnostic option."
+}

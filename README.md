@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **40 %**
 
-Actualizado: **2026-10-21**, etapa46. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-21**, etapa47. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -51,6 +51,11 @@ OFDM31 y HT5 paquetes con CRC correcto** durante cinco segundos, pero
 **0 transferencias USB**. La radio decodifica tráfico; falta aislar el bloqueo
 posterior en RMAC/DLE/despacho/USB. Avance **40 %**.
 Evidencia: [research/STAGE46.md](research/STAGE46.md).
+
+Etapa47: PLE grupo0 vacío y cuota RX sin uso en las muestras. Activar
+temporalmente RMAC CH_EN tampoco entregó paquetes USB; se restauró el bit.
+Continúa el diagnóstico de filtros y entrega PHY→RMAC. Avance **40 %**.
+Evidencia: [research/STAGE47.md](research/STAGE47.md).
 
 
 Proyecto experimental para TP-Link USB `37ad:0104`, con destino macOS Intel/Apple Silicon y Linux posteriormente.
