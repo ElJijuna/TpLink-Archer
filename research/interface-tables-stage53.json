@@ -1,0 +1,14 @@
+{
+  "stage": 53,
+  "source_commit": "c03c1a14507dfaf8b856c2608f9ac216021fc222",
+  "hardware_commands_sent": false,
+  "runtime_table_readback_validated": false,
+  "files": {
+    "artifacts/rtw89-fw.c": "acc4188f0829051ce67ad7dbcdff6819523948a291702279c3b555d0ed1d840c",
+    "artifacts/rtw89-fw.h": "d73c8eff7cf97ecc2096b72415a1130cc45d8719c909f5435b26d3bd71cf96e4",
+    "artifacts/rtw89-mac.c": "cd760d4e9f6037f6de5cb2d567e4d522e45c033346cb70ce6aa12558f4d41c95",
+    "artifacts/rtw8922a.c": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535",
+    "artifacts/rtw89-cam-stage52.h": "3d8f72a4fd1c560f69e01ca372ab1be69ee0345ee9c2890da0c27986271a26c9",
+    "artifacts/tests-stage53-final.txt": "0e540dd561e8ed6c161c91068ccd7ce180057cfa1821607fe9234ddc0d5a0b79"
+  }
+}
