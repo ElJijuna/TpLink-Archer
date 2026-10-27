@@ -1,21 +1,21 @@
 # Archer USB — investigación y base de controlador
 
-## Checklist resumido — avance estimado: **40 %**
+## Checklist resumido — avance estimado: **45 %**
 
-Actualizado: **2026-10-22**, etapa62. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-27**, etapa63: recepción normal reproducida. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
 - [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
 - [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
-- [ ] Ruta completa de datos Wi-Fi TX/RX — **0/15**.
+- [ ] Ruta completa de datos Wi-Fi TX/RX — **5/15**: RX normal repetido y FCS verificado; faltan TX y el resto del camino.
 - [ ] Escaneo, asociación y seguridad Wi-Fi — **0/15**.
 - [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
 - [ ] Validación física en Mac Intel — **0/5**.
 - [ ] Implementación y validación en Linux — **0/5**.
 
-**40/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
+**45/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
 no del tiempo restante. Compilar para Intel no equivale a validarlo físicamente.
 El adaptador todavía no ofrece conexión Wi-Fi utilizable.
 
@@ -28,6 +28,13 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; todavía no hay escaneo, asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa63: tras recuperar el arranque, dos ciclos recibieron555 paquetes normales,
+incluidos448 beacons y77 probe responses. Los555 FCS coinciden con CRC32
+calculado independientemente. Ocho controles PHY correctos en ambas pruebas;
+contexto retirado y TX de red pausado. RX reproducido sobre ARM; falta integrar
+el arranque, escaneo pasivo estructurado, TX y asociación. Avance45 %.
+Evidencia: [research/STAGE63.md](research/STAGE63.md).
 
 Etapa62: auditoría de24 campos RMAC/PLE/USB antes, durante y después
 del contexto. No aparecen diferencias inesperadas frente a la fuente bajo

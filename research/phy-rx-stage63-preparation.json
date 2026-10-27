@@ -1,0 +1,36 @@
+{
+  "stage": 63,
+  "date": "2026-10-27",
+  "status": "prepared_physical_test_pending",
+  "files": {
+    "artifacts/archer-context-rx-stage63": "b77519c0e50cc5142bbaa8e99d5e39f83481513546fad0460e2ce71a6359dbcc",
+    "artifacts/tests-stage63.txt": "525c19e39abc64f7bae0583f65cd08d1f510289320a7098e87ce084b4375623c",
+    "artifacts/optical-eject-stage63.jsonl": "934ee45b54f65c060888be6fb4508b5d7e5daf3012d7c8d2fc91c3733b27c4cc",
+    "artifacts/optical-eject-stage63.stderr": "c14fadf0abda290a6dc9e8d204a4b668952b1a4e530e144a6b563f48ae353b6c",
+    "artifacts/context-rx-stage62.jsonl": "10d7bcc1579b188cc309d49929cef52a0c308632ab9509c796eb7a7df77b73d2",
+    "include/archer/rx_delivery_audit.hpp": "638073166cc9381ca411098ddb57a924218fa04f994250904d618ac2c561fd38",
+    "tests/rx_delivery_audit_test.cpp": "2a46acdf0170bab81560dbdbee8c1b1d041dec372ce171f6bbca1e26216331ba",
+    "src/macos_context_rx.cpp": "6d51d514fe9848bf24d304e93184a23596bf06705c6f30a80a1d64da860bc5c9",
+    "artifacts/rtw8922a.c": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535",
+    "artifacts/rtw89-reg.h": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d"
+  },
+  "historical_stage62": {
+    "samples": 16,
+    "matching_samples": {
+      "phy_reset_released": 16,
+      "cck_cca_enabled": 16,
+      "packet_detection_enabled": 16,
+      "cmac_rx_phy_dma_enabled": 16
+    },
+    "limitation": "Four historical controls only; no observation of current PHY state"
+  },
+  "current_usb": "0bda:1a2b installer",
+  "eject_exit": 2,
+  "blocker": "Local administrator authentication required for verified optical media eject",
+  "physical_test_performed": false,
+  "validation": {
+    "cpp_suites": 50,
+    "python_tests": 55,
+    "universal_build": true
+  }
+}

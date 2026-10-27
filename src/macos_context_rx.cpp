@@ -109,6 +109,15 @@ int main(int argc,char** argv){
                          <<",\"source_value\":"<<field.source_value<<",\"value\":"<<values[i]
                          <<",\"source_match\":"<<((values[i]&field.mask)==field.source_value?"true":"false")<<"}"<<std::endl;
             }
+            const auto phy_values=archer::read_phy_rx_delivery_audit(bus);
+            for(unsigned i=0;i<phy_values.size();++i){
+                const auto& field=archer::phy_rx_delivery_fields[i];
+                std::cout<<"{\"operation\":\"phy_rx_delivery_audit\",\"phase\":\""<<phase
+                         <<"\",\"field\":\""<<field.name<<"\",\"address\":"<<field.address
+                         <<",\"width\":"<<field.width<<",\"mask\":"<<field.mask
+                         <<",\"source_value\":"<<field.source_value<<",\"value\":"<<phy_values[i]
+                         <<",\"source_match\":"<<((phy_values[i]&field.mask)==field.source_value?"true":"false")<<"}"<<std::endl;
+            }
         };
         audit("before_windows");
         measure("before_windows");

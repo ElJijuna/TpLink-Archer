@@ -35,6 +35,30 @@ inline constexpr std::array<RxDeliveryField,24> rx_delivery_fields{{
     {"data_filter",0x1142c,4,0xffffffff,0xffff},
     {"busy_check_sequence",0x11400,2,0x8000,0x8000},
 }};
+// PHY0, channel1/2.4GHz, AB profile. BB logical offsets use the
+// established 0x20000 mapping. rtw8922a.c:1849-1865,1981-2004,2162-2179.
+// These controls are prerequisites; they do not observe the PHY/MAC handshake.
+inline constexpr std::array<RxDeliveryField,8> phy_rx_delivery_fields{{
+    {"phy_reset_released",0x20704,4,2,2},
+    {"cck_cca_enabled",0x20520,4,1,0},
+    {"cck_enabled",0x20700,4,0x20,0x20},
+    {"packet_detection_enabled",0x20c3c,4,0x200,0},
+    {"cck_arbiter_enabled",0x20c80,4,0x80000000,0},
+    {"rx_antenna_ab",0x26b54,4,0xf,3},
+    {"rx_cca_ab",0x26b50,4,0x3c000,0xc000},
+    {"cmac_rx_phy_dma_enabled",0x10000,4,0x10000030,0x10000030},
+}};
+inline std::array<unsigned,phy_rx_delivery_fields.size()> read_phy_rx_delivery_audit(RegisterBus& bus){
+    std::array<unsigned,phy_rx_delivery_fields.size()> values{};
+    for(unsigned i=0;i<values.size();++i){
+        const auto& field=phy_rx_delivery_fields[i];
+        const auto value=bus.read(field.address,field.width);
+        if(value==0xdeadbeef||value==0xeaeaeaea)
+            throw std::runtime_error("PHY RX delivery audit register inaccessible");
+        values[i]=value;
+    }
+    return values;
+}
 inline std::array<unsigned,rx_delivery_fields.size()> read_rx_delivery_audit(RegisterBus& bus){
     std::array<unsigned,rx_delivery_fields.size()> values{};
     for(unsigned i=0;i<values.size();++i){
