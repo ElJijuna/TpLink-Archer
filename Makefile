@@ -63,6 +63,7 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/xtal-identity-test
 	./build/efuse-reader-test
 	./build/sequence-ledger-test
+	./build/workflow-lock-test
 	./build/usb-request-test
 	./build/usb-descriptors-test
 	./build/firmware-channel-test
@@ -267,3 +268,9 @@ build/passive-scan-test: tests/passive_scan_test.cpp include/archer/passive_scan
 .PHONY: passive-scan-decode-universal
 passive-scan-decode-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/passive_scan_decode.cpp -o build/archer-passive-scan-decode-universal
+
+test: build/workflow-lock-test
+build/workflow-lock-test: tests/workflow_lock_test.cpp include/archer/workflow_lock.hpp include/archer/sequence_ledger.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+# Changes to shared ownership must rebuild every ledger user.
+build/sequence-ledger-test: include/archer/workflow_lock.hpp

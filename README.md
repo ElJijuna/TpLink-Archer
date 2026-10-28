@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **48 %**
 
-Actualizado: **2026-10-27**, etapa64: escaneo pasivo fijo en canal1. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-27**, etapa65: recuperación y escaneo coordinados. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -28,6 +28,13 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; hay escaneo pasivo fijo, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa65: coordinador de recuperación, calibración y escaneo probado sobre ARM.
+Conserva binarios/logs/manifiesto y bloquea otras herramientas actualizadas entre
+fases. Obtuvo14 entradas y250 observaciones válidas, con replay idéntico.
+Quedan11 secuencias; otro ciclo completo exige22 y se rechazará antes de tocar
+USB. Falta una transición de época segura antes de más ciclos completos.
+Avance48 %. [research/STAGE65.md](research/STAGE65.md).
 
 Etapa64: escaneo pasivo agregado en17 entradas a partir de293 observaciones
 válidas (238 beacons y55 probe responses), sin sondas activas. Verifica FCS,

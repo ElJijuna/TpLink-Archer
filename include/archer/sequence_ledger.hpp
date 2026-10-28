@@ -1,4 +1,5 @@
 #pragma once
+#include "archer/workflow_lock.hpp"
 #include <array>
 #include <algorithm>
 #include <cerrno>
@@ -13,9 +14,10 @@ namespace archer {
 // Durable, non-wrapping sequence ownership for one physical adapter epoch.
 // Reserve before USB transmission; failures/timeouts never return a sequence.
 class SequenceLedger {
+    WorkflowLock workflow_;
     int fd_ = -1;
 public:
-    explicit SequenceLedger(const std::string& path) {
+    explicit SequenceLedger(const std::string& path):workflow_(path+".workflow") {
         fd_ = open(path.c_str(), O_RDWR | O_CREAT | O_NOFOLLOW, 0600);
         if (fd_ < 0) throw std::runtime_error(std::string("Cannot open sequence ledger: ")+std::strerror(errno));
         struct stat info{};
