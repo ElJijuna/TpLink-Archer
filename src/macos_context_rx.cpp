@@ -6,6 +6,7 @@
 #include "archer/phy_report_window.hpp"
 #include "archer/physts_window.hpp"
 #include "archer/beacon.hpp"
+#include "archer/passive_scan.hpp"
 #include "archer/usb_rx_aggregation.hpp"
 #include "archer/ple_probe.hpp"
 #include "archer/rx_counters.hpp"
@@ -62,6 +63,7 @@ int main(int argc,char** argv){
         // Cleanup target is unpaused/awake; initial hardware pause not measured.
         archer::InterfaceContextLifecycle session(context,sequences,true,true,false);
         unsigned transfers=0,normal=0,beacons=0;
+        archer::PassiveScan scan;
         const auto receive=[&](unsigned pipe,bool track){
             auto bytes=usb.receive(pipe,10);if(bytes.empty())return false;
             if(transfers>=1024)throw std::runtime_error("Context RX capture bound reached");
@@ -74,7 +76,7 @@ int main(int argc,char** argv){
                     if(session.observe(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes))
                         std::cout<<"{\"operation\":\"context_ack\",\"step_before\":"<<before<<",\"step_after\":"<<session.step()<<"}"<<std::endl;
                 }
-                if(m.packet.packet_type==0){++normal;try{auto b=archer::decode_rx_beacon(bytes,m);if(!b.probe_response)++beacons;}catch(const std::invalid_argument&){} }
+                if(m.packet.packet_type==0){scan.observe(bytes,m);++normal;try{auto b=archer::decode_rx_beacon(bytes,m);if(!b.probe_response)++beacons;}catch(const std::invalid_argument&){} }
             }
             return true;
         };
@@ -176,6 +178,9 @@ int main(int argc,char** argv){
         audit("after_windows");
         if(session.phase()!=archer::ContextPhase::cleanup_acknowledged || (archer::channel_bus_read(bus,0x10398)&0x3ffff))throw std::runtime_error("Context cleanup/TX pause not confirmed");
         reservation.clean();
+        std::ofstream scan_file(dir/"networks.json");scan.write_json(scan_file);scan_file.close();
+        if(!scan_file)throw std::runtime_error("Passive scan result write failed after context cleanup");
+        std::cout<<"{\"operation\":\"passive_scan_summary\",\"network_entries\":"<<scan.networks().size()<<",\"accepted_management\":"<<scan.accepted()<<",\"bad_fcs\":"<<scan.bad_fcs()<<",\"table_overflow\":"<<scan.overflow()<<"}"<<std::endl;
         std::cout<<"{\"result\":\"context_cleanup_acknowledged\",\"transfers\":"<<transfers<<",\"normal_packets\":"<<normal<<",\"beacons\":"<<beacons<<",\"network_tx_paused\":true,\"initial_macid_pause_measured\":false}"<<std::endl;
     });return 0;
  }catch(const std::exception& e){std::cerr<<"context-rx: "<<e.what()<<"; reservation may remain DIRTY; no replay\n";return 2;}

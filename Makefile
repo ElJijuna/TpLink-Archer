@@ -19,6 +19,7 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/channel-init-test
 	./build/rx-descriptor-test
 	./build/beacon-test
+	./build/passive-scan-test
 	./build/rx-scan-window-test
 	./build/rx-counters-test
 	./build/rx-delivery-audit-test
@@ -259,3 +260,10 @@ tx-calibrate-universal: | build
 test: build/rx-delivery-audit-test
 build/rx-delivery-audit-test: tests/rx_delivery_audit_test.cpp include/archer/rx_delivery_audit.hpp include/archer/register_mailbox.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
+
+test: build/passive-scan-test
+build/passive-scan-test: tests/passive_scan_test.cpp include/archer/passive_scan.hpp include/archer/beacon.hpp include/archer/rx_descriptor.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+.PHONY: passive-scan-decode-universal
+passive-scan-decode-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/passive_scan_decode.cpp -o build/archer-passive-scan-decode-universal

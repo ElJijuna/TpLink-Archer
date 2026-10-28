@@ -1,8 +1,8 @@
 # Archer USB — investigación y base de controlador
 
-## Checklist resumido — avance estimado: **45 %**
+## Checklist resumido — avance estimado: **48 %**
 
-Actualizado: **2026-10-27**, etapa63: recepción normal reproducida. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-27**, etapa64: escaneo pasivo fijo en canal1. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -10,12 +10,12 @@ para macOS ARM/Intel, con Linux posteriormente.
 - [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
 - [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
 - [ ] Ruta completa de datos Wi-Fi TX/RX — **5/15**: RX normal repetido y FCS verificado; faltan TX y el resto del camino.
-- [ ] Escaneo, asociación y seguridad Wi-Fi — **0/15**.
+- [ ] Escaneo, asociación y seguridad Wi-Fi — **3/15**: escaneo pasivo agregado en canal1; faltan barrido, asociación y seguridad.
 - [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
 - [ ] Validación física en Mac Intel — **0/5**.
 - [ ] Implementación y validación en Linux — **0/5**.
 
-**45/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
+**48/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
 no del tiempo restante. Compilar para Intel no equivale a validarlo físicamente.
 El adaptador todavía no ofrece conexión Wi-Fi utilizable.
 
@@ -25,9 +25,15 @@ La repetición desde firmware recargado terminó con respuestas OK de todos
 los comandos y RXDCK final limpio. IQK y TXGAPK reportan éxito; DPK no muestra
 timeouts/overflow, pero su máscara de estado y los estados de alineación TSSI
 siguen sin interpretación definitiva. No se afirma calidad RF plenamente validada.
-TX de red queda pausado; todavía no hay escaneo, asociación ni interfaz de red.
+TX de red queda pausado; hay escaneo pasivo fijo, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa64: escaneo pasivo agregado en17 entradas a partir de293 observaciones
+válidas (238 beacons y55 probe responses), sin sondas activas. Verifica FCS,
+conserva SSID como bytes y separa canal recibido de canal anunciado. Resultado
+en vivo idéntico al replay offline; todavía sin barrido ni asociación. Avance48 %.
+Evidencia: [research/STAGE64.md](research/STAGE64.md).
 
 Etapa63: tras recuperar el arranque, dos ciclos recibieron555 paquetes normales,
 incluidos448 beacons y77 probe responses. Los555 FCS coinciden con CRC32
