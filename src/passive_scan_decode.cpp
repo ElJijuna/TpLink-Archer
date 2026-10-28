@@ -4,11 +4,13 @@
 #include <iostream>
 #include <iterator>
 int main(int argc,char** argv){
-    if(argc!=3||std::string(argv[1])!="--channel1-fcs-appended"){
-        std::cerr<<"Usage: archer-passive-scan-decode --channel1-fcs-appended RX_DIRECTORY\n";return 2;
+    const std::string option=argc>1?argv[1]:"";
+    const unsigned channel=option=="--channel1-fcs-appended"?1:option=="--channel6-fcs-appended"?6:option=="--channel11-fcs-appended"?11:0;
+    if(argc!=3||!channel){
+        std::cerr<<"Usage: archer-passive-scan-decode {--channel1-fcs-appended|--channel6-fcs-appended|--channel11-fcs-appended} RX_DIRECTORY\n";return 2;
     }
     try{
-        archer::PassiveScan scan;
+        archer::PassiveScan scan(channel);
         unsigned total=0;
         for(const auto& e:std::filesystem::directory_iterator(argv[2])){
             const auto name=e.path().filename().string();

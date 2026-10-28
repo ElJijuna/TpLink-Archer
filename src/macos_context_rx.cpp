@@ -13,23 +13,7 @@
 #include "archer/rx_delivery_audit.hpp"
 #include <filesystem>
 #include <fstream>
-class ContextReservation {
- int fd=-1;
-public:
- ContextReservation(){
-    fd=open("artifacts/37ad-0104-context-reservation",O_RDWR|O_CREAT|O_NOFOLLOW,0600);
-    if(fd<0)throw std::runtime_error("Cannot open context reservation");
-    struct stat st{};char state[6]{};
-    if(fstat(fd,&st)||!S_ISREG(st.st_mode)||st.st_nlink!=1||flock(fd,LOCK_EX|LOCK_NB)||
-       (st.st_size && (st.st_size!=6||pread(fd,state,6,0)!=6||std::string(state,6)!="CLEAN\n"))){
-        close(fd);fd=-1;throw std::runtime_error("Context reservation dirty/owned; recover firmware before reuse");
-    }
-    try{write_state("DIRTY\n");}catch(...){close(fd);fd=-1;throw;}
- }
- void write_state(const char* state){if(pwrite(fd,state,6,0)!=6||ftruncate(fd,6)||fsync(fd))throw std::runtime_error("Context reservation persistence failed");}
- void clean(){write_state("CLEAN\n");}
- ~ContextReservation(){if(fd>=0)close(fd);}
-};
+#include "archer/context_reservation.hpp"
 int main(int argc,char** argv){
  if(argc!=3||(std::string(argv[1])!="--run-owned-source-profile"&&std::string(argv[1])!="--run-owned-source-profile-usb-aggregation"&&std::string(argv[1])!="--run-owned-source-profile-usb-aggregation-all-management"&&std::string(argv[1])!="--run-owned-source-profile-usb-aggregation-all-management-async")){
     std::cerr<<"Usage: archer-context-rx {--run-owned-source-profile|--run-owned-source-profile-usb-aggregation|--run-owned-source-profile-usb-aggregation-all-management|--run-owned-source-profile-usb-aggregation-all-management-async} NEW_DIRECTORY\n";return 2;

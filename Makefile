@@ -289,3 +289,8 @@ build/passive-channels-test: tests/passive_channels_test.cpp include/archer/pass
 passive-channel-plan-universal: | build
 	python3 tools/channel_bundle.py
 	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/passive_channel_plan.cpp -o build/archer-passive-channel-plan-universal
+
+.PHONY: passive-retune-universal
+passive-retune-universal: | build
+	python3 tools/channel_bundle.py
+	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/macos_passive_retune.cpp -framework IOKit -framework CoreFoundation -o build/archer-passive-retune-universal

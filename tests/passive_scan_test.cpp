@@ -24,6 +24,10 @@ int main(){
     m.packet.payload_offset=b.size()+1;assert(!s.observe(b,m));m=metadata(b);m.crc_error=true;assert(!s.observe(b,m));
     m=metadata(b);m.fcs_policy=archer::RxFcsPolicy::unknown;assert(!s.observe(b,m));
     std::ostringstream out;s.write_json(out);assert(out.str().find("610062")!=std::string::npos&&out.str().find("\"receive_channel\":1")!=std::string::npos);
+    archer::PassiveScan scan6(6);auto f6=frame(1,false,1);assert(scan6.observe(f6,metadata(f6)));
+    std::ostringstream six;scan6.write_json(six);
+    assert(six.str().find("\"receive_channel\":6")!=std::string::npos&&six.str().find("\"advertised_ds_channel\":1")!=std::string::npos);
+    bool invalid=false;try{archer::PassiveScan bad(2);}catch(const std::invalid_argument&){invalid=true;}assert(invalid);
     archer::PassiveScan bounded;
     for(unsigned i=0;i<129;++i){auto f=frame(i);bounded.observe(f,metadata(f));}
     assert(bounded.networks().size()==128&&bounded.overflow()==1);

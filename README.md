@@ -1,8 +1,8 @@
 # Archer USB — investigación y base de controlador
 
-## Checklist resumido — avance estimado: **48 %**
+## Checklist resumido — avance estimado: **50 %**
 
-Actualizado: **2026-10-27**, etapa67: planes multicanal preparados; escaneo operativo en1. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-27**, etapa68: barrido pasivo1/6/11 con retorno verificado. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -10,12 +10,12 @@ para macOS ARM/Intel, con Linux posteriormente.
 - [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
 - [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
 - [ ] Ruta completa de datos Wi-Fi TX/RX — **5/15**: RX normal repetido y FCS verificado; faltan TX y el resto del camino.
-- [ ] Escaneo, asociación y seguridad Wi-Fi — **3/15**: escaneo pasivo agregado en canal1; faltan barrido, asociación y seguridad.
+- [ ] Escaneo, asociación y seguridad Wi-Fi — **5/15**: barrido pasivo1/6/11 con retorno; faltan ampliación, asociación y seguridad.
 - [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
 - [ ] Validación física en Mac Intel — **0/5**.
 - [ ] Implementación y validación en Linux — **0/5**.
 
-**48/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
+**50/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
 no del tiempo restante. Compilar para Intel no equivale a validarlo físicamente.
 El adaptador todavía no ofrece conexión Wi-Fi utilizable.
 
@@ -25,9 +25,16 @@ La repetición desde firmware recargado terminó con respuestas OK de todos
 los comandos y RXDCK final limpio. IQK y TXGAPK reportan éxito; DPK no muestra
 timeouts/overflow, pero su máscara de estado y los estados de alineación TSSI
 siguen sin interpretación definitiva. No se afirma calidad RF plenamente validada.
-TX de red queda pausado; hay escaneo pasivo fijo, pero todavía no asociación ni interfaz de red.
+TX de red queda pausado; hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa68: barrido pasivo1→6→11→1 probado dos veces sobre ARM, con RXDCK
+limpio por destino y retorno comprobado a2412MHz. La versión final recibió
+127/144/100 observaciones válidas en6/11/1; todos los agregados coinciden con
+el replay offline y no tienen errores FCS. Quedan216 secuencias. TX de red
+pausado; calidad RF completa aún no validada. Avance50 %.
+Evidencia: [research/STAGE68.md](research/STAGE68.md).
 
 Etapa67: planes BB/RF para1/6/11 y búsqueda MCC con historial explícito,
 verificados contra la fuente y los datos enlazados de placa. El exportador es

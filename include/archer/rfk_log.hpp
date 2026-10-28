@@ -47,10 +47,12 @@ struct DackReportV2 {
 struct RxdckReport {
     unsigned version;
     std::array<unsigned,2> band, bandwidth, channel, timeout;
-    bool clean_initial_channel1() const {
-        return band==std::array<unsigned,2>{0,0} && bandwidth==std::array<unsigned,2>{0,0} &&
-               channel==std::array<unsigned,2>{1,1} && timeout==std::array<unsigned,2>{0,0};
+    bool clean_2g20(unsigned expected_channel) const {
+        return expected_channel>=1&&expected_channel<=13 &&
+               band==std::array<unsigned,2>{0,0} && bandwidth==std::array<unsigned,2>{0,0} &&
+               channel==std::array<unsigned,2>{expected_channel,expected_channel} && timeout==std::array<unsigned,2>{0,0};
     }
+    bool clean_initial_channel1() const {return clean_2g20(1);}
 };
 inline std::vector<RxdckReport> decode_rxdck_log_reports(const std::uint8_t* bytes,std::size_t size) {
     const auto log=decode_rfk_log(bytes,size);

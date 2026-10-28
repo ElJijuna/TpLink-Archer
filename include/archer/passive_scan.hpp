@@ -13,14 +13,18 @@ struct PassiveNetwork {
     BeaconSummary beacon;unsigned beacons=0,probe_responses=0;
     unsigned first_observation=0,last_observation=0;
 };
-// Fixed channel1 investigation profile; no retuning, probe TX or association.
+// Explicit per-capture receive channel. This aggregator never retunes or sends TX.
 // Keep conflicting SSID/channel advertisements separate rather than guessing
 // identity or merging hidden and disclosed SSIDs. No RF channel/RSSI inference.
 class PassiveScan {
     using Key=std::tuple<std::array<std::uint8_t,6>,std::vector<std::uint8_t>,std::optional<unsigned>>;
     std::map<Key,PassiveNetwork> networks_;
+    unsigned receive_channel_=1;
     unsigned normal_=0,accepted_=0,bad_fcs_=0,unsupported_=0,overflow_=0;
 public:
+    explicit PassiveScan(unsigned channel=1):receive_channel_(channel){
+        if(channel!=1&&channel!=6&&channel!=11)throw std::invalid_argument("Passive capture channel must be 1/6/11");
+    }
     bool observe(const std::vector<std::uint8_t>& bytes,const BeRxMetadata& m){
         if(m.packet.packet_type!=0)return false;
         ++normal_;
@@ -49,7 +53,7 @@ public:
     unsigned overflow()const{return overflow_;}
     void write_json(std::ostream& out)const{
         auto hex=[&](const auto& bytes){const char* h="0123456789abcdef";for(auto b:bytes)out<<h[b>>4]<<h[b&15];};
-        out<<"{\"receive_channel\":1,\"scope\":\"all_receive_phases\",\"active_probes_sent\":0,\"normal_packets\":"<<normal_
+        out<<"{\"receive_channel\":"<<receive_channel_<<",\"scope\":\"all_receive_phases\",\"active_probes_sent\":0,\"normal_packets\":"<<normal_
            <<",\"accepted_management\":"<<accepted_<<",\"bad_fcs\":"<<bad_fcs_<<",\"unsupported\":"<<unsupported_
            <<",\"table_overflow\":"<<overflow_<<",\"networks\":[";
         bool comma=false;

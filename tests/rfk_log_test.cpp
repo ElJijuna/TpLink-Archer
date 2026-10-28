@@ -6,6 +6,12 @@
 template<class F> void rejects(F f){bool caught=false;try{f();}catch(const std::exception&){caught=true;}assert(caught);}
 int main(){
     using namespace archer;
+    RxdckReport channel6{0,{0,0},{0,0},{6,6},{0,0}};
+    assert(channel6.clean_2g20(6)&&!channel6.clean_initial_channel1());
+    channel6.channel={11,11};assert(channel6.clean_2g20(11));channel6.channel={6,6};
+    channel6.timeout[1]=1;assert(!channel6.clean_2g20(6));channel6.timeout[1]=0;
+    channel6.channel[1]=1;assert(!channel6.clean_2g20(6));
+    assert(!channel6.clean_2g20(0)&&!channel6.clean_2g20(14));
     std::ifstream f("tests/fixtures/dack-isolated-stage30-usb.bin",std::ios::binary);assert(f.good());
     const std::vector<std::uint8_t> capture{std::istreambuf_iterator<char>(f),{}};
     const auto packets=decode_usb_rx_be(capture);
