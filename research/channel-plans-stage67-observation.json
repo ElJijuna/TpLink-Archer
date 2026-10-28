@@ -1,0 +1,56 @@
+{
+  "stage": 67,
+  "date": "2026-10-27",
+  "status": "pure_plans_prepared_not_executed",
+  "hardware_access_performed": false,
+  "files": {
+    "include/archer/passive_channels.hpp": "0b1977b33a5e34e7332448d8440be8606ceb5a4927b3cd927ee0e669959ef85e",
+    "src/passive_channel_plan.cpp": "c9ef360874298557619cf9fd4dd38171e4a2dbfc7a7e6cb61d08a5b8e062d4ff",
+    "tests/passive_channels_test.cpp": "9db0c7d8fb5c7a6d2cd521b4973e5da5205455b97297aac5ceba37812e26e121",
+    "artifacts/tests-stage67.txt": "6c95a28f3d6759f316ca8202854fbde57ff04f1d706bd14cefc7e2c41bb521d8",
+    "artifacts/build-stage67.txt": "ffafaff0aeb786e5d3d697fdcbae940723ff53b43ea5fb7437b40908d2934c1f",
+    "artifacts/passive-channel-plans-stage67.jsonl": "63ad3338cbebeb31af02648a7266009f03a789e1c79c40d8d5909b10527a1bfc",
+    "artifacts/passive-channel-source-check-stage67.json": "fe4131ede2561ba58f0d42527e9630297e281aca22e3cae80bc2ee03f89ffccc",
+    "build/archer-passive-channel-plan-universal": "f56b24deed4a4e9494460dab31170826d6d6dacd79223d34012304c3704a4cb7",
+    "artifacts/rtw8922a.c": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535",
+    "artifacts/rtw8922a_rfk.c": "0cab67fdbe2f7a780b818212022e2a6c94be18f6b278abca03bef20e08ffe257",
+    "artifacts/rtw89-phy.c": "c443be8a679f3f5dd0a330ab814ebda4411338f0cbe6cd556e0c31129aa9209b",
+    "artifacts/rtw89-phy.h": "f65766bba11e5d432ee48b6f4aeffcf67bd6f9532f285da9b6fce16e25d654ce",
+    "artifacts/channel_payload.hpp": "579c24d2a27b3711c2843212abd71bfb43f260eb8ceff19267c5e6dbb108e6d0",
+    "include/archer/channel_init.hpp": "4a28fbb702baeb0780c3a7e6d8ef1623e9874d5034337c2c9a52064e49c29fbd",
+    "include/archer/channel_transition.hpp": "02b154d5fc3fc96e4999d580214ad956acc960776861710039c537b739a67c78"
+  },
+  "source_checks": [
+    {
+      "channel": 1,
+      "bb_operations": 133,
+      "source_thresholds_match": true,
+      "frequency_mhz": 2412
+    },
+    {
+      "channel": 6,
+      "bb_operations": 133,
+      "source_thresholds_match": true,
+      "frequency_mhz": 2437
+    },
+    {
+      "channel": 11,
+      "bb_operations": 133,
+      "source_thresholds_match": true,
+      "frequency_mhz": 2462
+    }
+  ],
+  "validation": {
+    "cpp_suites": 53,
+    "python_tests": 64,
+    "universal_exporter_build": true
+  },
+  "progress": 48,
+  "limitations": [
+    "No physical retune or multichannel capture yet",
+    "MCC lookup consumes explicit caller history; no inferred hardware state",
+    "RFK, power policy and restoration/capture coordinator pending",
+    "No extension to channel14, 5/6GHz or other widths",
+    "No Intel physical validation"
+  ]
+}

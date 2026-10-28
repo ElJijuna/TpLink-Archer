@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **48 %**
 
-Actualizado: **2026-10-27**, etapa66: época de secuencias y reanudación verificadas. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-27**, etapa67: planes multicanal preparados; escaneo operativo en1. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -28,6 +28,12 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; hay escaneo pasivo fijo, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa67: planes BB/RF para1/6/11 y búsqueda MCC con historial explícito,
+verificados contra la fuente y los datos enlazados de placa. El exportador es
+offline y no ejecutable; falta integrar RFK, potencia, captura y restauración.
+No se ha retuneado el adaptador. Escaneo operativo aún en1; avance48 %.
+Evidencia: [research/STAGE67.md](research/STAGE67.md).
 
 Etapa66: transición explícita de época probada con reset/recarga sin H2C,
 archivo anterior preservado y bloqueo durable de fallos. La reanudación obtuvo

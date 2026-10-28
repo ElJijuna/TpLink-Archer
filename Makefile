@@ -17,6 +17,7 @@ build/efuse-reader-test: tests/efuse_reader_test.cpp include/archer/efuse_reader
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test build/bb-postinit-test build/radio-init-test build/dle-init-test build/rfk-protocol-test build/bb-table-window-test build/rf-power-test build/firmware-boot-test build/firmware-state-test build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
 	./build/channel-init-test
+	./build/passive-channels-test
 	./build/rx-descriptor-test
 	./build/beacon-test
 	./build/passive-scan-test
@@ -279,3 +280,12 @@ build/sequence-ledger-test: include/archer/workflow_lock.hpp
 epoch-boot-universal: | build
 	python3 tools/boot_bundle.py
 	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/macos_epoch_boot.cpp -framework IOKit -framework CoreFoundation -o build/archer-epoch-boot-universal
+
+test: build/passive-channels-test
+build/passive-channels-test: tests/passive_channels_test.cpp include/archer/passive_channels.hpp include/archer/channel_transition.hpp include/archer/channel_init.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+.PHONY: passive-channel-plan-universal
+passive-channel-plan-universal: | build
+	python3 tools/channel_bundle.py
+	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/passive_channel_plan.cpp -o build/archer-passive-channel-plan-universal
