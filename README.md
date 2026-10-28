@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **48 %**
 
-Actualizado: **2026-10-27**, etapa65: recuperación y escaneo coordinados. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-27**, etapa66: época de secuencias y reanudación verificadas. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -28,6 +28,12 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; hay escaneo pasivo fijo, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa66: transición explícita de época probada con reset/recarga sin H2C,
+archivo anterior preservado y bloqueo durable de fallos. La reanudación obtuvo
+16 entradas y417 observaciones válidas, sin errores FCS. Tras consumir22
+secuencias en la época nueva quedan232. No hay wrap dentro de una época.
+Avance48 %. [research/STAGE66.md](research/STAGE66.md).
 
 Etapa65: coordinador de recuperación, calibración y escaneo probado sobre ARM.
 Conserva binarios/logs/manifiesto y bloquea otras herramientas actualizadas entre

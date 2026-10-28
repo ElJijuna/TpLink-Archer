@@ -274,3 +274,8 @@ build/workflow-lock-test: tests/workflow_lock_test.cpp include/archer/workflow_l
 	$(CXX) $(CXXFLAGS) $< -o $@
 # Changes to shared ownership must rebuild every ledger user.
 build/sequence-ledger-test: include/archer/workflow_lock.hpp
+
+.PHONY: epoch-boot-universal
+epoch-boot-universal: | build
+	python3 tools/boot_bundle.py
+	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/macos_epoch_boot.cpp -framework IOKit -framework CoreFoundation -o build/archer-epoch-boot-universal

@@ -23,13 +23,13 @@ TOOLS = {
 
 
 def plan(mode):
-    if mode not in ('cold-start', 'recover-loaded'):
+    if mode not in ('cold-start', 'recover-loaded', 'resume-bootstrap'):
         raise ValueError('Unknown workflow mode')
     phases = [('inspect', [], 'firmware_controls')]
     if mode == 'cold-start':
         phases.append(('boot', ['--boot-usb-no-dcpu'], 'firmware_ready'))
     phases += [
-        ('radio', ['--cold-scc-radio' if mode == 'cold-start' else '--powered-cold-scc-radio', '@capture'], 'scc_radio_nctl_applied'),
+        ('radio', ['--resume-loaded-scc-radio' if mode == 'resume-bootstrap' else '--cold-scc-radio' if mode == 'cold-start' else '--powered-cold-scc-radio', '@capture'], 'scc_radio_nctl_applied'),
         ('initial_rfk', ['--initial-rfk', '@capture'], 'initial_pre_dack_rxdck_clean'),
         ('tx_rfk', ['--channel1-world-calibrate', '@capture'], 'tx_rfk_commands_completed'),
         ('scan', ['--run-owned-source-profile-usb-aggregation-all-management-async', '@capture'], 'context_cleanup_acknowledged'),
@@ -156,7 +156,7 @@ def execute(mode, output):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('mode', choices=['cold-start', 'recover-loaded'])
+    parser.add_argument('mode', choices=['cold-start', 'recover-loaded', 'resume-bootstrap'])
     parser.add_argument('new_directory', type=Path)
     args = parser.parse_args()
     execute(args.mode, args.new_directory)

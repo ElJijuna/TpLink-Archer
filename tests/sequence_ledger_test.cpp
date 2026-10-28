@@ -22,6 +22,15 @@ int main() {
         for (unsigned i = 4; i < 256; ++i) assert(ledger.reserve() == i);
         rejects([&] { (void)ledger.reserve(); });
     }
+    const auto fence=path+".epoch-transition";
+    {std::ofstream out(fence);out<<"DIRTY\n";}
+    rejects([&]{archer::SequenceLedger blocked(path);});
+    {std::ofstream out(fence);out<<"CLEAN\n";}
+    {archer::SequenceLedger clean_epoch(path);}
+    std::filesystem::remove(fence);
+    std::filesystem::create_symlink(path,fence);
+    rejects([&]{archer::SequenceLedger linked_fence(path);});
+    std::filesystem::remove(fence);
     { std::ofstream corrupt(path, std::ios::binary | std::ios::trunc); corrupt << "bad"; }
     {
         archer::SequenceLedger ledger(path);

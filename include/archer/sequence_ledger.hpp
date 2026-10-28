@@ -18,6 +18,15 @@ class SequenceLedger {
     int fd_ = -1;
 public:
     explicit SequenceLedger(const std::string& path):workflow_(path+".workflow") {
+        const auto fence_path=path+".epoch-transition";
+        const int fence=open(fence_path.c_str(),O_RDONLY|O_NOFOLLOW|O_CLOEXEC);
+        if(fence>=0){
+            struct stat st{};char state[6]{};
+            const bool valid=!fstat(fence,&st)&&S_ISREG(st.st_mode)&&st.st_nlink==1&&st.st_size==6&&
+                read(fence,state,6)==6&&std::string(state,6)=="CLEAN\n";
+            close(fence);
+            if(!valid)throw std::runtime_error("Epoch transition incomplete; commands are fenced");
+        }else if(errno!=ENOENT)throw std::runtime_error("Cannot inspect epoch transition fence");
         fd_ = open(path.c_str(), O_RDWR | O_CREAT | O_NOFOLLOW, 0600);
         if (fd_ < 0) throw std::runtime_error(std::string("Cannot open sequence ledger: ")+std::strerror(errno));
         struct stat info{};

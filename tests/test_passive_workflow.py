@@ -11,6 +11,7 @@ class WorkflowTest(unittest.TestCase):
     def test_modes_and_budget(self):
         self.assertEqual([x[0] for x in w.plan('cold-start')], ['inspect', 'boot', 'radio', 'initial_rfk', 'tx_rfk', 'scan'])
         self.assertEqual(w.plan('recover-loaded')[1][1][0], '--powered-cold-scc-radio')
+        self.assertEqual(w.plan('resume-bootstrap')[1][1][0], '--resume-loaded-scc-radio')
         self.assertEqual(w.available_sequences(b'ARCHSEQ\x01' + bytes([1] * 223 + [0] * 33)), 33)
         for bad in [b'', b'badmagic' + bytes(256), b'ARCHSEQ\x01' + bytes([2] * 256)]:
             with self.assertRaises(ValueError):
