@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **50 %**
 
-Actualizado: **2026-10-27**, etapa68: barrido pasivo1/6/11 con retorno verificado. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-29**, etapa69: LED encendido y confirmado visualmente sobre ARM. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -28,6 +28,13 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa69: pulso de tres segundos en GPIO8 ejecutado sobre ARM con readbacks
+correctos y restauración de registros verificada. Herramienta universal y
+pruebas de recuperación ante fallos listas. El usuario confirmó visualmente
+el encendido en la repetición de15 segundos. Avance50 %; encender el LED
+no completa la conexión Wi-Fi.
+Evidencia: [research/STAGE69.md](research/STAGE69.md).
 
 Etapa68: barrido pasivo1→6→11→1 probado dos veces sobre ARM, con RXDCK
 limpio por destino y retorno comprobado a2412MHz. La versión final recibió

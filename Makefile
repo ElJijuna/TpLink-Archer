@@ -3,6 +3,12 @@ CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -Iinclude
 .PHONY: test probe universal receive-universal decode decode-universal mailbox-universal efuse-universal identity-universal bb-probe-universal mailbox-state-universal mode-switch-universal scsi-eject-universal optical-eject-universal
 build:
 	mkdir -p build
+.PHONY: led-universal
+led-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_led.cpp -framework IOKit -framework CoreFoundation -o build/archer-led-universal
+build/led-window-test: tests/led_window_test.cpp include/archer/led_window.hpp include/archer/register_mailbox.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/led-window-test
 build/usb-request-test: tests/usb_request_test.cpp include/archer/usb_request.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/usb-descriptors-test: tests/usb_descriptors_test.cpp include/archer/usb_descriptors.hpp tests/fixtures/37ad-0104-usb2-config.bin tests/fixtures/0bda-1a2b-usb2-config.bin | build
@@ -17,6 +23,7 @@ build/efuse-reader-test: tests/efuse_reader_test.cpp include/archer/efuse_reader
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test build/bb-postinit-test build/radio-init-test build/dle-init-test build/rfk-protocol-test build/bb-table-window-test build/rf-power-test build/firmware-boot-test build/firmware-state-test build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
 	./build/channel-init-test
+	./build/led-window-test
 	./build/passive-channels-test
 	./build/rx-descriptor-test
 	./build/beacon-test
