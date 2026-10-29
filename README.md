@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **50 %**
 
-Actualizado: **2026-10-29**, etapa73: descriptor TX BE v2 con WDINFO offline; barrido y LED probados en ARM. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-29**, etapa74: plan USB TX y endpoints offline; barrido y LED probados en ARM. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -28,6 +28,11 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa74: plan USB TX con descriptor+trama, mapeo DMA/endpoint y tratamiento
+de frontera512 mediante ZLP. Pruebas offline correctas; aún sin envío ni
+confirmación TX por radio. Avance50 %.
+Evidencia: [research/STAGE74.md](research/STAGE74.md).
 
 Etapa73: extensión WDINFO de32 bytes integrada al cuerpo TX, con campos de
 reintentos y solicitud de reporte. Descriptor64 comprobado offline; no hay

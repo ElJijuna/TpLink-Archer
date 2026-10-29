@@ -75,14 +75,71 @@ def encode_body(fields):
     return struct.pack('<8I', *words)
 
 
+# rtw8922au.c bulkout_id indexes the OUT endpoints in descriptor order.
+BULKOUT_INDEX = {0:3, 2:5, 4:4, 6:6, 8:0, 9:0, 10:1, 11:1}
+
+
+def usb2_out_endpoints(configuration):
+    if len(configuration) < 9 or configuration[:2] != bytes([9,2]):
+        raise ValueError('Invalid USB configuration header')
+    if int.from_bytes(configuration[2:4], 'little') != len(configuration):
+        raise ValueError('USB configuration length mismatch')
+    outs, ins, interfaces = [], [], []
+    offset = 0
+    while offset < len(configuration):
+        size = configuration[offset]
+        if size < 2 or offset+size > len(configuration):
+            raise ValueError('Truncated USB descriptor')
+        d = configuration[offset:offset+size]
+        if d[1] == 4:
+            if size != 9:
+                raise ValueError('Invalid USB interface')
+            interfaces.append(d)
+        if d[1] == 5:
+            if not interfaces or size != 7 or d[3] != 2 or int.from_bytes(d[4:6],'little') != 512:
+                raise ValueError('Expected USB2 bulk endpoints of512 bytes')
+            (ins if d[2]&128 else outs).append(d[2])
+        offset += size
+    if len(interfaces) != 1 or interfaces[0][2:6] != bytes([0,0,9,255]):
+        raise ValueError('Expected single vendor interface0 alternate0 with9 endpoints')
+    if outs != [5,6,7,9,10,11,12] or ins != [132,136]:
+        raise ValueError('Unexpected Archer USB2 endpoint order')
+    return outs
+
+
+def usb_packet_plan(fields, frame, configuration, info=None):
+    descriptor = encode_descriptor(fields, info)
+    if len(frame) != fields['pkt_size']:
+        raise ValueError('Descriptor packet size differs from frame length')
+    if fields.get('stf_mode',1) != 1:
+        raise ValueError('USB network path requires STF_MODE1')
+    if fields['ch_dma'] not in BULKOUT_INDEX:
+        raise ValueError('No explicitly mapped DMA channel for this chip')
+    outs = usb2_out_endpoints(configuration)
+    packet = descriptor + frame
+    return {'endpoint_address': outs[BULKOUT_INDEX[fields['ch_dma']]],
+            'dma_channel':fields['ch_dma'], 'descriptor_bytes':len(descriptor),
+            'frame_bytes':len(frame), 'transfer_bytes':len(packet),
+            'transfer_hex':packet.hex(), 'padding_bytes':0,
+            'zero_packet_required':len(packet)%512==0,
+            'hardware_validated':False, 'transmission_ready':False}
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('fields_json', type=Path)
     parser.add_argument('--wdinfo-json', type=Path, help='Optional unencrypted WDINFO fields; explicit is_bmc required')
+    parser.add_argument('--frame-bin', type=Path, help='Offline frame bytes for USB packet plan')
+    parser.add_argument('--usb-config', type=Path, help='Recorded USB2 configuration descriptor')
     args = parser.parse_args()
+    if bool(args.frame_bin) != bool(args.usb_config):
+        parser.error('--frame-bin and --usb-config must be provided together')
     fields = json.loads(args.fields_json.read_text())
     info = json.loads(args.wdinfo_json.read_text()) if args.wdinfo_json else None
     body = encode_descriptor(fields, info)
+    if args.frame_bin:
+        print(json.dumps(usb_packet_plan(fields, args.frame_bin.read_bytes(), args.usb_config.read_bytes(), info)))
+        raise SystemExit(0)
     print(json.dumps({'descriptor_format':'BE_v2_with_wdinfo' if info is not None else 'BE_v2_body_only', 'descriptor_bytes':len(body),
                       'body_bytes':32, 'wdinfo_bytes':len(body)-32, 'body_hex':body[:32].hex(),
                       'descriptor_hex':body.hex(), 'words':[f'{w:08x}' for w in struct.unpack('<' + 'I'*(len(body)//4), body)],

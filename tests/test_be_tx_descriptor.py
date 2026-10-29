@@ -49,3 +49,25 @@ class TxDescriptorTest(unittest.TestCase):
                 with self.assertRaises(ValueError):tx.encode_info({'is_bmc':0,name:bad})
         for fields in ({},{'is_bmc':True},{'is_bmc':2},{'is_bmc':0,'sec_en':1}):
             with self.assertRaises(ValueError):tx.encode_info(fields)
+
+    def test_usb_queue_mapping_and_exact_boundary(self):
+        config=(Path(__file__).parent/'fixtures/37ad-0104-usb2-config.bin').read_bytes()
+        for dma,endpoint in [(0,9),(2,11),(4,10),(6,12),(8,5),(9,5),(10,6),(11,6)]:
+            plan=tx.usb_packet_plan(dict(ch_dma=dma,pkt_size=448),bytes(448),config,{'is_bmc':1})
+            self.assertEqual(plan['endpoint_address'],endpoint)
+            self.assertEqual(plan['transfer_bytes'],512)
+            self.assertTrue(plan['zero_packet_required'])
+            self.assertEqual(plan['padding_bytes'],0)
+        plan=tx.usb_packet_plan(dict(ch_dma=8,pkt_size=449),bytes(449),config,{'is_bmc':1})
+        self.assertEqual(plan['transfer_bytes'],513)
+        self.assertFalse(plan['zero_packet_required'])
+
+    def test_usb_reject_unknown_mapping_and_descriptor_mismatch(self):
+        config=(Path(__file__).parent/'fixtures/37ad-0104-usb2-config.bin').read_bytes()
+        for fields,frame,cfg in [({'ch_dma':1,'pkt_size':24},bytes(24),config),
+                                 ({'ch_dma':8,'pkt_size':25},bytes(24),config),
+                                 ({'ch_dma':8,'pkt_size':24,'stf_mode':0},bytes(24),config),
+                                 ({'ch_dma':8,'pkt_size':24},bytes(24),config[:-1])]:
+            with self.assertRaises(ValueError):tx.usb_packet_plan(fields,frame,cfg)
+        altered=bytearray(config);altered[27]=7 # Reorder/duplicate OUT endpoint.
+        with self.assertRaises(ValueError):tx.usb2_out_endpoints(altered)

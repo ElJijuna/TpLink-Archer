@@ -1,0 +1,17 @@
+{
+  "commit": "c03c1a14507dfaf8b856c2608f9ac216021fc222",
+  "sources": [
+    {
+      "path": "artifacts/rtw8922au.c",
+      "sha256": "8281d447225706cb770a53983a57a8a07e814e77d85f72360de1ca1873d846f5"
+    },
+    {
+      "path": "artifacts/rtw89-usb.c",
+      "sha256": "858b8771c585a65fe5b1498c1d98e786134ee3c46b18985924310a24c1a6d80e"
+    },
+    {
+      "path": "artifacts/rtw89-core.h",
+      "sha256": "13fcfa34fdea89773a9bbb5a6fe95d2bf95464eb1f4d759e5d39cb2ce48167af"
+    }
+  ]
+}
