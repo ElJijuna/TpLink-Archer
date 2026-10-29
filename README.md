@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **50 %**
 
-Actualizado: **2026-10-29**, etapa74: plan USB TX y endpoints offline; barrido y LED probados en ARM. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-29**, etapa75: trama entregada por USB y reportes TX reales con fallo de reintentos. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -28,6 +28,12 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa75: primera solicitud de sondeo entregada por USB0x05, con reportes TX
+reales del firmware. Estado: límite de reintentos, sin TX exitoso confirmado.
+Scheduler TX pausado y verificado; contexto DIRTY pendiente de recuperación.
+El ejecutable bloquea otro envío. Avance50 %.
+Evidencia: [research/STAGE75.md](research/STAGE75.md).
 
 Etapa74: plan USB TX con descriptor+trama, mapeo DMA/endpoint y tratamiento
 de frontera512 mediante ZLP. Pruebas offline correctas; aún sin envío ni

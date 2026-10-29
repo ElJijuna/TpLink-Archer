@@ -1,3 +1,9 @@
+#ifdef ARCHER_SINGLE_PROBE
+#include "archer/single_probe.hpp"
+#include "archer/xtal_identity.hpp"
+#include "channel_payload.hpp"
+#include "tx_calibration_payload.hpp"
+#endif
 #include "archer/macos_bulk.hpp"
 #include "archer/sequence_ledger.hpp"
 #include "archer/interface_lifecycle.hpp"
@@ -15,11 +21,21 @@
 #include <fstream>
 #include "archer/context_reservation.hpp"
 int main(int argc,char** argv){
+#ifdef ARCHER_SINGLE_PROBE
+ if(argc!=3||std::string(argv[1])!="--single-channel1-probe"){
+    std::cerr<<"Usage: archer-single-probe --single-channel1-probe NEW_DIRECTORY\n";return 2;
+ }
+ argv[1]=const_cast<char*>("--run-owned-source-profile-usb-aggregation-all-management-async");
+#endif
  if(argc!=3||(std::string(argv[1])!="--run-owned-source-profile"&&std::string(argv[1])!="--run-owned-source-profile-usb-aggregation"&&std::string(argv[1])!="--run-owned-source-profile-usb-aggregation-all-management"&&std::string(argv[1])!="--run-owned-source-profile-usb-aggregation-all-management-async")){
     std::cerr<<"Usage: archer-context-rx {--run-owned-source-profile|--run-owned-source-profile-usb-aggregation|--run-owned-source-profile-usb-aggregation-all-management|--run-owned-source-profile-usb-aggregation-all-management-async} NEW_DIRECTORY\n";return 2;
  }
  try{
     archer::SequenceLedger ledger("artifacts/37ad-0104-sequences.bin");
+#ifdef ARCHER_SINGLE_PROBE
+    if(std::filesystem::exists("artifacts/37ad-0104-single-probe-attempted"))
+        throw std::runtime_error("A probe was already attempted; physical recovery and retry analysis required");
+#endif
     const std::filesystem::path dir=argv[2];
     if(!std::filesystem::create_directory(dir))throw std::runtime_error("Capture directory must be new");
     MacRegisterBus bus;MacBulkChannel usb(std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management-async");
@@ -45,7 +61,14 @@ int main(int argc,char** argv){
         // Diagnostic locally administered address, never a discovered BSSID.
         const archer::UnlinkedCamContext context{{2,0,0,0x89,0x22,0xa1},0,0,0,0};
         // Cleanup target is unpaused/awake; initial hardware pause not measured.
-        archer::InterfaceContextLifecycle session(context,sequences,true,true,false);
+        archer::InterfaceContextLifecycle session(context,sequences,true,true,false
+#ifdef ARCHER_SINGLE_PROBE
+            ,archer::StationCapability::legacy,0,true
+#endif
+        );
+#ifdef ARCHER_SINGLE_PROBE
+        bool probe_submitted=false;std::optional<archer::ProbeTxReport> probe_report;
+#endif
         unsigned transfers=0,normal=0,beacons=0;
         archer::PassiveScan scan;
         const auto receive=[&](unsigned pipe,bool track){
@@ -55,6 +78,13 @@ int main(int argc,char** argv){
             file.write(reinterpret_cast<const char*>(bytes.data()),bytes.size());file.close();
             if(!file)throw std::runtime_error("Context RX capture write failed");
             for(const auto& m:archer::decode_be_rx_metadata(bytes,archer::RxFcsPolicy::appended)){
+#ifdef ARCHER_SINGLE_PROBE
+                if(m.packet.c2h&&probe_submitted){
+                    auto rpt=archer::single_probe_report(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes);
+                    if(rpt){if(probe_report)throw std::runtime_error("Duplicate probe TX report");probe_report=rpt;
+                        std::cout<<"{\"operation\":\"single_probe_tx_report\",\"tag\":1,\"state\":"<<rpt->state<<",\"tx_count\":"<<rpt->count<<"}"<<std::endl;}
+                }
+#endif
                 if(m.packet.c2h&&track){
                     const auto before=session.step();
                     if(session.observe(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes))
@@ -64,9 +94,28 @@ int main(int argc,char** argv){
             }
             return true;
         };
+#ifdef ARCHER_SINGLE_PROBE
+        // Stop accepting new traffic only while draining pre-existing USB data.
+        const std::array<unsigned,3> drain_regs{0x11424,0x11428,0x1142c};
+        std::array<unsigned,3> drain_saved{};
+        for(unsigned i=0;i<3;++i)drain_saved[i]=archer::channel_bus_read(bus,drain_regs[i]);
+        std::exception_ptr drain_error;bool quiet=false;
+        try{
+            for(auto r:drain_regs)archer::channel_bus_write(bus,r,0xffff,0);
+            const auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(3);
+            while(std::chrono::steady_clock::now()<deadline){const bool a=receive(0,false),b=receive(1,false);if(!a&&!b){quiet=true;break;}}
+        }catch(...){drain_error=std::current_exception();}
+        std::string drain_restore_errors;
+        for(unsigned i=0;i<3;++i)try{archer::channel_bus_write(bus,drain_regs[i],0xffff,drain_saved[i]&0xffff);}
+            catch(const std::exception& e){drain_restore_errors+=e.what();}
+        if(!drain_restore_errors.empty())throw std::runtime_error("Pre-probe RX restoration failed: "+drain_restore_errors);
+        if(drain_error)std::rethrow_exception(drain_error);
+        if(!quiet)throw std::runtime_error("Input did not quiesce; no context command sent");
+#else
         bool quiet=false;const auto drain=std::chrono::steady_clock::now()+std::chrono::seconds(3);
         while(std::chrono::steady_clock::now()<drain){const bool a=receive(0,false),b=receive(1,false);if(!a&&!b){quiet=true;break;}}
         if(!quiet)throw std::runtime_error("Input did not quiesce; no context command sent");
+#endif
         const auto measure=[&](const std::string& phase){
             archer::reset_rx_diagnostic_counters(bus);
             const auto end=std::chrono::steady_clock::now()+std::chrono::milliseconds(250);
@@ -130,6 +179,36 @@ int main(int argc,char** argv){
                 std::cout<<"{\"phase\":\"context_sequence_ready\",\"dmac_submission_only\":true}"<<std::endl;
                 std::exception_ptr capture_error;
                 try{
+#ifdef ARCHER_SINGLE_PROBE
+                    // Verify the world power fields actually remain resident.
+                    for(const auto& op:trusted_channel1_world_power)
+                        if((archer::channel_bus_read(bus,op.address)&op.mask)!=(op.value&op.mask))
+                            throw std::runtime_error("World power readback absent; no probe sent");
+                    const auto chip=archer::read_chip_identity(bus);
+                    if(chip.revision!=1||chip.analog_id!=0x6933)throw std::runtime_error("Probe hardware profile mismatch");
+                    if((archer::channel_bus_read(bus,0x26b4c)&0x1fff)!=2412)
+                        throw std::runtime_error("Probe BB channel1 absent");
+                    const auto marker=open("artifacts/37ad-0104-single-probe-attempted",O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW,0600);
+                    if(marker<0)throw std::runtime_error("Probe attempt already recorded; no automatic retransmission");
+                    const char token[]="TAG1 RESERVED\n";
+                    const bool persisted=write(marker,token,sizeof(token)-1)==sizeof(token)-1&&fsync(marker)==0;
+                    close(marker);if(!persisted)throw std::runtime_error("Cannot persist single probe reservation");
+                    const auto packet=archer::single_probe_packet();
+                    std::ofstream probe_file(dir/"single-probe.bin",std::ios::binary);
+                    probe_file.write(reinterpret_cast<const char*>(packet.data()),packet.size());probe_file.close();
+                    if(!probe_file)throw std::runtime_error("Cannot preserve probe bytes");
+                    try{
+                        archer::channel_bus_write(bus,0x10398,0x3ffff,0x100); // MGQ only.
+                        probe_submitted=true;usb.send_single_management_probe(packet);
+                        const auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(3);
+                        while(!probe_report&&std::chrono::steady_clock::now()<deadline){receive(0,true);receive(1,true);}
+                    }catch(...){archer::channel_bus_write(bus,0x10398,0x3ffff,0);probe_submitted=false;throw;}
+                    archer::channel_bus_write(bus,0x10398,0x3ffff,0);
+                    probe_submitted=false;
+                    if(!probe_report)throw std::runtime_error("Probe report timeout; no retransmission");
+                    if(probe_report->state!=0||probe_report->count==0)
+                        throw std::runtime_error("Probe did not report a completed transmission");
+#endif
                     audit("context_ready");
                     archer::reset_rx_diagnostic_counters(bus);
                     const auto start=std::chrono::steady_clock::now(),end=start+std::chrono::seconds(5);

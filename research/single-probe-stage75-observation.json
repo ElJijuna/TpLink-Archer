@@ -1,0 +1,58 @@
+{
+  "usb_submissions": 1,
+  "usb_endpoint": 5,
+  "usb_bytes": 96,
+  "usb_status": 0,
+  "tx_success": false,
+  "external_air_capture": false,
+  "scheduler_paused_value": 0,
+  "context": "DIRTY",
+  "reports": [
+    {
+      "file": "rx-145.bin",
+      "tag": 1,
+      "state": 1,
+      "count": 1,
+      "payload_sha256": "62730f5fe3bb9dcb53a13c9e137ee31d03b6bcc886abe7e239384beccf710ae4"
+    },
+    {
+      "file": "rx-145.bin",
+      "tag": 1,
+      "state": 1,
+      "count": 2,
+      "payload_sha256": "0db0ddc1d3f6e051593d08a22e7a3d4f731ca86dc9c2952de657ae6d91daa209"
+    },
+    {
+      "file": "rx-146.bin",
+      "tag": 1,
+      "state": 1,
+      "count": 3,
+      "payload_sha256": "3e2b571730753dd64a7fced9a850053f3d0f07ff133e1cba24c1590c05086dd4"
+    },
+    {
+      "file": "rx-146.bin",
+      "tag": 1,
+      "state": 1,
+      "count": 4,
+      "payload_sha256": "8a66a51443ad0fec973ccefa78a03f0d1109508a5b7772de3133b2de3735fbbe"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "artifacts/single-probe-stage75b.jsonl",
+      "sha256": "9de35d4ae198584cd313c58ea2567b850f9e086eba90227ef781075705b7b25a"
+    },
+    {
+      "path": "artifacts/single-probe-stage75b.stderr",
+      "sha256": "fbbced78188fa808f74127162d8ecbe471b97462726dce979c853f9df5db228f"
+    },
+    {
+      "path": "artifacts/single-probe-stage75b/single-probe.bin",
+      "sha256": "8707225dbde96b607dd99cd328c75af370696e408bed0480f5ee72e45a556834"
+    },
+    {
+      "path": "artifacts/probe-stop-audit-stage75.jsonl",
+      "sha256": "0f4e9869a02285c18a3bf41d4cb4ea614d8cb5bac8e571889f1934fccd1f05c4"
+    }
+  ]
+}

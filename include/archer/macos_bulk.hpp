@@ -7,7 +7,7 @@
 // Single-threaded channel: create, receive and close on the owning run-loop thread.
 // Async callbacks run only while that thread pumps the private run-loop mode.
 class MacBulkChannel {
-    IOUSBInterfaceInterface300** usb=nullptr;bool opened=false;UInt8 output=0;std::vector<UInt8> inputs,input_addresses;
+    IOUSBInterfaceInterface300** usb=nullptr;bool opened=false;UInt8 output=0,management_output=0;bool management_sent=false;std::vector<UInt8> inputs,input_addresses;
     struct AsyncSlot {
         MacBulkChannel* owner=nullptr;unsigned index=0;bool pending=false;
         std::array<std::uint8_t,20480> bytes{};
@@ -80,6 +80,7 @@ public:
                 UInt8 dir=0,ep=0,type=0,interval=0;UInt16 packet=0;
                 if((*usb)->GetPipeProperties(usb,pipe,&dir,&ep,&type,&packet,&interval))throw std::runtime_error("Cannot inspect boot pipes");
                 if(dir==kUSBIn&&type==kUSBBulk&&packet==512&&(ep==4||ep==8)){inputs.push_back(pipe);input_addresses.push_back(ep|0x80);}
+                if(dir==kUSBOut&&ep==5&&type==kUSBBulk&&packet==512){if(management_output)throw std::runtime_error("Ambiguous management output");management_output=pipe;}
                 if(dir==kUSBOut&&ep==7&&type==kUSBBulk&&packet==512){if(output)throw std::runtime_error("Ambiguous boot output");output=pipe;}
             }
             if(inputs.size()!=2)throw std::runtime_error("Expected two firmware input pipes");
@@ -108,6 +109,14 @@ public:
         auto status=(*usb)->WritePipeTO(usb,output,const_cast<std::uint8_t*>(frame.data()),frame.size(),500,1000);
         std::cout<<"{\"operation\":\"firmware_bulk_write\",\"bytes\":"<<frame.size()<<",\"status\":"<<status<<"}"<<std::endl;
         if(status)throw std::runtime_error("Firmware write failed; no retry");
+    }
+    void send_single_management_probe(const std::vector<std::uint8_t>& frame){
+        if(!management_output||management_sent||frame.size()!=96)
+            throw std::runtime_error("Single management probe cannot be submitted");
+        management_sent=true; // A failed/uncertain submission cannot be retried.
+        auto status=(*usb)->WritePipeTO(usb,management_output,const_cast<std::uint8_t*>(frame.data()),frame.size(),500,1000);
+        std::cout<<"{\"operation\":\"single_probe_usb_write\",\"endpoint\":5,\"bytes\":"<<frame.size()<<",\"status\":"<<status<<"}"<<std::endl;
+        if(status)throw std::runtime_error("Probe USB submission uncertain; no retry");
     }
     std::vector<std::uint8_t> receive(unsigned index,unsigned timeout_ms=20){
         if(index>=inputs.size()||!timeout_ms||timeout_ms>1000)throw std::invalid_argument("Invalid bulk receive bound");

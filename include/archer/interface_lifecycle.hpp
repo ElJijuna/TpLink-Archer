@@ -22,7 +22,7 @@ public:
     // constructing. No I/O, automatic retries, destructor cleanup or TX resume.
     InterfaceContextLifecycle(const UnlinkedCamContext& c,const std::array<unsigned,9>& seq,
         bool resources_exclusive,bool scheduler_paused,bool initial_macid_paused,
-        StationCapability capability=StationCapability::legacy,unsigned wmm=0){
+        StationCapability capability=StationCapability::legacy,unsigned wmm=0,bool tx_report_enabled=false){
         if(!resources_exclusive||!scheduler_paused||c.mac_id>127)
             throw std::invalid_argument("Context requires exclusive resources and paused scheduler");
         if(std::set<unsigned>(seq.begin(),seq.end()).size()!=seq.size())
@@ -31,7 +31,7 @@ public:
             encode_unlinked_station_role(seq[1],c.mac_id,c.port,StationRoleAction::create),
             encode_unlinked_station_join(seq[2],c.mac_id,c.port,wmm,capability),
             encode_unlinked_cam_v0(seq[3],c,StationRoleAction::create),
-            encode_default_station_cmac_g7(seq[4],c.mac_id,false),
+            encode_default_station_cmac_g7(seq[4],c.mac_id,tx_report_enabled),
             encode_default_station_dmac_v2(seq[5],c.mac_id),
             encode_unlinked_station_role(seq[6],c.mac_id,c.port,StationRoleAction::remove),
             encode_unlinked_cam_v0(seq[7],c,StationRoleAction::remove),

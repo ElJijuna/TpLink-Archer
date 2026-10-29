@@ -23,6 +23,7 @@ build/efuse-reader-test: tests/efuse_reader_test.cpp include/archer/efuse_reader
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test build/bb-postinit-test build/radio-init-test build/dle-init-test build/rfk-protocol-test build/bb-table-window-test build/rf-power-test build/firmware-boot-test build/firmware-state-test build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
 	./build/channel-init-test
+	./build/single-probe-test
 	./build/led-window-test
 	./build/passive-channels-test
 	./build/rx-descriptor-test
@@ -301,3 +302,11 @@ passive-channel-plan-universal: | build
 passive-retune-universal: | build
 	python3 tools/channel_bundle.py
 	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/macos_passive_retune.cpp -framework IOKit -framework CoreFoundation -o build/archer-passive-retune-universal
+
+.PHONY: single-probe-universal
+single-probe-universal: | build
+	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-single-probe-universal
+
+build/single-probe-test: tests/single_probe_test.cpp include/archer/single_probe.hpp include/archer/firmware_channel.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/single-probe-test
