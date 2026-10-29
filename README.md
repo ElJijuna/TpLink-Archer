@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **50 %**
 
-Actualizado: **2026-10-29**, etapa69: LED encendido y confirmado visualmente sobre ARM. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-29**, etapa70: informe pasivo multicanal validado offline; LED confirmado sobre ARM. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -28,6 +28,11 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa70: informe conjunto por BSSID/SSID con procedencia de recepción1/6/11.
+Las capturas guardadas de etapa68c contienen45 BSSID distintos y coinciden
+con los tres replays offline. No es un nuevo escaneo físico. Avance50 %.
+Evidencia: [research/STAGE70.md](research/STAGE70.md).
 
 Etapa69: pulso de tres segundos en GPIO8 ejecutado sobre ARM con readbacks
 correctos y restauración de registros verificada. Herramienta universal y
