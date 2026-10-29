@@ -29,3 +29,23 @@ class TxDescriptorTest(unittest.TestCase):
         self.assertEqual(words[3],4095)
         self.assertEqual(words[1],0)
         self.assertEqual(words[4:7],(0,0,0))
+
+    def test_wdinfo_golden_and_coupled_enable_bit(self):
+        fields=dict(is_bmc=0,port=3,stbc=1,ldpc=1,dis_data_fb=1,tx_cnt_lmt=2,
+                    tx_cnt_lmt_en=1,ampdu_num=3,a_ctrl_bsr=1,
+                    data_retry_lowest_rate=4,sn=10,ampdu_density=2,report=1)
+        self.assertEqual(tx.encode_info(fields).hex(),
+                         '301c4200034004a0000008400000000000000088000000000000000000000000')
+        descriptor=tx.encode_descriptor(dict(ch_dma=8,pkt_size=24),fields)
+        self.assertEqual(len(descriptor),64)
+        self.assertEqual(struct.unpack_from('<I',descriptor)[0],0x00480400)
+        self.assertEqual(descriptor[32:],tx.encode_info(fields))
+        bmc=struct.unpack('<8I',tx.encode_info(dict(is_bmc=1)))
+        self.assertEqual(bmc[4],0x80000000)
+
+    def test_wdinfo_field_boundaries_and_no_encryption(self):
+        for name,(_,_,width) in tx.INFO_FIELDS.items():
+            for bad in (-1,1<<width,True,1.5):
+                with self.assertRaises(ValueError):tx.encode_info({'is_bmc':0,name:bad})
+        for fields in ({},{'is_bmc':True},{'is_bmc':2},{'is_bmc':0,'sec_en':1}):
+            with self.assertRaises(ValueError):tx.encode_info(fields)
