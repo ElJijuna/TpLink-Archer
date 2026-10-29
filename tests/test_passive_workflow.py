@@ -75,3 +75,27 @@ class WorkflowTest(unittest.TestCase):
             report = w.json.loads((output / 'workflow.json').read_text())
             self.assertEqual(report['status'], 'stopped')
             self.assertEqual(report['phases'], [])
+
+    def test_sweep_plan_and_terminal_scope(self):
+        self.assertEqual(w.plan('recover-loaded', True)[-1],
+                         ('sweep', ['--owned-slot0-channel1-6-11-1', '@capture'],
+                          'passive_channel1_6_11_1_complete'))
+        row = dict(result='passive_channel1_6_11_1_complete', network_tx_paused=True,
+                   rxdck_all_channels_clean=True, full_rf_quality_validated=False)
+        self.assertEqual(w.phase_result('sweep', [row], row['result']), row)
+        for field, value in [('network_tx_paused', False), ('rxdck_all_channels_clean', False),
+                             ('full_rf_quality_validated', True)]:
+            with self.assertRaises(ValueError):
+                w.phase_result('sweep', [{**row, field:value}], row['result'])
+
+    def test_sweep_budget_stops_before_any_child(self):
+        import tempfile
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            ledger=root/'ledger'
+            ledger.write_bytes(b'ARCHSEQ\x01'+bytes([1]*229+[0]*27))
+            with patch.multiple(w, ROOT=root, LEDGER=ledger), patch.object(w.subprocess, 'run') as launch:
+                with self.assertRaises(ValueError):
+                    w.execute('cold-start', root/'run', sweep=True)
+                launch.assert_not_called()

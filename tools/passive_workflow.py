@@ -2,6 +2,7 @@
 import argparse
 import fcntl
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -22,7 +23,7 @@ TOOLS = {
 }
 
 
-def plan(mode):
+def plan(mode, sweep=False):
     if mode not in ('cold-start', 'recover-loaded', 'resume-bootstrap'):
         raise ValueError('Unknown workflow mode')
     phases = [('inspect', [], 'firmware_controls')]
@@ -34,6 +35,8 @@ def plan(mode):
         ('tx_rfk', ['--channel1-world-calibrate', '@capture'], 'tx_rfk_commands_completed'),
         ('scan', ['--run-owned-source-profile-usb-aggregation-all-management-async', '@capture'], 'context_cleanup_acknowledged'),
     ]
+    if sweep:
+        phases.append(('sweep', ['--owned-slot0-channel1-6-11-1', '@capture'], 'passive_channel1_6_11_1_complete'))
     return phases
 
 
@@ -52,10 +55,13 @@ def phase_result(name, records, expected):
         # Control bits only. Identity of resident firmware is still not read back.
         if r.get('run_environment') != 0 or r.get('status') != 3:
             raise ValueError('Unexpected firmware controls before workflow')
-    if name in ('tx_rfk', 'scan') and r.get('network_tx_paused') is not True:
+    if name in ('tx_rfk', 'scan', 'sweep') and r.get('network_tx_paused') is not True:
         raise ValueError('Network TX pause not confirmed')
     if name == 'scan' and not any(x == {'operation': 'bulk_async_drained', 'pending': 0} for x in records):
         raise ValueError('Async USB shutdown not confirmed')
+    if name == 'sweep' and (r.get('rxdck_all_channels_clean') is not True or
+                            r.get('full_rf_quality_validated') is not False):
+        raise ValueError('Sweep calibration/quality scope not confirmed')
     return r
 
 
@@ -78,10 +84,11 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def execute(mode, output):
+def execute(mode, output, sweep=False):
+    phases = plan(mode, sweep)  # Validate mode before making an output directory.
     output = output.resolve()
     output.mkdir()  # Each attempt owns a fresh directory; never overwrite or resume.
-    manifest = {'mode': mode, 'status': 'preflight', 'phases': [],
+    manifest = {'mode': mode, 'multichannel_sweep': sweep, 'status': 'preflight', 'phases': [],
                 'quality_validated': False, 'resident_version_readback': False}
     report = output / 'workflow.json'
     lock = os.open(str(LEDGER) + '.workflow', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
@@ -92,15 +99,19 @@ def execute(mode, output):
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         remaining = available_sequences(LEDGER.read_bytes())
         manifest['sequences_available_before'] = remaining
-        if remaining < 22:
-            raise ValueError('Need 22 unused sequences before complete workflow; no automatic epoch reset')
+        required = 28 if sweep else 22
+        if remaining < required:
+            raise ValueError(f'Need {required} unused sequences before complete workflow; no automatic epoch reset')
         lease = ROOT / 'artifacts/37ad-0104-context-reservation'
         if not lease.exists() or lease.read_bytes() != b'CLEAN\n':
             raise ValueError('Existing context is not CLEAN; no automatic recovery of uncertain commands')
         bindir = output / 'bin'
         bindir.mkdir()
         binaries = {}
-        for name, filename in TOOLS.items():
+        selected_tools = dict(TOOLS)
+        if sweep:
+            selected_tools['sweep'] = 'archer-passive-retune-universal'
+        for name, filename in selected_tools.items():
             source = ROOT / 'build' / filename
             target = bindir / filename
             shutil.copy2(source, target)
@@ -110,7 +121,7 @@ def execute(mode, output):
         manifest['status'] = 'running'
         save(report, manifest)
         env = dict(os.environ, ARCHER_WORKFLOW_FD=str(lock))
-        for name, arguments, expected in plan(mode):
+        for name, arguments, expected in phases:
             args = [str(output / name) if a == '@capture' else a for a in arguments]
             entry = {'name': name, 'arguments': args, 'status': 'started'}
             manifest['phases'].append(entry)
@@ -137,6 +148,19 @@ def execute(mode, output):
                            cwd=ROOT, stdout=out, stderr=subprocess.PIPE, check=True)
         if live != json.loads(replay_file.read_text()):
             raise ValueError('Live/offline scan results differ')
+        if sweep:
+            source = ROOT / 'tools/passive_sweep_report.py'
+            spec = importlib.util.spec_from_file_location('archer_sweep_report', source)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            combined = module.recorded_report(output / 'sweep', binaries['replay'])
+            save(output / 'sweep-report.json', combined)
+            manifest['sweep_report'] = {
+                'sha256': digest(output / 'sweep-report.json'),
+                'reporter_sha256': digest(source),
+                'distinct_bssids': combined['distinct_bssids'],
+                'bssid_ssid_entries': combined['bssid_ssid_entries'],
+                'live_equals_replay': True}
         if lease.read_bytes() != b'CLEAN\n':
             raise ValueError('Context ownership not CLEAN after scan')
         manifest.update(status='completed', live_equals_replay=True,
@@ -158,5 +182,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('mode', choices=['cold-start', 'recover-loaded', 'resume-bootstrap'])
     parser.add_argument('new_directory', type=Path)
+    parser.add_argument('--sweep-1-6-11', action='store_true', help='After channel1 scan, sweep6/11/1 and consolidate replays; needs28 sequences')
     args = parser.parse_args()
-    execute(args.mode, args.new_directory)
+    execute(args.mode, args.new_directory, args.sweep_1_6_11)
