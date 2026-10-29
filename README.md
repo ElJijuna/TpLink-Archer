@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **50 %**
 
-Actualizado: **2026-10-29**, etapa71: recuperación y barrido multicanal integrados y probados en ARM. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-29**, etapa72: codificador TX BE v2 offline; barrido y LED probados en ARM. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -28,6 +28,11 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa72: codificador offline del cuerpo TX BE v2 de32 bytes, con validación
+de campos y vector de prueba. No hay envío USB ni TX físico; faltan extensión,
+colas y reportes de transmisión. Avance50 %.
+Evidencia: [research/STAGE72.md](research/STAGE72.md).
 
 Etapa71: flujo completo desde carga de firmware hasta barrido pasivo1/6/11,
 probado en ARM:49 BSSID distintos, tres replays idénticos y retorno a canal1.

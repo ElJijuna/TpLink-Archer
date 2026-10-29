@@ -1,0 +1,26 @@
+{
+  "commit": "c03c1a14507dfaf8b856c2608f9ac216021fc222",
+  "sources": [
+    {
+      "path": "artifacts/rtw8922a.c",
+      "sha256": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535"
+    },
+    {
+      "path": "artifacts/rtw89-core.c",
+      "sha256": "131e39c92f0ac60ca3a9e581a692b7689c3ed6d0042ca1980a83cb0064aab211"
+    },
+    {
+      "path": "artifacts/rtw89-core.h",
+      "sha256": "13fcfa34fdea89773a9bbb5a6fe95d2bf95464eb1f4d759e5d39cb2ce48167af"
+    },
+    {
+      "path": "artifacts/rtw89-txrx.h",
+      "sha256": "c0b58ec83f4b4b8ca0eb0429d92e6da850c69d2b3968da0952c7180a05b9ee8b"
+    },
+    {
+      "path": "artifacts/rtw89-usb.c",
+      "sha256": "858b8771c585a65fe5b1498c1d98e786134ee3c46b18985924310a24c1a6d80e"
+    }
+  ],
+  "hardware_submission": false
+}
