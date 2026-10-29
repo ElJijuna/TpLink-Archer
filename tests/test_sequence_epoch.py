@@ -28,13 +28,13 @@ class EpochTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 e.validate_reload(case)
 
-    def run_transition(self, fail):
+    def run_transition(self, fail, dirty=False):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp);(root / 'artifacts').mkdir();(root / 'build').mkdir()
             ledger = root / 'artifacts/37ad-0104-sequences.bin'
             previous = b'ARCHSEQ\x01' + bytes([1] * 245 + [0] * 11)
             ledger.write_bytes(previous)
-            (root / 'artifacts/37ad-0104-context-reservation').write_text('CLEAN\n')
+            (root / 'artifacts/37ad-0104-context-reservation').write_text('DIRTY\n' if dirty else 'CLEAN\n')
             helper = root / 'build/archer-epoch-boot-universal'
             helper.write_text('#!/usr/bin/env python3\n' + ('raise SystemExit(7)\n' if fail else 'print(' + repr('\n'.join(json.dumps(x) for x in evidence())) + ')\n'))
             helper.chmod(0o700)
@@ -42,9 +42,11 @@ class EpochTest(unittest.TestCase):
             with patch.multiple(e, ROOT=root, LEDGER=ledger), contextlib.redirect_stdout(io.StringIO()):
                 if fail:
                     with self.assertRaises(RuntimeError):
-                        e.transition(output)
+                        e.transition(output, discard_dirty_context=dirty)
                 else:
-                    e.transition(output)
+                    e.transition(output, discard_dirty_context=dirty)
+            self.assertEqual((output/'previous-context.bin').read_bytes(), b'DIRTY\n' if dirty else b'CLEAN\n')
+            self.assertEqual((root/'artifacts/37ad-0104-context-reservation').read_bytes(), b'DIRTY\n' if dirty and fail else b'CLEAN\n')
             self.assertEqual((output / 'previous-ledger.bin').read_bytes(), previous)
             self.assertEqual(ledger.read_bytes(), previous if fail else e.new_epoch_bytes())
             self.assertEqual(Path(str(ledger) + '.epoch-transition').read_text(), 'DIRTY\n' if fail else 'CLEAN\n')
@@ -65,3 +67,19 @@ class EpochTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     e.transition(root / 'attempt')
                 launch.assert_not_called()
+
+    def test_dirty_context_recovery_requires_verified_boundary(self):
+        self.run_transition(True, dirty=True)
+        self.run_transition(False, dirty=True)
+
+    def test_dirty_context_default_refuses_before_child(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'artifacts').mkdir()
+            ledger=root/'ledger';ledger.write_bytes(e.new_epoch_bytes())
+            context=root/'artifacts/37ad-0104-context-reservation'
+            context.write_bytes(b'DIRTY\n')
+            with patch.multiple(e,ROOT=root,LEDGER=ledger),patch.object(e.subprocess,'run') as launch:
+                with self.assertRaises(ValueError):e.transition(root/'attempt')
+                launch.assert_not_called()
+            self.assertEqual(context.read_bytes(),b'DIRTY\n')
+            self.assertEqual(ledger.read_bytes(),e.new_epoch_bytes())

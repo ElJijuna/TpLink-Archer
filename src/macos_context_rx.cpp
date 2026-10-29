@@ -81,7 +81,7 @@ int main(int argc,char** argv){
 #ifdef ARCHER_SINGLE_PROBE
                 if(m.packet.c2h&&probe_submitted){
                     auto rpt=archer::single_probe_report(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes);
-                    if(rpt){if(probe_report)throw std::runtime_error("Duplicate probe TX report");probe_report=rpt;
+                    if(rpt){if(!probe_report&&archer::probe_report_terminal(*rpt,1))probe_report=rpt;
                         std::cout<<"{\"operation\":\"single_probe_tx_report\",\"tag\":1,\"state\":"<<rpt->state<<",\"tx_count\":"<<rpt->count<<"}"<<std::endl;}
                 }
 #endif

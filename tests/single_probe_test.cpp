@@ -2,6 +2,10 @@
 #include <cassert>
 #include <iostream>
 int main(){
+ assert(!archer::probe_report_terminal({1,1},8));
+ assert(archer::probe_report_terminal({1,8},8));
+ assert(archer::probe_report_terminal({0,1},8));
+ assert(archer::probe_report_terminal({1,1},1));
  auto p=archer::single_probe_packet();assert(p.size()==96);
  assert(archer::channel_u32(p.data())==0x486480);
  assert(archer::channel_u32(p.data()+8)==0x240020);

@@ -39,12 +39,12 @@ def new_epoch_bytes():
     return b'ARCHSEQ\x01' + bytes([1, 1]) + bytes(254)
 
 
-def transition(output):
+def transition(output, discard_dirty_context=False):
     output = output.resolve()
     output.mkdir()
     report = output / 'epoch.json'
     record = {'epoch_id': str(uuid.uuid4()), 'status': 'preflight',
-              'mode': 'powered-reload-no-h2c', 'resident_version_readback': False}
+              'mode': 'powered-reload-no-h2c', 'discard_dirty_context': discard_dirty_context, 'resident_version_readback': False}
     locks = []
     try:
         owner = os.open(str(LEDGER) + '.workflow', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
@@ -57,8 +57,20 @@ def transition(output):
         if fence.is_symlink() or (fence.exists() and fence.read_bytes() != b'CLEAN\n'):
             raise ValueError('Previous epoch transition incomplete; no automatic retry')
         lease = ROOT / 'artifacts/37ad-0104-context-reservation'
-        if lease.read_bytes() != b'CLEAN\n':
-            raise ValueError('Context uncertain; epoch transition refused')
+        context_fd = os.open(lease, os.O_RDWR | os.O_NOFOLLOW)
+        locks.append(context_fd)
+        context_stat = os.fstat(context_fd)
+        if not stat.S_ISREG(context_stat.st_mode) or context_stat.st_nlink != 1:
+            raise ValueError('Invalid context reservation file')
+        fcntl.flock(context_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        previous_context = os.pread(context_fd, 7, 0)
+        if previous_context != b'CLEAN\n' and not (discard_dirty_context and previous_context == b'DIRTY\n'):
+            raise ValueError('Context uncertain; explicit discard after verified reload required')
+        with (output / 'previous-context.bin').open('xb') as archive_context:
+            archive_context.write(previous_context)
+            archive_context.flush()
+            os.fsync(archive_context.fileno())
+        record['previous_context'] = previous_context.decode().strip()
         old_fd = os.open(LEDGER, os.O_RDWR | os.O_NOFOLLOW)
         locks.append(old_fd)
         info = os.fstat(old_fd)
@@ -111,6 +123,17 @@ def transition(output):
         sync_directory(LEDGER.parent)
         record.update(status='ledger_replaced', new_ledger_sha256=digest(LEDGER), available_after=available_sequences(data))
         save(report, record)
+        # Only reset the context after the full MAC/DLE/CPU reload boundary.
+        current_context_stat = os.lstat(lease)
+        if (current_context_stat.st_dev, current_context_stat.st_ino) != (context_stat.st_dev, context_stat.st_ino):
+            raise ValueError('Context reservation path changed during reload')
+        if os.pread(context_fd, 7, 0) != previous_context:
+            raise ValueError('Context reservation changed during reload')
+        if os.pwrite(context_fd, b'CLEAN\n', 0) != 6:
+            raise OSError('Incomplete context reset write')
+        os.fsync(context_fd)
+        record['context_after'] = 'CLEAN'
+        save(report, record)
         set_fence(fence, b'CLEAN\n')
         record['status'] = 'committed'
         save(report, record)
@@ -149,4 +172,6 @@ def set_fence(path, data):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('new_directory', type=Path)
-    transition(parser.parse_args().new_directory)
+    parser.add_argument('--discard-dirty-context', action='store_true', help='Archive uncertain context and discard it only after verified MAC/DLE/CPU reload; does not permit another probe')
+    args = parser.parse_args()
+    transition(args.new_directory, args.discard_dirty_context)

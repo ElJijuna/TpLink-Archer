@@ -18,6 +18,11 @@ inline std::vector<std::uint8_t> single_probe_packet(){
     std::copy(frame.begin(),frame.end(),p.begin()+64);return p;
 }
 struct ProbeTxReport {unsigned state,count;};
+inline bool probe_report_terminal(const ProbeTxReport& r,unsigned limit){
+    if(!limit||limit>63)throw std::invalid_argument("Invalid TX retry limit");
+    // mac.c:5848-5853: failed attempts are progress until the requested count.
+    return r.state==0||r.count==limit;
+}
 inline std::optional<ProbeTxReport> single_probe_report(const std::uint8_t* p,std::size_t size){
     auto h=decode_c2h(p,size);
     if(h.category!=1||h.command_class!=9||h.function!=1)return {};
