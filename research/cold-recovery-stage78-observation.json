@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-30",
+  "workflow_status": "completed",
+  "distinct_bssids": 34,
+  "sequences_before": 251,
+  "sequences_after": 223,
+  "channels": [
+    {
+      "channel": 1,
+      "entries": 19,
+      "accepted_management": 110,
+      "bad_fcs": 0
+    },
+    {
+      "channel": 6,
+      "entries": 7,
+      "accepted_management": 96,
+      "bad_fcs": 0
+    },
+    {
+      "channel": 11,
+      "entries": 8,
+      "accepted_management": 94,
+      "bad_fcs": 0
+    }
+  ],
+  "tx_probe_marker_preserved": true,
+  "context": "CLEAN",
+  "evidence": [
+    {
+      "path": "artifacts/cold-rfk-workflow-stage78/workflow.json",
+      "sha256": "86dafa88228e203baba50f6913a341542eb5dfe3310bb88f74a2cc6a98355603"
+    },
+    {
+      "path": "artifacts/cold-rfk-workflow-stage78/sweep-report.json",
+      "sha256": "e5b0e558cdabe526118f1207de916cc71e4f5d3b5550bb94262c258e0da0bf29"
+    },
+    {
+      "path": "artifacts/cold-rfk-workflow-stage78/initial_rfk.jsonl",
+      "sha256": "5c82968ec2e9881274d4b994e92be3a9ab8099d9bf6ce46311a48e01a2a7a9ee"
+    },
+    {
+      "path": "artifacts/cold-mode-switch-stage78c.jsonl",
+      "sha256": "7feb1ad24e09899a88e65502df3ff8d77056320b90b74667a4f1aff528937567"
+    },
+    {
+      "path": "artifacts/cold-preflight-stage78.jsonl",
+      "sha256": "e9fee8de050489f6d2047ffa88940f0aa1f8692bacac6ae5c3c0969b2bb1d761"
+    }
+  ]
+}

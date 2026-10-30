@@ -3,9 +3,10 @@
 #include "archer/storage_eject.hpp"
 int main(int argc,char** argv){
     const bool inspect=argc==2&&std::string(argv[1])=="--inspect";
+    const bool eject_only=argc==2&&std::string(argv[1])=="--eject-only-installer";
     const bool recover=argc==2&&std::string(argv[1])=="--reset-bot-eject-installer";
-    if(argc!=2||(!inspect&&!recover&&std::string(argv[1])!="--eject-installer")) {
-        std::cout<<"Usage: archer-mode-switch --inspect | --eject-installer | --reset-bot-eject-installer\n";return 2;
+    if(argc!=2||(!inspect&&!recover&&!eject_only&&std::string(argv[1])!="--eject-installer")) {
+        std::cout<<"Usage: archer-mode-switch --inspect | --eject-installer | --reset-bot-eject-installer | --eject-only-installer\n";return 2;
     }
     IOUSBInterfaceInterface300** usb=nullptr;bool opened=false,unconfirmed=false;
     try {
@@ -93,6 +94,7 @@ int main(int argc,char** argv){
             }
         }
         for(bool eject:{false,true}){
+            if(eject_only&&!eject)continue; // One START STOP UNIT; never bypass CSW validation.
             auto cbw=archer::installer_eject_cbw(eject);
             status=(*usb)->WritePipeTO(usb,out,cbw.data(),cbw.size(),500,1000);
             std::cout<<"{\"operation\":\""<<(eject?"eject":"allow_removal")<<"\",\"status\":"<<status<<"}"<<std::endl;

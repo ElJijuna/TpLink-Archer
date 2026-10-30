@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **50 %**
 
-Actualizado: **2026-10-29**, etapa76: contexto MAC recuperado; restauración RF detenida en PRE_NOTIFY. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-30**, etapa78: carga fría recuperó RFK y barrido completo en ARM. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -28,6 +28,17 @@ siguen sin interpretación definitiva. No se afirma calidad RF plenamente valida
 TX de red queda pausado; hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa78: tras reconexión eléctrica, carga fría, RFK y barrido1/6/11 completados.
+34 BSSID distintos, tres replays idénticos, retorno a canal1 y contexto CLEAN.
+Quedan223 secuencias; TX de red pausado y prueba de trama aún bloqueada.
+Reset en caliente sin causa resuelta. Avance50 %.
+Evidencia: [research/STAGE78.md](research/STAGE78.md).
+
+Etapa77: recepción RFK asíncrona y plazo USB corregido probados tras recargas
+verificadas; PRE_NOTIFY sigue sin terminal. El firmware sí responde capacidades
+PHY por buzón. TX pausado; pendiente contraste con reconexión eléctrica.
+Avance50 %. Evidencia: [research/STAGE77.md](research/STAGE77.md).
 
 Etapa76: reset MAC/DLE y recarga verificados recuperaron el contexto DIRTY.
 La restauración posterior se detuvo por falta de terminal PRE_NOTIFY; no hay

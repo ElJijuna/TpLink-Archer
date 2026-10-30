@@ -13,7 +13,9 @@ int main(int argc,char** argv){
     archer::SequenceLedger ledger("artifacts/37ad-0104-sequences.bin");
     if(!std::filesystem::create_directory(argv[2]))throw std::runtime_error("Capture directory must be new");
     const std::filesystem::path dir(argv[2]);
-    MacRegisterBus bus;MacBulkChannel usb;unsigned capture=0;
+    // Keep IN requests queued before H2C submission; capture responses while
+    // pumping the same run loop used by the validated persistent RX path.
+    MacRegisterBus bus;MacBulkChannel usb(true);unsigned capture=0;
     std::optional<archer::DackReportV2> dack_report;
     std::optional<archer::RxdckReport> rxdck_report;
     archer::with_wlan_io_window(bus,[&]{
@@ -63,7 +65,7 @@ int main(int argc,char** argv){
             archer::RfkReportTracker tracker;
             std::cout<<"{\"rfk_command\":"<<static_cast<unsigned>(cmd)<<",\"sequence\":"<<seq<<"}"<<std::endl;
             usb.send(frame);
-            const auto end=std::chrono::steady_clock::now()+std::chrono::milliseconds(ms);
+            const auto end=std::chrono::steady_clock::now()+std::chrono::milliseconds(ms*4); // phy.c:4005-4011 USB RFK latency multiplier.
             auto waiting=[&]{
                 if(!tracker.complete())return true;
                 if(!tracker.success())return false;
