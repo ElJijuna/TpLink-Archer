@@ -24,13 +24,13 @@ TOOLS = {
 
 
 def plan(mode, sweep=False):
-    if mode not in ('cold-start', 'recover-loaded', 'resume-bootstrap'):
+    if mode not in ('cold-start', 'recover-loaded', 'resume-bootstrap', 'cold-radio-bootstrap'):
         raise ValueError('Unknown workflow mode')
     phases = [('inspect', [], 'firmware_controls')]
     if mode == 'cold-start':
         phases.append(('boot', ['--boot-usb-no-dcpu'], 'firmware_ready'))
     phases += [
-        ('radio', ['--resume-loaded-scc-radio' if mode == 'resume-bootstrap' else '--cold-scc-radio' if mode == 'cold-start' else '--powered-cold-scc-radio', '@capture'], 'scc_radio_nctl_applied'),
+        ('radio', ['--resume-loaded-scc-radio' if mode == 'resume-bootstrap' else '--cold-scc-radio' if mode in ('cold-start', 'cold-radio-bootstrap') else '--powered-cold-scc-radio', '@capture'], 'scc_radio_nctl_applied'),
         ('initial_rfk', ['--initial-rfk', '@capture'], 'initial_pre_dack_rxdck_clean'),
         ('tx_rfk', ['--channel1-world-calibrate', '@capture'], 'tx_rfk_commands_completed'),
         ('scan', ['--run-owned-source-profile-usb-aggregation-all-management-async', '@capture'], 'context_cleanup_acknowledged'),
@@ -180,7 +180,7 @@ def execute(mode, output, sweep=False):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('mode', choices=['cold-start', 'recover-loaded', 'resume-bootstrap'])
+    parser.add_argument('mode', choices=['cold-start', 'recover-loaded', 'resume-bootstrap', 'cold-radio-bootstrap'])
     parser.add_argument('new_directory', type=Path)
     parser.add_argument('--sweep-1-6-11', action='store_true', help='After channel1 scan, sweep6/11/1 and consolidate replays; needs28 sequences')
     args = parser.parse_args()

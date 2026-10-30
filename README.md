@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **52 %**
 
-Actualizado: **2026-10-30**, etapa79: primera trama con TX_DONE del firmware sobre ARM. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-30**, etapa81: Especial confirmado en canal9; retorno a1 y contexto CLEAN. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -29,6 +29,19 @@ TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
 hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa81: el Archer identificó Especial en9:26 beacons y2 probe responses
+observados pasivamente. Recorrido1→9→1 con RXDCK limpio, FCS0 y replays
+idénticos. Contexto recuperado/CLEAN, TX pausado y228 secuencias disponibles.
+Sin nueva trama de red TX. Avance52 %.
+Evidencia: [research/STAGE81.md](research/STAGE81.md).
+
+Etapa80: auditoría reproducible con FCS confirma0 respuestas a la MAC de prueba.
+No se detectaron tasas básicas omitidas en beacons de16 BSSID que anuncian1.
+Objetivo Especial: resultado CoreWLAN con nombre oculto en9; retune pasivo9
+preparado sin prueba física. Nuevo comando MAC sin ACK dejó contexto DIRTY;
+TX pausado verificado y recuperación eléctrica pendiente. Sin nuevo TX Archer.
+Avance52 %. Evidencia: [research/STAGE80.md](research/STAGE80.md).
 
 Etapa79: solicitud de sondeo corregida entregada una vez por USB; firmware
 reportó TX_DONE/count1. Contexto retirado, CLEAN y TX pausado. No se capturaron

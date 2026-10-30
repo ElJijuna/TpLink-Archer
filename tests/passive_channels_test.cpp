@@ -13,16 +13,16 @@ archer::Channel1BbInputs board(){
 int main(){
     const archer::Channel1Inputs ready{true,true,true,true,true};const auto b=board();
     const auto baseline=archer::channel1_bb_plan({},ready,b);
-    for(unsigned ch:{1u,6u,11u}){
+    for(unsigned ch:{1u,6u,9u,11u}){
         const auto p=archer::passive_channel_bb_plan(ch,ready,b);assert(p.size()==baseline.size());
         unsigned changes=0;
         for(unsigned i=0;i<p.size();++i){assert(p[i].address==baseline[i].address&&p[i].mask==baseline[i].mask);changes+=p[i].value!=baseline[i].value;}
         assert(changes==(ch==1?0u:5u));
         auto value=[&](unsigned a,unsigned mask){for(auto& op:p)if(op.address==a&&op.mask==mask)return op.value;throw std::runtime_error("missing field");};
-        assert(value(0x26b4c,0x1fff)==(ch==1?2412u:ch==6?2437u:2462u));
-        assert(value(0x26b50,0x7f)==(ch==1?109u:ch==6?108u:106u));
-        assert(value(0x26758,0x7ffff)==(ch==1?0x1fe4fu:ch==6?0x20399u:0x208e3u));
-        assert(value(0x2675c,0x7ffff)==(ch==1?0x2bdacu:ch==6?0x2c4f2u:0x2cc38u));
+        assert(value(0x26b4c,0x1fff)==(ch==1?2412u:ch==6?2437u:ch==9?2452u:2462u));
+        assert(value(0x26b50,0x7f)==(ch==1?109u:ch==6?108u:ch==9?107u:106u));
+        assert(value(0x26758,0x7ffff)==(ch==1?0x1fe4fu:ch==6?0x20399u:ch==9?0x206c5u:0x208e3u));
+        assert(value(0x2675c,0x7ffff)==(ch==1?0x2bdacu:ch==6?0x2c4f2u:ch==9?0x2c94fu:0x2cc38u));
         assert(value(0x20734,0xff0000)==ch<<16);
         const std::array<std::uint32_t,4> snapshot{0xfffff,0xabcde,0x53421,0x12345};
         const auto rf=archer::passive_channel_rf_plan(ch,ready,snapshot,1);

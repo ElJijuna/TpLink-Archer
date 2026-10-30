@@ -17,9 +17,10 @@
 #include <memory>
 static void delay_us(unsigned us){std::this_thread::sleep_for(std::chrono::microseconds(us));}
 int main(int argc,char** argv){
+    const bool channel9=argc==3&&std::string(argv[1])=="--owned-slot0-channel1-9-1";
     const bool sweep3=argc==3&&std::string(argv[1])=="--owned-slot0-channel1-6-11-1";
-    if(argc!=3||(!sweep3&&std::string(argv[1])!="--owned-slot0-channel1-6-1")){
-        std::cerr<<"Usage: archer-passive-retune {--owned-slot0-channel1-6-1|--owned-slot0-channel1-6-11-1} NEW_DIRECTORY\n";return 2;
+    if(argc!=3||(!sweep3&&!channel9&&std::string(argv[1])!="--owned-slot0-channel1-6-1")){
+        std::cerr<<"Usage: archer-passive-retune {--owned-slot0-channel1-6-1|--owned-slot0-channel1-6-11-1|--owned-slot0-channel1-9-1} NEW_DIRECTORY\n";return 2;
     }
     try{
         archer::SequenceLedger ledger("artifacts/37ad-0104-sequences.bin");
@@ -30,6 +31,7 @@ int main(int argc,char** argv){
         const archer::Channel1Inputs ready{true,true,true,true,true};
         const auto bb1=archer::passive_channel_bb_plan(1,ready,trusted_channel1_bb);
         const auto bb6=archer::passive_channel_bb_plan(6,ready,trusted_channel1_bb);
+        const auto bb9=archer::passive_channel_bb_plan(9,ready,trusted_channel1_bb);
         const auto bb11=archer::passive_channel_bb_plan(11,ready,trusted_channel1_bb);
         MacRegisterBus bus;
         archer::with_wlan_io_window(bus,[&]{
@@ -71,7 +73,7 @@ int main(int argc,char** argv){
                     }
                     if(!quiet)throw std::runtime_error("Previous channel did not quiesce");
                 }
-                for(const auto& op:target==1?bb1:target==6?bb6:bb11)archer::channel_bus_write(bus,op.address,op.mask,op.value);
+                for(const auto& op:target==1?bb1:target==6?bb6:target==9?bb9:bb11)archer::channel_bus_write(bus,op.address,op.mask,op.value);
                 const std::array<unsigned,4> snap{rf.read_full(0,0x18),rf.read_full(0,0x10018),rf.read_full(1,0x18),rf.read_full(1,0x10018)};
                 for(const auto& op:archer::passive_channel_rf_plan(target,ready,snap,1)){
                     rf.submit_full_write(op.path,op.address,op.full_value);delay_us(op.delay_after_us);
@@ -149,12 +151,12 @@ int main(int argc,char** argv){
             // Journal filter/response controls around the whole cycle. Failure
             // leaves the context reservation DIRTY and TX paused; no blind retune back.
             archer::with_usb_rx_aggregation(bus,[&]{archer::with_unlinked_port0_window(bus,[&]{archer::with_physts_window(bus,[&]{archer::with_phy_report_window(bus,[&]{
-                archer::with_passive_rx_window(bus,[&]{transition(6);dwell(6);if(sweep3){transition(11);dwell(11);}transition(1);dwell(1);},false,archer::RxAcceptance::all_management);
+                archer::with_passive_rx_window(bus,[&]{transition(channel9?9:6);dwell(channel9?9:6);if(sweep3){transition(11);dwell(11);}transition(1);dwell(1);},false,archer::RxAcceptance::all_management);
             });});});});
             if(current_channel!=1||seq_at!=sequences.size()||(rf.read_full(0,0x10018)&0x31fff)!=1||(rf.read_full(1,0x10018)&0x31fff)!=1||
                (archer::channel_bus_read(bus,0x26b4c)&0x1fff)!=2412||(archer::channel_bus_read(bus,0x10398)&0x3ffff))throw std::runtime_error("Return to channel1 not verified");
             reservation.clean();
-            std::cout<<"{\"result\":\""<<(sweep3?"passive_channel1_6_11_1_complete":"passive_channel1_6_1_complete")<<"\",\"network_tx_paused\":true,\"rxdck_all_channels_clean\":true,\"full_rf_quality_validated\":false}"<<std::endl;
+            std::cout<<"{\"result\":\""<<(sweep3?"passive_channel1_6_11_1_complete":channel9?"passive_channel1_9_1_complete":"passive_channel1_6_1_complete")<<"\",\"network_tx_paused\":true,\"rxdck_all_channels_clean\":true,\"full_rf_quality_validated\":false}"<<std::endl;
         });return 0;
     }catch(const std::exception& e){std::cerr<<"passive-retune: "<<e.what()<<"; reservation may remain DIRTY, no replay\n";return 2;}
 }

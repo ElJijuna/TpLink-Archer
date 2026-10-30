@@ -2,9 +2,9 @@
 #include "archer/channel_transition.hpp"
 namespace archer {
 // Pure planning only: these plans do not prove calibration or authorize TX.
-// Narrow scan candidates: PHY0/MAC0 SCC, 2.4GHz, 20MHz, channels 1/6/11.
+// Narrow scan candidates: PHY0/MAC0 SCC, 2.4GHz, 20MHz, channels 1/6/9/11.
 inline unsigned passive_channel_frequency(unsigned channel){
-    if(channel!=1&&channel!=6&&channel!=11)throw std::invalid_argument("Passive channel plan supports only 1/6/11");
+    if(channel!=1&&channel!=6&&channel!=9&&channel!=11)throw std::invalid_argument("Passive channel plan supports only 1/6/9/11");
     return 2407+5*channel;
 }
 inline std::vector<Channel1BbWrite> passive_channel_bb_plan(unsigned channel,
@@ -13,8 +13,8 @@ inline std::vector<Channel1BbWrite> passive_channel_bb_plan(unsigned channel,
     // Same gain band, offset band, width, CCK non-14 coefficients and spur
     // disable branch as channel1. Preserve the validated board/efuse input checks.
     auto plan=channel1_bb_plan({},prerequisites,inputs);
-    const unsigned barker=channel==1?0x1fe4f:channel==6?0x20399:0x208e3;
-    const unsigned cck=channel==1?0x2bdac:channel==6?0x2c4f2:0x2cc38;
+    const unsigned barker=channel==1?0x1fe4f:channel==6?0x20399:channel==9?0x206c5:0x208e3;
+    const unsigned cck=channel==1?0x2bdac:channel==6?0x2c4f2:channel==9?0x2c94f:0x2cc38;
     unsigned patched=0;
     for(auto& op:plan){
         if(op.address==0x26758&&op.mask==0x7ffff){op.value=barker;++patched;}

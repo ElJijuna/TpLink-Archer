@@ -9,7 +9,9 @@
 // Deliberately no SequenceLedger and no H2C commands. The parent owns and
 // freezes the old ledger while this process establishes the firmware boundary.
 int main(int argc,char** argv){
-    if(argc!=3||std::string(argv[1])!="--reload-powered-no-h2c"){
+    const bool finish=argc==3&&std::string(argv[1])=="--finish-cold-boundary-no-h2c";
+    const bool cold=finish||(argc==3&&std::string(argv[1])=="--reload-cold-no-h2c");
+    if(argc!=3||(!cold&&std::string(argv[1])!="--reload-powered-no-h2c")){
         std::cerr<<"Usage: archer-epoch-boot --reload-powered-no-h2c NEW_DIRECTORY (coordinator only)\n";return 2;
     }
     try{
@@ -29,6 +31,23 @@ int main(int argc,char** argv){
         MacRegisterBus bus;
         archer::with_wlan_io_window(bus,[&]{
             if(archer::read_chip_identity(bus).analog_id!=0x6933)throw std::runtime_error("Unexpected analog identity");
+            if(cold){
+              if(!finish){
+                if((bus.read(0x84,4)&0x33)||bus.read(0x842c,4)!=0)
+                    throw std::runtime_error("Cold BB reset profile absent");
+                std::cout<<"{\"phase\":\"epoch_cold_profile_verified\"}"<<std::endl;
+                archer::with_rf_power_window(bus,[&]{
+                    MacBulkChannel usb;
+                    archer::boot_firmware(bus,images,[&](const auto& frame){usb.send(frame);},
+                        [](const char* phase){std::cout<<"{\"phase\":\""<<phase<<"\"}"<<std::endl;},true);
+                    bus.write(0x84,1,bus.read(0x84,1)|3);
+                    bus.write(0x842c,4,0x7ff97ff9);
+                    for(auto [address,value]:trusted_bb_table)bus.write(address,4,value);
+                    bus.write(0x84,4,bus.read(0x84,4)|5);
+                    bus.write(0x20000,4,bus.read(0x20000,4)|4);bus.pause();
+                });
+              }
+            }else{
             for(const auto [a,v]:std::vector<std::pair<unsigned,unsigned>>{{0xe0,3},{0x90,0x6f},{0x80,0xeb},{0x81,0xeb}})
                 if(archer::read_xtal_power_byte(bus,a)!=v)throw std::runtime_error("Powered profile mismatch");
             const auto pll=archer::read_xtal_power_byte(bus,0xe1);
@@ -42,8 +61,9 @@ int main(int argc,char** argv){
                 archer::boot_firmware(bus,images,[&](const auto& frame){usb.send(frame);},
                     [](const char* phase){std::cout<<"{\"phase\":\""<<phase<<"\"}"<<std::endl;},true);
             }
+            }
             // No radio-table or other H2C submission in this new firmware epoch.
-            if((bus.read(0x1e0,4)&0x0c00003f)!=0x0c000022||(bus.read(0x84,4)&0x300007)!=2)
+            if((bus.read(0x1e0,4)&0x0c00003f)!=0x0c000022||(bus.read(0x84,4)&0x300007)!=(cold?0x300007u:2u))
                 throw std::runtime_error("Reloaded firmware controls do not match resume prerequisites");
             unsigned drained=0;
             {

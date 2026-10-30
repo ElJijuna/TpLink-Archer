@@ -23,6 +23,7 @@ build/efuse-reader-test: tests/efuse_reader_test.cpp include/archer/efuse_reader
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test build/bb-postinit-test build/radio-init-test build/dle-init-test build/rfk-protocol-test build/bb-table-window-test build/rf-power-test build/firmware-boot-test build/firmware-state-test build/hwsi-window-test build/installer-media-test build/storage-eject-test build/bb-window-test build/rf-transport-test build/rf-access-test build/xtal-identity-test build/efuse-reader-test build/sequence-ledger-test build/usb-request-test build/usb-descriptors-test build/firmware-channel-test build/register-mailbox-test
 	./build/channel-init-test
+	./build/probe-air-audit-test
 	./build/single-probe-test
 	./build/led-window-test
 	./build/passive-channels-test
@@ -310,3 +311,10 @@ single-probe-universal: | build
 build/single-probe-test: tests/single_probe_test.cpp include/archer/single_probe.hpp include/archer/firmware_channel.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/single-probe-test
+
+.PHONY: probe-air-audit-universal
+probe-air-audit-universal: | build
+	$(CXX) $(CXXFLAGS) -DARCHER_PROBE_AIR_AUDIT -arch arm64 -arch x86_64 src/passive_scan_decode.cpp -o build/archer-probe-air-audit-universal
+build/probe-air-audit-test: tests/probe_air_audit_test.cpp include/archer/probe_air_audit.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/probe-air-audit-test

@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-30",
+  "target_ssid_hex": "457370656369616c",
+  "channels": [
+    {
+      "channel": 9,
+      "entries": 12,
+      "accepted_management": 134,
+      "bad_fcs": 0,
+      "live_equals_replay": true
+    },
+    {
+      "channel": 1,
+      "entries": 15,
+      "accepted_management": 74,
+      "bad_fcs": 0,
+      "live_equals_replay": true
+    }
+  ],
+  "context": "CLEAN",
+  "sequences_after": 228,
+  "network_tx_probe_marker_retained": true,
+  "evidence": [
+    {
+      "path": "artifacts/special-channel9-stage81.jsonl",
+      "sha256": "b02a18aa62183c63cea35a79419d0ab8b2111f47ae645e7054dd63625c232fdd"
+    },
+    {
+      "path": "artifacts/special-channel9-stage81.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/special-cold-recovery-stage81/reload.jsonl",
+      "sha256": "0dc00aafe3cc82bbb8e1d2a29637a5dbe598d70f6599893eb280d5f0f0c5e3ae"
+    },
+    {
+      "path": "artifacts/special-cold-recovery-stage81/finish.jsonl",
+      "sha256": "ab47a50ede08c952a935f84c0c0ae7d1e393f8cdbc2a499c8876dbd5658baf43"
+    },
+    {
+      "path": "artifacts/special-channel9-stage81/channel-9/networks.json",
+      "sha256": "e36010832dc8aa0917bcd118660cf63d7835062005489c318bf58ff49b18e992"
+    }
+  ],
+  "target_observations": [
+    {
+      "bssid_hex": "50926a110666",
+      "ssid_hex": "457370656369616c",
+      "advertised_ds_channel": 9,
+      "beacons": 26,
+      "probe_responses": 2,
+      "first_observation": 6,
+      "last_observation": 144,
+      "interval_tu": 100,
+      "capability": 7185
+    }
+  ]
+}

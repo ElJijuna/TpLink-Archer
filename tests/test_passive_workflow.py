@@ -99,3 +99,9 @@ class WorkflowTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     w.execute('cold-start', root/'run', sweep=True)
                 launch.assert_not_called()
+
+    def test_cold_radio_bootstrap_uses_verified_loaded_image(self):
+        phases=w.plan('cold-radio-bootstrap')
+        self.assertEqual(phases[1][0],'radio')
+        self.assertEqual(phases[1][1][0],'--cold-scc-radio')
+        self.assertNotIn('boot',[p[0] for p in phases])

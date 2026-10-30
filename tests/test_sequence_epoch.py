@@ -28,7 +28,7 @@ class EpochTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 e.validate_reload(case)
 
-    def run_transition(self, fail, dirty=False):
+    def run_transition(self, fail, dirty=False, cold=False):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp);(root / 'artifacts').mkdir();(root / 'build').mkdir()
             ledger = root / 'artifacts/37ad-0104-sequences.bin'
@@ -36,15 +36,17 @@ class EpochTest(unittest.TestCase):
             ledger.write_bytes(previous)
             (root / 'artifacts/37ad-0104-context-reservation').write_text('DIRTY\n' if dirty else 'CLEAN\n')
             helper = root / 'build/archer-epoch-boot-universal'
-            helper.write_text('#!/usr/bin/env python3\n' + ('raise SystemExit(7)\n' if fail else 'print(' + repr('\n'.join(json.dumps(x) for x in evidence())) + ')\n'))
+            rows=evidence()
+            if cold:rows[0]={'phase':'epoch_cold_profile_verified'}
+            helper.write_text('#!/usr/bin/env python3\n' + ('raise SystemExit(7)\n' if fail else 'print(' + repr('\n'.join(json.dumps(x) for x in rows)) + ')\n'))
             helper.chmod(0o700)
             output = root / 'attempt'
             with patch.multiple(e, ROOT=root, LEDGER=ledger), contextlib.redirect_stdout(io.StringIO()):
                 if fail:
                     with self.assertRaises(RuntimeError):
-                        e.transition(output, discard_dirty_context=dirty)
+                        e.transition(output, discard_dirty_context=dirty, cold=cold)
                 else:
-                    e.transition(output, discard_dirty_context=dirty)
+                    e.transition(output, discard_dirty_context=dirty, cold=cold)
             self.assertEqual((output/'previous-context.bin').read_bytes(), b'DIRTY\n' if dirty else b'CLEAN\n')
             self.assertEqual((root/'artifacts/37ad-0104-context-reservation').read_bytes(), b'DIRTY\n' if dirty and fail else b'CLEAN\n')
             self.assertEqual((output / 'previous-ledger.bin').read_bytes(), previous)
@@ -83,3 +85,35 @@ class EpochTest(unittest.TestCase):
                 launch.assert_not_called()
             self.assertEqual(context.read_bytes(),b'DIRTY\n')
             self.assertEqual(ledger.read_bytes(),e.new_epoch_bytes())
+
+    def test_cold_boundary_is_distinct_and_transactional(self):
+        rows=evidence();rows[0]={'phase':'epoch_cold_profile_verified'}
+        self.assertEqual(e.validate_reload(rows,cold=True)['h2c_submissions'],0)
+        with self.assertRaises(ValueError):e.validate_reload(rows)
+        with self.assertRaises(ValueError):e.validate_reload(evidence(),cold=True)
+        self.run_transition(False,dirty=True,cold=True)
+        self.run_transition(True,dirty=True,cold=True)
+
+    def test_finish_preserved_cold_download_does_not_reload(self):
+        for fail_finish in (False,True):
+            with self.subTest(fail_finish=fail_finish),tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp);(root/'artifacts').mkdir();(root/'build').mkdir()
+                ledger=root/'artifacts/37ad-0104-sequences.bin'
+                old=b'ARCHSEQ\x01'+bytes([1]*50+[0]*206);ledger.write_bytes(old)
+                context=root/'artifacts/37ad-0104-context-reservation';context.write_bytes(b'DIRTY\n')
+                helper=root/'build/archer-epoch-boot-universal'
+                partial=evidence()[:-2];partial[0]={'phase':'epoch_cold_profile_verified'}
+                helper.write_text('#!/usr/bin/env python3\nprint('+repr('\n'.join(json.dumps(x) for x in partial))+')\nraise SystemExit(7)\n');helper.chmod(0o700)
+                output=root/'attempt'
+                with patch.multiple(e,ROOT=root,LEDGER=ledger),contextlib.redirect_stdout(io.StringIO()):
+                    with self.assertRaises(RuntimeError):e.transition(output,True,True)
+                    initial_log=(output/'reload.jsonl').read_bytes()
+                    final=evidence()[-2:]
+                    helper.write_text('#!/usr/bin/env python3\n'+('raise SystemExit(7)\n' if fail_finish else 'print('+repr('\n'.join(json.dumps(x) for x in final))+')\n'))
+                    if fail_finish:
+                        with self.assertRaises(RuntimeError):e.transition(output,True,finish_cold=True)
+                    else:e.transition(output,True,finish_cold=True)
+                self.assertEqual((output/'reload.jsonl').read_bytes(),initial_log)
+                self.assertEqual(ledger.read_bytes(),old if fail_finish else e.new_epoch_bytes())
+                self.assertEqual(context.read_bytes(),b'DIRTY\n' if fail_finish else b'CLEAN\n')
+                self.assertEqual(Path(str(ledger)+'.epoch-transition').read_bytes(),b'DIRTY\n' if fail_finish else b'CLEAN\n')

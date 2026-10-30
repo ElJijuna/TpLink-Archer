@@ -23,7 +23,7 @@ class PassiveScan {
     unsigned normal_=0,accepted_=0,bad_fcs_=0,unsupported_=0,overflow_=0;
 public:
     explicit PassiveScan(unsigned channel=1):receive_channel_(channel){
-        if(channel!=1&&channel!=6&&channel!=11)throw std::invalid_argument("Passive capture channel must be 1/6/11");
+        if(channel!=1&&channel!=6&&channel!=9&&channel!=11)throw std::invalid_argument("Passive capture channel must be 1/6/9/11");
     }
     bool observe(const std::vector<std::uint8_t>& bytes,const BeRxMetadata& m){
         if(m.packet.packet_type!=0)return false;

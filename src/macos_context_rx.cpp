@@ -105,28 +105,23 @@ int main(int argc,char** argv){
             }
             return true;
         };
-#ifdef ARCHER_SINGLE_PROBE
         // Stop accepting new traffic only while draining pre-existing USB data.
-        const std::array<unsigned,3> drain_regs{0x11424,0x11428,0x1142c};
-        std::array<unsigned,3> drain_saved{};
-        for(unsigned i=0;i<3;++i)drain_saved[i]=archer::channel_bus_read(bus,drain_regs[i]);
+        const std::array<unsigned,4> drain_regs{0x11424,0x11428,0x1142c,0x11440};
+        const std::array<unsigned,4> drain_masks{0xffff,0xffff,0xffff,1};
+        std::array<unsigned,4> drain_saved{};
+        for(unsigned i=0;i<4;++i)drain_saved[i]=archer::channel_bus_read(bus,drain_regs[i]);
         std::exception_ptr drain_error;bool quiet=false;
         try{
-            for(auto r:drain_regs)archer::channel_bus_write(bus,r,0xffff,0);
+            for(unsigned i=0;i<4;++i)archer::channel_bus_write(bus,drain_regs[i],drain_masks[i],0);
             const auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(3);
             while(std::chrono::steady_clock::now()<deadline){const bool a=receive(0,false),b=receive(1,false);if(!a&&!b){quiet=true;break;}}
         }catch(...){drain_error=std::current_exception();}
         std::string drain_restore_errors;
-        for(unsigned i=0;i<3;++i)try{archer::channel_bus_write(bus,drain_regs[i],0xffff,drain_saved[i]&0xffff);}
+        for(unsigned i=0;i<4;++i)try{archer::channel_bus_write(bus,drain_regs[i],drain_masks[i],drain_saved[i]&drain_masks[i]);}
             catch(const std::exception& e){drain_restore_errors+=e.what();}
         if(!drain_restore_errors.empty())throw std::runtime_error("Pre-probe RX restoration failed: "+drain_restore_errors);
         if(drain_error)std::rethrow_exception(drain_error);
         if(!quiet)throw std::runtime_error("Input did not quiesce; no context command sent");
-#else
-        bool quiet=false;const auto drain=std::chrono::steady_clock::now()+std::chrono::seconds(3);
-        while(std::chrono::steady_clock::now()<drain){const bool a=receive(0,false),b=receive(1,false);if(!a&&!b){quiet=true;break;}}
-        if(!quiet)throw std::runtime_error("Input did not quiesce; no context command sent");
-#endif
         const auto measure=[&](const std::string& phase){
             archer::reset_rx_diagnostic_counters(bus);
             const auto end=std::chrono::steady_clock::now()+std::chrono::milliseconds(250);
