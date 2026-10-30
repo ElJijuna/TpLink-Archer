@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-30",
+  "validation": {
+    "firmware_tx_done": true,
+    "reported_tx_count": 1,
+    "usb_submissions": 1,
+    "context_cleanup_acknowledged": true,
+    "network_tx_paused": true,
+    "external_ack_verified": false,
+    "association": false
+  },
+  "context": "CLEAN",
+  "sequences_after": 214,
+  "evidence": [
+    {
+      "path": "artifacts/single-probe-stage79/attempt.json",
+      "sha256": "179ddf127362d8f914cd782548970d64204903555a4e1c99c35332ed5dff59d8"
+    },
+    {
+      "path": "artifacts/single-probe-stage79/probe.jsonl",
+      "sha256": "0deaff895564d6128146dcea9b084ee3b574e0499352b7dc2334f258ee33ecab"
+    },
+    {
+      "path": "artifacts/single-probe-stage79/probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/single-probe-stage79/capture/single-probe.bin",
+      "sha256": "540d9cdd65daf4d8f6200c2c4fd8f14955fa596b536e9b04a0d2602e0027f3e6"
+    },
+    {
+      "path": "artifacts/single-probe-stage79/archer-single-probe",
+      "sha256": "68027fe396311beef88899607a11748576979e38733b3d5d8ffa70a2de03c90f"
+    },
+    {
+      "path": "artifacts/single-probe-stage79/previous-probe-marker.bin",
+      "sha256": "40fa8830ab43aa78949c595d518e9b58d14d6308d0caaa55e5060fa35769ee68"
+    }
+  ]
+}

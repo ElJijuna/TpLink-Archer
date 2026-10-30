@@ -1,21 +1,21 @@
 # Archer USB — investigación y base de controlador
 
-## Checklist resumido — avance estimado: **50 %**
+## Checklist resumido — avance estimado: **52 %**
 
-Actualizado: **2026-10-30**, etapa78: carga fría recuperó RFK y barrido completo en ARM. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-30**, etapa79: primera trama con TX_DONE del firmware sobre ARM. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
 - [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
 - [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
-- [ ] Ruta completa de datos Wi-Fi TX/RX — **5/15**: RX normal repetido y FCS verificado; faltan TX y el resto del camino.
+- [ ] Ruta completa de datos Wi-Fi TX/RX — **7/15**: RX/FCS y una trama de gestión con TX_DONE del firmware; faltan respuesta externa, datos TX y el resto del camino.
 - [ ] Escaneo, asociación y seguridad Wi-Fi — **5/15**: barrido pasivo1/6/11 con retorno; faltan ampliación, asociación y seguridad.
 - [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
 - [ ] Validación física en Mac Intel — **0/5**.
 - [ ] Implementación y validación en Linux — **0/5**.
 
-**50/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
+**52/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
 no del tiempo restante. Compilar para Intel no equivale a validarlo físicamente.
 El adaptador todavía no ofrece conexión Wi-Fi utilizable.
 
@@ -25,9 +25,15 @@ La repetición desde firmware recargado terminó con respuestas OK de todos
 los comandos y RXDCK final limpio. IQK y TXGAPK reportan éxito; DPK no muestra
 timeouts/overflow, pero su máscara de estado y los estados de alineación TSSI
 siguen sin interpretación definitiva. No se afirma calidad RF plenamente validada.
-TX de red queda pausado; hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
+TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
+hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa79: solicitud de sondeo corregida entregada una vez por USB; firmware
+reportó TX_DONE/count1. Contexto retirado, CLEAN y TX pausado. No se capturaron
+probe responses dirigidos a la MAC de prueba; sin ACK externo ni asociación.
+Avance52 %. Evidencia: [research/STAGE79.md](research/STAGE79.md).
 
 Etapa78: tras reconexión eléctrica, carga fría, RFK y barrido1/6/11 completados.
 34 BSSID distintos, tres replays idénticos, retorno a canal1 y contexto CLEAN.

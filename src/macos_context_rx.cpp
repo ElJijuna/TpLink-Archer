@@ -33,7 +33,18 @@ int main(int argc,char** argv){
  try{
     archer::SequenceLedger ledger("artifacts/37ad-0104-sequences.bin");
 #ifdef ARCHER_SINGLE_PROBE
-    if(std::filesystem::exists("artifacts/37ad-0104-single-probe-attempted"))
+    bool recovery_permit=false;
+    if(const auto value=std::getenv("ARCHER_PROBE_RECOVERY_FD")){
+        char* end=nullptr;errno=0;const long fd=std::strtol(value,&end,10);
+        struct stat inherited{},target{};char state[19]{};
+        if(errno||*end||fd<0||fd>0x7fffffff||fstat(fd,&inherited)||
+           lstat("artifacts/37ad-0104-single-probe-attempted",&target)||
+           !S_ISREG(target.st_mode)||target.st_nlink!=1||inherited.st_dev!=target.st_dev||inherited.st_ino!=target.st_ino||
+           pread(fd,state,sizeof(state),0)!=18||std::string(state,18)!="RECOVERY_RESERVED\n"||flock(fd,LOCK_EX|LOCK_NB))
+            throw std::runtime_error("Invalid inherited single-probe recovery reservation");
+        recovery_permit=true;
+    }
+    if(!recovery_permit&&std::filesystem::exists("artifacts/37ad-0104-single-probe-attempted"))
         throw std::runtime_error("A probe was already attempted; physical recovery and retry analysis required");
 #endif
     const std::filesystem::path dir=argv[2];
@@ -188,11 +199,13 @@ int main(int argc,char** argv){
                     if(chip.revision!=1||chip.analog_id!=0x6933)throw std::runtime_error("Probe hardware profile mismatch");
                     if((archer::channel_bus_read(bus,0x26b4c)&0x1fff)!=2412)
                         throw std::runtime_error("Probe BB channel1 absent");
+                    if(!recovery_permit){
                     const auto marker=open("artifacts/37ad-0104-single-probe-attempted",O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW,0600);
                     if(marker<0)throw std::runtime_error("Probe attempt already recorded; no automatic retransmission");
                     const char token[]="TAG1 RESERVED\n";
                     const bool persisted=write(marker,token,sizeof(token)-1)==sizeof(token)-1&&fsync(marker)==0;
                     close(marker);if(!persisted)throw std::runtime_error("Cannot persist single probe reservation");
+                    }
                     const auto packet=archer::single_probe_packet();
                     std::ofstream probe_file(dir/"single-probe.bin",std::ios::binary);
                     probe_file.write(reinterpret_cast<const char*>(packet.data()),packet.size());probe_file.close();
