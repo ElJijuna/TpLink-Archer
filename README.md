@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **52 %**
 
-Actualizado: **2026-10-30**, etapa81: Especial confirmado en canal9; retorno a1 y contexto CLEAN. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-31**, etapa82: perfil de potencia9 generado y contrastado; pendiente integración/calibración física. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -29,6 +29,11 @@ TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
 hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa82: generador de potencia separado para canal9, con197 escrituras y
+consulta del índice8 confirmado en Linux. Canal1 conserva exactamente su
+salida previa;85 tests Python pasan. Sin nuevo TX ni calibración física.
+Avance52 %. Evidencia: [research/STAGE82.md](research/STAGE82.md).
 
 Etapa81: el Archer identificó Especial en9:26 beacons y2 probe responses
 observados pasivamente. Recorrido1→9→1 con RXDCK limpio, FCS0 y replays

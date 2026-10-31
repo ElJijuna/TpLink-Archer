@@ -84,32 +84,38 @@ for e in entries(16,4):shapes[tuple(e[:3])]=e[3]
 write(0x26c04,1 if shapes.get((0,1,0),0) else 0,3)
 lmt={tuple(e[:6]):signed(e[6]) for e in entries(10,7)}
 ru={tuple(e[:4]):signed(e[4]) for e in entries(13,5)}
-addr=0x11fac
-for nt in range(2):
-    # Source memset page then fill four pairs at 20MHz; 76-byte page.
-    page=[0]*76
-    for pair,(bw,rs) in enumerate(((0,0),(1,0),(0,1),(0,2))):
-        for bf in range(2):
-            key=(bw,nt,rs,bf,0,0)
-            # Missing BF combinations retain source kzalloc zero, not copied non-BF values.
-            page[pair*2+bf]=min(lmt.get(key,0)//2,63) # noSAR=63, 2G TPE=63
-    for i in range(0,76,4):write(addr,pack(page[i:i+4]));addr+=4
-addr=0x12048
-for nt in range(2):
-    page=[0]*80
-    for r in range(5):
-        key=(r,nt,0,0)
-        page[r*16]=min(ru.get(key,0)//2,63)
-    for i in range(0,80,4):write(addr,pack(page[i:i+4]));addr+=4
-# Source CV1 antenna difference is zero when regd_enabled=0; references=0.
-for p in range(2):
-    write(0x2e628+p*0x100,0,0x1ff);write(0x2e628+p*0x100,0,0x3fe00)
-    write(0x2e6a0+p*0x100,18<<20,0x3ff00000)
-write(0x11a20,0,0x3fe);write(0x11a20,0,0x7fc00)
-# Unconfigured SAR query returns 63 MAC units, converted to RF:126.
-for p in range(2):write(0x2e61c+p*0x100,126<<12,0x1ff000)
-with (ROOT/'artifacts/channel_payload.hpp').open('a') as out:
-    out.write('inline const std::vector<archer::Channel1BbWrite> trusted_channel1_world_power{\n')
-    for a,m,v in ops:out.write(f'{{{a},{m}u,{v}u}},\n')
-    out.write('};\n')
-print('Bound world/unconfigured diagnostic power writes:',len(ops))
+common_ops=ops.copy()
+# Linux phy.c rtw89_channel_to_idx: 2.4 GHz channels map to channel - 1.
+# BE 20 MHz limit and RU fillers both query the actual center channel.
+for channel in (1,9):
+    ops=common_ops.copy()
+    addr=0x11fac
+    for nt in range(2):
+        # Source memset page then fill four pairs at 20MHz; 76-byte page.
+        page=[0]*76
+        for pair,(bw,rs) in enumerate(((0,0),(1,0),(0,1),(0,2))):
+            for bf in range(2):
+                key=(bw,nt,rs,bf,0,channel-1)
+                # Missing BF combinations retain source kzalloc zero, not copied non-BF values.
+                page[pair*2+bf]=min(lmt.get(key,0)//2,63) # noSAR=63, 2G TPE=63
+        for i in range(0,76,4):write(addr,pack(page[i:i+4]));addr+=4
+    addr=0x12048
+    for nt in range(2):
+        page=[0]*80
+        for r in range(5):
+            key=(r,nt,0,channel-1)
+            page[r*16]=min(ru.get(key,0)//2,63)
+        for i in range(0,80,4):write(addr,pack(page[i:i+4]));addr+=4
+    # Source CV1 antenna difference is zero when regd_enabled=0; references=0.
+    for p in range(2):
+        write(0x2e628+p*0x100,0,0x1ff);write(0x2e628+p*0x100,0,0x3fe00)
+        write(0x2e6a0+p*0x100,18<<20,0x3ff00000)
+    write(0x11a20,0,0x3fe);write(0x11a20,0,0x7fc00)
+    # Unconfigured SAR query returns 63 MAC units, converted to RF:126.
+    for p in range(2):write(0x2e61c+p*0x100,126<<12,0x1ff000)
+    if len(ops)!=197:raise ValueError('Unexpected diagnostic power plan length')
+    with (ROOT/'artifacts/channel_payload.hpp').open('a') as out:
+        out.write(f'inline const std::vector<archer::Channel1BbWrite> trusted_channel{channel}_world_power{{\n')
+        for a,m,v in ops:out.write(f'{{{a},{m}u,{v}u}},\n')
+        out.write('};\n')
+    print(f'Bound channel{channel} world/unconfigured diagnostic power writes:',len(ops))
