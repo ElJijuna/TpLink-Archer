@@ -1,5 +1,6 @@
 #include "archer/macos_bulk.hpp"
-#include "archer/sequence_ledger.hpp"
+#include "archer/context_reservation.hpp"
+#include "archer/passive_channels.hpp"
 #include "archer/cmac_init.hpp"
 #include "archer/channel_bus.hpp"
 #include "archer/trx_path.hpp"
@@ -11,18 +12,20 @@
 #include <fstream>
 static void delay_us(unsigned us){std::this_thread::sleep_for(std::chrono::microseconds(us));}
 // Fixed research profile only: source-fresh host state, BTC intentionally not
-// initialized, WW power tables, PHY0/SCC channel1/20MHz, scheduler never resumed.
+// initialized, WW power tables, PHY0/SCC channel1 or9/20MHz, scheduler never resumed.
 int main(int argc,char** argv){
- if(argc!=3 || std::string(argv[1])!="--channel1-world-calibrate") {
-    std::cerr<<"Usage: archer-tx-calibrate --channel1-world-calibrate NEW_CAPTURE_DIRECTORY\n";return 2;
+ const bool channel9=argc==3 && std::string(argv[1])=="--owned-slot0-channel9-world-calibrate";
+ if(argc!=3 || (!channel9 && std::string(argv[1])!="--channel1-world-calibrate")) {
+    std::cerr<<"Usage: archer-tx-calibrate {--channel1-world-calibrate|--owned-slot0-channel9-world-calibrate} NEW_CAPTURE_DIRECTORY\n";return 2;
  }
  try {
     archer::SequenceLedger ledger("artifacts/37ad-0104-sequences.bin");
     const archer::Channel1Context context;
-    const archer::RfkChannel channel{0,0,1};
+    const unsigned target=channel9?9:1;
+    const archer::RfkChannel channel{0,0,target};
     const archer::RfkFirmwareVersion version{0,35,41,0};
     // Validate all compile-bound board/planning data before touching hardware.
-    const auto bb=archer::channel1_bb_plan(context,{true,true,true,true,true},trusted_channel1_bb);
+    const auto bb=archer::passive_channel_bb_plan(target,{true,true,true,true,true},trusted_channel1_bb);
     const auto mac=archer::channel1_mac_plan(context);
     const auto trim=archer::channel1_board_trim_plan(context,trusted_channel1_trim,0x6933,1,1);
     archer::validate_world_diagnostic_power(context,{0,0,0,true,true});
@@ -30,13 +33,23 @@ int main(int argc,char** argv){
     (void)archer::prepare_tssi_normal_payload(version,0,channel,1,0,trusted_tssi_board,tssi_trim,trusted_tssi_tracking);
     if(!std::filesystem::create_directory(argv[2]))throw std::runtime_error("Capture directory must be new");
     const std::filesystem::path directory(argv[2]);
-    MacRegisterBus bus;MacBulkChannel usb;
+    MacRegisterBus bus;MacBulkChannel usb(true);
     archer::with_wlan_io_window(bus,[&]{
         if(archer::read_chip_identity(bus).analog_id!=0x6933 ||
            (archer::channel_bus_read(bus,0x1e0)&0xc00003f)!=0xc000022 ||
            (archer::channel_bus_read(bus,0x84)&0x300007)!=7 ||
            (archer::channel_bus_read(bus,0x842c)&0xffff)!=0x7ff9)
             throw std::runtime_error("Bound firmware/ADDA/BB profile absent");
+        if(channel9) {
+            if(archer::channel_bus_read(bus,0x10398)&0x3ffff)throw std::runtime_error("Channel9 requires paused scheduler");
+            archer::BeRfTransport initial_rf(bus);
+            for(auto a:{0x28104u,0x28204u})if(archer::channel_bus_read(bus,a)&0x303)throw std::runtime_error("Owned slot0 required");
+            if((initial_rf.read_full(0,0x18)&0x31fff)!=1 ||
+               (initial_rf.read_full(0,0x10018)&0x31fff)!=1 ||
+               (initial_rf.read_full(1,0x10018)&0x31fff)!=1)
+                throw std::runtime_error("Channel9 requires verified initial channel1");
+        }
+        ContextReservation reservation;
         (void)archer::pause_cmac0_scheduler(bus);
         archer::initialize_usb2_scc_cmac0(bus,{true},[]{delay_us(1);});
         for(const auto& op:archer::rtl8922a_scc_bb_sethw_plan())
@@ -58,22 +71,22 @@ int main(int argc,char** argv){
         for(const auto& op:bb)archer::channel_bus_write(bus,op.address,op.mask,op.value);
         const std::array<unsigned,4> snapshot{rf.read_full(0,0x18),rf.read_full(0,0x10018),rf.read_full(1,0x18),rf.read_full(1,0x10018)};
         (void)rf.read_full(0,0x18); // Source's separate synthesizer snapshot.
-        for(const auto& op:archer::channel1_rf_tuning_plan(context,{true,true,true,true,true},snapshot,1)) {
+        for(const auto& op:archer::passive_channel_rf_plan(target,{true,true,true,true,true},snapshot,1)) {
             rf.submit_full_write(op.path,op.address,op.full_value);delay_us(op.delay_after_us);
             const auto effective=rf.read_full(op.path,op.address);
             std::cout<<"{\"rf_channel_readback\":{\"path\":"<<op.path<<",\"address\":"<<op.address<<",\"effective\":"<<effective<<"}}"<<std::endl;
             // get_syn_sel(PHY0,MLO_DBCC_NOT_SUPPORT) selects A. Source also writes
             // B analog RF18 without enforcing equality; keep that observation
             // separate from selected SYN A and both digital channel registers.
-            if((effective&0x31fff)!=1 && !(op.path==1 && op.address==0x18))
-                throw std::runtime_error("Selected synthesizer/digital channel1 tuning did not latch");
+            if((effective&0x31fff)!=target && !(op.path==1 && op.address==0x18))
+                throw std::runtime_error("Selected synthesizer/digital channel tuning did not latch");
         }
-        for(const auto& op:trusted_channel1_world_power)
+        for(const auto& op:channel9?trusted_channel9_world_power:trusted_channel1_world_power)
             archer::channel_bus_write(bus,op.address,op.mask,op.value);
         lifecycle.execute(archer::channel1_reset_exit(context));
-        const auto post=archer::channel1_post_rf_plan(context,{0,0},{rf.read_full(0,1),rf.read_full(1,1)});
+        const auto post=archer::passive_channel_post_rf_plan(target,{0,0},{rf.read_full(0,1),rf.read_full(1,1)});
         lifecycle.execute(post.operations);
-        std::cout<<"{\"phase\":\"channel1_world_applied\",\"network_tx_paused\":true}"<<std::endl;
+        std::cout<<"{\"phase\":\"channel_world_applied\",\"network_tx_paused\":true}"<<std::endl;
         const auto rf_deadline=std::chrono::steady_clock::now()+std::chrono::milliseconds(5);
         archer::wait_rf_not_transmitting([&](unsigned p,unsigned a){return rf.read_full(p,a);},delay_us,
             [&]{return std::chrono::steady_clock::now()>=rf_deadline;});
@@ -142,11 +155,11 @@ int main(int argc,char** argv){
             do {receive(0,&tracker);receive(1,&tracker);}while((!tracker.complete() || (tracker.success() && !report_present())) && std::chrono::steady_clock::now()<deadline);
             if(!tracker.success() || !report_present())throw std::runtime_error("TX RFK terminal/report missing or failed; no next command");
             if((txgapk && !txgapk->flags_clear()) || (iqk && (!iqk->flags_clear() || !iqk->matches(channel,0))) ||
-               (dpk && (!dpk->error_flags_clear() || dpk->path_success()==std::optional<bool>{false} || !dpk->matches(channel))) || (rxdck && !rxdck->clean_initial_channel1()))
+               (dpk && (!dpk->error_flags_clear() || dpk->path_success()==std::optional<bool>{false} || !dpk->matches(channel))) || (rxdck && !rxdck->clean_2g20(target)))
                 throw std::runtime_error("TX RFK detailed report failed; no next command");
         };
         archer::RfkPreNotifyV1 notify;notify.mlo_mode=1; // Explicit SCC/no-DBCC profile.
-        notify.channels[0][0]=notify.channels[1][0]=1;
+        notify.channels[0][0]=notify.channels[1][0]=target;
         command(archer::RfkCommand::pre_notify,archer::rfk_pre_notify_payload(version,notify));
         command(archer::RfkCommand::tssi,{},true);
         const auto after_scan_deadline=std::chrono::steady_clock::now()+std::chrono::milliseconds(5);
@@ -159,8 +172,14 @@ int main(int argc,char** argv){
         command(archer::RfkCommand::dpk,archer::rfk_dpk_payload(version,0,channel,true));
         command(archer::RfkCommand::rxdck,archer::rfk_rxdck_payload(version,0,channel,false,true));
         if(archer::channel_bus_read(bus,0x10398)&0x3ffff)throw std::runtime_error("Scheduler no longer paused");
+        if((archer::channel_bus_read(bus,0x26b4c)&0x1fff)!=archer::passive_channel_frequency(target) ||
+           (rf.read_full(0,0x10018)&0x31fff)!=target || (rf.read_full(1,0x10018)&0x31fff)!=target)
+            throw std::runtime_error("Final channel readback mismatch");
+        usb.close(); // Drain callbacks before committing a clean context.
+        reservation.clean();
+        std::cout<<"{\"calibrated_channel\":"<<target<<",\"mcc_slot\":0,\"context_clean\":true}"<<std::endl;
         std::cout<<"{\"result\":\"tx_rfk_commands_completed\",\"network_tx_paused\":true,\"all_calibration_quality_validated\":false,\"dpk_path_semantics_validated\":false,\"tssi_alignment_semantics_validated\":false}"<<std::endl;
     });
     return 0;
- }catch(const std::exception& e){std::cerr<<"tx-calibrate: "<<e.what()<<"; scheduler remains paused, do not retry pending RFK\n";return 2;}
+ }catch(const std::exception& e){std::cerr<<"tx-calibrate: "<<e.what()<<"; stopped, do not retry pending RFK\n";return 2;}
 }

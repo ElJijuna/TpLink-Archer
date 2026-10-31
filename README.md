@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **52 %**
 
-Actualizado: **2026-10-31**, etapa82: perfil de potencia9 generado y contrastado; pendiente integración/calibración física. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-31**, etapa84: secuencia RFK9 completada físicamente; canal9/CLEAN y TX pausado. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -29,6 +29,18 @@ TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
 hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa84: TXGAPK/IQK/TSSI/DPK/RXDCK ejecutados en9 con ocho terminales OK.
+IQK coincide con9 y RXDCK replay confirma ambos caminos9 sin timeouts.
+Estado final9/2452MHz, MCC0, contexto CLEAN,224 secuencias y TX pausado.
+Calidad/semánticas DPK y TSSI aún pendientes; sin nueva trama de red.
+Avance52 %. Evidencia: [research/STAGE84.md](research/STAGE84.md).
+
+Etapa83: secuencia de calibración9 integrada y compilada Intel/ARM; tests
+TSSI verifican sus grupos y campos DE. La ejecución se detuvo antes de H2C:
+endpoint0x84 bloqueado y lectura de identidad abortada. Pendiente reconexión;
+no se completaron calibraciones físicas en9. Avance52 %.
+Evidencia: [research/STAGE83.md](research/STAGE83.md).
 
 Etapa82: generador de potencia separado para canal9, con197 escrituras y
 consulta del índice8 confirmado en Linux. Canal1 conserva exactamente su

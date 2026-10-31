@@ -1,0 +1,148 @@
+{
+  "date": "2026-10-31",
+  "stage": 84,
+  "channel": 9,
+  "frequency_mhz": 2452,
+  "mcc_slot": 0,
+  "commands": [
+    {
+      "rfk_command": 8,
+      "sequence": 24,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 0,
+      "sequence": 25,
+      "tssi_scan": true
+    },
+    {
+      "rfk_command": 8,
+      "sequence": 26,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 4,
+      "sequence": 27,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 1,
+      "sequence": 28,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 0,
+      "sequence": 29,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 3,
+      "sequence": 30,
+      "tssi_scan": false
+    },
+    {
+      "rfk_command": 6,
+      "sequence": 31,
+      "tssi_scan": false
+    }
+  ],
+  "terminal_success_count": 8,
+  "txgapk_success": true,
+  "iqk_channel_matches": true,
+  "iqk_flags_clear": true,
+  "dpk_error_flags_clear": true,
+  "dpk_channel_matches": true,
+  "dpk_path_status": [
+    4,
+    4
+  ],
+  "dpk_path_semantics_validated": false,
+  "tssi_alignment_state": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "tssi_semantics_validated": false,
+  "rxdck_replay": {
+    "rxdck_clean": true,
+    "channels": [
+      9,
+      9
+    ],
+    "timeouts": [
+      0,
+      0
+    ]
+  },
+  "context": "CLEAN",
+  "network_tx_paused": true,
+  "new_network_frame_submissions": 0,
+  "available_sequences": 224,
+  "full_rf_quality_validated": false,
+  "evidence": {
+    "artifacts/channel9-calibration-stage84-evidence/archer-tx-calibrate-universal": "a18c0aabaf82d1c32a60e689d197939267c579ee281d05fd9775ac15d15b5d0d",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-0.bin": "0a9e91f69bd3e99f40e4d1433a3cbfc880d6d1b468cf868b7c2decce8760c05b",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-1.bin": "759449601af52f6b39fa425654c6dd6eb53ee6e755f6c3a37a5e47b6f651c112",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-10.bin": "97be871be68b71488c443ba2c8af50b9e665c58502585fe7a4a06fd8903488de",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-11.bin": "69ab36c7bcc86a58b8a904ec4f80771a565ddb791cd19416eb4f62eaf3c99e68",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-12.bin": "a87399eb96928210354d37ea3130ee10fac166cab4e22818e7c21043472a2115",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-13.bin": "bedd2e7075b26eff1982558096f30fa59b077490002f761b34aad697a0bd02e1",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-14.bin": "f911efa9f897ddbbd59b5067475213443d2f6ed374ac83bb28bdfc076fc7829d",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-15.bin": "495df7485c9b78aa7ea659f41aaddfc8c1c92b58646c64d02be1b255a01f7f28",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-16.bin": "cbc645241891d05125fed5a818306ca6b7b79b02398838c6036d0731d16bf2da",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-17.bin": "7c61bd27ed05671d94b358eb4ae20c35396f0fcf05251488107a5063b38180af",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-18.bin": "6826db4f8c8609501fdf5e63f52b3c34736d22b88a4cb6a563d8be35fdef7d92",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-19.bin": "1e63067f0363df27400f48bbc9500178d1fccbb4bab494f46db784865033d795",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-2.bin": "bb3fd1c73a9c2f14de797706eea7234b70bf88445d4d6ff3d3357b0b707b300f",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-20.bin": "82eba2693afebead8d5f793585dde24090948fbf5cf9188faa42953e1685ed2a",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-21.bin": "05f38a8e85462c2703b9ce4ca11eaeb969b82be3d68fd5bcff29c77b44e790b2",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-22.bin": "4ce262e55aa3c3e3878b4e82c97bdc8e5c23a575c708cc964f26ed72af7c7b17",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-23.bin": "884318de6dede9eb553b0b0a0f85e2536125f4f822150c35477c419f7a3bd51b",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-24.bin": "a42f0b3d73245c41a58f4135534ebff0587156e81316d5165e70f445a7456f07",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-25.bin": "7d65f1a64c07d638a5e7d7b1c75434e768ec0df9ecd2cfb20c148a50020205ff",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-26.bin": "50d1d4bbdf4b9c7f157e75e64885a0ac1278a811cc538044266dba7639df1639",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-27.bin": "321391acbaf29814da844334242c236867798aa8a4227d0a68829c565cd32a66",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-28.bin": "c655816acc2f46d45d40d3c2a78a6a2c02858bcbf33b932f845123d491bfdf98",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-29.bin": "5d008047f72a1f620d5789ebd8a04bfc9259a9c9beb60f56e833a0647c6f8e52",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-3.bin": "6ae3d431f12a245824945657821af0e48f6499d07df7c585320fb5feee926149",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-30.bin": "8c543e0375a14a54afabb05f32accceea8800f0cb80a5f84ac74332009e4b619",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-31.bin": "d84026fc5151a732158c8b2cefc373fb14517ac40d57c83605ed68b15ef99704",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-32.bin": "f0d3e5001d985572e0a2cb9577b56f74e7be46e08546d7627c41f306f7de1c79",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-33.bin": "a1820ba6b93dc9c1b5bb7f0126896881c2f232564200a7bfb7d474884d8ae366",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-34.bin": "4eeabeaa0e8478a77c1537dfe2ae358e60cf87b3ea819297740fcda798c8044d",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-35.bin": "e6333b403860d4022d09e503fd4da8f791e0d2567d28c1281081bad8f942581f",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-36.bin": "a1bf346646fdc92eb87a67949dd0fa6f8be2d40e093dc0606c16fc81bbfa21be",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-37.bin": "d94a341ba4a868ef23fb42e8c7d74de4b03b28bedd1e971a546ef6045b5631ce",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-38.bin": "e035a36db4e04e7592c539bee02764c9ae318d239eacec25fa60f77d55213342",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-39.bin": "9883082781b087dfaf5e0a72605c4c98a678fd5dd02f8b9af6fa297f7becb039",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-4.bin": "9b452a289bde870c2490a822a2ab8a4134010d574c2c30ba831c5355d1d2d053",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-40.bin": "fa621df8598b3d13540732cf1e40154b3449a3f9bdf0bfe895eb6a1a3df21ccc",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-41.bin": "06f11f6f3ac7ebd80d96d502c6fad8bb3756c4ea3d43ebce8e301dda83e50cdf",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-42.bin": "3d97287dd894933eac52f903f8438decfe1053255bccccb5c891be76ed7ee54a",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-5.bin": "cd177d6bba98c00aa3e9a77f5f8362bacb47d66fb57a100162035c9702b4b56d",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-6.bin": "b350a038f70d40efdfac2adda247d041770f3d831b4585c9c2378a004992eccd",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-7.bin": "bbae7626e1413cfee84990cc0262f21a2bda9f7dc669670fd2bd890cf7545f9b",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-8.bin": "2548adeef84bced6fa0f28c10f91d80b82b21cd3dc96d660b6d95646cfa50e10",
+    "artifacts/channel9-calibration-stage84-evidence/capture/rx-9.bin": "f1ffb910108867d4dab66f7b6cf411a8b14755c00f88d3a5c55e37dcecb9e273",
+    "artifacts/channel9-calibration-stage84-evidence/capture/tx-24.bin": "20582bf1436210873c959ae7917b141a8d5e9d807803de4f0e145b785b75cc6d",
+    "artifacts/channel9-calibration-stage84-evidence/capture/tx-25.bin": "ea53d0d7a8d85622cbc618e5874beca2b4684630d31db35182fd176fd6b0fd89",
+    "artifacts/channel9-calibration-stage84-evidence/capture/tx-26.bin": "c421d0e3613edfc061628edd9d541d18824dc418f978f37a8ba4a2f6feeb4b30",
+    "artifacts/channel9-calibration-stage84-evidence/capture/tx-27.bin": "fb95e656c91e82a151c8d83bad146666d99812b6c41a692a15586fa7f8f2cce8",
+    "artifacts/channel9-calibration-stage84-evidence/capture/tx-28.bin": "9710652f49dcd6cdb684b220350ecff3b8022e658b641be1571a3082167eaecf",
+    "artifacts/channel9-calibration-stage84-evidence/capture/tx-29.bin": "47313965911a6fdb3b9cd7f585c7b7e534b53a293af82e878c84354da4d203e9",
+    "artifacts/channel9-calibration-stage84-evidence/capture/tx-30.bin": "4deea50f9ff9e8ca57c2a65049712ccb2b1648f10e98df2f98bf967096c75dcd",
+    "artifacts/channel9-calibration-stage84-evidence/capture/tx-31.bin": "feb05f15bcdb508e3c3ac08e6a6640c8016319f39c88def00eae49d39fd6c0cd",
+    "artifacts/channel9-calibration-stage84-evidence/replay": "a2e9b379e7364bfab3fbf3170884cfe5fa41a74a2c39b3992f87701c5674fe44",
+    "artifacts/channel9-calibration-stage84-evidence/replay.cpp": "9c6f5388e2283d218afbd832857f191a94f10b65bc7efbd553b5cdbfde5fdab9",
+    "artifacts/channel9-calibration-stage84-evidence/replay.jsonl": "3e02fd431757479a962fc0c6551651cf1cedcd699e02b9ac065aa79955a79dcb",
+    "artifacts/channel9-calibration-stage84-evidence/run.jsonl": "0cd17fdede0b403fc76ee956fb8f55d749f25f9415d8e7373210d5b64a925859",
+    "artifacts/channel9-calibration-stage84-evidence/run.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_sha256": {
+    "src/macos_tx_calibrate.cpp": "b75cec984e70ebfaf913c9302236f8aa848e65eaf656503b3be53eefca48fb30",
+    "tools/channel_bundle.py": "e51d44d93e6d10c82d698bd15cd414cc0426fdd0cac565a4c227c57b9455061c",
+    "include/archer/passive_channels.hpp": "c28b6c411285a0defacb0bb7c77a32ac7d9bca57b2bf64f2455b63f367c5ceeb",
+    "include/archer/tssi_protocol.hpp": "8902064d1dd2ab52899f25b13d45a8b0f60a9be0292bd07c28d6f1a759088337"
+  }
+}

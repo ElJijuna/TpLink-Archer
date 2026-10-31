@@ -9,6 +9,7 @@ static std::vector<std::uint8_t> read(const char* path) {
 }
 int main() {
     using namespace archer;
+    assert(tssi_cck_group(9)==3 && tssi_ofdm_group(9)==3 && tssi_trim_group(9)==1);
     assert(tssi_ofdm_group(42)==(0x80000000u|5));
     assert(tssi_6g_ofdm_group(232)==(0x80000000u|28));
     assert(tssi_trim_group(50)==(0x80000000u|2));
@@ -37,6 +38,21 @@ int main() {
     const TssiTrimData zero_host_trim(std::array<std::array<int,8>,2>{},
                                       std::array<std::array<int,16>,2>{});
     const RfkFirmwareVersion version{0,35,41,0};
+    // Distinct channel9 groups must reach the actual wire DE fields for both paths.
+    auto nine_board=board;
+    for(unsigned p=0;p<2;++p){
+        nine_board.cck[p][0]=1;nine_board.cck[p][3]=10+p;
+        nine_board.mcs[p][0]=2;nine_board.mcs[p][3]=20+p;
+    }
+    std::array<std::array<int,8>,2> trim9{};
+    trim9[0][0]=1;trim9[1][0]=2;trim9[0][1]=3;trim9[1][1]=4;
+    const TssiTrimData nine_trim(trim9,std::array<std::array<int,16>,2>{});
+    auto nine=prepare_tssi_normal_payload(version,0,{0,0,9},1,0,nine_board,nine_trim,track);
+    assert(nine[3]==9 && nine[4]==0 && nine[5]==0);
+    assert(nine[10]==13 && nine[11]==15); // CCK plus channel9 trim.
+    assert(nine[18]==23 && nine[19]==25); // OFDM plus channel9 trim.
+    assert(nine[28]==20 && nine[29]==21); // Raw OFDM DE.
+    assert(nine[38]==3 && nine[39]==4); // Channel9 trim, not channel1.
     auto payload=prepare_tssi_normal_payload(version,0,{0,0,6},1,0,board,zero_host_trim,track);
     assert(payload.size()==300 && payload[0]==44 && payload[1]==1 && payload[6]==1);
     assert(payload[8]==0 && payload[9]==0 && payload[10]==6 && payload[11]==18);

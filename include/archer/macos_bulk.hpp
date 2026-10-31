@@ -19,7 +19,7 @@ class MacBulkChannel {
     static CFStringRef mode(){return CFSTR("ArcherBulkReceive");}
     void submit(AsyncSlot& slot){
         auto status=(*usb)->ReadPipeAsyncTO(usb,inputs[slot.index],slot.bytes.data(),slot.bytes.size(),0,0,&completion,&slot);
-        if(status){async_error=status;return;}
+        if(status){std::cout<<"{\"operation\":\"bulk_async_submit_failed\",\"endpoint\":"<<unsigned(input_addresses[slot.index])<<",\"status\":"<<status<<",\"pending\":"<<pending<<"}"<<std::endl;async_error=status;return;}
         slot.pending=true;++pending;
     }
     static void completion(void* refcon,IOReturn status,void* arg) noexcept {
