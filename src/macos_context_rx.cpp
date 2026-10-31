@@ -1,5 +1,8 @@
 #ifdef ARCHER_SINGLE_PROBE
 #include "archer/single_probe.hpp"
+#ifdef ARCHER_SPECIAL_MONITORED
+#include "archer/ifs_clm.hpp"
+#endif
 #include "archer/xtal_identity.hpp"
 #include "channel_payload.hpp"
 #include "tx_calibration_payload.hpp"
@@ -21,7 +24,10 @@
 #include <fstream>
 #include "archer/context_reservation.hpp"
 int main(int argc,char** argv){
-#ifdef ARCHER_SPECIAL_UNICAST
+#ifdef ARCHER_SPECIAL_MONITORED
+ constexpr unsigned probe_channel=9,probe_tag=4;
+ const char* marker_path="artifacts/37ad-0104-special-channel9-monitored-probe-attempted";
+#elif defined(ARCHER_SPECIAL_UNICAST)
  constexpr unsigned probe_channel=9,probe_tag=3;
  const char* marker_path="artifacts/37ad-0104-special-channel9-unicast-probe-attempted";
 #elif defined(ARCHER_SPECIAL_PROBE)
@@ -35,7 +41,9 @@ int main(int argc,char** argv){
 #endif
 #endif
 #ifdef ARCHER_SINGLE_PROBE
-#ifdef ARCHER_SPECIAL_UNICAST
+#ifdef ARCHER_SPECIAL_MONITORED
+ if(argc!=3||std::string(argv[1])!="--single-special-channel9-monitored-probe"){
+#elif defined(ARCHER_SPECIAL_UNICAST)
  if(argc!=3||std::string(argv[1])!="--single-special-channel9-unicast-probe"){
 #elif defined(ARCHER_SPECIAL_PROBE)
  if(argc!=3||std::string(argv[1])!="--single-special-channel9-probe"){
@@ -224,10 +232,11 @@ int main(int argc,char** argv){
                     const bool persisted=write(marker,token,sizeof(token)-1)==sizeof(token)-1&&fsync(marker)==0;
                     close(marker);if(!persisted)throw std::runtime_error("Cannot persist single probe reservation");
                     }
-                    const auto packet=probe_tag==3?archer::special_channel9_unicast_probe_packet():probe_channel==9?archer::special_channel9_probe_packet():archer::single_probe_packet();
+                    const auto packet=probe_tag==4?archer::special_channel9_monitored_probe_packet():probe_tag==3?archer::special_channel9_unicast_probe_packet():probe_channel==9?archer::special_channel9_probe_packet():archer::single_probe_packet();
                     std::ofstream probe_file(dir/"single-probe.bin",std::ios::binary);
                     probe_file.write(reinterpret_cast<const char*>(packet.data()),packet.size());probe_file.close();
                     if(!probe_file)throw std::runtime_error("Cannot preserve probe bytes");
+                    const auto transmit=[&]{
                     try{
                         archer::channel_bus_write(bus,0x10398,0x3ffff,0x100); // MGQ only.
                         probe_submitted=true;usb.send_single_management_probe(packet);
@@ -236,9 +245,37 @@ int main(int argc,char** argv){
                     }catch(...){archer::channel_bus_write(bus,0x10398,0x3ffff,0);probe_submitted=false;throw;}
                     archer::channel_bus_write(bus,0x10398,0x3ffff,0);
                     probe_submitted=false;
+                    };
+#ifdef ARCHER_SPECIAL_MONITORED
+                    archer::with_ifs_clm_window(bus,[&]{
+                        for(unsigned index=0;index<2;++index){
+                            const auto start=std::chrono::steady_clock::now();
+                            archer::trigger_ifs_clm(bus);
+                            if(archer::channel_bus_read(bus,0x20eec)&0x10000)throw std::runtime_error("Stale IFS DONE");
+                            if(index)transmit();
+                            bool done=false;
+                            while(std::chrono::steady_clock::now()-start<std::chrono::milliseconds(2300)){
+                                if(archer::channel_bus_read(bus,0x20eec)&0x10000){done=true;break;}
+                                receive(0,true);receive(1,true);
+                            }
+                            if(!done)throw std::runtime_error("Instrumented IFS deadline");
+                            const auto elapsed=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-start).count();
+                            if(elapsed<1900)throw std::runtime_error("IFS DONE too early");
+                            const auto report=archer::read_ifs_clm(bus);
+                            std::cout<<"{\"operation\":\"probe_ifs_clm_window\",\"index\":"<<index<<",\"period\":62500,\"unit_us\":32,\"elapsed_ms\":"<<elapsed
+                                <<",\"tx_units\":"<<report.tx<<",\"cck_cca_units\":"<<report.cck_cca<<",\"ofdm_cca_units\":"<<report.ofdm_cca<<",\"total_ifs\":"<<report.total<<"}"<<std::endl;
+                            if(!index&&report.tx)throw std::runtime_error("Baseline contains unexpected TX; no probe");
+                        }
+                    });
+                    std::cout<<"{\"phase\":\"probe_ifs_controls_restored\"}"<<std::endl;
+#else
+                    transmit();
+#endif
                     if(!probe_report)throw std::runtime_error("Probe report timeout; no retransmission");
-                    if(probe_report->state!=0||probe_report->count==0)
-                        throw std::runtime_error("Probe did not report a completed transmission");
+                    if(probe_report->state!=0||probe_report->count==0){
+                        completed_tx_failure=std::make_exception_ptr(std::runtime_error("Probe did not report a completed transmission"));
+                        std::rethrow_exception(completed_tx_failure);
+                    }
 #endif
                     audit("context_ready");
                     archer::reset_rx_diagnostic_counters(bus);
@@ -268,7 +305,7 @@ int main(int argc,char** argv){
                     // A terminal TX failure is distinct from a missing report.
                     // Finish verifying/restoring the acknowledged context before
                     // reporting that failure. Unknown transport/report stays DIRTY.
-                    if(probe_report&&archer::probe_report_terminal(*probe_report,1)&&
+                    if(completed_tx_failure&&probe_report&&archer::probe_report_terminal(*probe_report,1)&&
                        session.phase()==archer::ContextPhase::cleanup_acknowledged)
                         completed_tx_failure=capture_error;
                     else

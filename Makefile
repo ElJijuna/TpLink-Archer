@@ -78,6 +78,7 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/usb-descriptors-test
 	./build/firmware-channel-test
 	./build/register-mailbox-test
+	./build/ifs-clm-test
 	python3 -m unittest discover -s tests -p 'test_*.py'
 build/archer-probe: src/macos_probe.cpp include/archer/usb_descriptors.hpp include/archer/usb_request.hpp | build
 	$(CXX) $(CXXFLAGS) $< -framework IOKit -framework CoreFoundation -o $@
@@ -337,3 +338,15 @@ special-unicast-probe-universal: | build
 cleanup-verify-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/context_cleanup_replay.cpp -o build/archer-context-cleanup-replay-universal
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_cleanup_verify.cpp -framework IOKit -framework CoreFoundation -o build/archer-cleanup-verify-universal
+
+.PHONY: ifs-clm-universal
+ifs-clm-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_ifs_clm.cpp -framework IOKit -framework CoreFoundation -o build/archer-ifs-clm-universal
+build/ifs-clm-test: tests/ifs_clm_test.cpp include/archer/ifs_clm.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/ifs-clm-test
+
+.PHONY: special-monitored-probe-universal
+special-monitored-probe-universal: | build
+	python3 tools/channel_bundle.py
+	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-monitored-probe-universal

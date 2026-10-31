@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **52 %**
 
-Actualizado: **2026-10-31**, etapa87: reserva CLEAN recuperada por replay y verificación física; sin reset/TX. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-31**, etapa89: sondeo medido9 registró544us TX interno, RETRY_LIMIT; CLEAN/TX pausado. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -29,6 +29,12 @@ TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
 hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas88–89: monitor IFS-CLM validado con ventanas pasivas de2s. Nuevo
+sondeo unicast con RTS_EN desactivado: baseline TX0, ventana activa17 unidades
+(544us internos), pero RETRY_LIMIT/tag4/count1 y0 respuestas a nuestra MAC.
+Controles restaurados, contexto CLEAN,197 secuencias y TX pausado. Avance52 %.
+Evidencia: [research/STAGE88.md](research/STAGE88.md), [research/STAGE89.md](research/STAGE89.md).
 
 Etapa87: limpieza86 reconstruida desde USB y estado físico9/MCC0/TX pausado
 verificado. Reserva recuperada a CLEAN sin reset, H2C ni trama nueva; siguen

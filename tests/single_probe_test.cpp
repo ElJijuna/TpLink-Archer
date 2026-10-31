@@ -26,6 +26,11 @@ int main(){
  assert(archer::channel_u32(uni.data()+36)==0x30000000);
  assert(archer::channel_u32(uni.data()+48)==0x88000000);
  assert(std::equal(uni.begin()+88,uni.end(),special.begin()+88));
+ auto mon=archer::special_channel9_monitored_probe_packet();assert(mon.size()==104);
+ assert(mon[86]==0x40&&archer::channel_u32(mon.data()+12)==0x2004);
+ assert(archer::channel_u32(mon.data()+36)==0x40000000&&archer::channel_u32(mon.data()+48)==0x80000000);
+ assert(std::equal(ap.begin(),ap.end(),mon.begin()+68));
+ assert(std::equal(mon.begin()+88,mon.end(),uni.begin()+88));
  std::vector<std::uint8_t> rpt(80);archer::channel_put32(rpt.data(),1|(9<<2)|(1<<8));
  archer::channel_put32(rpt.data()+4,80);archer::channel_put32(rpt.data()+48,1<<12);
  archer::channel_put32(rpt.data()+56,1<<10);

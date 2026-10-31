@@ -1,0 +1,50 @@
+{
+  "stage": 88,
+  "date": "2026-10-31",
+  "windows": [
+    {
+      "operation": "ifs_clm_window",
+      "index": 0,
+      "period": 62500,
+      "unit_us": 32,
+      "elapsed_ms": 2025,
+      "total_ifs": 991,
+      "tx_units": 0,
+      "edcca_units": 269,
+      "cck_cca_units": 5759,
+      "ofdm_cca_units": 45,
+      "cck_fa_units": 2788,
+      "ofdm_fa_units": 148,
+      "host_network_submissions": 0
+    },
+    {
+      "operation": "ifs_clm_window",
+      "index": 1,
+      "period": 62500,
+      "unit_us": 32,
+      "elapsed_ms": 2022,
+      "total_ifs": 1190,
+      "tx_units": 0,
+      "edcca_units": 788,
+      "cck_cca_units": 8947,
+      "ofdm_cca_units": 240,
+      "cck_fa_units": 3186,
+      "ofdm_fa_units": 186,
+      "host_network_submissions": 0
+    }
+  ],
+  "result": {
+    "result": "ifs_clm_passive_baseline_completed",
+    "controls_restored": true,
+    "network_tx_paused": true,
+    "h2c_submissions": 0
+  },
+  "context": "CLEAN",
+  "remaining_sequences": 206,
+  "ledger_sha256_after": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+  "evidence": {
+    "artifacts/ifs-clm-passive-stage88/run.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/ifs-clm-passive-stage88/archer-ifs-clm-universal": "bb53a43e6c4ccd9a6e1ff6355414bae4b502fac02585291be16c57ff54445400",
+    "artifacts/ifs-clm-passive-stage88/run.jsonl": "1558a5df0d778c8e09c63c99bd604678d2506e108bcd7cf3393eedf58fc7fd4b"
+  }
+}

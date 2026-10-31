@@ -51,3 +51,13 @@ class SpecialProbeTest(unittest.TestCase):
                 with self.assertRaises(FileExistsError):p.execute(root/'second')
             self.assertEqual(old.read_bytes(),b'OLD RESERVED\n')
             self.assertEqual((root/'artifacts/37ad-0104-special-channel9-probe-attempted').read_bytes(),b'RECOVERY_RESERVED\n')
+
+
+    def test_paired_measurement_requires_fresh_baseline_and_restoration(self):
+        rows=[dict(operation='probe_ifs_clm_window',index=i,period=62500,unit_us=32,elapsed_ms=2010,tx_units=0 if i==0 else 16) for i in range(2)]
+        rows.append(dict(phase='probe_ifs_controls_restored'))
+        self.assertEqual(p.validate_measurement(rows)['windows'][1]['tx_units'],16)
+        for changed in (rows[:-1],list(reversed(rows))):
+            with self.assertRaises(ValueError):p.validate_measurement(changed)
+        rows[0]['tx_units']=1
+        with self.assertRaises(ValueError):p.validate_measurement(rows)
