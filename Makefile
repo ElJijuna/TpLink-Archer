@@ -318,3 +318,12 @@ probe-air-audit-universal: | build
 build/probe-air-audit-test: tests/probe_air_audit_test.cpp include/archer/probe_air_audit.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/probe-air-audit-test
+
+.PHONY: special-probe-universal
+special-probe-universal: | build
+	python3 tools/channel_bundle.py
+	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-probe-universal
+
+.PHONY: special-probe-audit-universal
+special-probe-audit-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/special_probe_audit.cpp -o build/archer-special-probe-audit-universal

@@ -21,8 +21,22 @@
 #include <fstream>
 #include "archer/context_reservation.hpp"
 int main(int argc,char** argv){
+#ifdef ARCHER_SPECIAL_PROBE
+ constexpr unsigned probe_channel=9,probe_tag=2;
+ const char* marker_path="artifacts/37ad-0104-special-channel9-probe-attempted";
+#else
+ constexpr unsigned probe_channel=1;
 #ifdef ARCHER_SINGLE_PROBE
+ constexpr unsigned probe_tag=1;
+ const char* marker_path="artifacts/37ad-0104-single-probe-attempted";
+#endif
+#endif
+#ifdef ARCHER_SINGLE_PROBE
+#ifdef ARCHER_SPECIAL_PROBE
+ if(argc!=3||std::string(argv[1])!="--single-special-channel9-probe"){
+#else
  if(argc!=3||std::string(argv[1])!="--single-channel1-probe"){
+#endif
     std::cerr<<"Usage: archer-single-probe --single-channel1-probe NEW_DIRECTORY\n";return 2;
  }
  argv[1]=const_cast<char*>("--run-owned-source-profile-usb-aggregation-all-management-async");
@@ -38,14 +52,17 @@ int main(int argc,char** argv){
         char* end=nullptr;errno=0;const long fd=std::strtol(value,&end,10);
         struct stat inherited{},target{};char state[19]{};
         if(errno||*end||fd<0||fd>0x7fffffff||fstat(fd,&inherited)||
-           lstat("artifacts/37ad-0104-single-probe-attempted",&target)||
+           lstat(marker_path,&target)||
            !S_ISREG(target.st_mode)||target.st_nlink!=1||inherited.st_dev!=target.st_dev||inherited.st_ino!=target.st_ino||
            pread(fd,state,sizeof(state),0)!=18||std::string(state,18)!="RECOVERY_RESERVED\n"||flock(fd,LOCK_EX|LOCK_NB))
             throw std::runtime_error("Invalid inherited single-probe recovery reservation");
         recovery_permit=true;
     }
-    if(!recovery_permit&&std::filesystem::exists("artifacts/37ad-0104-single-probe-attempted"))
+    if(!recovery_permit&&std::filesystem::exists(marker_path))
         throw std::runtime_error("A probe was already attempted; physical recovery and retry analysis required");
+#endif
+#ifdef ARCHER_SPECIAL_PROBE
+    if(!recovery_permit)throw std::runtime_error("Directed probe requires coordinator reservation");
 #endif
     const std::filesystem::path dir=argv[2];
     if(!std::filesystem::create_directory(dir))throw std::runtime_error("Capture directory must be new");
@@ -59,7 +76,7 @@ int main(int argc,char** argv){
            (archer::channel_bus_read(bus,0x10400)&0x1e04) ||
            !(archer::channel_bus_read(bus,0x9c00)&1))throw std::runtime_error("Owned SCC radio prerequisites absent");
         archer::BeRfTransport rf(bus);
-        for(unsigned path=0;path<2;++path)if((rf.read_full(path,0x10018)&0x3ff)!=1)throw std::runtime_error("Channel1 absent");
+        for(unsigned path=0;path<2;++path)if((rf.read_full(path,0x10018)&0x3ff)!=probe_channel)throw std::runtime_error("Channel1 absent");
         // Only this investigation has initialized firmware/CAM; no previous
         // context sender has run. Lock records ownership from this first run.
         ContextReservation reservation;
@@ -81,7 +98,7 @@ int main(int argc,char** argv){
         bool probe_submitted=false;std::optional<archer::ProbeTxReport> probe_report;
 #endif
         unsigned transfers=0,normal=0,beacons=0;
-        archer::PassiveScan scan;
+        archer::PassiveScan scan(probe_channel);
         const auto receive=[&](unsigned pipe,bool track){
             auto bytes=usb.receive(pipe,10);if(bytes.empty())return false;
             if(transfers>=1024)throw std::runtime_error("Context RX capture bound reached");
@@ -91,9 +108,9 @@ int main(int argc,char** argv){
             for(const auto& m:archer::decode_be_rx_metadata(bytes,archer::RxFcsPolicy::appended)){
 #ifdef ARCHER_SINGLE_PROBE
                 if(m.packet.c2h&&probe_submitted){
-                    auto rpt=archer::single_probe_report(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes);
+                    auto rpt=archer::single_probe_report(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes,probe_tag);
                     if(rpt){if(!probe_report&&archer::probe_report_terminal(*rpt,1))probe_report=rpt;
-                        std::cout<<"{\"operation\":\"single_probe_tx_report\",\"tag\":1,\"state\":"<<rpt->state<<",\"tx_count\":"<<rpt->count<<"}"<<std::endl;}
+                        std::cout<<"{\"operation\":\"single_probe_tx_report\",\"tag\":"<<probe_tag<<",\"state\":"<<rpt->state<<",\"tx_count\":"<<rpt->count<<"}"<<std::endl;}
                 }
 #endif
                 if(m.packet.c2h&&track){
@@ -187,21 +204,21 @@ int main(int argc,char** argv){
                 try{
 #ifdef ARCHER_SINGLE_PROBE
                     // Verify the world power fields actually remain resident.
-                    for(const auto& op:trusted_channel1_world_power)
+                    for(const auto& op:probe_channel==9?trusted_channel9_world_power:trusted_channel1_world_power)
                         if((archer::channel_bus_read(bus,op.address)&op.mask)!=(op.value&op.mask))
                             throw std::runtime_error("World power readback absent; no probe sent");
                     const auto chip=archer::read_chip_identity(bus);
                     if(chip.revision!=1||chip.analog_id!=0x6933)throw std::runtime_error("Probe hardware profile mismatch");
-                    if((archer::channel_bus_read(bus,0x26b4c)&0x1fff)!=2412)
+                    if((archer::channel_bus_read(bus,0x26b4c)&0x1fff)!=(2407+5*probe_channel))
                         throw std::runtime_error("Probe BB channel1 absent");
                     if(!recovery_permit){
-                    const auto marker=open("artifacts/37ad-0104-single-probe-attempted",O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW,0600);
+                    const auto marker=open(marker_path,O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW,0600);
                     if(marker<0)throw std::runtime_error("Probe attempt already recorded; no automatic retransmission");
                     const char token[]="TAG1 RESERVED\n";
                     const bool persisted=write(marker,token,sizeof(token)-1)==sizeof(token)-1&&fsync(marker)==0;
                     close(marker);if(!persisted)throw std::runtime_error("Cannot persist single probe reservation");
                     }
-                    const auto packet=archer::single_probe_packet();
+                    const auto packet=probe_channel==9?archer::special_channel9_probe_packet():archer::single_probe_packet();
                     std::ofstream probe_file(dir/"single-probe.bin",std::ios::binary);
                     probe_file.write(reinterpret_cast<const char*>(packet.data()),packet.size());probe_file.close();
                     if(!probe_file)throw std::runtime_error("Cannot preserve probe bytes");

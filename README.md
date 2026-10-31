@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **52 %**
 
-Actualizado: **2026-10-31**, etapa84: secuencia RFK9 completada físicamente; canal9/CLEAN y TX pausado. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-31**, etapa85: probe a Especial en9 con TX_DONE; sin respuesta dirigida; CLEAN/TX pausado. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -29,6 +29,12 @@ TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
 hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa85: una solicitud de sondeo SSID Especial enviada en9 (104 bytes,tag2),
+TX_DONE/count1 y limpieza confirmada. Captura:31 beacons y13 probe responses
+ del objetivo, pero0 respuestas a nuestra MAC; aún sin evidencia externa TX.
+Contexto CLEAN,215 secuencias y TX pausado. Avance52 %.
+Evidencia: [research/STAGE85.md](research/STAGE85.md).
 
 Etapa84: TXGAPK/IQK/TSSI/DPK/RXDCK ejecutados en9 con ocho terminales OK.
 IQK coincide con9 y RXDCK replay confirma ambos caminos9 sin timeouts.

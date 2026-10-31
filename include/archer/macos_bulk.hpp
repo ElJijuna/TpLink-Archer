@@ -111,7 +111,7 @@ public:
         if(status)throw std::runtime_error("Firmware write failed; no retry");
     }
     void send_single_management_probe(const std::vector<std::uint8_t>& frame){
-        if(!management_output||management_sent||frame.size()!=96)
+        if(!management_output||management_sent||(frame.size()!=96&&frame.size()!=104))
             throw std::runtime_error("Single management probe cannot be submitted");
         management_sent=true; // A failed/uncertain submission cannot be retried.
         auto status=(*usb)->WritePipeTO(usb,management_output,const_cast<std::uint8_t*>(frame.data()),frame.size(),500,1000);

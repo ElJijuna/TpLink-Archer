@@ -17,18 +17,31 @@ inline std::vector<std::uint8_t> single_probe_packet(){
         255,255,255,255,255,255, 0x10,0, 0,0, 1,4,0x82,0x84,0x8b,0x96};
     std::copy(frame.begin(),frame.end(),p.begin()+64);return p;
 }
+// Explicit SSID-directed request for the user-owned 2G target. Broadcast DA/BSSID
+// retain the proven BMC descriptor; SSID IE selects Especial. Tag2 and seq2
+// distinguish this attempt from the historical wildcard request.
+inline std::vector<std::uint8_t> special_channel9_probe_packet(){
+    auto p=single_probe_packet();
+    p.insert(p.begin()+90,{'E','s','p','e','c','i','a','l'});
+    p[89]=8;p[86]=0x20;
+    channel_put32(p.data()+8,0x00240028); // frame40, QSEL18.
+    channel_put32(p.data()+12,0x2002); // Wi-Fi sequence2.
+    channel_put32(p.data()+36,0x20000000); // Report tag2.
+    return p;
+}
 struct ProbeTxReport {unsigned state,count;};
 inline bool probe_report_terminal(const ProbeTxReport& r,unsigned limit){
     if(!limit||limit>63)throw std::invalid_argument("Invalid TX retry limit");
     // mac.c:5848-5853: failed attempts are progress until the requested count.
     return r.state==0||r.count==limit;
 }
-inline std::optional<ProbeTxReport> single_probe_report(const std::uint8_t* p,std::size_t size){
+inline std::optional<ProbeTxReport> single_probe_report(const std::uint8_t* p,std::size_t size,unsigned expected_tag=1){
+    if(expected_tag<1||expected_tag>15)throw std::invalid_argument("Invalid expected TX report tag");
     auto h=decode_c2h(p,size);
     if(h.category!=1||h.command_class!=9||h.function!=1)return {};
     if(size!=80)throw std::runtime_error("Unexpected RTL8922A TX report size");
     const auto w12=channel_u32(p+48),w14=channel_u32(p+56);
-    if(((w12>>12)&15)!=1)return {};
+    if(((w12>>12)&15)!=expected_tag)return {};
     return ProbeTxReport{(w12>>8)&3,(w14>>10)&63};
 }
 }
