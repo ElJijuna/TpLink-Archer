@@ -18,6 +18,14 @@ int main(){
  assert(archer::channel_u32(special.data()+36)==0x20000000);
  assert(special[86]==0x20&&special[89]==8&&special[98]==1&&special[99]==4);
  assert(std::string(special.begin()+90,special.begin()+98)=="Especial");
+ auto uni=archer::special_channel9_unicast_probe_packet();assert(uni.size()==104);
+ const std::array<std::uint8_t,6> ap{0x50,0x92,0x6a,0x11,0x06,0x66};
+ assert(std::equal(ap.begin(),ap.end(),uni.begin()+68));
+ assert(std::equal(ap.begin(),ap.end(),uni.begin()+80));
+ assert(uni[86]==0x30&&archer::channel_u32(uni.data()+12)==0x2003);
+ assert(archer::channel_u32(uni.data()+36)==0x30000000);
+ assert(archer::channel_u32(uni.data()+48)==0x88000000);
+ assert(std::equal(uni.begin()+88,uni.end(),special.begin()+88));
  std::vector<std::uint8_t> rpt(80);archer::channel_put32(rpt.data(),1|(9<<2)|(1<<8));
  archer::channel_put32(rpt.data()+4,80);archer::channel_put32(rpt.data()+48,1<<12);
  archer::channel_put32(rpt.data()+56,1<<10);

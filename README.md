@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **52 %**
 
-Actualizado: **2026-10-31**, etapa85: probe a Especial en9 con TX_DONE; sin respuesta dirigida; CLEAN/TX pausado. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-10-31**, etapa86: probe unicast9 terminó en RETRY_LIMIT; TX pausado, reserva DIRTY. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -29,6 +29,12 @@ TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
 hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa86: Especial anuncia las cuatro tasas básicas CCK incluidas; esa
+hipótesis no explica la ausencia de respuesta. Un probe unicast nuevo al AP
+reportó RETRY_LIMIT/tag3/count1. Limpieza6/7/8 confirmada, TX pausado y USB
+drenado; el fallo conserva reserva DIRTY,206 secuencias. Sin éxito externo.
+Avance52 %. Evidencia: [research/STAGE86.md](research/STAGE86.md).
 
 Etapa85: una solicitud de sondeo SSID Especial enviada en9 (104 bytes,tag2),
 TX_DONE/count1 y limpieza confirmada. Captura:31 beacons y13 probe responses

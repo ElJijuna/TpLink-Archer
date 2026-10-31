@@ -26,6 +26,9 @@ class SpecialProbeTest(unittest.TestCase):
               dict(result='context_cleanup_acknowledged',network_tx_paused=True),
               dict(operation='bulk_async_drained',pending=0)]
         p.validate_result(rows)
+        rows[1]['tag']=3
+        p.validate_result(rows,3)
+        with self.assertRaises(ValueError):p.validate_result(rows)
         rows[1]['tag']=1
         with self.assertRaises(ValueError):p.validate_result(rows)
 

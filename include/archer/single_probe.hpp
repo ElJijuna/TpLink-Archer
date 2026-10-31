@@ -29,6 +29,17 @@ inline std::vector<std::uint8_t> special_channel9_probe_packet(){
     channel_put32(p.data()+36,0x20000000); // Report tag2.
     return p;
 }
+inline std::vector<std::uint8_t> special_channel9_unicast_probe_packet(){
+    auto p=special_channel9_probe_packet();
+    const std::array<std::uint8_t,6> ap{0x50,0x92,0x6a,0x11,0x06,0x66};
+    std::copy(ap.begin(),ap.end(),p.begin()+68); // DA.
+    std::copy(ap.begin(),ap.end(),p.begin()+80); // BSSID.
+    p[86]=0x30;
+    channel_put32(p.data()+12,0x2003);
+    channel_put32(p.data()+36,0x30000000); // Distinct report tag3.
+    channel_put32(p.data()+48,0x88000000); // Source !is_bmc RTS_EN, HW_RTS_EN.
+    return p;
+}
 struct ProbeTxReport {unsigned state,count;};
 inline bool probe_report_terminal(const ProbeTxReport& r,unsigned limit){
     if(!limit||limit>63)throw std::invalid_argument("Invalid TX retry limit");
