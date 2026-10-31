@@ -332,3 +332,8 @@ special-probe-audit-universal: | build
 special-unicast-probe-universal: | build
 	python3 tools/channel_bundle.py
 	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-unicast-probe-universal
+
+.PHONY: cleanup-verify-universal
+cleanup-verify-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/context_cleanup_replay.cpp -o build/archer-context-cleanup-replay-universal
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_cleanup_verify.cpp -framework IOKit -framework CoreFoundation -o build/archer-cleanup-verify-universal

@@ -1,0 +1,103 @@
+{
+  "stage": 87,
+  "date": "2026-10-31",
+  "cleanup": {
+    "status": "completed",
+    "stage": 87,
+    "h2c_submissions": 0,
+    "firmware_resets": 0,
+    "new_probe_attempts": 0,
+    "observation_sha256": "6db05cb4c72b2aa3a3659583be53f62a99d957e5e34bb7bc8092d35399324e5d",
+    "ledger_sha256": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+    "replay_helper_sha256": "0260ecd01701adb694a8f5bb1924b6228439e00ccb59b076adbc9e1c0844d4d6",
+    "replay_exit": 0,
+    "replay_stdout_sha256": "8d972cf92bbeffc1c746592b67b832b1797a634777df18707d875d2a2a42c53b",
+    "replay_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "replay_result": {
+      "result": "stage86_cleanup_replayed",
+      "issued_commands": 9,
+      "final_step": 9,
+      "retry_limit_terminal": true,
+      "pending_h2c": false
+    },
+    "verify_helper_sha256": "1f520a4113ff51ae4f636b964218f230a03b7d6dad1d11549ee342ba127e33dd",
+    "verify_exit": 0,
+    "verify_stdout_sha256": "509c1bc36a675b9bf338646a400c768f6af5bebbdd755f9d88ec667c8d8305e8",
+    "verify_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "verify_result": {
+      "result": "paused_channel9_verified",
+      "network_tx_paused": true,
+      "h2c_submissions": 0,
+      "firmware_resets": 0,
+      "mcc_slot": 0
+    },
+    "context_after": "CLEAN",
+    "channel": 9
+  },
+  "context": "CLEAN",
+  "remaining_sequences": 206,
+  "new_h2c": 0,
+  "new_network_frames": 0,
+  "firmware_resets": 0,
+  "channel": 9,
+  "mcc_slot": 0,
+  "raw_diagnostics": [
+    {
+      "operation": "read",
+      "address": 67628,
+      "width": 4,
+      "value": 538968064,
+      "status": 0,
+      "completed_bytes": 4
+    },
+    {
+      "operation": "read",
+      "address": 67824,
+      "width": 4,
+      "value": 0,
+      "status": 0,
+      "completed_bytes": 4
+    },
+    {
+      "operation": "read",
+      "address": 67828,
+      "width": 4,
+      "value": 256,
+      "status": 0,
+      "completed_bytes": 4
+    },
+    {
+      "operation": "read",
+      "address": 134860,
+      "width": 4,
+      "value": 0,
+      "status": 0,
+      "completed_bytes": 4
+    },
+    {
+      "operation": "read",
+      "address": 134864,
+      "width": 4,
+      "value": 0,
+      "status": 0,
+      "completed_bytes": 4
+    }
+  ],
+  "raw_counters_prove_air_transmission": false,
+  "evidence": {
+    "artifacts/cleanup-finalization-stage87/archer-cleanup-verify-universal": "1f520a4113ff51ae4f636b964218f230a03b7d6dad1d11549ee342ba127e33dd",
+    "artifacts/cleanup-finalization-stage87/archer-context-cleanup-replay-universal": "0260ecd01701adb694a8f5bb1924b6228439e00ccb59b076adbc9e1c0844d4d6",
+    "artifacts/cleanup-finalization-stage87/cleanup.json": "dc06e884c2ccd950cfc5ddc499755db469465adbf3c04782a33a0cdb94df367f",
+    "artifacts/cleanup-finalization-stage87/previous-context.bin": "37fbc5d84a74b9ac79e59b639426000390ce2ed15b2510215954d866e000e0eb",
+    "artifacts/cleanup-finalization-stage87/replay.jsonl": "8d972cf92bbeffc1c746592b67b832b1797a634777df18707d875d2a2a42c53b",
+    "artifacts/cleanup-finalization-stage87/replay.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/cleanup-finalization-stage87/verify.jsonl": "509c1bc36a675b9bf338646a400c768f6af5bebbdd755f9d88ec667c8d8305e8",
+    "artifacts/cleanup-finalization-stage87/verify.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_sha256": {
+    "src/context_cleanup_replay.cpp": "6534ee53ac83b8207689c1378040846a94cc34136973f93b9a457998ca62b1e2",
+    "src/macos_cleanup_verify.cpp": "635bc193cffaf74d5365ef6642eada2d9bfba5cd0d87b3ff6527873caa251815",
+    "tools/finish_probe_cleanup.py": "4e9c1f614839405a727ffec7a65eb41e0e5369c018617871fa96ca9941cd9871",
+    "src/macos_context_rx.cpp": "132daedc8637fd2ca17f207d72100baad554debc3a3c12c6f2d3c07ecc0667a7"
+  }
+}

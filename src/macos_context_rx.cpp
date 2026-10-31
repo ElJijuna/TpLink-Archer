@@ -200,6 +200,7 @@ int main(int argc,char** argv){
                 measure("after_command_"+std::to_string(step));
             }catch(...){if(session.step()==step&&session.phase()!=archer::ContextPhase::uncertain)session.mark_transport_uncertain();throw;}
         };
+        std::exception_ptr completed_tx_failure;
         const auto run_context=[&]{measure("after_aggregation");archer::with_unlinked_port0_window(bus,[&]{measure("after_port");archer::with_physts_window(bus,[&]{measure("after_physts");archer::with_phy_report_window(bus,[&]{measure("after_phy_report");
             archer::with_passive_rx_window(bus,[&]{
                 measure("after_filters");
@@ -262,7 +263,18 @@ int main(int argc,char** argv){
                 }
                 catch(...){capture_error=std::current_exception();}
                 if(session.phase()==archer::ContextPhase::ready){session.begin_removal();for(unsigned i=0;i<3;++i)command();}
-                if(capture_error)std::rethrow_exception(capture_error);
+                if(capture_error){
+#ifdef ARCHER_SINGLE_PROBE
+                    // A terminal TX failure is distinct from a missing report.
+                    // Finish verifying/restoring the acknowledged context before
+                    // reporting that failure. Unknown transport/report stays DIRTY.
+                    if(probe_report&&archer::probe_report_terminal(*probe_report,1)&&
+                       session.phase()==archer::ContextPhase::cleanup_acknowledged)
+                        completed_tx_failure=capture_error;
+                    else
+#endif
+                    std::rethrow_exception(capture_error);
+                }
             },false,(std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management"||std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management-async")?archer::RxAcceptance::all_management:archer::RxAcceptance::broadcast_bit_clear);
         });});});};
         if(std::string(argv[1])!="--run-owned-source-profile")archer::with_usb_rx_aggregation(bus,run_context);
@@ -270,11 +282,13 @@ int main(int argc,char** argv){
         measure("after_windows");
         audit("after_windows");
         if(session.phase()!=archer::ContextPhase::cleanup_acknowledged || (archer::channel_bus_read(bus,0x10398)&0x3ffff))throw std::runtime_error("Context cleanup/TX pause not confirmed");
+        usb.close(); // Confirm callback shutdown before CLEAN, including known TX failure.
         reservation.clean();
         std::ofstream scan_file(dir/"networks.json");scan.write_json(scan_file);scan_file.close();
         if(!scan_file)throw std::runtime_error("Passive scan result write failed after context cleanup");
         std::cout<<"{\"operation\":\"passive_scan_summary\",\"network_entries\":"<<scan.networks().size()<<",\"accepted_management\":"<<scan.accepted()<<",\"bad_fcs\":"<<scan.bad_fcs()<<",\"table_overflow\":"<<scan.overflow()<<"}"<<std::endl;
         std::cout<<"{\"result\":\"context_cleanup_acknowledged\",\"transfers\":"<<transfers<<",\"normal_packets\":"<<normal<<",\"beacons\":"<<beacons<<",\"network_tx_paused\":true,\"initial_macid_pause_measured\":false}"<<std::endl;
+        if(completed_tx_failure)std::rethrow_exception(completed_tx_failure);
     });return 0;
  }catch(const std::exception& e){std::cerr<<"context-rx: "<<e.what()<<"; reservation may remain DIRTY; no replay\n";return 2;}
 }
