@@ -1,0 +1,366 @@
+{
+  "stage": 90,
+  "date": "2026-11-01",
+  "historical_channel1": [
+    {
+      "report": "tssi",
+      "capture": 2,
+      "quality_validated": false,
+      "alignment_codes_all_zero": true,
+      "alignment_power_raw": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "alignment_code": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "alignment_state": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "default_txagc_offset_raw": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "report": "tssi",
+      "capture": 9,
+      "quality_validated": false,
+      "alignment_codes_all_zero": true,
+      "alignment_power_raw": [
+        64,
+        48,
+        48,
+        16,
+        64,
+        48,
+        48,
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "alignment_code": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "alignment_state": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "default_txagc_offset_raw": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "report": "dpk",
+      "capture": 12,
+      "version": 13,
+      "path_success": null,
+      "quality_validated": false,
+      "channel": [
+        1,
+        1
+      ],
+      "path_status": [
+        4,
+        4
+      ],
+      "index": [
+        0,
+        0
+      ],
+      "txagc_raw": [
+        54,
+        55
+      ],
+      "thermal_raw": [
+        62,
+        62
+      ],
+      "gain_scaling_raw": [
+        91,
+        91
+      ],
+      "dc_i_bytes": [
+        0,
+        0,
+        21,
+        2
+      ],
+      "dc_q_bytes": [
+        0,
+        0,
+        35,
+        6
+      ],
+      "correlation_value_raw": [
+        235,
+        237
+      ],
+      "correlation_index_raw": [
+        104,
+        104
+      ],
+      "timeout": [
+        0,
+        0
+      ],
+      "rxbb_overflow": [
+        0,
+        0
+      ]
+    },
+    {
+      "result": "rfk_capture_audit_completed",
+      "dpk_reports": 1,
+      "tssi_reports": 2,
+      "hardware_access": false
+    }
+  ],
+  "channel9": [
+    {
+      "report": "tssi",
+      "capture": 30,
+      "quality_validated": false,
+      "alignment_codes_all_zero": true,
+      "alignment_power_raw": [
+        64,
+        48,
+        48,
+        16,
+        64,
+        48,
+        48,
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "alignment_code": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "alignment_state": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "default_txagc_offset_raw": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "report": "tssi",
+      "capture": 37,
+      "quality_validated": false,
+      "alignment_codes_all_zero": true,
+      "alignment_power_raw": [
+        64,
+        48,
+        48,
+        16,
+        64,
+        48,
+        48,
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "alignment_code": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "alignment_state": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "default_txagc_offset_raw": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "report": "dpk",
+      "capture": 40,
+      "version": 13,
+      "path_success": null,
+      "quality_validated": false,
+      "channel": [
+        9,
+        9
+      ],
+      "path_status": [
+        4,
+        4
+      ],
+      "index": [
+        0,
+        0
+      ],
+      "txagc_raw": [
+        52,
+        53
+      ],
+      "thermal_raw": [
+        59,
+        59
+      ],
+      "gain_scaling_raw": [
+        91,
+        91
+      ],
+      "dc_i_bytes": [
+        0,
+        0,
+        43,
+        3
+      ],
+      "dc_q_bytes": [
+        0,
+        0,
+        33,
+        3
+      ],
+      "correlation_value_raw": [
+        235,
+        240
+      ],
+      "correlation_index_raw": [
+        106,
+        104
+      ],
+      "timeout": [
+        0,
+        0
+      ],
+      "rxbb_overflow": [
+        0,
+        0
+      ]
+    },
+    {
+      "result": "rfk_capture_audit_completed",
+      "dpk_reports": 1,
+      "tssi_reports": 2,
+      "hardware_access": false
+    }
+  ],
+  "new_hardware_io": false,
+  "new_h2c": 0,
+  "new_network_frames": 0,
+  "remaining_sequences": 197,
+  "context": "CLEAN",
+  "evidence_sha256": {
+    "artifacts/rfk-audit-stage90-channel1-historical.jsonl": "7ffab195e90f1ea6953b932d883282d784dae3ffb58eb413da13b2942190a6a6",
+    "artifacts/rfk-audit-stage90-channel9.jsonl": "70639739eebc736d3da0cd218096515c7b8da0334611205d3742ca7ddf93f7d9",
+    "research/windows-rfk-stage90-evidence.json": "bb8c59b34de3e5d7e9d403a1109e85a45e956b61d4da1f0a024dd0aeee7bacef",
+    "include/archer/tx_rfk.hpp": "cf524fb8eb4e67c510ad4e0756d8d1ca5f29a90c81898b5d967e6d19628631c7",
+    "src/rfk_capture_audit.cpp": "9a003d4fb700b070dc60d5df9bdbc6fbc0d21342c94eff2a62ba4edf9381f96a"
+  }
+}

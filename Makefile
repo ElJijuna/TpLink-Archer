@@ -350,3 +350,7 @@ test: build/ifs-clm-test
 special-monitored-probe-universal: | build
 	python3 tools/channel_bundle.py
 	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-monitored-probe-universal
+
+.PHONY: rfk-capture-audit-universal
+rfk-capture-audit-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/rfk_capture_audit.cpp -o build/archer-rfk-capture-audit-universal

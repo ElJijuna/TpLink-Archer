@@ -28,6 +28,10 @@ struct DpkReport {
     std::vector<std::uint8_t> raw;
     bool error_flags_clear() const {return timeout==std::array<unsigned,2>{0,0} &&
         rxbb_overflow==std::array<unsigned,2>{0,0};}
+    // Raw documented diagnostics; no inferred units, signs or success thresholds.
+    std::array<unsigned,2> index{},txagc{},thermal{},gain_scaling{},correlation_value{},correlation_index{};
+    std::array<unsigned,4> dc_i_bytes{},dc_q_bytes{};
+    unsigned reserved=0;
     // RTL8922A v13 path_ok producer semantics are unavailable. Other chips use
     // either a boolean or calibrated-set bitmap; never reinterpret4 as true.
     std::optional<bool> path_success() const {
@@ -41,8 +45,16 @@ struct DpkReport {
 inline DpkReport decode_dpk_report(const RfkLogChunk& chunk) {
     const auto& b=chunk.content;
     if(chunk.type!=1 || b.size()!=34)throw std::invalid_argument("Unsupported DPK log extent; quality unknown");
-    return {b[0],{b[3],b[4]},{b[5],b[6]},{b[7],b[8]},{b[9],b[10]},
-            {b[29],b[30]},{b[31],b[32]},b};
+    DpkReport r{};r.version=b[0];r.raw=b;
+    for(unsigned i=0;i<2;++i){
+        r.index[i]=b[1+i];r.band[i]=b[3+i];r.bandwidth[i]=b[5+i];
+        r.channel[i]=b[7+i];r.path_ok[i]=b[9+i];r.txagc[i]=b[11+i];
+        r.thermal[i]=b[13+i];r.gain_scaling[i]=b[15+i];
+        r.correlation_value[i]=b[25+i];r.correlation_index[i]=b[27+i];
+        r.timeout[i]=b[29+i];r.rxbb_overflow[i]=b[31+i];
+    }
+    for(unsigned i=0;i<4;++i){r.dc_i_bytes[i]=b[17+i];r.dc_q_bytes[i]=b[21+i];}
+    r.reserved=b[33];return r;
 }
 struct TxgapkReport {
     unsigned version,ok,check_id,check_count;

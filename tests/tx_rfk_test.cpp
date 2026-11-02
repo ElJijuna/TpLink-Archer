@@ -27,6 +27,16 @@ int main(){using namespace archer;
  assert(dpk_reports.size()==1 && dpk_reports[0].version==13 && dpk_reports[0].error_flags_clear());
  assert((dpk_reports[0].path_ok==std::array<unsigned,2>{4,4}));
  assert(!dpk_reports[0].path_success() && !dpk_reports[0].flags_clear() && dpk_reports[0].matches({0,0,1}));
+ // Raw diagnostic fields preserve the ABI byte order without assigning units.
+ RfkLogChunk diagnostic{1,std::vector<std::uint8_t>(34)};
+ for(unsigned i=0;i<34;++i)diagnostic.content[i]=i;
+ const auto dr=decode_dpk_report(diagnostic);
+ assert((dr.index==std::array<unsigned,2>{1,2})&&(dr.txagc==std::array<unsigned,2>{11,12}));
+ assert((dr.thermal==std::array<unsigned,2>{13,14})&&(dr.gain_scaling==std::array<unsigned,2>{15,16}));
+ assert((dr.dc_i_bytes==std::array<unsigned,4>{17,18,19,20}));
+ assert((dr.dc_q_bytes==std::array<unsigned,4>{21,22,23,24}));
+ assert((dr.correlation_value==std::array<unsigned,2>{25,26})&&(dr.correlation_index==std::array<unsigned,2>{27,28}));
+ assert(dr.reserved==33);
  RfkLogChunk tx{1,std::vector<std::uint8_t>(100)};tx.content[80]=1;tx.content[82]=7;tx.content[92]=0x34;tx.content[93]=0x12;
  assert((*decode_txgapk_report(tx).failcode)[0]==0x1234 && !decode_txgapk_report(tx).flags_clear());
  tx.content[92]=tx.content[93]=0;assert(decode_txgapk_report(tx).flags_clear());
