@@ -3,6 +3,9 @@ CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -Iinclude
 .PHONY: test probe universal receive-universal decode decode-universal mailbox-universal efuse-universal identity-universal bb-probe-universal mailbox-state-universal mode-switch-universal scsi-eject-universal optical-eject-universal
 build:
 	mkdir -p build
+.PHONY: monitor-capture-universal
+monitor-capture-universal: | build
+	clang -Wall -Wextra -Werror -fobjc-arc -arch arm64 -arch x86_64 src/macos_monitor_capture.m -framework Foundation -framework CoreWLAN -o build/archer-monitor-capture-universal
 .PHONY: led-universal
 led-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_led.cpp -framework IOKit -framework CoreFoundation -o build/archer-led-universal

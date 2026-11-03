@@ -30,6 +30,11 @@ hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 
+Etapa93: receptor independiente en0 confirmado con radiotap y soporte9/20MHz.
+Helper de captura pasiva20s compilado Intel/ARM; ejecución administrativa y
+validación del canal en la captura pendientes. Sin nueva trama Archer.
+Avance52 %. Evidencia: [research/STAGE93.md](research/STAGE93.md).
+
 Etapas91–92: firmware recuperado y ocho terminales de calibración en9.
 La captura pasiva recibió2 ACK y1 CTS con FCS válido. Un único sondeo nuevo
 con captura de controles habilitada terminó en RETRY_LIMIT/tag5/count1,
