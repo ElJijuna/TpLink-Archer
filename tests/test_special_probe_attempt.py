@@ -18,6 +18,27 @@ def calibration():
 
 
 class SpecialProbeTest(unittest.TestCase):
+    def test_tag7_requires_tag6_cleanup_and_repeated_crc_validation(self):
+        previous=dict(stage=96,context='CLEAN',remaining_sequences=197,pcap_sha256='pcap',
+            tx_reports=[dict(operation='single_probe_tx_report',tag=6,state=1,tx_count=1)],
+            cleanup=[dict(network_tx_paused=True)])
+        validation=dict(stage=98,context='CLEAN',remaining_sequences=197,
+            state=dict(all_state_unchanged=True),validation=dict(result='validated',repeated_snapshots=3,stable_registers=210),
+            external_crc=dict(source_sha256='pcap',valid_target_beacons=381,valid_test_mac_frames=0))
+        p.validate_phy_history(previous,validation)
+        for change in (dict(context='DIRTY'),dict(remaining_sequences=196),dict(tx_reports=[]),dict(cleanup=[])):
+            with self.assertRaises(ValueError):p.validate_phy_history({**previous,**change},validation)
+        for change in (dict(state={}),dict(validation={}),dict(external_crc=dict(source_sha256='wrong'))):
+            with self.assertRaises(ValueError):p.validate_phy_history(previous,{**validation,**change})
+
+    def test_phy_measurement_is_paired_bounded_and_not_air_proof(self):
+        record=dict(operation='probe_phy_tx_counters',before=[65535,0,0,0],after=[0,1,0,0],
+            modulo_delta=[1,1,0,0],controls_enabled=True,antenna_emission_proven=False)
+        p.validate_phy_measurement([record])
+        for rows in ([],[record,record],[{**record,'after':[65536,1,0,0]}],
+                     [{**record,'modulo_delta':[0,1,0,0]}],[{**record,'controls_enabled':False}]):
+            with self.assertRaises(ValueError):p.validate_phy_measurement(rows)
+
     def test_external_capture_requires_clean_terminal_history_and_radiotap(self):
         previous=dict(stage=92,context='CLEAN',remaining_sequences=206,
             tx_reports=[dict(operation='single_probe_tx_report',tag=5,state=1,tx_count=1)],

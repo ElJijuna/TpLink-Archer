@@ -30,6 +30,12 @@ hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 
+Etapa99: sondeo único tag7/secuencia7 con captura externa y contadores PHY
+antes/después preparado. Preflight9/TX pausado y105 tests Python aprobados;
+ejecución pendiente de autenticación sudo en Terminal. Sin nuevo TX ni
+asociación. Contexto CLEAN y197 secuencias, avance52 %.
+Evidencia: [research/STAGE99.md](research/STAGE99.md).
+
 Etapa98: tres snapshots de210 registros estables, estado persistente intacto
 y contraste separado de ruta AB/tasas CCK. CRC software externo:1463 válidos,
 1010 inválidos,4 truncados;0 tramas válidas de nuestra MAC. Instrumentación

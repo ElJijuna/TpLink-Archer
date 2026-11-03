@@ -24,10 +24,11 @@ def validate_live_decode(text):
         raise ValueError('Independent receiver has not captured Especial on channel9')
 
 
-def run(output):
+def run(output,phy=False):
     if os.geteuid()==0:raise ValueError('Run as your normal user after sudo -v; only monitor capture uses sudo')
     output=output.resolve();output.mkdir()
-    report={'status':'preflight','automatic_retry':False,'tag':6}
+    tag=7 if phy else 6
+    report={'status':'preflight','automatic_retry':False,'tag':tag}
     monitor=None
     try:
         with (output/'preflight.jsonl').open('w') as out,(output/'preflight.stderr').open('w') as err:
@@ -59,9 +60,9 @@ def run(output):
             time.sleep(1)
             guard()
             report['status']='capture_live';save(output/'paired.json',report)
-            print('Independent capture live; submitting the unique tag6 attempt.',flush=True)
+            print(f'Independent capture live; submitting the unique tag{tag} attempt.',flush=True)
             try:
-                execute(output/'probe',external_capture=True,capture_guard=guard)
+                execute(output/'probe',external_capture=True,capture_guard=guard,external_phy=phy)
                 report['probe_executor']='completed'
             except Exception as error:
                 report.update(probe_executor='stopped',probe_error=str(error))
@@ -84,4 +85,6 @@ def run(output):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('new_directory',type=Path)
-    run(parser.parse_args().new_directory)
+    parser.add_argument('--phy',action='store_true',help='Unique tag7 experiment with before/after PHY counters')
+    args=parser.parse_args()
+    run(args.new_directory,args.phy)

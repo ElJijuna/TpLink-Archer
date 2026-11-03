@@ -1,0 +1,25 @@
+{
+  "stage": 99,
+  "date": "2026-11-03",
+  "tag": 7,
+  "sequence": 7,
+  "status": "prepared_awaiting_terminal_authentication",
+  "python_tests": 105,
+  "new_network_frame_submissions": 0,
+  "context": "CLEAN",
+  "remaining_sequences": 197,
+  "marker_created": false,
+  "evidence": {
+    "artifacts/phy-probe-stage99-build.log": "edbd321d00340b4bff9d18998624d5b857eaedfe178ec783e77feb9dc7285e78",
+    "artifacts/phy-probe-stage99-tests.log": "0f038c841f28530761980400bddafcfc05ef52f752c085cf43d7f3e828a92fca",
+    "artifacts/phy-probe-stage99-preflight.jsonl": "c6cf1a0dd0de439f645a67041d24f9112aa1fdc80ff1e2e7eec316524ad7d577",
+    "artifacts/phy-probe-stage99-preflight.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/archer-special-phy-probe-stage99": "c6d24985a6cef747696bd0523e540fa3d1fe8b47967df52b88611bccc330f0bd",
+    "tools/external_probe_capture.py": "9cb6f9246e326598d327cfd78b05812ee31ed2003196e3dfb00ebc6e285dcc3e",
+    "tools/special_probe_attempt.py": "788136961cfb9f72751ca87f5027b367769da736137298cd1f0ec68d78047b2d",
+    "src/macos_context_rx.cpp": "8f08689e3f1262e8145ce2a8b9dfcff204d016da79cc1cf58b2021a292739e9d",
+    "include/archer/single_probe.hpp": "86c4171bfb218929505b4fae287a6ca4a3dcbe3ca7d8fb981000397c646fd193",
+    "tests/test_special_probe_attempt.py": "3176f66e1da16f19a9a5363eec8a74dbb9b85079fcd7a0df25000f7f64b994ec",
+    "tests/single_probe_test.cpp": "2748bf02173279c42fc91423fd7da13c6cbf2e2e14815d57bf4c28866563f3f2"
+  }
+}
