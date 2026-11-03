@@ -30,6 +30,11 @@ hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 
+Etapa95: prueba simultánea preparada con captura independiente y sondeo
+único tag6; exige observar Especial a2452MHz antes de autorizar el envío.
+Compilaciones y94 tests Python pasan; todavía sin ejecutar TX nuevo.
+Avance52 %. Evidencia: [research/STAGE95.md](research/STAGE95.md).
+
 Etapa94: captura independiente de1499 paquetes, todos a2452MHz;165 beacons
 de Especial sin marca bad-fcs,16 ACK y72 CTS del entorno. Sin nuevo TX Archer.
 La captura terminó; restaurar el canal del Mac falló y requiere reconexión.

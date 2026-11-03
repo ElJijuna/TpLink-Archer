@@ -35,6 +35,11 @@ int main(){
  assert(ack_probe[86]==0x50&&archer::channel_u32(ack_probe.data()+12)==0x2005);
  assert(archer::channel_u32(ack_probe.data()+36)==0x50000000);
  assert(archer::channel_u32(ack_probe.data()+48)==0x80000000);
+ auto external=archer::special_channel9_external_probe_packet();
+ assert(external[86]==0x60&&archer::channel_u32(external.data()+12)==0x2006);
+ assert(archer::channel_u32(external.data()+36)==0x60000000);
+ for(std::size_t i=0;i<external.size();++i)
+   if(i!=12&&i!=39&&i!=86)assert(external[i]==ack_probe[i]);
  std::vector<std::uint8_t> rpt(80);archer::channel_put32(rpt.data(),1|(9<<2)|(1<<8));
  archer::channel_put32(rpt.data()+4,80);archer::channel_put32(rpt.data()+48,1<<12);
  archer::channel_put32(rpt.data()+56,1<<10);

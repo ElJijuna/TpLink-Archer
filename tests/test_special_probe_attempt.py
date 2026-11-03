@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).parents[1]/'tools'))
 import special_probe_attempt as p
+from external_probe_capture import validate_capture_header, validate_live_decode
 
 
 def calibration():
@@ -17,6 +18,27 @@ def calibration():
 
 
 class SpecialProbeTest(unittest.TestCase):
+    def test_external_capture_requires_clean_terminal_history_and_radiotap(self):
+        previous=dict(stage=92,context='CLEAN',remaining_sequences=206,
+            tx_reports=[dict(operation='single_probe_tx_report',tag=5,state=1,tx_count=1)],
+            cleanup=dict(network_tx_paused=True))
+        baseline=dict(stage=94,frequencies_mhz={'2452':1499},
+            target_beacons_without_bad_fcs_flag=165,archer_tx_submissions=0,capture_exit=0)
+        p.validate_external_history(previous,baseline)
+        for change in (dict(context='DIRTY'),dict(tx_reports=[]),dict(remaining_sequences=205)):
+            with self.assertRaises(ValueError):p.validate_external_history({**previous,**change},baseline)
+        for change in (dict(frequencies_mhz={'5180':1499}),dict(target_beacons_without_bad_fcs_flag=0),dict(archer_tx_submissions=1)):
+            with self.assertRaises(ValueError):p.validate_external_history(previous,{**baseline,**change})
+        header=b'\xd4\xc3\xb2\xa1'+bytes(16)+(127).to_bytes(4,'little')
+        validate_capture_header(header)
+        for bad in (header[:20],header[:20]+(1).to_bytes(4,'little')):
+            with self.assertRaises(ValueError):validate_capture_header(bad)
+        with self.assertRaises(ValueError):p.execute(Path('unused'),external_capture=True)
+        beacon='1.0 Mb/s 2452 MHz BSSID:50:92:6a:11:06:66 Beacon (Especial)'
+        validate_live_decode(beacon)
+        for text in ('',beacon.replace('2452','5180'),'bad-fcs '+beacon,beacon+'\nmetadata absent'):
+            with self.assertRaises(ValueError):validate_live_decode(text)
+
     def test_rejects_wrong_channel_history_and_report_tag(self):
         p.validate_calibration(calibration())
         for change in (dict(channel=1),dict(commands=[]),dict(context='DIRTY')):
@@ -51,6 +73,40 @@ class SpecialProbeTest(unittest.TestCase):
                 with self.assertRaises(FileExistsError):p.execute(root/'second')
             self.assertEqual(old.read_bytes(),b'OLD RESERVED\n')
             self.assertEqual((root/'artifacts/37ad-0104-special-channel9-probe-attempted').read_bytes(),b'RECOVERY_RESERVED\n')
+
+    def test_external_handoff_blocks_without_marker_and_consumes_only_new_marker(self):
+        with tempfile.TemporaryDirectory() as t:
+            root=Path(t).resolve()
+            for name in ('artifacts','research','build'):(root/name).mkdir()
+            ledger=root/'artifacts/37ad-0104-sequences.bin'
+            ledger.write_bytes(b'ARCHSEQ\x01'+bytes([1])*50+bytes(206))
+            Path(str(ledger)+'.epoch-transition').write_bytes(b'CLEAN\n')
+            (root/'artifacts/37ad-0104-context-reservation').write_bytes(b'CLEAN\n')
+            old=root/'artifacts/37ad-0104-special-channel9-ack-probe-attempted';old.write_bytes(b'OLD\n')
+            raw=root/'artifacts/raw';raw.write_bytes(b'raw')
+            calibration_record=calibration();calibration_record['evidence']={'artifacts/raw':p.digest(raw)}
+            (root/'research/channel9-calibration-stage84-observation.json').write_text(json.dumps(calibration_record))
+            previous=dict(stage=92,context='CLEAN',remaining_sequences=206,
+                tx_reports=[dict(operation='single_probe_tx_report',tag=5,state=1,tx_count=1)],
+                cleanup=dict(network_tx_paused=True),attempt=dict(ledger_after_sha256=p.digest(ledger)),
+                evidence={'artifacts/raw':p.digest(raw)})
+            (root/'research/ack-probe-stage92-observation.json').write_text(json.dumps(previous))
+            (root/'artifacts/monitor-channel9-baseline').mkdir()
+            baseline_raw=root/'artifacts/monitor-channel9-baseline/monitor-channel9.pcap';baseline_raw.write_bytes(b'baseline')
+            baseline=dict(stage=94,frequencies_mhz={'2452':1499},target_beacons_without_bad_fcs_flag=165,
+                archer_tx_submissions=0,capture_exit=0,source_sha256=p.digest(baseline_raw))
+            (root/'research/monitor-baseline-stage94-observation.json').write_text(json.dumps(baseline))
+            helper=root/'build/archer-special-external-probe-universal'
+            helper.write_text('#!/usr/bin/env python3\nraise SystemExit(7)\n');helper.chmod(0o700)
+            marker=root/'artifacts/37ad-0104-special-channel9-external-probe-attempted'
+            with patch.object(p,'ROOT',root),patch.object(p,'LEDGER',ledger):
+                with self.assertRaises(ValueError):
+                    p.execute(root/'blocked',external_capture=True,capture_guard=lambda:(_ for _ in ()).throw(ValueError('capture stopped')))
+                self.assertFalse(marker.exists())
+                with self.assertRaises(RuntimeError):p.execute(root/'first',external_capture=True,capture_guard=lambda:None)
+                with self.assertRaises(FileExistsError):p.execute(root/'second',external_capture=True,capture_guard=lambda:None)
+            self.assertEqual(marker.read_bytes(),b'RECOVERY_RESERVED\n')
+            self.assertEqual(old.read_bytes(),b'OLD\n')
 
 
     def test_paired_measurement_requires_fresh_baseline_and_restoration(self):

@@ -62,11 +62,27 @@ def validate_control_baseline(record):
     if not record.get('evidence'):raise ValueError('Raw baseline evidence missing')
 
 
-def execute(output, unicast=False, monitored=False, ack_capture=False):
+def validate_external_history(previous, baseline):
+    if (previous.get('stage')!=92 or previous.get('context')!='CLEAN' or
+        previous.get('remaining_sequences')!=206 or
+        previous.get('tx_reports')!=[dict(operation='single_probe_tx_report',tag=5,state=1,tx_count=1)] or
+        previous.get('cleanup',{}).get('network_tx_paused') is not True):
+        raise ValueError('Completed cleanup of the unique stage92 terminal failure required')
+    if (baseline.get('stage')!=94 or baseline.get('frequencies_mhz')!={'2452':1499} or
+        baseline.get('target_beacons_without_bad_fcs_flag',0)<1 or
+        baseline.get('archer_tx_submissions')!=0 or baseline.get('capture_exit')!=0):
+        raise ValueError('Independent channel9 baseline required')
+
+
+def execute(output, unicast=False, monitored=False, ack_capture=False, external_capture=False, capture_guard=None):
+    if external_capture:
+        if capture_guard is None:raise ValueError('Live independent capture guard required')
+        ack_capture=True
     if ack_capture:monitored=True
     if monitored:unicast=True
     output=output.resolve();output.mkdir();fds=[]
-    report={'status':'preflight','ssid':'Especial','channel':9,'tag':5 if ack_capture else 4 if monitored else 3 if unicast else 2,'unicast':unicast,'monitored':monitored,'ack_capture':ack_capture,'automatic_retry':False}
+    tag=6 if external_capture else 5 if ack_capture else 4 if monitored else 3 if unicast else 2
+    report={'status':'preflight','ssid':'Especial','channel':9,'tag':tag,'unicast':unicast,'monitored':monitored,'ack_capture':ack_capture,'external_capture':external_capture,'automatic_retry':False}
     try:
         owner=os.open(str(LEDGER)+'.workflow',os.O_RDWR|os.O_CREAT|os.O_NOFOLLOW,0o600);fds.append(owner)
         fcntl.flock(owner,fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -78,11 +94,26 @@ def execute(output, unicast=False, monitored=False, ack_capture=False):
                 raise ValueError('Calibration evidence changed')
         # Fresh verified epoch had0..31 reserved after stage84. Any later H2C
         # invalidates this one-shot admission, rather than guessing current history.
-        if LEDGER.read_bytes()!=b'ARCHSEQ\x01'+bytes([1])*(41 if ack_capture else 50 if monitored else 41 if unicast else 32)+bytes(215 if ack_capture else 206 if monitored else 215 if unicast else 224):
+        if LEDGER.read_bytes()!=b'ARCHSEQ\x01'+bytes([1])*(50 if external_capture else 41 if ack_capture else 50 if monitored else 41 if unicast else 32)+bytes(206 if external_capture else 215 if ack_capture else 206 if monitored else 215 if unicast else 224):
             raise ValueError('Sequence history changed since calibration9')
         for path in (ROOT/'artifacts/37ad-0104-context-reservation',Path(str(LEDGER)+'.epoch-transition')):
             if path.read_bytes()!=b'CLEAN\n':raise ValueError('Context/epoch not CLEAN')
-        if ack_capture:
+        if external_capture:
+            previous_path=ROOT/'research/ack-probe-stage92-observation.json'
+            baseline_path=ROOT/'research/monitor-baseline-stage94-observation.json'
+            previous=json.loads(previous_path.read_text());base=json.loads(baseline_path.read_text())
+            validate_external_history(previous,base)
+            if previous.get('attempt',{}).get('ledger_after_sha256')!=digest(LEDGER):
+                raise ValueError('History changed since stage92 cleanup')
+            for name,sha in previous.get('evidence',{}).items():
+                path=(ROOT/name).resolve()
+                if not path.is_relative_to(ROOT/'artifacts') or digest(path)!=sha:raise ValueError('Stage92 evidence changed')
+            if not previous.get('evidence'):raise ValueError('Missing stage92 raw evidence')
+            if digest(ROOT/'artifacts/monitor-channel9-baseline/monitor-channel9.pcap')!=base.get('source_sha256'):
+                raise ValueError('Independent baseline PCAP changed')
+            capture_guard()
+            report.update(previous_sha256=digest(previous_path),independent_baseline_sha256=digest(baseline_path))
+        elif ack_capture:
             baseline=ROOT/'research/control-rx-stage91-observation.json'
             base=json.loads(baseline.read_text())
             validate_control_baseline(base)
@@ -116,10 +147,11 @@ def execute(output, unicast=False, monitored=False, ack_capture=False):
             validate_result([json.loads(x) for x in (history/'probe.jsonl').read_text().splitlines()])
             report['preceding_attempt_sha256']=digest(history/'attempt.json')
         helper=output/'archer-special-probe'
-        shutil.copy2(ROOT/('build/archer-special-ack-probe-universal' if ack_capture else 'build/archer-special-monitored-probe-universal' if monitored else 'build/archer-special-unicast-probe-universal' if unicast else 'build/archer-special-probe-universal'),helper)
+        shutil.copy2(ROOT/('build/archer-special-external-probe-universal' if external_capture else 'build/archer-special-ack-probe-universal' if ack_capture else 'build/archer-special-monitored-probe-universal' if monitored else 'build/archer-special-unicast-probe-universal' if unicast else 'build/archer-special-probe-universal'),helper)
         report.update(calibration_sha256=digest(evidence),ledger_before_sha256=digest(LEDGER),helper_sha256=digest(helper))
         save(output/'attempt.json',report)
-        marker=ROOT/('artifacts/37ad-0104-special-channel9-ack-probe-attempted' if ack_capture else 'artifacts/37ad-0104-special-channel9-monitored-probe-attempted' if monitored else 'artifacts/37ad-0104-special-channel9-unicast-probe-attempted' if unicast else 'artifacts/37ad-0104-special-channel9-probe-attempted')
+        if external_capture:capture_guard()
+        marker=ROOT/('artifacts/37ad-0104-special-channel9-external-probe-attempted' if external_capture else 'artifacts/37ad-0104-special-channel9-ack-probe-attempted' if ack_capture else 'artifacts/37ad-0104-special-channel9-monitored-probe-attempted' if monitored else 'artifacts/37ad-0104-special-channel9-unicast-probe-attempted' if unicast else 'artifacts/37ad-0104-special-channel9-probe-attempted')
         permit=os.open(marker,os.O_RDWR|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600);fds.append(permit)
         fcntl.flock(permit,fcntl.LOCK_EX|fcntl.LOCK_NB)
         token=b'RECOVERY_RESERVED\n'
@@ -129,7 +161,7 @@ def execute(output, unicast=False, monitored=False, ack_capture=False):
         report['status']='started';save(output/'attempt.json',report)
         env=dict(os.environ,ARCHER_WORKFLOW_FD=str(owner),ARCHER_PROBE_RECOVERY_FD=str(permit))
         with (output/'probe.jsonl').open('w') as out,(output/'probe.stderr').open('w') as err:
-            result=subprocess.run([str(helper),'--single-special-channel9-ack-probe' if ack_capture else '--single-special-channel9-monitored-probe' if monitored else '--single-special-channel9-unicast-probe' if unicast else '--single-special-channel9-probe',str(output/'capture')],
+            result=subprocess.run([str(helper),'--single-special-channel9-external-probe' if external_capture else '--single-special-channel9-ack-probe' if ack_capture else '--single-special-channel9-monitored-probe' if monitored else '--single-special-channel9-unicast-probe' if unicast else '--single-special-channel9-probe',str(output/'capture')],
                 cwd=ROOT,env=env,pass_fds=(owner,permit),stdout=out,stderr=err,check=False)
         report.update(exit_code=result.returncode,stdout_sha256=digest(output/'probe.jsonl'),
                       stderr_sha256=digest(output/'probe.stderr'),ledger_after_sha256=digest(LEDGER))
@@ -137,7 +169,7 @@ def execute(output, unicast=False, monitored=False, ack_capture=False):
         if monitored and any(r.get('operation')=='probe_ifs_clm_window' for r in rows):
             report['measurement']=validate_measurement(rows)
         if result.returncode:raise RuntimeError('Probe stopped; reservation retained, no retry')
-        report['validation']=validate_result([json.loads(x) for x in (output/'probe.jsonl').read_text().splitlines()],5 if ack_capture else 4 if monitored else 3 if unicast else 2)
+        report['validation']=validate_result([json.loads(x) for x in (output/'probe.jsonl').read_text().splitlines()],tag)
         report['status']='completed';save(output/'attempt.json',report)
     except BaseException as error:
         report.update(status='stopped',error=str(error));save(output/'attempt.json',report);raise

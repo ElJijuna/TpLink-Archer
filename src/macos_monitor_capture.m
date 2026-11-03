@@ -10,9 +10,10 @@ static void stop_capture(int signo) { (void)signo; interrupted = 1; }
 int main(int argc, const char **argv) {
     @autoreleasepool {
         BOOL inspect = argc == 2 && strcmp(argv[1], "--inspect") == 0;
-        BOOL capture = argc == 3 && strcmp(argv[1], "--capture-channel9") == 0;
+        BOOL paired = argc == 3 && strcmp(argv[1], "--capture-probe-channel9") == 0;
+        BOOL capture = paired || (argc == 3 && strcmp(argv[1], "--capture-channel9") == 0);
         if (!inspect && !capture) {
-            fprintf(stderr, "Usage: %s --inspect | --capture-channel9 NEW_DIRECTORY\n", argv[0]);
+            fprintf(stderr, "Usage: %s --inspect | {--capture-channel9|--capture-probe-channel9} NEW_DIRECTORY\n", argv[0]);
             return 2;
         }
         CWInterface *wifi = [[CWWiFiClient sharedWiFiClient] interfaceWithName:@"en0"];
@@ -52,8 +53,17 @@ int main(int argc, const char **argv) {
                                    @"-s", @"2048", @"-U", @"-w", path,
                                    @"type mgt or type ctl"];
                 if ([task launchAndReturnError:&error]) {
-                    fprintf(stderr, "Passive capture: channel9/20MHz, maximum20 seconds; no Archer TX\n");
-                    for (int i = 0; i < 200 && task.running && !interrupted; ++i) usleep(100000);
+                    if (paired) {
+                        NSData *ready = [NSJSONSerialization dataWithJSONObject:
+                            @{@"channel": @9, @"width_mhz": @20, @"capture_pid": @(task.processIdentifier)}
+                            options:0 error:&error];
+                        if (!ready || ![ready writeToFile:[directory stringByAppendingPathComponent:@"ready.json"]
+                                                 options:NSDataWritingAtomic error:&error]) {
+                            fprintf(stderr, "Capture handoff failed\n"); interrupted = 1;
+                        }
+                    }
+                    fprintf(stderr, "Monitor capture channel9/20MHz, maximum%d seconds\n", paired ? 45 : 20);
+                    for (int i = 0; i < (paired ? 450 : 200) && task.running && !interrupted; ++i) usleep(100000);
                     if (task.running) kill(task.processIdentifier, SIGINT);
                     for (int i = 0; i < 30 && task.running; ++i) usleep(100000);
                     if (task.running) kill(task.processIdentifier, SIGKILL);
