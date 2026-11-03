@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **52 %**
 
-Actualizado: **2026-11-03**, etapa97: ruta/potencia leídas;210 registros coinciden, emisión aún no verificada. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-03**, etapa98: lecturas repetidas y CRC externo validados; emisión aún no verificada. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -29,6 +29,14 @@ TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
 hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa98: tres snapshots de210 registros estables, estado persistente intacto
+y contraste separado de ruta AB/tasas CCK. CRC software externo:1463 válidos,
+1010 inválidos,4 truncados;0 tramas válidas de nuestra MAC. Instrumentación
+PHY antes/después integrada sin nuevo TX.103 tests Python y suites C++ pasan.
+Se corrigió la explicación previa del reset de contadores para RETRY_LIMIT.
+Contexto CLEAN,197 secuencias, avance52 %.
+Evidencia: [research/STAGE98.md](research/STAGE98.md).
 
 Etapa97: auditor físico de ruta/potencia compilado Intel/ARM y ejecutado en
 Mac ARM. Los210 registros coinciden con el plan; continuidad TSSI bit3 limpia

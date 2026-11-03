@@ -3,6 +3,7 @@
 #include "archer/channel_bus.hpp"
 #include "archer/xtal_identity.hpp"
 #include "archer/trx_path.hpp"
+#include "archer/phy_tx_counters.hpp"
 #include "channel_payload.hpp"
 #include <map>
 // Snapshot only: standard WLAN access-window writes are restored. No RFK,
@@ -47,6 +48,14 @@ int main(int argc,char** argv){
     const auto raw=archer::channel_bus_read(bus,address);
     std::cout<<"{\"operation\":\"tx_gate_raw_snapshot\",\"address\":"<<address
       <<",\"observed\":"<<raw<<",\"attributed_to_network_tx\":false}"<<std::endl;
+   }
+   for(unsigned sample=0;sample<3;++sample){
+    const auto phy=archer::read_phy_tx_snapshot(bus);const auto counts=phy.counts();
+    std::cout<<"{\"operation\":\"passive_phy_tx_counters\",\"sample\":"<<sample
+      <<",\"controls_enabled\":"<<(phy.enabled()?"true":"false")<<",\"counts\":[";
+    for(unsigned i=0;i<4;++i){if(i)std::cout<<',';std::cout<<counts[i];}
+    std::cout<<"],\"attributed_to_network_tx\":false}"<<std::endl;
+    if(sample!=2)std::this_thread::sleep_for(std::chrono::milliseconds(150));
    }
    std::cout<<"{\"result\":\"tx_power_snapshot_complete\",\"registers\":"<<expected.size()
      <<",\"differences_from_host_plan\":"<<differences

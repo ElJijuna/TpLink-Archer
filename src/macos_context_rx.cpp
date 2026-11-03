@@ -19,6 +19,7 @@
 #include "archer/usb_rx_aggregation.hpp"
 #include "archer/ple_probe.hpp"
 #include "archer/rx_counters.hpp"
+#include "archer/phy_tx_counters.hpp"
 #include "archer/rx_delivery_audit.hpp"
 #include <filesystem>
 #include <fstream>
@@ -249,6 +250,8 @@ int main(int argc,char** argv){
                     probe_file.write(reinterpret_cast<const char*>(packet.data()),packet.size());probe_file.close();
                     if(!probe_file)throw std::runtime_error("Cannot preserve probe bytes");
                     const auto transmit=[&]{
+                    const auto phy_before=archer::read_phy_tx_snapshot(bus);
+                    if(!phy_before.enabled())throw std::runtime_error("PHY counters disabled; no probe");
                     try{
                         archer::channel_bus_write(bus,0x10398,0x3ffff,0x100); // MGQ only.
                         probe_submitted=true;usb.send_single_management_probe(packet);
@@ -257,6 +260,16 @@ int main(int argc,char** argv){
                     }catch(...){archer::channel_bus_write(bus,0x10398,0x3ffff,0);probe_submitted=false;throw;}
                     archer::channel_bus_write(bus,0x10398,0x3ffff,0);
                     probe_submitted=false;
+                    const auto phy_after=archer::read_phy_tx_snapshot(bus);
+                    const auto phy_delta=archer::phy_tx_modulo_delta(phy_before,phy_after);
+                    const auto before_counts=phy_before.counts(),after_counts=phy_after.counts();
+                    std::cout<<"{\"operation\":\"probe_phy_tx_counters\",\"before\":[";
+                    for(unsigned i=0;i<4;++i){if(i)std::cout<<',';std::cout<<before_counts[i];}
+                    std::cout<<"],\"after\":[";
+                    for(unsigned i=0;i<4;++i){if(i)std::cout<<',';std::cout<<after_counts[i];}
+                    std::cout<<"],\"modulo_delta\":[";
+                    for(unsigned i=0;i<4;++i){if(i)std::cout<<',';std::cout<<phy_delta[i];}
+                    std::cout<<"],\"controls_enabled\":true,\"antenna_emission_proven\":false}"<<std::endl;
                     };
 #ifdef ARCHER_SPECIAL_MONITORED
                     archer::with_ifs_clm_window(bus,[&]{

@@ -6,6 +6,9 @@ build:
 .PHONY: tx-power-audit-universal
 tx-power-audit-universal: | build
 	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/macos_tx_power_audit.cpp -framework IOKit -framework CoreFoundation -o build/archer-tx-power-audit-universal
+build/phy-tx-counters-test: tests/phy_tx_counters_test.cpp include/archer/phy_tx_counters.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/phy-tx-counters-test
 .PHONY: monitor-capture-universal
 monitor-capture-universal: | build
 	clang -Wall -Wextra -Werror -fobjc-arc -arch arm64 -arch x86_64 src/macos_monitor_capture.m -framework Foundation -framework CoreWLAN -o build/archer-monitor-capture-universal
@@ -41,6 +44,7 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/passive-scan-test
 	./build/rx-scan-window-test
 	./build/rx-counters-test
+	./build/phy-tx-counters-test
 	./build/rx-delivery-audit-test
 	./build/ple-probe-test
 	./build/phy-report-window-test

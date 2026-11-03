@@ -1,0 +1,91 @@
+{
+  "stage": 98,
+  "date": "2026-11-03",
+  "validation": {
+    "result": "validated",
+    "repeated_snapshots": 3,
+    "stable_registers": 210,
+    "wlan_window_restored": true,
+    "only_wlan_and_xtal_read_protocol_writes": true,
+    "independent_reference": {
+      "ab_path_words": 7,
+      "firmware_cck_rate_cells": 4,
+      "firmware_cck_word": 673720360
+    },
+    "antenna_emission_proven": false
+  },
+  "state": {
+    "state_sha256_before": {
+      "artifacts/37ad-0104-sequences.bin": "b515249e68049ff2c6b844b20980dc78fc281f967dbe3c24ce87c9952db609ae",
+      "artifacts/37ad-0104-context-reservation": "0b98843240a0b1a2384483206c02be8968dd809eb73838820be24cb7d6d6aeb9",
+      "artifacts/37ad-0104-sequences.bin.epoch-transition": "0b98843240a0b1a2384483206c02be8968dd809eb73838820be24cb7d6d6aeb9",
+      "artifacts/37ad-0104-single-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff",
+      "artifacts/37ad-0104-special-channel9-ack-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff",
+      "artifacts/37ad-0104-special-channel9-external-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff",
+      "artifacts/37ad-0104-special-channel9-monitored-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff",
+      "artifacts/37ad-0104-special-channel9-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff",
+      "artifacts/37ad-0104-special-channel9-unicast-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff"
+    },
+    "state_sha256_after": {
+      "artifacts/37ad-0104-sequences.bin": "b515249e68049ff2c6b844b20980dc78fc281f967dbe3c24ce87c9952db609ae",
+      "artifacts/37ad-0104-context-reservation": "0b98843240a0b1a2384483206c02be8968dd809eb73838820be24cb7d6d6aeb9",
+      "artifacts/37ad-0104-sequences.bin.epoch-transition": "0b98843240a0b1a2384483206c02be8968dd809eb73838820be24cb7d6d6aeb9",
+      "artifacts/37ad-0104-single-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff",
+      "artifacts/37ad-0104-special-channel9-ack-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff",
+      "artifacts/37ad-0104-special-channel9-external-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff",
+      "artifacts/37ad-0104-special-channel9-monitored-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff",
+      "artifacts/37ad-0104-special-channel9-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff",
+      "artifacts/37ad-0104-special-channel9-unicast-probe-attempted": "7aa9c3b4b7e736523837352b2145047720742b9696f11036a33bc1173851ecff"
+    },
+    "all_state_unchanged": true
+  },
+  "external_crc": {
+    "packets": 2477,
+    "crc_valid": 1463,
+    "crc_invalid": 1010,
+    "truncated_packets": 4,
+    "fcs_unavailable": 0,
+    "flag_crc_disagreements": 0,
+    "valid_target_beacons": 381,
+    "valid_ack": 35,
+    "valid_cts": 151,
+    "valid_test_mac_frames": 0,
+    "frequencies_mhz": {
+      "2452": 2477
+    },
+    "source_sha256": "d2fe0effed7e5e1e1f33bc22d70b058690ddda31a71ec83194063f09c2feac6f",
+    "antenna_emission_proven": false
+  },
+  "context": "CLEAN",
+  "remaining_sequences": 197,
+  "new_network_frame_submissions": 0,
+  "python_tests": 103,
+  "phy_before_after_instrumentation_executed_with_tx": false,
+  "correction": "Stage97 post-probe reset explanation does not apply to terminal RETRY_LIMIT; that path exits before the reset.",
+  "evidence": {
+    "artifacts/tx-validation-stage98-0.jsonl": "4954fa3d6591a3c67ced046505664f2bf27a0909df0294762724f5d06da28700",
+    "artifacts/tx-validation-stage98-0.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tx-validation-stage98-1.jsonl": "4954fa3d6591a3c67ced046505664f2bf27a0909df0294762724f5d06da28700",
+    "artifacts/tx-validation-stage98-1.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tx-validation-stage98-2.jsonl": "4954fa3d6591a3c67ced046505664f2bf27a0909df0294762724f5d06da28700",
+    "artifacts/tx-validation-stage98-2.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tx-validation-stage98-state.json": "2536851842b6a0608c1b11bbc876168d5532a8a55eeb8cb401dcca605fdde428",
+    "artifacts/tx-validation-stage98-validation.json": "4987d877c5c5fcabbb60b3a3c050e91864506ec948c693d52e6396ecf8defaa2",
+    "artifacts/tx-validation-stage98-external-crc.json": "e80f7230ca4effacaf3c0fe1f2546aa8734ff47381a24fc17fec066496d37ed4",
+    "artifacts/tx-validation-stage98-build.log": "4d034e622c8fb1a50f5e23c0c839c5ec38319c814b14b9e052c71cd8730ecc73",
+    "artifacts/tx-validation-stage98-regression-build.log": "1c40692d3323daf7c0b4ba09a96ef018aa008f7c7835f59f2c7dfb485790a1a2",
+    "artifacts/tx-validation-stage98-tests.log": "26e4a943cb63c324435ed4f6a9fc84b045ba3ecfda7e4b331d4df654e7cf930d",
+    "src/macos_tx_power_audit.cpp": "d2ffc6732a1a0d7b610920d73ea0a8ba2d534df2ad1d4f3b57597913fd260bc0",
+    "src/macos_context_rx.cpp": "ca3980a07fadcb1193a9abe861551143f843edf6947a54487ea265fa42d04270",
+    "include/archer/phy_tx_counters.hpp": "52919ff494502240b623c756ee8e132e63985ccea4d8260180d6b69edda9a45a",
+    "tools/validate_tx_snapshot.py": "64d457cacaf901fc1ed6a676af58910f0ae94e02bb7a02ea9a670da8a4f418ca",
+    "tools/monitor_crc_audit.py": "52c0c12453bceac8960b920a70b41612553cdb0c2bdecae65503becb68e24112",
+    "tests/phy_tx_counters_test.cpp": "6adf83bc65181ea21818cb01ea35c9d7fdf472f57cfae6fb9257892839c6c648",
+    "tests/test_validate_tx_snapshot.py": "0aa25d3ac72413de1b578ea242a10c9fcc45b3f18731fba9e7aa03144ae4e686",
+    "tests/test_monitor_crc_audit.py": "372d8efab7daf82480d67336b231f3788fe7113d03001682b58dada8ddcebbcc",
+    "artifacts/rtw8922a.c": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535",
+    "artifacts/rtw89-phy.c": "c443be8a679f3f5dd0a330ab814ebda4411338f0cbe6cd556e0c31129aa9209b",
+    "artifacts/rtw89-reg.h": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d",
+    "artifacts/archer-tx-power-audit-stage98": "b46485e084a3841421c12ae4fc0db7b1d4c11e6875d3ddac483a3da858603f7e"
+  }
+}

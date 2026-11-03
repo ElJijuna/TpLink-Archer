@@ -6,7 +6,7 @@ Se añadió archer-tx-power-audit-universal --paused-channel9. Valida el perfil
 firmware/ADDA/BB, scheduler pausado, canal9 y MCC0 antes de leer. Contrasta
 la combinación final de máscaras de la ruta AB y las197 escrituras del perfil
 de potencia world/unconfigured. Los registros se leen sin reprogramarlos;
-solo se abre/restaura la ventana de acceso WLAN estándar. No envía H2C,
+se abre/restaura la ventana WLAN y se usa el protocolo XTAL-SI de lectura de identidad. No envía H2C,
 no reinicia firmware, no recalibra ni reserva secuencias.
 
 Dos snapshots físicos coincidieron en los210 registros únicos de ruta y
@@ -28,10 +28,11 @@ de rtw8922a_rfk.c:12–22 y la salida del reset de rtw8922a.c:2315.
 No se observó el bloqueo de continuidad TSSI de esa función concreta.
 Esto no interpreta los estados de alineación ni valida TSSI global.
 
-CCK_TXEN/TXON crudos0x22e00/0x22e04 fueron0. No permiten atribución al
-sondeo anterior: macos_context_rx.cpp resetea los contadores diagnósticos
-después de la ventana del sondeo (reset_rx_diagnostic_counters, posterior al
-terminal TX). No se usa ese0 como prueba de ausencia de transmisión.
+CCK_TXEN/TXON crudos0x22e00/0x22e04 fueron0. Corrección de etapa98:
+el reset posterior del capturador solo se alcanza en la ruta de éxito; un
+RETRY_LIMIT terminal sale antes. La explicación inicial basada en ese reset
+no estaba sustentada para el tag6. Sin una lectura previa emparejada, esos0
+no prueban ausencia de transmisión. Véase STAGE98.md.
 
 Estado final: contexto CLEAN,197 secuencias, mismo digest del ledger que tras
 el tag6, TX pausado. Build Intel/ARM aprobado; Intel físico pendiente.
