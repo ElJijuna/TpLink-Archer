@@ -30,6 +30,14 @@ hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 
+Etapa100: captura externa del intento tag7 ejecutada; el ejecutor se detuvo
+antes de H2C/TX porque no drenó la entrada. CRC externo4069 válidos/727
+inválidos/5 truncados,395 beacons de Especial. Marcador tag7 conservado,
+188 secuencias libres. Drenaje corregido y probado físicamente sin H2C/TX;
+tag8 preparado con marcador nuevo, pendiente de ejecución en Terminal.
+No hay medición PHY con TX nueva, corrección RF ni asociación. Avance52 %.
+Evidencia: [research/STAGE100.md](research/STAGE100.md).
+
 Etapa99: sondeo único tag7/secuencia7 con captura externa y contadores PHY
 antes/después preparado. Preflight9/TX pausado y105 tests Python aprobados;
 ejecución pendiente de autenticación sudo en Terminal. Sin nuevo TX ni

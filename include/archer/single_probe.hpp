@@ -59,6 +59,10 @@ inline std::vector<std::uint8_t> special_channel9_phy_probe_packet(){
     auto p=special_channel9_external_probe_packet();p[86]=0x70;
     channel_put32(p.data()+12,0x2007);channel_put32(p.data()+36,0x70000000);return p;
 }
+inline std::vector<std::uint8_t> special_channel9_drained_phy_probe_packet(){
+    auto p=special_channel9_phy_probe_packet();p[86]=0x80;
+    channel_put32(p.data()+12,0x2008);channel_put32(p.data()+36,0x80000000);return p;
+}
 struct ProbeTxReport {unsigned state,count;};
 inline bool probe_report_terminal(const ProbeTxReport& r,unsigned limit){
     if(!limit||limit>63)throw std::invalid_argument("Invalid TX retry limit");

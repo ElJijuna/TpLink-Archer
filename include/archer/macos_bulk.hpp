@@ -119,8 +119,9 @@ public:
         if(status)throw std::runtime_error("Probe USB submission uncertain; no retry");
     }
     std::vector<std::uint8_t> receive(unsigned index,unsigned timeout_ms=20){
-        if(index>=inputs.size()||!timeout_ms||timeout_ms>1000)throw std::invalid_argument("Invalid bulk receive bound");
+        if(index>=inputs.size()||(!timeout_ms&&!async_mode)||timeout_ms>1000)throw std::invalid_argument("Invalid bulk receive bound");
         if(async_mode){
+            if(!timeout_ms)CFRunLoopRunInMode(mode(),0,true);
             const auto deadline=std::chrono::steady_clock::now()+std::chrono::milliseconds(timeout_ms);
             while(completed[index].empty()&&!async_error&&std::chrono::steady_clock::now()<deadline){
                 const auto seconds=std::chrono::duration<double>(deadline-std::chrono::steady_clock::now()).count();

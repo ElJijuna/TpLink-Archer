@@ -24,8 +24,12 @@
 #include <filesystem>
 #include <fstream>
 #include "archer/context_reservation.hpp"
+#include "archer/input_quiescence.hpp"
 int main(int argc,char** argv){
-#ifdef ARCHER_SPECIAL_PHY_CAPTURE
+#ifdef ARCHER_SPECIAL_DRAINED_PHY_CAPTURE
+ constexpr unsigned probe_channel=9,probe_tag=8;
+ const char* marker_path="artifacts/37ad-0104-special-channel9-drained-phy-probe-attempted";
+#elif defined(ARCHER_SPECIAL_PHY_CAPTURE)
  constexpr unsigned probe_channel=9,probe_tag=7;
  const char* marker_path="artifacts/37ad-0104-special-channel9-phy-probe-attempted";
 #elif defined(ARCHER_SPECIAL_EXTERNAL_CAPTURE)
@@ -53,7 +57,9 @@ int main(int argc,char** argv){
 #endif
 #endif
 #ifdef ARCHER_SINGLE_PROBE
-#ifdef ARCHER_SPECIAL_PHY_CAPTURE
+#ifdef ARCHER_SPECIAL_DRAINED_PHY_CAPTURE
+ if(argc!=3||std::string(argv[1])!="--single-special-channel9-drained-phy-probe"){
+#elif defined(ARCHER_SPECIAL_PHY_CAPTURE)
  if(argc!=3||std::string(argv[1])!="--single-special-channel9-phy-probe"){
 #elif defined(ARCHER_SPECIAL_EXTERNAL_CAPTURE)
  if(argc!=3||std::string(argv[1])!="--single-special-channel9-external-probe"){
@@ -97,7 +103,8 @@ int main(int argc,char** argv){
 #endif
     const std::filesystem::path dir=argv[2];
     if(!std::filesystem::create_directory(dir))throw std::runtime_error("Capture directory must be new");
-    MacRegisterBus bus;MacBulkChannel usb(std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management-async");
+    const bool persistent_async=std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management-async";
+    MacRegisterBus bus;MacBulkChannel usb(persistent_async);
     archer::with_wlan_io_window(bus,[&]{
         if((archer::channel_bus_read(bus,0xfc)&255)!=0x71 ||
            (archer::channel_bus_read(bus,0x1e0)&0xc00003f)!=0xc000022 ||
@@ -130,8 +137,8 @@ int main(int argc,char** argv){
 #endif
         unsigned transfers=0,normal=0,beacons=0;
         archer::PassiveScan scan(probe_channel);
-        const auto receive=[&](unsigned pipe,bool track){
-            auto bytes=usb.receive(pipe,10);if(bytes.empty())return false;
+        const auto receive=[&](unsigned pipe,bool track,unsigned timeout_ms=10){
+            auto bytes=usb.receive(pipe,timeout_ms);if(bytes.empty())return false;
             if(transfers>=1024)throw std::runtime_error("Context RX capture bound reached");
             std::ofstream file(dir/("rx-"+std::to_string(transfers++)+".bin"),std::ios::binary);
             file.write(reinterpret_cast<const char*>(bytes.data()),bytes.size());file.close();
@@ -161,8 +168,13 @@ int main(int argc,char** argv){
         std::exception_ptr drain_error;bool quiet=false;
         try{
             for(unsigned i=0;i<4;++i)archer::channel_bus_write(bus,drain_regs[i],drain_masks[i],0);
-            const auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(3);
-            while(std::chrono::steady_clock::now()<deadline){const bool a=receive(0,false),b=receive(1,false);if(!a&&!b){quiet=true;break;}}
+            if(persistent_async)
+                quiet=archer::drain_input_until_quiet([&](unsigned pipe,unsigned timeout){return receive(pipe,false,timeout);},[]{return std::chrono::steady_clock::now();});
+            else {
+                const auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(3);
+                while(std::chrono::steady_clock::now()<deadline){const bool a=receive(0,false),b=receive(1,false);if(!a&&!b){quiet=true;break;}}
+            }
+            std::cout<<"{\"operation\":\"pre_context_drain\",\"quiet\":"<<(quiet?"true":"false")<<",\"transfers\":"<<transfers<<"}"<<std::endl;
         }catch(...){drain_error=std::current_exception();}
         std::string drain_restore_errors;
         for(unsigned i=0;i<4;++i)try{archer::channel_bus_write(bus,drain_regs[i],drain_masks[i],drain_saved[i]&drain_masks[i]);}
@@ -250,7 +262,7 @@ int main(int argc,char** argv){
                     const bool persisted=write(marker,token,sizeof(token)-1)==sizeof(token)-1&&fsync(marker)==0;
                     close(marker);if(!persisted)throw std::runtime_error("Cannot persist single probe reservation");
                     }
-                    const auto packet=probe_tag==7?archer::special_channel9_phy_probe_packet():probe_tag==6?archer::special_channel9_external_probe_packet():probe_tag==5?archer::special_channel9_ack_probe_packet():probe_tag==4?archer::special_channel9_monitored_probe_packet():probe_tag==3?archer::special_channel9_unicast_probe_packet():probe_channel==9?archer::special_channel9_probe_packet():archer::single_probe_packet();
+                    const auto packet=probe_tag==8?archer::special_channel9_drained_phy_probe_packet():probe_tag==7?archer::special_channel9_phy_probe_packet():probe_tag==6?archer::special_channel9_external_probe_packet():probe_tag==5?archer::special_channel9_ack_probe_packet():probe_tag==4?archer::special_channel9_monitored_probe_packet():probe_tag==3?archer::special_channel9_unicast_probe_packet():probe_channel==9?archer::special_channel9_probe_packet():archer::single_probe_packet();
                     std::ofstream probe_file(dir/"single-probe.bin",std::ios::binary);
                     probe_file.write(reinterpret_cast<const char*>(packet.data()),packet.size());probe_file.close();
                     if(!probe_file)throw std::runtime_error("Cannot preserve probe bytes");

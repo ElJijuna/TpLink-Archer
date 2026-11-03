@@ -144,3 +144,16 @@ class SpecialProbeTest(unittest.TestCase):
         p.validate_control_baseline(record)
         for update in (dict(channel=1),dict(context='DIRTY'),dict(calibration_terminals=7),dict(evidence={}),dict(control_audit=dict(ack_frames=2,cts_frames=0,bad_control_fcs=0))):
             with self.assertRaises(ValueError):p.validate_control_baseline({**record,**update})
+
+    def test_drained_history_rejects_submitted_tag7_or_changed_ledger(self):
+        import hashlib
+        ledger=b'ARCHSEQ\x01'+bytes([1])*68+bytes(188)
+        record=dict(stage=100,tag7_submissions=0,tag7_h2c_submissions=0,context='CLEAN',
+                    remaining_sequences=188,drain=dict(quiet=True,h2c_submissions=0,network_tx_submissions=0),
+                    ledger_sha256_after=hashlib.sha256(ledger).hexdigest(),evidence={'raw':'sha'})
+        p.validate_drained_phy_history(record,ledger)
+        for update in (dict(tag7_submissions=1),dict(tag7_h2c_submissions=1),dict(context='DIRTY'),
+                       dict(remaining_sequences=197),dict(drain=dict(quiet=False)),dict(evidence={}),
+                       dict(ledger_sha256_after='changed')):
+            with self.assertRaises(ValueError):p.validate_drained_phy_history({**record,**update},ledger)
+        with self.assertRaises(ValueError):p.validate_drained_phy_history(record,ledger[:-1]+b'\x01')
