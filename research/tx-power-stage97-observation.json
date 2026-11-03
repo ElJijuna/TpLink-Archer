@@ -1,0 +1,1747 @@
+{
+  "stage": 97,
+  "date": "2026-11-03",
+  "channel": 9,
+  "result": {
+    "result": "tx_power_snapshot_complete",
+    "registers": 210,
+    "differences_from_host_plan": 0,
+    "network_tx_paused": true,
+    "h2c_submissions": 0,
+    "firmware_resets": 0
+  },
+  "snapshot": [
+    {
+      "operation": "tx_power_snapshot",
+      "address": 72192,
+      "mask": 4294967295,
+      "expected_host_plan": 566782208,
+      "observed": 566782208,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 72196,
+      "mask": 4294967295,
+      "expected_host_plan": 15000627,
+      "observed": 15000627,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 72200,
+      "mask": 4294967295,
+      "expected_host_plan": 960040137,
+      "observed": 960040137,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 72204,
+      "mask": 4294967295,
+      "expected_host_plan": 1313026624,
+      "observed": 1313026624,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 72208,
+      "mask": 4294967295,
+      "expected_host_plan": 2429325326,
+      "observed": 2429325326,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 72212,
+      "mask": 4294967295,
+      "expected_host_plan": 2360211,
+      "observed": 2360211,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 72216,
+      "mask": 4294967295,
+      "expected_host_plan": 538740224,
+      "observed": 538740224,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 72224,
+      "mask": 524286,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 72240,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73216,
+      "mask": 4294967295,
+      "expected_host_plan": 673720360,
+      "observed": 673720360,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73220,
+      "mask": 4294967295,
+      "expected_host_plan": 707406378,
+      "observed": 707406378,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73224,
+      "mask": 4294967295,
+      "expected_host_plan": 673720874,
+      "observed": 673720874,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73228,
+      "mask": 4294967295,
+      "expected_host_plan": 671099392,
+      "observed": 671099392,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73232,
+      "mask": 4294967295,
+      "expected_host_plan": 707406378,
+      "observed": 707406378,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73236,
+      "mask": 4294967295,
+      "expected_host_plan": 673720874,
+      "observed": 673720874,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73240,
+      "mask": 4294967295,
+      "expected_host_plan": 606348838,
+      "observed": 606348838,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73244,
+      "mask": 4294967295,
+      "expected_host_plan": 707403810,
+      "observed": 707403810,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73248,
+      "mask": 4294967295,
+      "expected_host_plan": 673720874,
+      "observed": 673720874,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73252,
+      "mask": 4294967295,
+      "expected_host_plan": 640165928,
+      "observed": 640165928,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73256,
+      "mask": 4294967295,
+      "expected_host_plan": 505422372,
+      "observed": 505422372,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73260,
+      "mask": 4294967295,
+      "expected_host_plan": 370678300,
+      "observed": 370678300,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73264,
+      "mask": 4294967295,
+      "expected_host_plan": 673720360,
+      "observed": 673720360,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73268,
+      "mask": 4294967295,
+      "expected_host_plan": 707406378,
+      "observed": 707406378,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73272,
+      "mask": 4294967295,
+      "expected_host_plan": 673720874,
+      "observed": 673720874,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73276,
+      "mask": 4294967295,
+      "expected_host_plan": 606348838,
+      "observed": 606348838,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73280,
+      "mask": 4294967295,
+      "expected_host_plan": 707403810,
+      "observed": 707403810,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73284,
+      "mask": 4294967295,
+      "expected_host_plan": 673720874,
+      "observed": 673720874,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73288,
+      "mask": 4294967295,
+      "expected_host_plan": 640165928,
+      "observed": 640165928,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73292,
+      "mask": 4294967295,
+      "expected_host_plan": 505422372,
+      "observed": 505422372,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73296,
+      "mask": 4294967295,
+      "expected_host_plan": 370678300,
+      "observed": 370678300,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73300,
+      "mask": 4294967295,
+      "expected_host_plan": 673720360,
+      "observed": 673720360,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73304,
+      "mask": 4294967295,
+      "expected_host_plan": 673720360,
+      "observed": 673720360,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73308,
+      "mask": 4294967295,
+      "expected_host_plan": 707406378,
+      "observed": 707406378,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73312,
+      "mask": 4294967295,
+      "expected_host_plan": 673720874,
+      "observed": 673720874,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73316,
+      "mask": 4294967295,
+      "expected_host_plan": 671099392,
+      "observed": 671099392,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73320,
+      "mask": 4294967295,
+      "expected_host_plan": 707406378,
+      "observed": 707406378,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73324,
+      "mask": 4294967295,
+      "expected_host_plan": 673720874,
+      "observed": 673720874,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73328,
+      "mask": 4294967295,
+      "expected_host_plan": 606348838,
+      "observed": 606348838,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73332,
+      "mask": 4294967295,
+      "expected_host_plan": 707403810,
+      "observed": 707403810,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73336,
+      "mask": 4294967295,
+      "expected_host_plan": 673720874,
+      "observed": 673720874,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73340,
+      "mask": 4294967295,
+      "expected_host_plan": 640165928,
+      "observed": 640165928,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73344,
+      "mask": 4294967295,
+      "expected_host_plan": 505422372,
+      "observed": 505422372,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73348,
+      "mask": 4294967295,
+      "expected_host_plan": 370678300,
+      "observed": 370678300,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73352,
+      "mask": 4294967295,
+      "expected_host_plan": 673720360,
+      "observed": 673720360,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73356,
+      "mask": 4294967295,
+      "expected_host_plan": 673720360,
+      "observed": 673720360,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73360,
+      "mask": 4294967295,
+      "expected_host_plan": 640034856,
+      "observed": 640034856,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73364,
+      "mask": 4294967295,
+      "expected_host_plan": 572662820,
+      "observed": 572662820,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73368,
+      "mask": 4294967295,
+      "expected_host_plan": 673717792,
+      "observed": 673717792,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73372,
+      "mask": 4294967295,
+      "expected_host_plan": 673720360,
+      "observed": 673720360,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73376,
+      "mask": 4294967295,
+      "expected_host_plan": 640165928,
+      "observed": 640165928,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73380,
+      "mask": 4294967295,
+      "expected_host_plan": 505422372,
+      "observed": 505422372,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73384,
+      "mask": 4294967295,
+      "expected_host_plan": 370678300,
+      "observed": 370678300,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73388,
+      "mask": 4294967295,
+      "expected_host_plan": 673720360,
+      "observed": 673720360,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73392,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73396,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73400,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73404,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73408,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73412,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73416,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73420,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73424,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73428,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73432,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73436,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73440,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73444,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73448,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73452,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73456,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73460,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73464,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73468,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73472,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73476,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73480,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73484,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73488,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73492,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73496,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73500,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73504,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73508,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73512,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73516,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73520,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73524,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73528,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73532,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73536,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73540,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73544,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73548,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73552,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73556,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73560,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73564,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73568,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73572,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73576,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73580,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73584,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73588,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73592,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73596,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73600,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73604,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73608,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73612,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73616,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73620,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73624,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73628,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73632,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73636,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73640,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73644,
+      "mask": 4294967295,
+      "expected_host_plan": 917533,
+      "observed": 917533,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73648,
+      "mask": 4294967295,
+      "expected_host_plan": 1900573,
+      "observed": 1900573,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73652,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73656,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73660,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73664,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73668,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73672,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73676,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73680,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73684,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73688,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73692,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73696,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73700,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73704,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73708,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73712,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73716,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73720,
+      "mask": 4294967295,
+      "expected_host_plan": 458773,
+      "observed": 458773,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73724,
+      "mask": 4294967295,
+      "expected_host_plan": 286720023,
+      "observed": 286720023,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73728,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73732,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73736,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73740,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73744,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73748,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73752,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73756,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73760,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73764,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73768,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73772,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73776,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73780,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73784,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73788,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73792,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73800,
+      "mask": 4294967295,
+      "expected_host_plan": 16,
+      "observed": 16,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73804,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73808,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73812,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73816,
+      "mask": 4294967295,
+      "expected_host_plan": 20,
+      "observed": 20,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73820,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73824,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73828,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73832,
+      "mask": 4294967295,
+      "expected_host_plan": 24,
+      "observed": 24,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73836,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73840,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73844,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73848,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73852,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73856,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73860,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73864,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73868,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73872,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73876,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73880,
+      "mask": 4294967295,
+      "expected_host_plan": 10,
+      "observed": 10,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73884,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73888,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73892,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73896,
+      "mask": 4294967295,
+      "expected_host_plan": 15,
+      "observed": 15,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73900,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73904,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73908,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73912,
+      "mask": 4294967295,
+      "expected_host_plan": 21,
+      "observed": 21,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73916,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73920,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73924,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73928,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73932,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73936,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73940,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73944,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73948,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73952,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 73956,
+      "mask": 4294967295,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 132120,
+      "mask": 6292224,
+      "expected_host_plan": 2097408,
+      "observed": 1344313600,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 132212,
+      "mask": 28,
+      "expected_host_plan": 4,
+      "observed": 17809412,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 132216,
+      "mask": 4278304768,
+      "expected_host_plan": 67125248,
+      "observed": 67136649,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 132224,
+      "mask": 58851264,
+      "expected_host_plan": 8405248,
+      "observed": 8405248,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 133540,
+      "mask": 917504,
+      "expected_host_plan": 0,
+      "observed": 0,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 158544,
+      "mask": 245760,
+      "expected_host_plan": 49152,
+      "observed": 317035,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 158548,
+      "mask": 15,
+      "expected_host_plan": 3,
+      "observed": 32771,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 158724,
+      "mask": 3,
+      "expected_host_plan": 0,
+      "observed": 256992256,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 189964,
+      "mask": 65536,
+      "expected_host_plan": 65536,
+      "observed": 65792,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 189980,
+      "mask": 2093056,
+      "expected_host_plan": 516096,
+      "observed": 872931792,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 189992,
+      "mask": 262143,
+      "expected_host_plan": 0,
+      "observed": 85983232,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 190112,
+      "mask": 1072693248,
+      "expected_host_plan": 18874368,
+      "observed": 3240099840,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 190220,
+      "mask": 65536,
+      "expected_host_plan": 65536,
+      "observed": 65792,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 190236,
+      "mask": 2093056,
+      "expected_host_plan": 516096,
+      "observed": 872931792,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 190248,
+      "mask": 262143,
+      "expected_host_plan": 0,
+      "observed": 85983232,
+      "matches_host_plan": true
+    },
+    {
+      "operation": "tx_power_snapshot",
+      "address": 190368,
+      "mask": 1072693248,
+      "expected_host_plan": 18874368,
+      "observed": 3240099840,
+      "matches_host_plan": true
+    }
+  ],
+  "raw_gates": [
+    {
+      "operation": "tx_gate_raw_snapshot",
+      "address": 133504,
+      "observed": 21072,
+      "attributed_to_network_tx": false
+    },
+    {
+      "operation": "tx_gate_raw_snapshot",
+      "address": 189968,
+      "observed": 3,
+      "attributed_to_network_tx": false
+    },
+    {
+      "operation": "tx_gate_raw_snapshot",
+      "address": 190224,
+      "observed": 3,
+      "attributed_to_network_tx": false
+    },
+    {
+      "operation": "tx_gate_raw_snapshot",
+      "address": 142848,
+      "observed": 0,
+      "attributed_to_network_tx": false
+    },
+    {
+      "operation": "tx_gate_raw_snapshot",
+      "address": 142852,
+      "observed": 0,
+      "attributed_to_network_tx": false
+    }
+  ],
+  "context": "CLEAN",
+  "remaining_sequences": 197,
+  "ledger_sha256_after": "b515249e68049ff2c6b844b20980dc78fc281f967dbe3c24ce87c9952db609ae",
+  "antenna_emission_verified": false,
+  "network_frame_submissions": 0,
+  "evidence": {
+    "artifacts/tx-power-stage97.jsonl": "bee67a8f5a3f5c35723faf15de1f8e56ef92ffba6ea30047901ca7c5a7f43176",
+    "artifacts/tx-power-stage97.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tx-power-stage97-gates.jsonl": "f042fbac4fbef6e05becb4c5922a73944ea408d318375dd872c0de0aa2ba8f88",
+    "artifacts/tx-power-stage97-gates.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/tx-power-stage97-build.log": "bdf13cd4ba8c67bbadc8aa410c6b517d0f9076d0f894a1607cf6ca57270a74e4",
+    "artifacts/channel_payload.hpp": "706fa0ba51d697491f499383e4daa6f3214f46859c38a2c26848be1c029f0857",
+    "artifacts/rtw8922a.c": "b26ee64f4949e17877ae84d956bfeba84bfda4f1def0ef4ea6b5690227165535",
+    "artifacts/rtw8922a_rfk.c": "0cab67fdbe2f7a780b818212022e2a6c94be18f6b278abca03bef20e08ffe257",
+    "artifacts/rtw89-reg.h": "a2e82156ae4ebca7a408c67c28b51e01f7f737ecb456b63fc4ab0b239bbceb4d",
+    "src/macos_tx_power_audit.cpp": "c0f209ed90b2d390b490ffa9da7cf22a8a6ea75d7b31ed5142451c2f9d344a12",
+    "include/archer/trx_path.hpp": "a64f50a904e5c67b78b2e471762e6e8933b0d2573b663cffb41ddd160e0d154b",
+    "tools/channel_bundle.py": "e51d44d93e6d10c82d698bd15cd414cc0426fdd0cac565a4c227c57b9455061c",
+    "artifacts/archer-tx-power-audit-stage97": "3030963dd78a700e49f73950b5ec48a040a7e06134fadf1943b3cc05c5401fa8"
+  }
+}

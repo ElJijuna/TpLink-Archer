@@ -3,6 +3,9 @@ CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -Iinclude
 .PHONY: test probe universal receive-universal decode decode-universal mailbox-universal efuse-universal identity-universal bb-probe-universal mailbox-state-universal mode-switch-universal scsi-eject-universal optical-eject-universal
 build:
 	mkdir -p build
+.PHONY: tx-power-audit-universal
+tx-power-audit-universal: | build
+	$(CXX) $(CXXFLAGS) -Iartifacts -arch arm64 -arch x86_64 src/macos_tx_power_audit.cpp -framework IOKit -framework CoreFoundation -o build/archer-tx-power-audit-universal
 .PHONY: monitor-capture-universal
 monitor-capture-universal: | build
 	clang -Wall -Wextra -Werror -fobjc-arc -arch arm64 -arch x86_64 src/macos_monitor_capture.m -framework Foundation -framework CoreWLAN -o build/archer-monitor-capture-universal
