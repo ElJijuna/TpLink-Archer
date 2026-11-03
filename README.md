@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **52 %**
 
-Actualizado: **2026-11-01**, etapa90: auditoría DPK/TSSI ampliada; calidad RF aún pendiente. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-02**, etapa92: recepción ACK/CTS comprobada; sondeo unicast aún sin ACK. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -29,6 +29,13 @@ TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
 hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas91–92: firmware recuperado y ocho terminales de calibración en9.
+La captura pasiva recibió2 ACK y1 CTS con FCS válido. Un único sondeo nuevo
+con captura de controles habilitada terminó en RETRY_LIMIT/tag5/count1,
+sin ACK ni respuesta dirigida a nuestra MAC. Contexto CLEAN,206 secuencias,
+TX pausado. Sigue pendiente comprobar la emisión con un receptor independiente.
+Avance52 %. Evidencia: [research/STAGE91.md](research/STAGE91.md), [research/STAGE92.md](research/STAGE92.md).
 
 Etapa90: auditor offline DPK/TSSI con campos completos; el patrón path4 y
 códigos TSSI0 aparece tanto en1 como en9. Windows etiqueta el estado de

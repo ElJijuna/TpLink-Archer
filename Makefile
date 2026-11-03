@@ -79,6 +79,7 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/firmware-channel-test
 	./build/register-mailbox-test
 	./build/ifs-clm-test
+	./build/control-frame-audit-test
 	python3 -m unittest discover -s tests -p 'test_*.py'
 build/archer-probe: src/macos_probe.cpp include/archer/usb_descriptors.hpp include/archer/usb_request.hpp | build
 	$(CXX) $(CXXFLAGS) $< -framework IOKit -framework CoreFoundation -o $@
@@ -354,3 +355,19 @@ special-monitored-probe-universal: | build
 .PHONY: rfk-capture-audit-universal
 rfk-capture-audit-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/rfk_capture_audit.cpp -o build/archer-rfk-capture-audit-universal
+
+.PHONY: control-rx-channel9-universal
+control-rx-channel9-universal: | build
+	$(CXX) $(CXXFLAGS) -DARCHER_CHANNEL9_CONTROL_RX -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-control-rx-channel9-universal
+
+.PHONY: control-capture-audit-universal
+control-capture-audit-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/control_capture_audit.cpp -o build/archer-control-capture-audit-universal
+build/control-frame-audit-test: tests/control_frame_audit_test.cpp include/archer/control_frame_audit.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/control-frame-audit-test
+
+.PHONY: special-ack-probe-universal
+special-ack-probe-universal: | build
+	python3 tools/channel_bundle.py
+	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -DARCHER_SPECIAL_ACK_CAPTURE -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-ack-probe-universal

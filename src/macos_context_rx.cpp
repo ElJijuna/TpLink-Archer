@@ -24,12 +24,17 @@
 #include <fstream>
 #include "archer/context_reservation.hpp"
 int main(int argc,char** argv){
-#ifdef ARCHER_SPECIAL_MONITORED
+#ifdef ARCHER_SPECIAL_ACK_CAPTURE
+ constexpr unsigned probe_channel=9,probe_tag=5;
+ const char* marker_path="artifacts/37ad-0104-special-channel9-ack-probe-attempted";
+#elif defined(ARCHER_SPECIAL_MONITORED)
  constexpr unsigned probe_channel=9,probe_tag=4;
  const char* marker_path="artifacts/37ad-0104-special-channel9-monitored-probe-attempted";
 #elif defined(ARCHER_SPECIAL_UNICAST)
  constexpr unsigned probe_channel=9,probe_tag=3;
  const char* marker_path="artifacts/37ad-0104-special-channel9-unicast-probe-attempted";
+#elif defined(ARCHER_CHANNEL9_CONTROL_RX)
+ constexpr unsigned probe_channel=9;
 #elif defined(ARCHER_SPECIAL_PROBE)
  constexpr unsigned probe_channel=9,probe_tag=2;
  const char* marker_path="artifacts/37ad-0104-special-channel9-probe-attempted";
@@ -41,7 +46,9 @@ int main(int argc,char** argv){
 #endif
 #endif
 #ifdef ARCHER_SINGLE_PROBE
-#ifdef ARCHER_SPECIAL_MONITORED
+#ifdef ARCHER_SPECIAL_ACK_CAPTURE
+ if(argc!=3||std::string(argv[1])!="--single-special-channel9-ack-probe"){
+#elif defined(ARCHER_SPECIAL_MONITORED)
  if(argc!=3||std::string(argv[1])!="--single-special-channel9-monitored-probe"){
 #elif defined(ARCHER_SPECIAL_UNICAST)
  if(argc!=3||std::string(argv[1])!="--single-special-channel9-unicast-probe"){
@@ -232,7 +239,7 @@ int main(int argc,char** argv){
                     const bool persisted=write(marker,token,sizeof(token)-1)==sizeof(token)-1&&fsync(marker)==0;
                     close(marker);if(!persisted)throw std::runtime_error("Cannot persist single probe reservation");
                     }
-                    const auto packet=probe_tag==4?archer::special_channel9_monitored_probe_packet():probe_tag==3?archer::special_channel9_unicast_probe_packet():probe_channel==9?archer::special_channel9_probe_packet():archer::single_probe_packet();
+                    const auto packet=probe_tag==5?archer::special_channel9_ack_probe_packet():probe_tag==4?archer::special_channel9_monitored_probe_packet():probe_tag==3?archer::special_channel9_unicast_probe_packet():probe_channel==9?archer::special_channel9_probe_packet():archer::single_probe_packet();
                     std::ofstream probe_file(dir/"single-probe.bin",std::ios::binary);
                     probe_file.write(reinterpret_cast<const char*>(packet.data()),packet.size());probe_file.close();
                     if(!probe_file)throw std::runtime_error("Cannot preserve probe bytes");
@@ -312,7 +319,13 @@ int main(int argc,char** argv){
 #endif
                     std::rethrow_exception(capture_error);
                 }
-            },false,(std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management"||std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management-async")?archer::RxAcceptance::all_management:archer::RxAcceptance::broadcast_bit_clear);
+            },false,(std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management"||std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management-async")?
+#if defined(ARCHER_CHANNEL9_CONTROL_RX) || defined(ARCHER_SPECIAL_ACK_CAPTURE)
+                archer::RxAcceptance::management_ack_cts
+#else
+                archer::RxAcceptance::all_management
+#endif
+                :archer::RxAcceptance::broadcast_bit_clear);
         });});});};
         if(std::string(argv[1])!="--run-owned-source-profile")archer::with_usb_rx_aggregation(bus,run_context);
         else run_context();

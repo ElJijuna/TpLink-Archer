@@ -2,12 +2,12 @@
 #include "archer/channel_bus.hpp"
 #include <array>
 namespace archer {
-enum class RxAcceptance { broadcast, broadcast_bit_clear, sniffer, response_engine, all_management };
+enum class RxAcceptance { broadcast, broadcast_bit_clear, sniffer, response_engine, all_management, management_ack_cts };
 // Fixed MAC0 diagnostic window, not the Linux scan lifecycle. No retune or
 // host TX submission. response_engine can permit automatic hardware responses.
 inline void with_passive_rx_window(RegisterBus& bus,const std::function<void()>& receive,
     bool diagnostic_enable_rmac_channel=false,RxAcceptance acceptance=RxAcceptance::broadcast) {
-    if(acceptance!=RxAcceptance::broadcast && acceptance!=RxAcceptance::broadcast_bit_clear && acceptance!=RxAcceptance::sniffer && acceptance!=RxAcceptance::response_engine && acceptance!=RxAcceptance::all_management)
+    if(acceptance!=RxAcceptance::broadcast && acceptance!=RxAcceptance::broadcast_bit_clear && acceptance!=RxAcceptance::sniffer && acceptance!=RxAcceptance::response_engine && acceptance!=RxAcceptance::all_management && acceptance!=RxAcceptance::management_ack_cts)
         throw std::invalid_argument("Unknown RX acceptance diagnostic");
     if((channel_bus_read(bus,0xfc)&255)!=0x71 ||
        !(channel_bus_read(bus,0x10000)&0x40000000) ||
@@ -16,10 +16,14 @@ inline void with_passive_rx_window(RegisterBus& bus,const std::function<void()>&
     constexpr std::array<unsigned,6> addr{0x10000,0x11424,0x1142c,0x11428,0x11420,0x11400};
     constexpr std::array<unsigned,6> mask{0x80,0xffff,0xffff,0xffff,0x7bff,1};
     // Normally disable response engine; explicit diagnostic can enable it.
-    // Reject control/data; admit beacon/probe response (sniffer effect is empirical).
-    const std::array<unsigned,6> value{acceptance==RxAcceptance::response_engine?0x80u:0u,0,0,
-        acceptance==RxAcceptance::all_management?0xffffu:0x120u,
-        acceptance==RxAcceptance::broadcast_bit_clear||acceptance==RxAcceptance::all_management?0u:acceptance==RxAcceptance::sniffer?5u:4u,1};
+    // Reject data; admit management and, only in the explicit profile, ACK/CTS.
+    // Sniffer effect is empirical.
+    const bool all_management=acceptance==RxAcceptance::all_management||acceptance==RxAcceptance::management_ack_cts;
+    // Control subtype13 ACK and12 CTS: source R_BE_CTRL_FLTR subtype bitmap.
+    // This controls host forwarding, not proof of MAC ACK engine behavior.
+    const std::array<unsigned,6> value{acceptance==RxAcceptance::response_engine?0x80u:0u,acceptance==RxAcceptance::management_ack_cts?0x3000u:0u,0,
+        all_management?0xffffu:0x120u,
+        acceptance==RxAcceptance::broadcast_bit_clear||all_management?0u:acceptance==RxAcceptance::sniffer?5u:4u,1};
     const unsigned count=diagnostic_enable_rmac_channel?6:5;
     std::array<unsigned,6> saved{};
     for(unsigned i=0;i<count;++i)saved[i]=channel_bus_read(bus,addr[i]);

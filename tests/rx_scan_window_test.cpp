@@ -16,6 +16,8 @@ int main(){
  assert(b.r==original);
  archer::with_passive_rx_window(b,[&]{assert(b.r[0x11428]==0xffff);assert((b.r[0x11420]&0x7bff)==0);assert(b.r[0x11424]==0&&b.r[0x1142c]==0);},false,archer::RxAcceptance::all_management);
  assert(b.r==original);
+ archer::with_passive_rx_window(b,[&]{assert(b.r[0x11424]==0x3000);assert(b.r[0x11428]==0xffff&&b.r[0x1142c]==0);assert(!(b.r[0x10000]&0x80));assert((b.r[0x11420]&0x7bff)==0);},false,archer::RxAcceptance::management_ack_cts);
+ assert(b.r==original);
  b.r[0x11400]=0x20f3e000;auto diagnostic_original=b.r;
  archer::with_passive_rx_window(b,[&]{assert(b.r[0x11400]==0x20f3e001);},true);
  assert(b.r==diagnostic_original);original=b.r;
@@ -26,6 +28,7 @@ int main(){
  archer::with_passive_rx_window(b,[&]{assert(b.r[0x10000]&0x80);assert(!(b.r[0x10398]&0x3ffff));},false,archer::RxAcceptance::response_engine);
  assert(b.r==original);
  rejects([&]{archer::with_passive_rx_window(b,[]{throw std::runtime_error("receive failed");});});assert(b.r==original);
+ for(unsigned i=1;i<=5;++i){Bus f;auto saved=f.r;f.fail=i;rejects([&]{archer::with_passive_rx_window(f,[]{},false,archer::RxAcceptance::management_ack_cts);});assert(f.r==saved);}
  for(unsigned i=1;i<=5;++i){Bus f;auto saved=f.r;f.fail=i;rejects([&]{archer::with_passive_rx_window(f,[]{});});assert(f.r==saved);}
  Bus sixth;sixth.r[0x11400]=0x20f3e000;auto saved=sixth.r;sixth.fail=6;
  rejects([&]{archer::with_passive_rx_window(sixth,[]{},true);});assert(sixth.r==saved);

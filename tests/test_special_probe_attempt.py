@@ -61,3 +61,9 @@ class SpecialProbeTest(unittest.TestCase):
             with self.assertRaises(ValueError):p.validate_measurement(changed)
         rows[0]['tx_units']=1
         with self.assertRaises(ValueError):p.validate_measurement(rows)
+
+    def test_control_baseline_rejects_missing_cts_or_stale_profile(self):
+        record=dict(stage=91,channel=9,context='CLEAN',remaining_sequences=215,calibration_terminals=8,active_probes_sent=0,scan_live_equals_replay=True,evidence={'raw':'sha'},control_audit=dict(ack_frames=2,cts_frames=1,bad_control_fcs=0))
+        p.validate_control_baseline(record)
+        for update in (dict(channel=1),dict(context='DIRTY'),dict(calibration_terminals=7),dict(evidence={}),dict(control_audit=dict(ack_frames=2,cts_frames=0,bad_control_fcs=0))):
+            with self.assertRaises(ValueError):p.validate_control_baseline({**record,**update})
