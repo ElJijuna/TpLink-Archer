@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **52 %**
 
-Actualizado: **2026-11-02**, etapa92: recepción ACK/CTS comprobada; sondeo unicast aún sin ACK. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-02**, etapa94: receptor independiente validado en9; sondeo unicast aún sin ACK. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -29,6 +29,11 @@ TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
 hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa94: captura independiente de1499 paquetes, todos a2452MHz;165 beacons
+de Especial sin marca bad-fcs,16 ACK y72 CTS del entorno. Sin nuevo TX Archer.
+La captura terminó; restaurar el canal del Mac falló y requiere reconexión.
+Avance52 %. Evidencia: [research/STAGE94.md](research/STAGE94.md).
 
 Etapa93: receptor independiente en0 confirmado con radiotap y soporte9/20MHz.
 Helper de captura pasiva20s compilado Intel/ARM; ejecución administrativa y

@@ -19,7 +19,11 @@ int main(int argc, const char **argv) {
         if (!wifi) { fprintf(stderr, "en0 Wi-Fi unavailable\n"); return 1; }
         CWChannel *original = [wifi wlanChannel];
         CWChannel *target = nil;
+        CWChannel *original20 = nil;
         for (CWChannel *candidate in [wifi supportedWLANChannels]) {
+            if (candidate.channelNumber == original.channelNumber &&
+                candidate.channelBand == original.channelBand &&
+                candidate.channelWidth == kCWChannelWidth20MHz) original20 = candidate;
             if (candidate.channelNumber == 9 && candidate.channelWidth == kCWChannelWidth20MHz &&
                 candidate.channelBand == kCWChannelBand2GHz) target = candidate;
         }
@@ -63,7 +67,19 @@ int main(int argc, const char **argv) {
             error = nil;
             BOOL restored = [wifi setWLANChannel:original error:&error];
             printf("original_channel_restore=%s\n", restored ? "yes" : "failed");
-            if (!restored) { fprintf(stderr, "%s\n", error.description.UTF8String); result = 1; }
+            if (!restored) {
+                fprintf(stderr, "%s\n", error.description.UTF8String);
+                // A wide associated channel may be rejected when disassociated.
+                // This fallback restores only frequency, never claims association.
+                BOOL frequencyRestored = NO;
+                if (original20) {
+                    error = nil;
+                    frequencyRestored = [wifi setWLANChannel:original20 error:&error] &&
+                        [wifi wlanChannel].channelNumber == original.channelNumber;
+                }
+                printf("original_frequency_20MHz_fallback=%s\n", frequencyRestored ? "yes" : "failed");
+                result = 1; // Preserve failure to restore the exact original profile.
+            }
             fprintf(stderr, "Reconnect the Mac Wi-Fi network if it did not reconnect automatically.\n");
         }
         return result;

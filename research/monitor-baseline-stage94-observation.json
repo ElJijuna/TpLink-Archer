@@ -1,0 +1,27 @@
+{
+  "stage": 94,
+  "date": "2026-11-02",
+  "source_sha256": "90206f5a851bf7bba6007ce5adbc653098d5c7da9e950db04909f9c011ce6340",
+  "packets_decoded": 1499,
+  "frequencies_mhz": {
+    "2452": 1499
+  },
+  "radiotap_bad_fcs_packets": 631,
+  "target_beacons_without_bad_fcs_flag": 165,
+  "ack_without_bad_fcs_flag": 16,
+  "cts_without_bad_fcs_flag": 72,
+  "test_mac_lines": 0,
+  "target_signal_dbm": [
+    "-36",
+    "-37",
+    "-38",
+    "-39",
+    "-40"
+  ],
+  "capture_exit": 0,
+  "kernel_drops_reported": 0,
+  "original_channel_restore": false,
+  "archer_tx_submissions": 0,
+  "fcs_validation": "tcpdump radiotap bad-fcs flags only; no software CRC audit",
+  "decoder_stderr": "reading from file artifacts/monitor-channel9-baseline/monitor-channel9.pcap, link-type IEEE802_11_RADIO (802.11 plus radiotap header)"
+}
