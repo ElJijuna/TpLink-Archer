@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **52 %**
 
-Actualizado: **2026-11-02**, etapa94: receptor independiente validado en9; sondeo unicast aún sin ACK. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-02**, etapa96: contraste externo realizado; emisión Archer aún no verificada. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -29,6 +29,13 @@ TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
 hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa96: contraste simultáneo completado: tag6 RETRY_LIMIT/count1; captura
+externa2477 paquetes en9 y381 beacons de Especial sin marca bad-fcs, pero
+ninguna trama identificada con nuestra MAC. No demuestra ausencia de energía
+RF. Contexto CLEAN,197 secuencias y TX pausado; Wi-Fi del Mac requiere
+reconexión manual tras fallar restauración. Avance52 %.
+Evidencia: [research/STAGE96.md](research/STAGE96.md).
 
 Etapa95: prueba simultánea preparada con captura independiente y sondeo
 único tag6; exige observar Especial a2452MHz antes de autorizar el envío.
