@@ -4,6 +4,7 @@
 #include <array>
 #include <deque>
 #include <chrono>
+#include "archer/station_management.hpp"
 // Single-threaded channel: create, receive and close on the owning run-loop thread.
 // Async callbacks run only while that thread pumps the private run-loop mode.
 class MacBulkChannel {
@@ -16,6 +17,7 @@ class MacBulkChannel {
     std::array<std::deque<std::vector<std::uint8_t>>,2> completed;
     CFRunLoopSourceRef source=nullptr;
     bool async_mode=false,stopping=false;unsigned pending=0;IOReturn async_error=0;
+    archer::StationManagementSendGuard station_management_guard;bool station_management_started=false;
     static CFStringRef mode(){return CFSTR("ArcherBulkReceive");}
     void submit(AsyncSlot& slot){
         auto status=(*usb)->ReadPipeAsyncTO(usb,inputs[slot.index],slot.bytes.data(),slot.bytes.size(),0,0,&completion,&slot);
@@ -111,12 +113,19 @@ public:
         if(status)throw std::runtime_error("Firmware write failed; no retry");
     }
     void send_single_management_probe(const std::vector<std::uint8_t>& frame){
-        if(!management_output||management_sent||(frame.size()!=96&&frame.size()!=104))
+        if(!management_output||management_sent||station_management_started||(frame.size()!=96&&frame.size()!=104))
             throw std::runtime_error("Single management probe cannot be submitted");
         management_sent=true; // A failed/uncertain submission cannot be retried.
         auto status=(*usb)->WritePipeTO(usb,management_output,const_cast<std::uint8_t*>(frame.data()),frame.size(),500,1000);
         std::cout<<"{\"operation\":\"single_probe_usb_write\",\"endpoint\":5,\"bytes\":"<<frame.size()<<",\"status\":"<<status<<"}"<<std::endl;
         if(status)throw std::runtime_error("Probe USB submission uncertain; no retry");
+    }
+    void send_station_management_once(archer::StationManagementKind kind,const std::vector<std::uint8_t>& frame){
+        if(!management_output||management_sent)throw std::runtime_error("Station exchange cannot share a probe transport");
+        station_management_guard.issue(kind,frame);station_management_started=true;
+        auto status=(*usb)->WritePipeTO(usb,management_output,const_cast<std::uint8_t*>(frame.data()),frame.size(),500,1000);
+        std::cout<<"{\"operation\":\"station_management_usb_write\",\"tag\":"<<unsigned(kind)<<",\"endpoint\":5,\"bytes\":"<<frame.size()<<",\"status\":"<<status<<"}"<<std::endl;
+        if(status)throw std::runtime_error("Station management submission uncertain; no retry");
     }
     std::vector<std::uint8_t> receive(unsigned index,unsigned timeout_ms=20){
         if(index>=inputs.size()||(!timeout_ms&&!async_mode)||timeout_ms>1000)throw std::invalid_argument("Invalid bulk receive bound");

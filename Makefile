@@ -3,6 +3,12 @@ CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -Iinclude
 .PHONY: test probe universal receive-universal decode decode-universal mailbox-universal efuse-universal identity-universal bb-probe-universal mailbox-state-universal mode-switch-universal scsi-eject-universal optical-eject-universal
 build:
 	mkdir -p build
+build/station-management-test: tests/station_management_test.cpp include/archer/station_management.hpp tests/fixtures/special-probe-response-stage102.bin | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/station-management-test
+build/wlan-grant-window-test: tests/wlan_grant_window_test.cpp include/archer/wlan_grant_window.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/wlan-grant-window-test
 build/input-quiescence-test: tests/input_quiescence_test.cpp include/archer/input_quiescence.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/input-quiescence-test
@@ -24,6 +30,12 @@ special-phy-probe-universal: | build
 .PHONY: special-drained-phy-probe-universal
 special-drained-phy-probe-universal: | build
 	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -DARCHER_SPECIAL_ACK_CAPTURE -DARCHER_SPECIAL_EXTERNAL_CAPTURE -DARCHER_SPECIAL_PHY_CAPTURE -DARCHER_SPECIAL_DRAINED_PHY_CAPTURE -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-drained-phy-probe-universal
+.PHONY: special-grant-probe-universal
+special-grant-probe-universal: | build
+	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -DARCHER_SPECIAL_ACK_CAPTURE -DARCHER_SPECIAL_EXTERNAL_CAPTURE -DARCHER_SPECIAL_PHY_CAPTURE -DARCHER_SPECIAL_DRAINED_PHY_CAPTURE -DARCHER_SPECIAL_GRANT_CAPTURE -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-grant-probe-universal
+.PHONY: special-station-exchange-universal
+special-station-exchange-universal: | build
+	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -DARCHER_SPECIAL_ACK_CAPTURE -DARCHER_SPECIAL_EXTERNAL_CAPTURE -DARCHER_SPECIAL_PHY_CAPTURE -DARCHER_SPECIAL_DRAINED_PHY_CAPTURE -DARCHER_SPECIAL_GRANT_CAPTURE -DARCHER_STATION_EXCHANGE -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-station-exchange-universal
 .PHONY: led-universal
 led-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_led.cpp -framework IOKit -framework CoreFoundation -o build/archer-led-universal
@@ -103,6 +115,8 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/ifs-clm-test
 	./build/control-frame-audit-test
 	./build/input-quiescence-test
+	./build/wlan-grant-window-test
+	./build/station-management-test
 	python3 -m unittest discover -s tests -p 'test_*.py'
 build/archer-probe: src/macos_probe.cpp include/archer/usb_descriptors.hpp include/archer/usb_request.hpp | build
 	$(CXX) $(CXXFLAGS) $< -framework IOKit -framework CoreFoundation -o $@

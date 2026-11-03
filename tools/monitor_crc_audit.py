@@ -7,16 +7,17 @@ import struct
 import zlib
 
 
-def audit(data):
+def audit(data,target_details=False):
     if len(data)<24 or data[:4]!=b'\xd4\xc3\xb2\xa1' or struct.unpack_from('<I',data,20)[0]!=127:
         raise ValueError('Expected little-endian classic PCAP/radiotap')
     result=dict(packets=0,crc_valid=0,crc_invalid=0,truncated_packets=0,
         fcs_unavailable=0,flag_crc_disagreements=0,valid_target_beacons=0,
         valid_ack=0,valid_cts=0,valid_test_mac_frames=0,frequencies_mhz={})
+    if target_details:result['valid_test_mac_records']=[]
     cursor=24;test=bytes.fromhex('0200008922a1');ap=bytes.fromhex('50926a110666')
     while cursor<len(data):
         if len(data)-cursor<16:raise ValueError('Incomplete PCAP record header')
-        _,_,length,original=struct.unpack_from('<IIII',data,cursor);cursor+=16
+        seconds,microseconds,length,original=struct.unpack_from('<IIII',data,cursor);cursor+=16
         if length>original or length>len(data)-cursor:raise ValueError('Invalid PCAP record extent')
         packet=data[cursor:cursor+length];cursor+=length;result['packets']+=1
         if len(packet)<8 or packet[0]!=0:raise ValueError('Invalid radiotap header')
@@ -53,7 +54,14 @@ def audit(data):
         addresses=[frame[4:10]]
         if frame[0]&0x0c==0 and len(frame)>=24:addresses += [frame[10:16],frame[16:22]]
         elif kind==0xb4 and len(frame)>=16:addresses.append(frame[10:16])
-        if test in addresses:result['valid_test_mac_frames']+=1
+        if test in addresses:
+            result['valid_test_mac_frames']+=1
+            if target_details:
+                result['valid_test_mac_records'].append(dict(packet=result['packets'],
+                    timestamp_seconds=seconds,timestamp_microseconds=microseconds,
+                    frequency_mhz=frequency,subtype=kind,frame_hex=frame.hex(),
+                    frame_sha256=hashlib.sha256(frame).hexdigest(),
+                    addresses=[a.hex(':') for a in addresses]))
         if kind==0x80 and len(frame)>=36 and frame[16:22]==ap:
             ie=36
             while ie+2<=len(frame):

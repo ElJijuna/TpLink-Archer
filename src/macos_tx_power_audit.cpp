@@ -44,7 +44,10 @@ int main(int argc,char** argv){
    }
    // Fixed diagnostic registers selected from RTL8922A source. Counters have
    // no fresh baseline and must not be attributed to any previous network TX.
-   for(auto address:{0x20980u,0x2e610u,0x2e710u,0x22e00u,0x22e04u}){
+   // R_BE_GNT_SW_CTRL is the RTL8922A v2 grant policy register. Read raw
+   // policy/BT coexistence controls without forcing either grant or RF path.
+   for(auto address:{0x20980u,0x2e610u,0x2e710u,0x22e00u,0x22e04u,
+                     0xe348u,0xe300u,0x1087cu,0x20c6cu}){
     const auto raw=archer::channel_bus_read(bus,address);
     std::cout<<"{\"operation\":\"tx_gate_raw_snapshot\",\"address\":"<<address
       <<",\"observed\":"<<raw<<",\"attributed_to_network_tx\":false}"<<std::endl;

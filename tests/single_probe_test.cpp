@@ -50,6 +50,11 @@ int main(){
  assert(archer::channel_u32(drained.data()+36)==0x80000000);
  for(std::size_t i=0;i<drained.size();++i)
    if(i!=12&&i!=39&&i!=86)assert(drained[i]==phy[i]);
+ auto grant=archer::special_channel9_grant_probe_packet();
+ assert(grant[86]==0x90&&archer::channel_u32(grant.data()+12)==0x2009);
+ assert(archer::channel_u32(grant.data()+36)==0x90000000);
+ for(std::size_t i=0;i<grant.size();++i)
+   if(i!=12&&i!=39&&i!=86)assert(grant[i]==drained[i]);
  std::vector<std::uint8_t> rpt(80);archer::channel_put32(rpt.data(),1|(9<<2)|(1<<8));
  archer::channel_put32(rpt.data()+4,80);archer::channel_put32(rpt.data()+48,1<<12);
  archer::channel_put32(rpt.data()+56,1<<10);

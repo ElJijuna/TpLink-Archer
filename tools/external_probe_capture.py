@@ -24,11 +24,13 @@ def validate_live_decode(text):
         raise ValueError('Independent receiver has not captured Especial on channel9')
 
 
-def run(output,phy=False,drained=False):
+def run(output,phy=False,drained=False,grant=False,station=False):
+    if station:phy=True
+    if grant:phy=True
     if drained:phy=True
     if os.geteuid()==0:raise ValueError('Run as your normal user after sudo -v; only monitor capture uses sudo')
     output=output.resolve();output.mkdir()
-    tag=8 if drained else 7 if phy else 6
+    tag=10 if station else 9 if grant else 8 if drained else 7 if phy else 6
     report={'status':'preflight','automatic_retry':False,'tag':tag}
     monitor=None
     try:
@@ -63,7 +65,7 @@ def run(output,phy=False,drained=False):
             report['status']='capture_live';save(output/'paired.json',report)
             print(f'Independent capture live; submitting the unique tag{tag} attempt.',flush=True)
             try:
-                execute(output/'probe',external_capture=True,capture_guard=guard,external_phy=phy,external_phy_drained=drained)
+                execute(output/'probe',external_capture=True,capture_guard=guard,external_phy=phy,external_phy_drained=drained,external_phy_grant=grant,station_exchange=station)
                 report['probe_executor']='completed'
             except Exception as error:
                 report.update(probe_executor='stopped',probe_error=str(error))
@@ -88,5 +90,7 @@ if __name__=='__main__':
     parser.add_argument('new_directory',type=Path)
     parser.add_argument('--phy',action='store_true',help='Unique tag7 experiment with before/after PHY counters')
     parser.add_argument('--phy-drained',action='store_true',help='Unique tag8 after recorded pre-context tag7 stop and verified input drain')
+    parser.add_argument('--phy-grant',action='store_true',help='Unique tag9 under reversible source v2 WLAN grant policy')
+    parser.add_argument('--station-exchange',action='store_true',help='One auth/association/deauth experiment after validated tag9 response')
     args=parser.parse_args()
-    run(args.new_directory,args.phy,args.phy_drained)
+    run(args.new_directory,args.phy,args.phy_drained,args.phy_grant,args.station_exchange)

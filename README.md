@@ -30,6 +30,16 @@ hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 
+Etapa101: tag8 ejecutado con captura independiente; CCK_TXEN/TXON0→1,
+OFDM0→0,pero RETRY_LIMIT/count1. CRC externo1979 válidos,835 inválidos,
+4 truncados;395 beacons de Especial y0 tramas válidas de nuestra MAC.
+Limpieza confirmada,CLEAN,179 secuencias libres,TX pausado. Primer objetivo
+medido; fallo RF,DPK/TSSI y asociación siguen abiertos. Avance52 %.
+Se observó además una política que fuerza bajas las concesiones Wi-Fi;
+ventana correctiva reversible validada sin TX,tag9 preparado para contrastar
+causalidad por radio. No se declara aún corregido el fallo RF.
+Evidencia: [research/STAGE101.md](research/STAGE101.md).
+
 Etapa100: captura externa del intento tag7 ejecutada; el ejecutor se detuvo
 antes de H2C/TX porque no drenó la entrada. CRC externo4069 válidos/727
 inválidos/5 truncados,395 beacons de Especial. Marcador tag7 conservado,

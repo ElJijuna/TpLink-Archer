@@ -157,3 +157,40 @@ class SpecialProbeTest(unittest.TestCase):
                        dict(ledger_sha256_after='changed')):
             with self.assertRaises(ValueError):p.validate_drained_phy_history({**record,**update},ledger)
         with self.assertRaises(ValueError):p.validate_drained_phy_history(record,ledger[:-1]+b'\x01')
+
+    def test_grant_history_requires_measured_phy_and_restored_contrast(self):
+        import hashlib
+        ledger=b'ARCHSEQ\x01'+bytes([1])*77+bytes(179)
+        record=dict(stage=101,tag=8,context='CLEAN',remaining_sequences=179,
+            phy=dict(modulo_delta=[1,1,0,0]),tx_reports=[dict(operation='single_probe_tx_report',tag=8,state=1,tx_count=1)],
+            grant_contrast=dict(restored=True),evidence={'raw':'sha'},ledger_sha256=hashlib.sha256(ledger).hexdigest())
+        p.validate_grant_history(record,ledger)
+        for update in (dict(grant_contrast=dict(restored=False)),dict(phy=dict(modulo_delta=[0,0,0,0])),
+                       dict(context='DIRTY'),dict(tx_reports=[]),dict(evidence={}),dict(tag=7)):
+            with self.assertRaises(ValueError):p.validate_grant_history({**record,**update},ledger)
+        with self.assertRaises(ValueError):p.validate_grant_history(record,ledger[:-1]+b'\x01')
+
+    def test_station_admission_requires_external_success_and_clean_ledger(self):
+        import hashlib
+        ledger=b'ARCHSEQ\x01'+bytes([1])*86+bytes(170)
+        record=dict(stage=102,tag=9,context='CLEAN',remaining_sequences=170,external_exchange=dict(verified=True),
+            archer_target_responses=2,grant_restored=True,tx_reports=[dict(operation='single_probe_tx_report',tag=9,state=0,tx_count=1)],
+            evidence={'raw':'sha'},ledger_sha256=hashlib.sha256(ledger).hexdigest())
+        p.validate_station_history(record,ledger)
+        for update in (dict(grant_restored=False),dict(external_exchange=dict(verified=False)),dict(archer_target_responses=0),
+                       dict(context='DIRTY'),dict(tx_reports=[]),dict(evidence={})):
+            with self.assertRaises(ValueError):p.validate_station_history({**record,**update},ledger)
+        with self.assertRaises(ValueError):p.validate_station_history(record,ledger[:-1]+b'\x01')
+
+    def test_station_success_cannot_claim_security_or_skip_deauth_cleanup(self):
+        rows=[dict(operation='station_management_usb_write',tag=t,endpoint=5,bytes=n,status=0) for t,n in ((10,94),(11,130),(12,90))]
+        rows += [dict(operation='single_probe_tx_report',tag=t,state=0,tx_count=1) for t in (10,11,12)]
+        rows += [dict(operation='station_management_reply',kind=10,status=0,aid=0),dict(operation='station_management_reply',kind=11,status=0,aid=7)]
+        rows += [dict(result='context_cleanup_acknowledged',network_tx_paused=True),dict(operation='bulk_async_drained',pending=0)]
+        rows += [dict(operation='probe_grant_policy',phase=phase,value=v) for phase,v in [('enabled',0x1757f5f),('restored',0x1775774)]]
+        result=p.validate_station_result(rows)
+        self.assertTrue(result['association_verified']);self.assertFalse(result['security_established']);self.assertFalse(result['data_path_established'])
+        for index in range(len(rows)):
+            with self.assertRaises(ValueError):p.validate_station_result(rows[:index]+rows[index+1:])
+        changed=[dict(r) for r in rows];changed[7]['status']=13
+        with self.assertRaises(ValueError):p.validate_station_result(changed)

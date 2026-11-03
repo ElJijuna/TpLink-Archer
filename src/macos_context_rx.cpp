@@ -25,8 +25,15 @@
 #include <fstream>
 #include "archer/context_reservation.hpp"
 #include "archer/input_quiescence.hpp"
+#include "archer/wlan_grant_window.hpp"
 int main(int argc,char** argv){
-#ifdef ARCHER_SPECIAL_DRAINED_PHY_CAPTURE
+#ifdef ARCHER_STATION_EXCHANGE
+ constexpr unsigned probe_channel=9;
+ const char* marker_path="artifacts/37ad-0104-special-channel9-station-exchange-attempted";
+#elif defined(ARCHER_SPECIAL_GRANT_CAPTURE)
+ constexpr unsigned probe_channel=9,probe_tag=9;
+ const char* marker_path="artifacts/37ad-0104-special-channel9-grant-probe-attempted";
+#elif defined(ARCHER_SPECIAL_DRAINED_PHY_CAPTURE)
  constexpr unsigned probe_channel=9,probe_tag=8;
  const char* marker_path="artifacts/37ad-0104-special-channel9-drained-phy-probe-attempted";
 #elif defined(ARCHER_SPECIAL_PHY_CAPTURE)
@@ -57,7 +64,11 @@ int main(int argc,char** argv){
 #endif
 #endif
 #ifdef ARCHER_SINGLE_PROBE
-#ifdef ARCHER_SPECIAL_DRAINED_PHY_CAPTURE
+#ifdef ARCHER_STATION_EXCHANGE
+ if(argc!=3||std::string(argv[1])!="--single-special-channel9-station-exchange"){
+#elif defined(ARCHER_SPECIAL_GRANT_CAPTURE)
+ if(argc!=3||std::string(argv[1])!="--single-special-channel9-grant-probe"){
+#elif defined(ARCHER_SPECIAL_DRAINED_PHY_CAPTURE)
  if(argc!=3||std::string(argv[1])!="--single-special-channel9-drained-phy-probe"){
 #elif defined(ARCHER_SPECIAL_PHY_CAPTURE)
  if(argc!=3||std::string(argv[1])!="--single-special-channel9-phy-probe"){
@@ -82,6 +93,11 @@ int main(int argc,char** argv){
     std::cerr<<"Usage: archer-context-rx {--run-owned-source-profile|--run-owned-source-profile-usb-aggregation|--run-owned-source-profile-usb-aggregation-all-management|--run-owned-source-profile-usb-aggregation-all-management-async} NEW_DIRECTORY\n";return 2;
  }
  try{
+#ifdef ARCHER_STATION_EXCHANGE
+    std::ifstream target_file("artifacts/special-probe-response-stage102.bin",std::ios::binary);
+    const std::vector<std::uint8_t> target((std::istreambuf_iterator<char>(target_file)),{});
+    archer::validate_station_target_profile(target.data(),target.size());
+#endif
     archer::SequenceLedger ledger("artifacts/37ad-0104-sequences.bin");
 #ifdef ARCHER_SINGLE_PROBE
     bool recovery_permit=false;
@@ -134,21 +150,38 @@ int main(int argc,char** argv){
         );
 #ifdef ARCHER_SINGLE_PROBE
         bool probe_submitted=false;std::optional<archer::ProbeTxReport> probe_report;
+#ifdef ARCHER_STATION_EXCHANGE
+        unsigned station_tx_tag=10;
+        std::optional<archer::StationManagementKind> station_expected_reply;
+        std::optional<archer::StationManagementReply> station_auth,station_association;
+#endif
 #endif
         unsigned transfers=0,normal=0,beacons=0;
         archer::PassiveScan scan(probe_channel);
         const auto receive=[&](unsigned pipe,bool track,unsigned timeout_ms=10){
             auto bytes=usb.receive(pipe,timeout_ms);if(bytes.empty())return false;
-            if(transfers>=1024)throw std::runtime_error("Context RX capture bound reached");
+            if(transfers>=
+#ifdef ARCHER_STATION_EXCHANGE
+                4096
+#else
+                1024
+#endif
+            )throw std::runtime_error("Context RX capture bound reached");
             std::ofstream file(dir/("rx-"+std::to_string(transfers++)+".bin"),std::ios::binary);
             file.write(reinterpret_cast<const char*>(bytes.data()),bytes.size());file.close();
             if(!file)throw std::runtime_error("Context RX capture write failed");
             for(const auto& m:archer::decode_be_rx_metadata(bytes,archer::RxFcsPolicy::appended)){
 #ifdef ARCHER_SINGLE_PROBE
                 if(m.packet.c2h&&probe_submitted){
-                    auto rpt=archer::single_probe_report(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes,probe_tag);
+                    const unsigned active_tag=
+#ifdef ARCHER_STATION_EXCHANGE
+                    station_tx_tag;
+#else
+                    probe_tag;
+#endif
+                    auto rpt=archer::single_probe_report(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes,active_tag);
                     if(rpt){if(!probe_report&&archer::probe_report_terminal(*rpt,1))probe_report=rpt;
-                        std::cout<<"{\"operation\":\"single_probe_tx_report\",\"tag\":"<<probe_tag<<",\"state\":"<<rpt->state<<",\"tx_count\":"<<rpt->count<<"}"<<std::endl;}
+                        std::cout<<"{\"operation\":\"single_probe_tx_report\",\"tag\":"<<active_tag<<",\"state\":"<<rpt->state<<",\"tx_count\":"<<rpt->count<<"}"<<std::endl;}
                 }
 #endif
                 if(m.packet.c2h&&track){
@@ -156,6 +189,15 @@ int main(int argc,char** argv){
                     if(session.observe(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes))
                         std::cout<<"{\"operation\":\"context_ack\",\"step_before\":"<<before<<",\"step_after\":"<<session.step()<<"}"<<std::endl;
                 }
+#ifdef ARCHER_STATION_EXCHANGE
+                if(m.normal_80211_candidate()&&station_expected_reply){
+                    const auto reply=archer::decode_station_reply(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes);
+                    if(reply&&reply->kind==*station_expected_reply){
+                        auto& target=reply->kind==archer::StationManagementKind::authenticate?station_auth:station_association;
+                        if(!target){target=reply;std::cout<<"{\"operation\":\"station_management_reply\",\"kind\":"<<unsigned(reply->kind)<<",\"status\":"<<reply->status<<",\"aid\":"<<reply->aid<<"}"<<std::endl;}
+                    }
+                }
+#endif
                 if(m.packet.packet_type==0){scan.observe(bytes,m);++normal;try{auto b=archer::decode_rx_beacon(bytes,m);if(!b.probe_response)++beacons;}catch(const std::invalid_argument&){} }
             }
             return true;
@@ -262,7 +304,57 @@ int main(int argc,char** argv){
                     const bool persisted=write(marker,token,sizeof(token)-1)==sizeof(token)-1&&fsync(marker)==0;
                     close(marker);if(!persisted)throw std::runtime_error("Cannot persist single probe reservation");
                     }
-                    const auto packet=probe_tag==8?archer::special_channel9_drained_phy_probe_packet():probe_tag==7?archer::special_channel9_phy_probe_packet():probe_tag==6?archer::special_channel9_external_probe_packet():probe_tag==5?archer::special_channel9_ack_probe_packet():probe_tag==4?archer::special_channel9_monitored_probe_packet():probe_tag==3?archer::special_channel9_unicast_probe_packet():probe_channel==9?archer::special_channel9_probe_packet():archer::single_probe_packet();
+#ifdef ARCHER_STATION_EXCHANGE
+                    bool station_deauth_completed=false;
+                    const auto send_station=[&](archer::StationManagementKind kind){
+                        const auto packet=archer::station_management_packet(kind);
+                        std::ofstream file(dir/("station-tx-"+std::to_string(unsigned(kind))+".bin"),std::ios::binary);
+                        file.write(reinterpret_cast<const char*>(packet.data()),packet.size());file.close();
+                        if(!file)throw std::runtime_error("Station packet preservation failed");
+                        station_tx_tag=unsigned(kind);probe_report.reset();
+                        const auto before=archer::read_phy_tx_snapshot(bus);
+                        if(!before.enabled())throw std::runtime_error("Station PHY counters disabled");
+                        try{
+                            archer::channel_bus_write(bus,0x10398,0x3ffff,0x100);
+                            probe_submitted=true;usb.send_station_management_once(kind,packet);
+                            const auto end=std::chrono::steady_clock::now()+std::chrono::seconds(3);
+                            while(!probe_report&&std::chrono::steady_clock::now()<end){receive(0,true);receive(1,true);}
+                        }catch(...){archer::channel_bus_write(bus,0x10398,0x3ffff,0);probe_submitted=false;throw;}
+                        archer::channel_bus_write(bus,0x10398,0x3ffff,0);probe_submitted=false;
+                        const auto after=archer::read_phy_tx_snapshot(bus);
+                        const auto delta=archer::phy_tx_modulo_delta(before,after);
+                        std::cout<<"{\"operation\":\"station_phy_delta\",\"tag\":"<<unsigned(kind)<<",\"counts\":[";
+                        for(unsigned i=0;i<4;++i){if(i)std::cout<<',';std::cout<<delta[i];}std::cout<<"]}"<<std::endl;
+                        if(!probe_report||probe_report->state!=0||probe_report->count!=1)throw std::runtime_error("Station TX not confirmed; no retry");
+                    };
+                    const auto wait_reply=[&](const std::optional<archer::StationManagementReply>& reply){
+                        const auto end=std::chrono::steady_clock::now()+std::chrono::seconds(3);
+                        while(!reply&&std::chrono::steady_clock::now()<end){receive(0,true);receive(1,true);}
+                        if(!reply)throw std::runtime_error("Station response timeout; no retry");
+                        if(reply->status)throw std::runtime_error("AP rejected station management request");
+                    };
+                    try{
+                        archer::with_scc_wlan_grant_window(bus,[&]{
+                            archer::log_probe_grant_policy(bus,"enabled",std::cout);
+                            std::exception_ptr exchange_error;bool auth_attempted=false;
+                            try{
+                                station_expected_reply=archer::StationManagementKind::authenticate;
+                                auth_attempted=true;send_station(archer::StationManagementKind::authenticate);wait_reply(station_auth);
+                                station_expected_reply=archer::StationManagementKind::associate;
+                                send_station(archer::StationManagementKind::associate);wait_reply(station_association);
+                                std::cout<<"{\"operation\":\"station_association_accepted\",\"aid\":"<<station_association->aid<<",\"security_established\":false,\"data_path_established\":false}"<<std::endl;
+                            }catch(...){exchange_error=std::current_exception();}
+                            station_expected_reply.reset();
+                            if(auth_attempted&&probe_report&&archer::probe_report_terminal(*probe_report,1)){
+                                try{send_station(archer::StationManagementKind::deauthenticate);station_deauth_completed=true;}
+                                catch(...){if(!exchange_error)exchange_error=std::current_exception();}
+                            }
+                            if(exchange_error)std::rethrow_exception(exchange_error);
+                        });
+                        archer::log_probe_grant_policy(bus,"restored",std::cout);
+                    }catch(...){if(station_deauth_completed)completed_tx_failure=std::current_exception();throw;}
+#else
+                    const auto packet=probe_tag==9?archer::special_channel9_grant_probe_packet():probe_tag==8?archer::special_channel9_drained_phy_probe_packet():probe_tag==7?archer::special_channel9_phy_probe_packet():probe_tag==6?archer::special_channel9_external_probe_packet():probe_tag==5?archer::special_channel9_ack_probe_packet():probe_tag==4?archer::special_channel9_monitored_probe_packet():probe_tag==3?archer::special_channel9_unicast_probe_packet():probe_channel==9?archer::special_channel9_probe_packet():archer::single_probe_packet();
                     std::ofstream probe_file(dir/"single-probe.bin",std::ios::binary);
                     probe_file.write(reinterpret_cast<const char*>(packet.data()),packet.size());probe_file.close();
                     if(!probe_file)throw std::runtime_error("Cannot preserve probe bytes");
@@ -289,6 +381,10 @@ int main(int argc,char** argv){
                     std::cout<<"],\"controls_enabled\":true,\"antenna_emission_proven\":false}"<<std::endl;
                     };
 #ifdef ARCHER_SPECIAL_MONITORED
+#ifdef ARCHER_SPECIAL_GRANT_CAPTURE
+                    archer::with_scc_wlan_grant_window(bus,[&]{
+                    archer::log_probe_grant_policy(bus,"enabled",std::cout);
+#endif
                     archer::with_ifs_clm_window(bus,[&]{
                         for(unsigned index=0;index<2;++index){
                             const auto start=std::chrono::steady_clock::now();
@@ -310,6 +406,10 @@ int main(int argc,char** argv){
                         }
                     });
                     std::cout<<"{\"phase\":\"probe_ifs_controls_restored\"}"<<std::endl;
+#ifdef ARCHER_SPECIAL_GRANT_CAPTURE
+                    });
+                    archer::log_probe_grant_policy(bus,"restored",std::cout);
+#endif
 #else
                     transmit();
 #endif
@@ -318,6 +418,7 @@ int main(int argc,char** argv){
                         completed_tx_failure=std::make_exception_ptr(std::runtime_error("Probe did not report a completed transmission"));
                         std::rethrow_exception(completed_tx_failure);
                     }
+#endif
 #endif
                     audit("context_ready");
                     archer::reset_rx_diagnostic_counters(bus);
