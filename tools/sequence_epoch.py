@@ -65,15 +65,32 @@ def transition(output, discard_dirty_context=False, cold=False, finish_cold=Fals
     record = {'epoch_id': str(uuid.uuid4()), 'status': 'preflight',
               'mode': 'cold-reload-no-h2c' if cold else 'powered-reload-no-h2c', 'discard_dirty_context': discard_dirty_context, 'resident_version_readback': False}
     earlier_rows=[]
+    capture_collision=False
     if resume_cold_preflight:
         cold=True
         record=json.loads(report.read_text())
-        if digest(output/'reload.jsonl')!=record.get('reload_stdout_sha256') or digest(output/'reload.stderr')!=record.get('reload_stderr_sha256'):
+        preflight_record=record
+        if record.get('resuming_cold_preflight'):
+            if (record.get('capture_collision_continuation') or record.get('status')!='stopped'
+                or record.get('boundary_stdout_file')!='resume-cold.jsonl' or record.get('reload_exit')!=2
+                or (output/'resume-cold.jsonl').read_bytes()!=b''
+                or (output/'resume-cold.stderr').read_text()!='epoch-boot: New epoch capture directory required; keep transition fenced, no replay\n'
+                or digest(output/'resume-cold.jsonl')!=record.get('reload_stdout_sha256')
+                or digest(output/'resume-cold.stderr')!=record.get('reload_stderr_sha256')
+                or digest(output/'preflight-stop.json')!=record.get('preflight_stop_sha256')):
+                raise ValueError('Only the exact pre-USB capture collision may continue')
+            preflight_record=json.loads((output/'preflight-stop.json').read_text())
+            save(output/'capture-collision-stop.json',record)
+            record['capture_collision_stop_sha256']=digest(output/'capture-collision-stop.json')
+            record['capture_collision_continuation']=True
+            capture_collision=True
+        if digest(output/'reload.jsonl')!=preflight_record.get('reload_stdout_sha256') or digest(output/'reload.stderr')!=preflight_record.get('reload_stderr_sha256'):
             raise ValueError('Original preflight evidence changed')
-        validate_cold_preflight_stop(record,[json.loads(line) for line in (output/'reload.jsonl').read_text().splitlines()],(output/'reload.stderr').read_text())
+        validate_cold_preflight_stop(preflight_record,[json.loads(line) for line in (output/'reload.jsonl').read_text().splitlines()],(output/'reload.stderr').read_text())
         if not discard_dirty_context:raise ValueError('Explicit archived context recovery required')
-        save(output/'preflight-stop.json',record)
-        record['preflight_stop_sha256']=digest(output/'preflight-stop.json')
+        if not capture_collision:
+            save(output/'preflight-stop.json',record)
+            record['preflight_stop_sha256']=digest(output/'preflight-stop.json')
         record['resuming_cold_preflight']=True
     if finish_cold:
         cold=True
@@ -81,7 +98,7 @@ def transition(output, discard_dirty_context=False, cold=False, finish_cold=Fals
         if record.get('status')!='stopped' or record.get('mode')!='cold-reload-no-h2c':
             raise ValueError('Only a stopped cold boundary may be finished')
         boundary_log=output/record.get('boundary_stdout_file','reload.jsonl')
-        if boundary_log.name not in ('reload.jsonl','resume-cold.jsonl'):raise ValueError('Invalid boundary log')
+        if boundary_log.name not in ('reload.jsonl','resume-cold.jsonl','resume-cold-after-collision.jsonl'):raise ValueError('Invalid boundary log')
         if digest(boundary_log)!=record.get('reload_stdout_sha256'):
             raise ValueError('Original cold download log changed')
         earlier_rows=[json.loads(line) for line in boundary_log.read_text().splitlines()]
@@ -154,11 +171,11 @@ def transition(output, discard_dirty_context=False, cold=False, finish_cold=Fals
         record['status'] = 'reload_started'
         save(report, record)
         env = dict(os.environ, ARCHER_WORKFLOW_FD=str(owner), ARCHER_EPOCH_LEDGER_FD=str(old_fd))
-        prefix='finish' if finish_cold else 'resume-cold' if resume_cold_preflight else 'reload'
+        prefix='finish' if finish_cold else 'resume-cold-after-collision' if capture_collision else 'resume-cold' if resume_cold_preflight else 'reload'
         stdout, stderr = output / (prefix+'.jsonl'), output / (prefix+'.stderr')
         if not finish_cold:record['boundary_stdout_file']=stdout.name
         with stdout.open('w') as out, stderr.open('w') as err:
-            process = subprocess.run([str(helper), '--finish-cold-boundary-no-h2c' if finish_cold else '--reload-cold-no-h2c' if cold else '--reload-powered-no-h2c', str(output / ('finish' if finish_cold else 'reload'))],
+            process = subprocess.run([str(helper), '--finish-cold-boundary-no-h2c' if finish_cold else '--reload-cold-no-h2c' if cold else '--reload-powered-no-h2c', str(output / prefix)],
                                      cwd=ROOT, env=env, pass_fds=(owner, old_fd), stdout=out, stderr=err, check=False)
         record.update(reload_exit=process.returncode, reload_stdout_sha256=digest(stdout), reload_stderr_sha256=digest(stderr))
         if process.returncode:

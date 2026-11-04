@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **56 %**
 
-Actualizado: **2026-11-04**, etapa107: no se observó el estado frío requerido para recuperar el intento detenido. Contexto y transición DIRTY; ledger anterior intacto,143 secuencias libres. Emisión, asociación y M1 de etapas anteriores siguen documentados. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-04**, etapa108: Archer en modo CD instalador tras reconexión; expulsión nativa pendiente de sudo local. Contexto/transición DIRTY y ledger anterior intacto con143 secuencias libres. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -30,6 +30,11 @@ y el receptor nativo obtuvo M1 con FCS válido. WPA2 completo, datos cifrados e
 interfaz de red todavía no están verificados.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa108: modo instalador0bda:1a2b y CD Realtek verificado. La interfaz USB
+está ocupada; expulsión óptica pendiente de autenticación en Terminal. Sin
+SCSI/H2C/tramas nuevas;118 pruebas Python y suites C++ aprobadas.
+[Instrucciones y evidencia](research/STAGE108.md).
 
 Etapa107: enumeración37ad:0104; el perfil frío no aparece. La recuperación
 se detuvo antes de reset/carga/H2C y conservó el ledger. Continuación segura

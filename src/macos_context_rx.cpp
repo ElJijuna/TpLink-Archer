@@ -33,7 +33,11 @@
 int main(int argc,char** argv){
 #ifdef ARCHER_WPA2_ONCE
  constexpr unsigned probe_channel=9;
+#ifdef ARCHER_WPA2_RECOVERED
+ const char* marker_path="artifacts/37ad-0104-special-channel9-wpa2-recovered-stage110-attempted";
+#else
  const char* marker_path="artifacts/37ad-0104-special-channel9-wpa2-attempted";
+#endif
 #elif defined(ARCHER_STATION_EAPOL_RX)
  constexpr unsigned probe_channel=9;
  const char* marker_path="artifacts/37ad-0104-special-channel9-eapol-rx-attempted";
@@ -176,7 +180,7 @@ int main(int argc,char** argv){
         bool probe_submitted=false;std::optional<archer::ProbeTxReport> probe_report;
 #ifdef ARCHER_STATION_EXCHANGE
 #ifdef ARCHER_WPA2_ONCE
-        unsigned station_tx_tag=0;
+        unsigned station_tx_tag=archer::secure_cleanup_tag;
 #elif defined(ARCHER_STATION_EAPOL_RX)
         constexpr unsigned station_round=1;
         std::optional<archer::EapolM1> station_m1;

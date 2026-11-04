@@ -109,7 +109,7 @@ class EpochTest(unittest.TestCase):
                     with self.assertRaises(RuntimeError):e.transition(output,True,True)
                     initial_log=(output/'reload.jsonl').read_bytes()
                     final=evidence()[-2:]
-                    helper.write_text('#!/usr/bin/env python3\n'+('raise SystemExit(7)\n' if fail_finish else 'print('+repr('\n'.join(json.dumps(x) for x in final))+')\n'))
+                    helper.write_text('#!/usr/bin/env python3\nimport sys\nfrom pathlib import Path\nPath(sys.argv[2]).mkdir()\n'+('raise SystemExit(7)\n' if fail_finish else 'print('+repr('\n'.join(json.dumps(x) for x in final))+')\n'))
                     if fail_finish:
                         with self.assertRaises(RuntimeError):e.transition(output,True,finish_cold=True)
                     else:e.transition(output,True,finish_cold=True)
@@ -130,20 +130,25 @@ class ColdPreflightResumeTest(unittest.TestCase):
             with self.assertRaises(ValueError):e.validate_cold_preflight_stop(changed,rows,stderr)
 
     def test_resume_preserves_original_and_commits_only_after_boundary(self):
-        for fail in [False,True]:
-            with self.subTest(fail=fail),tempfile.TemporaryDirectory() as tmp:
+        for fail,collision in [(False,False),(True,False),(False,True),(True,True)]:
+            with self.subTest(fail=fail,collision=collision),tempfile.TemporaryDirectory() as tmp:
                 root=Path(tmp);(root/'artifacts').mkdir();(root/'build').mkdir()
                 ledger=root/'artifacts/37ad-0104-sequences.bin';old=b'ARCHSEQ\x01'+bytes([1])*113+bytes(143);ledger.write_bytes(old)
                 context=root/'artifacts/37ad-0104-context-reservation';context.write_bytes(b'DIRTY\n')
                 helper=root/'build/archer-epoch-boot-universal'
                 raw=(Path(__file__).parent/'fixtures/cold-preflight-rejected-stage107.jsonl').read_text()
                 stderr='epoch-boot: Cold BB reset profile absent; keep transition fenced, no replay\n'
-                helper.write_text('#!/usr/bin/env python3\nimport sys\nsys.stdout.write('+repr(raw)+')\nsys.stderr.write('+repr(stderr)+')\nsys.exit(2)\n');helper.chmod(0o700)
+                helper.write_text('#!/usr/bin/env python3\nimport sys\nfrom pathlib import Path\nPath(sys.argv[2]).mkdir()\nsys.stdout.write('+repr(raw)+')\nsys.stderr.write('+repr(stderr)+')\nsys.exit(2)\n');helper.chmod(0o700)
                 output=root/'attempt'
                 with patch.multiple(e,ROOT=root,LEDGER=ledger),contextlib.redirect_stdout(io.StringIO()):
                     with self.assertRaises(RuntimeError):e.transition(output,True,True)
+                    if collision:
+                        original=json.loads((output/'epoch.json').read_text());e.save(output/'preflight-stop.json',original)
+                        (output/'resume-cold.jsonl').write_bytes(b'');(output/'resume-cold.stderr').write_text('epoch-boot: New epoch capture directory required; keep transition fenced, no replay\n')
+                        original.update(resuming_cold_preflight=True,boundary_stdout_file='resume-cold.jsonl',preflight_stop_sha256=e.digest(output/'preflight-stop.json'),reload_stdout_sha256=e.digest(output/'resume-cold.jsonl'),reload_stderr_sha256=e.digest(output/'resume-cold.stderr'))
+                        e.save(output/'epoch.json',original)
                     rows=evidence();rows[0]={'phase':'epoch_cold_profile_verified'}
-                    helper.write_text('#!/usr/bin/env python3\n'+('raise SystemExit(7)\n' if fail else 'print('+repr('\n'.join(json.dumps(x) for x in rows))+')\n'))
+                    helper.write_text('#!/usr/bin/env python3\nimport sys\nfrom pathlib import Path\nPath(sys.argv[2]).mkdir()\n'+('raise SystemExit(7)\n' if fail else 'print('+repr('\n'.join(json.dumps(x) for x in rows))+')\n'))
                     if fail:
                         with self.assertRaises(RuntimeError):e.transition(output,True,resume_cold_preflight=True)
                     else:e.transition(output,True,resume_cold_preflight=True)

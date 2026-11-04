@@ -1,5 +1,5 @@
 #include "archer/macos_register_bus.hpp"
-#include "archer/sequence_ledger.hpp"
+#include "archer/workflow_lock.hpp"
 #include "archer/installer_media.hpp"
 #include <sys/disk.h>
 #include <sys/ioctl.h>
@@ -33,7 +33,8 @@ int main(int argc,char** argv){
     }
     io_service_t media=0;int fd=-1;
     try{
-        archer::SequenceLedger lock("artifacts/37ad-0104-sequences.bin");
+        // Installer identity is verified below; no firmware sequence is submitted.
+        archer::WorkflowLock lock("artifacts/37ad-0104-sequences.bin.workflow");
         io_iterator_t iterator=0;
         if(IOServiceGetMatchingServices(kIOMainPortDefault,IOServiceMatching("IOCDMedia"),&iterator))
             throw std::runtime_error("Cannot enumerate optical media");

@@ -1,8 +1,13 @@
 #pragma once
 #include "archer/ccmp.hpp"
 namespace archer {
+#ifdef ARCHER_WPA2_RECOVERED
+inline constexpr unsigned secure_first_sequence=22,secure_cleanup_tag=1;
+#else
+inline constexpr unsigned secure_first_sequence=16,secure_cleanup_tag=0;
+#endif
 enum class SecureFramePhase:unsigned {authenticate,associate,m2,m4,discover,deauthenticate};
-inline unsigned secure_frame_sequence(SecureFramePhase phase){if(unsigned(phase)>5)throw std::invalid_argument("Invalid secure phase");return 16+unsigned(phase);}
+inline unsigned secure_frame_sequence(SecureFramePhase phase){if(unsigned(phase)>5)throw std::invalid_argument("Invalid secure phase");return secure_first_sequence+unsigned(phase);}
 inline std::vector<std::uint8_t> secure_tx_packet(SecureFramePhase phase,const std::vector<std::uint8_t>& frame){
  const auto sequence=secure_frame_sequence(phase);const bool data=unsigned(phase)>=2&&unsigned(phase)<=4;
  if(frame.size()<24||frame.size()>4096||management_u16(frame.data()+22)!=(sequence<<4)||
@@ -12,7 +17,7 @@ inline std::vector<std::uint8_t> secure_tx_packet(SecureFramePhase phase,const s
  // Source body0 HDR_LLC_LEN is ieee80211_hdrlen/2, including for software crypto.
  channel_put32(packet.data(),data?0x00406480:0x00486480); // DMA0/BE via USB09; MGQ/DMA8 via USB05.
  channel_put32(packet.data()+8,(data?0:0x00240000)|frame.size());channel_put32(packet.data()+12,0x2000|sequence);
- channel_put32(packet.data()+36,0); // Tag0 reserved exclusively for the final deauth report.
+ channel_put32(packet.data()+36,phase==SecureFramePhase::deauthenticate?secure_cleanup_tag<<28:0); // Only final cleanup requests a report in this firmware epoch.
  channel_put32(packet.data()+40,phase==SecureFramePhase::deauthenticate?0x40000000:0);
  packet.insert(packet.end(),frame.begin(),frame.end());return packet;
 }

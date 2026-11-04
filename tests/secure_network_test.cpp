@@ -9,14 +9,14 @@ int main(){
  SecureFrameSendGuard guard;
  const auto auth=secure_management_packet(SecureFramePhase::authenticate),assoc=secure_management_packet(SecureFramePhase::associate),deauth=secure_management_packet(SecureFramePhase::deauthenticate);
  assert(auth.size()==94&&assoc.size()==130&&deauth.size()==90);
- assert(management_u16(auth.data()+86)==16*16&&management_u16(deauth.data()+86)==21*16);
+ assert(management_u16(auth.data()+86)==secure_first_sequence*16&&management_u16(deauth.data()+86)==(secure_first_sequence+5)*16);
  rejects([&]{guard.issue(SecureFramePhase::associate,assoc);});
  guard.issue(SecureFramePhase::authenticate,auth);rejects([&]{guard.issue(SecureFramePhase::authenticate,auth);});guard.issue(SecureFramePhase::associate,assoc);
  auto m2=secure_eapol_packet(SecureFramePhase::m2,read("tests/fixtures/wpa2-test-m2.bin"));
  auto m4=secure_eapol_packet(SecureFramePhase::m4,read("tests/fixtures/wpa2-test-m4.bin"));
  assert(channel_u32(m2.data())==0x00406480&&channel_u32(m2.data()+40)==0&&channel_u32(deauth.data()+40)==0x40000000);
  auto changed=m2;changed[40]^=1;rejects([&]{guard.issue(SecureFramePhase::m2,changed);});guard.issue(SecureFramePhase::m2,m2);guard.issue(SecureFramePhase::m4,m4);
- std::array<std::uint8_t,32> snonce{};for(unsigned i=0;i<32;++i)snonce[i]=i+1;Wpa2PskHandshake hs(derive_wpa2_pmk("password","Especial"),snonce);auto raw_m1=read("tests/fixtures/special-eapol-m1-stage104.bin");hs.accept_m1(raw_m1.data(),raw_m1.size());hs.issue_m2();hs.accept_m3(read("tests/fixtures/wpa2-test-m3.bin"));hs.issue_m4();CcmpSession session(hs);const std::array<std::uint8_t,6> broadcast{255,255,255,255,255,255};auto data=secure_tx_packet(SecureFramePhase::discover,session.encrypt_to_ap(dhcp_discover_msdu(0x12345678),broadcast,20));assert(data.size()==440);guard.issue(SecureFramePhase::discover,data);rejects([&]{guard.issue(SecureFramePhase::discover,data);});
+ std::array<std::uint8_t,32> snonce{};for(unsigned i=0;i<32;++i)snonce[i]=i+1;Wpa2PskHandshake hs(derive_wpa2_pmk("password","Especial"),snonce);auto raw_m1=read("tests/fixtures/special-eapol-m1-stage104.bin");hs.accept_m1(raw_m1.data(),raw_m1.size());hs.issue_m2();hs.accept_m3(read("tests/fixtures/wpa2-test-m3.bin"));hs.issue_m4();CcmpSession session(hs);const std::array<std::uint8_t,6> broadcast{255,255,255,255,255,255};auto data=secure_tx_packet(SecureFramePhase::discover,session.encrypt_to_ap(dhcp_discover_msdu(0x12345678),broadcast,secure_frame_sequence(SecureFramePhase::discover)));assert(data.size()==440);guard.issue(SecureFramePhase::discover,data);rejects([&]{guard.issue(SecureFramePhase::discover,data);});
  guard.issue(SecureFramePhase::deauthenticate,deauth);rejects([&]{guard.issue(SecureFramePhase::deauthenticate,deauth);});
  SecureFrameSendGuard early;early.issue(SecureFramePhase::authenticate,auth);early.issue(SecureFramePhase::deauthenticate,deauth);rejects([&]{early.issue(SecureFramePhase::associate,assoc);});
  auto m1=read("tests/fixtures/special-eapol-m1-stage104.bin");auto e=target_rsn_eapol(m1.data(),m1.size());assert(e&&e->size()==99);for(std::size_t n=0;n<m1.size();++n)assert(!target_rsn_eapol(m1.data(),n));
