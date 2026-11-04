@@ -194,3 +194,24 @@ class SpecialProbeTest(unittest.TestCase):
             with self.assertRaises(ValueError):p.validate_station_result(rows[:index]+rows[index+1:])
         changed=[dict(r) for r in rows];changed[7]['status']=13
         with self.assertRaises(ValueError):p.validate_station_result(changed)
+
+    def test_eapol_requires_verified_predecessor_and_fresh_report_tags(self):
+        import hashlib
+        ledger=b'ARCHSEQ\x01'+bytes([1])*95+bytes(161)
+        record=dict(stage=103,context='CLEAN',remaining_sequences=161,result=dict(authentication_verified=True,
+                    association_verified=True,deauth_submitted=True),grant_restored=True,
+                    external_association_response_packet=1257,evidence={'raw':'sha'},ledger_sha256=hashlib.sha256(ledger).hexdigest())
+        p.validate_eapol_history(record,ledger)
+        for update in (dict(grant_restored=False),dict(external_association_response_packet=0),dict(result={}),dict(evidence={})):
+            with self.assertRaises(ValueError):p.validate_eapol_history({**record,**update},ledger)
+        with self.assertRaises(ValueError):p.validate_eapol_history(record,ledger[:-1]+b'\x01')
+
+    def test_m1_observation_does_not_imply_security_or_data(self):
+        result=dict(operation='station_eapol_observation',m1_received=True,security_established=False,data_path_established=False)
+        message=dict(operation='station_eapol_m1',key_info=138,key_length=16,key_data_bytes=0,security_established=False)
+        self.assertTrue(p.validate_eapol_observation([result,message])['m1_received'])
+        p.validate_eapol_observation([{**result,'m1_received':False}])
+        for rows in ([result],[result,message,message],[{**result,'security_established':True},message],
+                     [result,{**message,'key_info':394}],[{**result,'m1_received':False},message]):
+            with self.assertRaises(ValueError):p.validate_eapol_observation(rows)
+        with self.assertRaises(ValueError):p.validate_station_result([],2)

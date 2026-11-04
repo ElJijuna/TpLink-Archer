@@ -26,8 +26,18 @@
 #include "archer/context_reservation.hpp"
 #include "archer/input_quiescence.hpp"
 #include "archer/wlan_grant_window.hpp"
+#include "archer/eapol_m1.hpp"
+#ifdef ARCHER_WPA2_ONCE
+#include "archer/credential_pipe.hpp"
+#endif
 int main(int argc,char** argv){
-#ifdef ARCHER_STATION_EXCHANGE
+#ifdef ARCHER_WPA2_ONCE
+ constexpr unsigned probe_channel=9;
+ const char* marker_path="artifacts/37ad-0104-special-channel9-wpa2-attempted";
+#elif defined(ARCHER_STATION_EAPOL_RX)
+ constexpr unsigned probe_channel=9;
+ const char* marker_path="artifacts/37ad-0104-special-channel9-eapol-rx-attempted";
+#elif defined(ARCHER_STATION_EXCHANGE)
  constexpr unsigned probe_channel=9;
  const char* marker_path="artifacts/37ad-0104-special-channel9-station-exchange-attempted";
 #elif defined(ARCHER_SPECIAL_GRANT_CAPTURE)
@@ -64,7 +74,11 @@ int main(int argc,char** argv){
 #endif
 #endif
 #ifdef ARCHER_SINGLE_PROBE
-#ifdef ARCHER_STATION_EXCHANGE
+#ifdef ARCHER_WPA2_ONCE
+ if(argc!=3||std::string(argv[1])!="--single-special-channel9-wpa2"){
+#elif defined(ARCHER_STATION_EAPOL_RX)
+ if(argc!=3||std::string(argv[1])!="--single-special-channel9-eapol-rx"){
+#elif defined(ARCHER_STATION_EXCHANGE)
  if(argc!=3||std::string(argv[1])!="--single-special-channel9-station-exchange"){
 #elif defined(ARCHER_SPECIAL_GRANT_CAPTURE)
  if(argc!=3||std::string(argv[1])!="--single-special-channel9-grant-probe"){
@@ -93,6 +107,16 @@ int main(int argc,char** argv){
     std::cerr<<"Usage: archer-context-rx {--run-owned-source-profile|--run-owned-source-profile-usb-aggregation|--run-owned-source-profile-usb-aggregation-all-management|--run-owned-source-profile-usb-aggregation-all-management-async} NEW_DIRECTORY\n";return 2;
  }
  try{
+#ifdef ARCHER_WPA2_ONCE
+    const auto secure_deadline=std::chrono::steady_clock::now()+std::chrono::seconds(20);
+    const auto credential_env=std::getenv("ARCHER_CREDENTIAL_FD");char* credential_end=nullptr;errno=0;
+    const long credential_fd=credential_env?std::strtol(credential_env,&credential_end,10):-1;
+    if(!credential_env||errno||!credential_end||*credential_end||credential_fd<3||credential_fd>0x7fffffff)throw std::runtime_error("Private credential FD required");
+    archer::Wpa2PskHandshake handshake(archer::pmk_from_credential_pipe(credential_fd),archer::fresh_wpa2_snonce());
+    std::optional<archer::CcmpSession> ccmp;std::optional<archer::DhcpOffer> dhcp_offer;
+    std::vector<std::uint8_t> secure_m1,secure_m3;bool m2_sent=false;std::uint32_t dhcp_xid=0;
+    if(CCRandomGenerateBytes(&dhcp_xid,sizeof(dhcp_xid))!=kCCSuccess||!dhcp_xid)throw std::runtime_error("DHCP random transaction unavailable");
+#endif
 #ifdef ARCHER_STATION_EXCHANGE
     std::ifstream target_file("artifacts/special-probe-response-stage102.bin",std::ios::binary);
     const std::vector<std::uint8_t> target((std::istreambuf_iterator<char>(target_file)),{});
@@ -151,7 +175,17 @@ int main(int argc,char** argv){
 #ifdef ARCHER_SINGLE_PROBE
         bool probe_submitted=false;std::optional<archer::ProbeTxReport> probe_report;
 #ifdef ARCHER_STATION_EXCHANGE
-        unsigned station_tx_tag=10;
+#ifdef ARCHER_WPA2_ONCE
+        unsigned station_tx_tag=0;
+#elif defined(ARCHER_STATION_EAPOL_RX)
+        constexpr unsigned station_round=1;
+        std::optional<archer::EapolM1> station_m1;
+#else
+        constexpr unsigned station_round=0;
+#endif
+#ifndef ARCHER_WPA2_ONCE
+        unsigned station_tx_tag=10+3*station_round;
+#endif
         std::optional<archer::StationManagementKind> station_expected_reply;
         std::optional<archer::StationManagementReply> station_auth,station_association;
 #endif
@@ -159,6 +193,9 @@ int main(int argc,char** argv){
         unsigned transfers=0,normal=0,beacons=0;
         archer::PassiveScan scan(probe_channel);
         const auto receive=[&](unsigned pipe,bool track,unsigned timeout_ms=10){
+#if defined(ARCHER_STATION_EAPOL_RX) || defined(ARCHER_WPA2_ONCE)
+            if(persistent_async&&usb.has_completed_input(1-pipe))timeout_ms=0;
+#endif
             auto bytes=usb.receive(pipe,timeout_ms);if(bytes.empty())return false;
             if(transfers>=
 #ifdef ARCHER_STATION_EXCHANGE
@@ -190,6 +227,22 @@ int main(int argc,char** argv){
                         std::cout<<"{\"operation\":\"context_ack\",\"step_before\":"<<before<<",\"step_after\":"<<session.step()<<"}"<<std::endl;
                 }
 #ifdef ARCHER_STATION_EXCHANGE
+#ifdef ARCHER_WPA2_ONCE
+                if(m.normal_80211_candidate()){
+                    const auto* frame=bytes.data()+m.packet.payload_offset;const auto size=m.packet.payload_bytes;
+                    if(secure_m1.empty()&&archer::decode_target_eapol_m1(frame,size))secure_m1.assign(frame,frame+size);
+                    if(m2_sent&&secure_m3.empty()){
+                        const auto eapol=archer::target_rsn_eapol(frame,size);
+                        if(eapol&&archer::eapol_be16(eapol->data()+5)==0x13ca)secure_m3=*eapol;
+                    }
+                    if(ccmp&&!dhcp_offer){try{const auto plain=ccmp->decrypt_from_ap(frame,size);dhcp_offer=archer::decode_dhcp_offer(plain.bytes,dhcp_xid);}catch(const std::exception&){} }
+                }
+#elif defined(ARCHER_STATION_EAPOL_RX)
+                if(m.normal_80211_candidate()&&!station_m1){
+                    station_m1=archer::decode_target_eapol_m1(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes);
+                    if(station_m1)std::cout<<"{\"operation\":\"station_eapol_m1\",\"key_info\":138,\"key_length\":16,\"key_data_bytes\":"<<station_m1->key_data_bytes<<",\"security_established\":false}"<<std::endl;
+                }
+#endif
                 if(m.normal_80211_candidate()&&station_expected_reply){
                     const auto reply=archer::decode_station_reply(bytes.data()+m.packet.payload_offset,m.packet.payload_bytes);
                     if(reply&&reply->kind==*station_expected_reply){
@@ -305,25 +358,28 @@ int main(int argc,char** argv){
                     close(marker);if(!persisted)throw std::runtime_error("Cannot persist single probe reservation");
                     }
 #ifdef ARCHER_STATION_EXCHANGE
+#ifdef ARCHER_WPA2_ONCE
+#include "archer/secure_exchange.inc"
+#else
                     bool station_deauth_completed=false;
                     const auto send_station=[&](archer::StationManagementKind kind){
-                        const auto packet=archer::station_management_packet(kind);
-                        std::ofstream file(dir/("station-tx-"+std::to_string(unsigned(kind))+".bin"),std::ios::binary);
+                        const auto packet=archer::station_management_packet(kind,station_round);
+                        std::ofstream file(dir/("station-tx-"+std::to_string(unsigned(kind)+3*station_round)+".bin"),std::ios::binary);
                         file.write(reinterpret_cast<const char*>(packet.data()),packet.size());file.close();
                         if(!file)throw std::runtime_error("Station packet preservation failed");
-                        station_tx_tag=unsigned(kind);probe_report.reset();
+                        station_tx_tag=unsigned(kind)+3*station_round;probe_report.reset();
                         const auto before=archer::read_phy_tx_snapshot(bus);
                         if(!before.enabled())throw std::runtime_error("Station PHY counters disabled");
                         try{
                             archer::channel_bus_write(bus,0x10398,0x3ffff,0x100);
-                            probe_submitted=true;usb.send_station_management_once(kind,packet);
+                            probe_submitted=true;usb.send_station_management_once(kind,packet,station_round);
                             const auto end=std::chrono::steady_clock::now()+std::chrono::seconds(3);
                             while(!probe_report&&std::chrono::steady_clock::now()<end){receive(0,true);receive(1,true);}
                         }catch(...){archer::channel_bus_write(bus,0x10398,0x3ffff,0);probe_submitted=false;throw;}
                         archer::channel_bus_write(bus,0x10398,0x3ffff,0);probe_submitted=false;
                         const auto after=archer::read_phy_tx_snapshot(bus);
                         const auto delta=archer::phy_tx_modulo_delta(before,after);
-                        std::cout<<"{\"operation\":\"station_phy_delta\",\"tag\":"<<unsigned(kind)<<",\"counts\":[";
+                        std::cout<<"{\"operation\":\"station_phy_delta\",\"tag\":"<<station_tx_tag<<",\"counts\":[";
                         for(unsigned i=0;i<4;++i){if(i)std::cout<<',';std::cout<<delta[i];}std::cout<<"]}"<<std::endl;
                         if(!probe_report||probe_report->state!=0||probe_report->count!=1)throw std::runtime_error("Station TX not confirmed; no retry");
                     };
@@ -336,6 +392,9 @@ int main(int argc,char** argv){
                     try{
                         archer::with_scc_wlan_grant_window(bus,[&]{
                             archer::log_probe_grant_policy(bus,"enabled",std::cout);
+#ifdef ARCHER_STATION_EAPOL_RX
+                            archer::with_station_data_rx_window(bus,[&]{
+#endif
                             std::exception_ptr exchange_error;bool auth_attempted=false;
                             try{
                                 station_expected_reply=archer::StationManagementKind::authenticate;
@@ -343,6 +402,11 @@ int main(int argc,char** argv){
                                 station_expected_reply=archer::StationManagementKind::associate;
                                 send_station(archer::StationManagementKind::associate);wait_reply(station_association);
                                 std::cout<<"{\"operation\":\"station_association_accepted\",\"aid\":"<<station_association->aid<<",\"security_established\":false,\"data_path_established\":false}"<<std::endl;
+#ifdef ARCHER_STATION_EAPOL_RX
+                                const auto m1_end=std::chrono::steady_clock::now()+std::chrono::seconds(3);
+                                while(!station_m1&&std::chrono::steady_clock::now()<m1_end){receive(0,true);receive(1,true);}
+                                std::cout<<"{\"operation\":\"station_eapol_observation\",\"m1_received\":"<<(station_m1?"true":"false")<<",\"security_established\":false,\"data_path_established\":false}"<<std::endl;
+#endif
                             }catch(...){exchange_error=std::current_exception();}
                             station_expected_reply.reset();
                             if(auth_attempted&&probe_report&&archer::probe_report_terminal(*probe_report,1)){
@@ -350,9 +414,13 @@ int main(int argc,char** argv){
                                 catch(...){if(!exchange_error)exchange_error=std::current_exception();}
                             }
                             if(exchange_error)std::rethrow_exception(exchange_error);
+#ifdef ARCHER_STATION_EAPOL_RX
+                            });
+#endif
                         });
                         archer::log_probe_grant_policy(bus,"restored",std::cout);
                     }catch(...){if(station_deauth_completed)completed_tx_failure=std::current_exception();throw;}
+#endif // ARCHER_WPA2_ONCE
 #else
                     const auto packet=probe_tag==9?archer::special_channel9_grant_probe_packet():probe_tag==8?archer::special_channel9_drained_phy_probe_packet():probe_tag==7?archer::special_channel9_phy_probe_packet():probe_tag==6?archer::special_channel9_external_probe_packet():probe_tag==5?archer::special_channel9_ack_probe_packet():probe_tag==4?archer::special_channel9_monitored_probe_packet():probe_tag==3?archer::special_channel9_unicast_probe_packet():probe_channel==9?archer::special_channel9_probe_packet():archer::single_probe_packet();
                     std::ofstream probe_file(dir/"single-probe.bin",std::ios::binary);

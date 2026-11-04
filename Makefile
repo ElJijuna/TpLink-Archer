@@ -3,6 +3,12 @@ CXXFLAGS := -std=c++17 -Wall -Wextra -Werror -Iinclude
 .PHONY: test probe universal receive-universal decode decode-universal mailbox-universal efuse-universal identity-universal bb-probe-universal mailbox-state-universal mode-switch-universal scsi-eject-universal optical-eject-universal
 build:
 	mkdir -p build
+build/eapol-m1-test: tests/eapol_m1_test.cpp include/archer/eapol_m1.hpp include/archer/station_management.hpp tests/fixtures/special-eapol-m1-stage104.bin | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/eapol-m1-test
+.PHONY: station-capture-audit-universal
+station-capture-audit-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/station_capture_audit.cpp -o build/archer-station-capture-audit-universal
 build/station-management-test: tests/station_management_test.cpp include/archer/station_management.hpp tests/fixtures/special-probe-response-stage102.bin | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/station-management-test
@@ -36,6 +42,9 @@ special-grant-probe-universal: | build
 .PHONY: special-station-exchange-universal
 special-station-exchange-universal: | build
 	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -DARCHER_SPECIAL_ACK_CAPTURE -DARCHER_SPECIAL_EXTERNAL_CAPTURE -DARCHER_SPECIAL_PHY_CAPTURE -DARCHER_SPECIAL_DRAINED_PHY_CAPTURE -DARCHER_SPECIAL_GRANT_CAPTURE -DARCHER_STATION_EXCHANGE -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-station-exchange-universal
+.PHONY: special-eapol-rx-universal
+special-eapol-rx-universal: | build
+	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -DARCHER_SPECIAL_ACK_CAPTURE -DARCHER_SPECIAL_EXTERNAL_CAPTURE -DARCHER_SPECIAL_PHY_CAPTURE -DARCHER_SPECIAL_DRAINED_PHY_CAPTURE -DARCHER_SPECIAL_GRANT_CAPTURE -DARCHER_STATION_EXCHANGE -DARCHER_STATION_EAPOL_RX -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-eapol-rx-universal
 .PHONY: led-universal
 led-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_led.cpp -framework IOKit -framework CoreFoundation -o build/archer-led-universal
@@ -117,6 +126,11 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/input-quiescence-test
 	./build/wlan-grant-window-test
 	./build/station-management-test
+	./build/eapol-m1-test
+	./build/wpa2-handshake-test
+	./build/ccmp-test
+	./build/secure-network-test
+	./build/credential-pipe-test
 	python3 -m unittest discover -s tests -p 'test_*.py'
 build/archer-probe: src/macos_probe.cpp include/archer/usb_descriptors.hpp include/archer/usb_request.hpp | build
 	$(CXX) $(CXXFLAGS) $< -framework IOKit -framework CoreFoundation -o $@
@@ -408,3 +422,29 @@ test: build/control-frame-audit-test
 special-ack-probe-universal: | build
 	python3 tools/channel_bundle.py
 	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -DARCHER_SPECIAL_ACK_CAPTURE -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-ack-probe-universal
+
+# Offline security vectors; no USB/network access or real credentials.
+build/wpa2-handshake-test: tests/wpa2_handshake_test.cpp include/archer/wpa2_handshake.hpp include/archer/wpa2_handshake.hpp include/archer/ccmp.hpp include/archer/station_management.hpp $(wildcard tests/fixtures/wpa2-test-*.bin) | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/wpa2-handshake-test
+build/ccmp-test: tests/ccmp_test.cpp include/archer/ccmp.hpp include/archer/wpa2_handshake.hpp include/archer/ccmp.hpp include/archer/station_management.hpp $(wildcard tests/fixtures/wpa2-test-*.bin) | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/ccmp-test
+build/secure-network-test: tests/secure_network_test.cpp include/archer/secure_network.hpp include/archer/wpa2_handshake.hpp include/archer/ccmp.hpp include/archer/station_management.hpp $(wildcard tests/fixtures/wpa2-test-*.bin) | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/secure-network-test
+build/credential-pipe-test: tests/credential_pipe_test.cpp include/archer/credential_pipe.hpp include/archer/wpa2_handshake.hpp include/archer/ccmp.hpp include/archer/station_management.hpp $(wildcard tests/fixtures/wpa2-test-*.bin) | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/credential-pipe-test
+
+.PHONY: special-wpa2-universal
+special-wpa2-universal: | build
+	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -DARCHER_SPECIAL_ACK_CAPTURE -DARCHER_SPECIAL_EXTERNAL_CAPTURE -DARCHER_SPECIAL_PHY_CAPTURE -DARCHER_SPECIAL_DRAINED_PHY_CAPTURE -DARCHER_SPECIAL_GRANT_CAPTURE -DARCHER_STATION_EXCHANGE -DARCHER_WPA2_ONCE -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-wpa2-universal
+
+.PHONY: pending-rx-universal
+pending-rx-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_pending_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-pending-rx-universal
+
+.PHONY: cold-inspect-universal
+cold-inspect-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/macos_cold_inspect.cpp -framework IOKit -framework CoreFoundation -o build/archer-cold-inspect-universal

@@ -117,3 +117,39 @@ class EpochTest(unittest.TestCase):
                 self.assertEqual(ledger.read_bytes(),old if fail_finish else e.new_epoch_bytes())
                 self.assertEqual(context.read_bytes(),b'DIRTY\n' if fail_finish else b'CLEAN\n')
                 self.assertEqual(Path(str(ledger)+'.epoch-transition').read_bytes(),b'DIRTY\n' if fail_finish else b'CLEAN\n')
+
+class ColdPreflightResumeTest(unittest.TestCase):
+    def test_real_preflight_rejects_any_boundary_or_extra_write(self):
+        rows=[json.loads(x) for x in (Path(__file__).parent/'fixtures/cold-preflight-rejected-stage107.jsonl').read_text().splitlines()]
+        record=dict(status='stopped',mode='cold-reload-no-h2c',reload_exit=2)
+        stderr='epoch-boot: Cold BB reset profile absent; keep transition fenced, no replay\n'
+        e.validate_cold_preflight_stop(record,rows,stderr)
+        for extra in [dict(phase='cpu_reset'),dict(operation='firmware_bulk_write',status=0),dict(operation='write',address=0x84,width=4,completed_bytes=4,status=0,value=0)]:
+            with self.assertRaises(ValueError):e.validate_cold_preflight_stop(record,rows+[extra],stderr)
+        for changed in [dict(record,resuming_cold_preflight=True),dict(record,reload_exit=0)]:
+            with self.assertRaises(ValueError):e.validate_cold_preflight_stop(changed,rows,stderr)
+
+    def test_resume_preserves_original_and_commits_only_after_boundary(self):
+        for fail in [False,True]:
+            with self.subTest(fail=fail),tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp);(root/'artifacts').mkdir();(root/'build').mkdir()
+                ledger=root/'artifacts/37ad-0104-sequences.bin';old=b'ARCHSEQ\x01'+bytes([1])*113+bytes(143);ledger.write_bytes(old)
+                context=root/'artifacts/37ad-0104-context-reservation';context.write_bytes(b'DIRTY\n')
+                helper=root/'build/archer-epoch-boot-universal'
+                raw=(Path(__file__).parent/'fixtures/cold-preflight-rejected-stage107.jsonl').read_text()
+                stderr='epoch-boot: Cold BB reset profile absent; keep transition fenced, no replay\n'
+                helper.write_text('#!/usr/bin/env python3\nimport sys\nsys.stdout.write('+repr(raw)+')\nsys.stderr.write('+repr(stderr)+')\nsys.exit(2)\n');helper.chmod(0o700)
+                output=root/'attempt'
+                with patch.multiple(e,ROOT=root,LEDGER=ledger),contextlib.redirect_stdout(io.StringIO()):
+                    with self.assertRaises(RuntimeError):e.transition(output,True,True)
+                    rows=evidence();rows[0]={'phase':'epoch_cold_profile_verified'}
+                    helper.write_text('#!/usr/bin/env python3\n'+('raise SystemExit(7)\n' if fail else 'print('+repr('\n'.join(json.dumps(x) for x in rows))+')\n'))
+                    if fail:
+                        with self.assertRaises(RuntimeError):e.transition(output,True,resume_cold_preflight=True)
+                    else:e.transition(output,True,resume_cold_preflight=True)
+                self.assertEqual((output/'reload.jsonl').read_text(),raw)
+                self.assertEqual((output/'reload.stderr').read_text(),stderr)
+                self.assertEqual((output/'previous-ledger.bin').read_bytes(),old)
+                self.assertEqual(ledger.read_bytes(),old if fail else e.new_epoch_bytes())
+                self.assertEqual(context.read_bytes(),b'DIRTY\n' if fail else b'CLEAN\n')
+                self.assertEqual(Path(str(ledger)+'.epoch-transition').read_bytes(),b'DIRTY\n' if fail else b'CLEAN\n')

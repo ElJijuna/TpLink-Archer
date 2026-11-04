@@ -123,12 +123,14 @@ def validate_station_history(history,ledger):
         raise ValueError('Stage102 sequence history changed')
 
 
-def validate_station_result(rows):
+def validate_station_result(rows,round=0):
+    if round not in (0,1):raise ValueError('Unallocated station report-tag round')
+    tags=tuple(t+3*round for t in (10,11,12))
     writes=[r for r in rows if r.get('operation')=='station_management_usb_write']
-    if writes!=[dict(operation='station_management_usb_write',tag=t,endpoint=5,bytes=n,status=0) for t,n in ((10,94),(11,130),(12,90))]:
+    if writes!=[dict(operation='station_management_usb_write',tag=t,endpoint=5,bytes=n,status=0) for t,n in zip(tags,(94,130,90))]:
         raise ValueError('Unique auth/association/deauth submissions required')
     reports=[r for r in rows if r.get('operation')=='single_probe_tx_report']
-    if reports!=[dict(operation='single_probe_tx_report',tag=t,state=0,tx_count=1) for t in (10,11,12)]:
+    if reports!=[dict(operation='single_probe_tx_report',tag=t,state=0,tx_count=1) for t in tags]:
         raise ValueError('Three successful station TX reports required')
     replies=[r for r in rows if r.get('operation')=='station_management_reply']
     if len(replies)!=2 or replies[0]!=dict(operation='station_management_reply',kind=10,status=0,aid=0) or replies[1].get('kind')!=11 or replies[1].get('status')!=0 or not 1<=replies[1].get('aid',0)<=2007:
@@ -142,6 +144,30 @@ def validate_station_result(rows):
         raise ValueError('Station grant restoration missing')
     return dict(authentication_verified=True,association_verified=True,aid=replies[1]['aid'],
                 deauth_submitted=True,security_established=False,data_path_established=False)
+
+
+def validate_eapol_history(history,ledger):
+    result=history.get('result',{})
+    if (history.get('stage')!=103 or history.get('context')!='CLEAN' or history.get('remaining_sequences')!=161 or
+        result.get('authentication_verified') is not True or result.get('association_verified') is not True or
+        result.get('deauth_submitted') is not True or history.get('grant_restored') is not True or
+        not history.get('external_association_response_packet') or not history.get('evidence')):
+        raise ValueError('Externally verified management association and cleanup required')
+    if ledger!=b'ARCHSEQ\x01'+bytes([1])*95+bytes(161) or hashlib.sha256(ledger).hexdigest()!=history.get('ledger_sha256'):
+        raise ValueError('Stage103 sequence history changed')
+
+
+def validate_eapol_observation(rows):
+    observations=[r for r in rows if r.get('operation')=='station_eapol_observation']
+    messages=[r for r in rows if r.get('operation')=='station_eapol_m1']
+    if (len(observations)!=1 or type(observations[0].get('m1_received')) is not bool or
+        observations[0].get('security_established') is not False or observations[0].get('data_path_established') is not False or
+        len(messages)>1 or observations[0]['m1_received']!=bool(messages)):
+        raise ValueError('One consistent bounded EAPOL observation required')
+    if messages and (messages[0].get('key_info')!=138 or messages[0].get('key_length')!=16 or
+                     messages[0].get('security_established') is not False):
+        raise ValueError('Unsupported EAPOL M1 observation')
+    return observations[0]
 
 
 def validate_phy_measurement(rows):
@@ -158,7 +184,8 @@ def validate_phy_measurement(rows):
     return record
 
 
-def execute(output, unicast=False, monitored=False, ack_capture=False, external_capture=False, capture_guard=None, external_phy=False, external_phy_drained=False, external_phy_grant=False, station_exchange=False):
+def execute(output, unicast=False, monitored=False, ack_capture=False, external_capture=False, capture_guard=None, external_phy=False, external_phy_drained=False, external_phy_grant=False, station_exchange=False, eapol_rx=False):
+    if eapol_rx:station_exchange=True
     if station_exchange:external_phy=True
     if external_phy_grant:external_phy=True
     if external_phy_drained:external_phy=True
@@ -169,7 +196,7 @@ def execute(output, unicast=False, monitored=False, ack_capture=False, external_
     if ack_capture:monitored=True
     if monitored:unicast=True
     output=output.resolve();output.mkdir();fds=[]
-    tag=10 if station_exchange else 9 if external_phy_grant else 8 if external_phy_drained else 7 if external_phy else 6 if external_capture else 5 if ack_capture else 4 if monitored else 3 if unicast else 2
+    tag=13 if eapol_rx else 10 if station_exchange else 9 if external_phy_grant else 8 if external_phy_drained else 7 if external_phy else 6 if external_capture else 5 if ack_capture else 4 if monitored else 3 if unicast else 2
     report={'status':'preflight','ssid':'Especial','channel':9,'tag':tag,'unicast':unicast,'monitored':monitored,'ack_capture':ack_capture,'external_capture':external_capture,'automatic_retry':False}
     try:
         owner=os.open(str(LEDGER)+'.workflow',os.O_RDWR|os.O_CREAT|os.O_NOFOLLOW,0o600);fds.append(owner)
@@ -182,7 +209,7 @@ def execute(output, unicast=False, monitored=False, ack_capture=False, external_
                 raise ValueError('Calibration evidence changed')
         # Fresh verified epoch had0..31 reserved after stage84. Any later H2C
         # invalidates this one-shot admission, rather than guessing current history.
-        if LEDGER.read_bytes()!=b'ARCHSEQ\x01'+bytes([1])*(86 if station_exchange else 77 if external_phy_grant else 68 if external_phy_drained else 59 if external_phy else 50 if external_capture else 41 if ack_capture else 50 if monitored else 41 if unicast else 32)+bytes(170 if station_exchange else 179 if external_phy_grant else 188 if external_phy_drained else 197 if external_phy else 206 if external_capture else 215 if ack_capture else 206 if monitored else 215 if unicast else 224):
+        if LEDGER.read_bytes()!=b'ARCHSEQ\x01'+bytes([1])*(95 if eapol_rx else 86 if station_exchange else 77 if external_phy_grant else 68 if external_phy_drained else 59 if external_phy else 50 if external_capture else 41 if ack_capture else 50 if monitored else 41 if unicast else 32)+bytes(161 if eapol_rx else 170 if station_exchange else 179 if external_phy_grant else 188 if external_phy_drained else 197 if external_phy else 206 if external_capture else 215 if ack_capture else 206 if monitored else 215 if unicast else 224):
             raise ValueError('Sequence history changed since calibration9')
         for path in (ROOT/'artifacts/37ad-0104-context-reservation',Path(str(LEDGER)+'.epoch-transition')):
             if path.read_bytes()!=b'CLEAN\n':raise ValueError('Context/epoch not CLEAN')
@@ -204,13 +231,15 @@ def execute(output, unicast=False, monitored=False, ack_capture=False, external_
                         if digest(path)!=sha:raise ValueError('Retained stage96/98 evidence changed')
                 if not raw:raise ValueError('Missing retained physical evidence')
             if station_exchange:
-                history_path=ROOT/'research/grant-probe-stage102-observation.json'
-                history=json.loads(history_path.read_text());validate_station_history(history,LEDGER.read_bytes())
+                history_path=ROOT/('research/station-exchange-stage103-observation.json' if eapol_rx else 'research/grant-probe-stage102-observation.json')
+                history=json.loads(history_path.read_text())
+                if eapol_rx:validate_eapol_history(history,LEDGER.read_bytes())
+                else:validate_station_history(history,LEDGER.read_bytes())
                 for name,sha in history['evidence'].items():
                     path=(ROOT/name).resolve()
                     if not path.is_relative_to(ROOT/'artifacts') or digest(path)!=sha:
                         raise ValueError('Stage102 retained exchange evidence changed')
-                if (ROOT/'artifacts/37ad-0104-special-channel9-grant-probe-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':
+                if (ROOT/('artifacts/37ad-0104-special-channel9-station-exchange-attempted' if eapol_rx else 'artifacts/37ad-0104-special-channel9-grant-probe-attempted')).read_bytes()!=b'RECOVERY_RESERVED\n':
                     raise ValueError('Preserved tag9 marker required')
                 report['station_history_sha256']=digest(history_path)
             if external_phy_grant:
@@ -289,11 +318,11 @@ def execute(output, unicast=False, monitored=False, ack_capture=False, external_
             validate_result([json.loads(x) for x in (history/'probe.jsonl').read_text().splitlines()])
             report['preceding_attempt_sha256']=digest(history/'attempt.json')
         helper=output/'archer-special-probe'
-        shutil.copy2(ROOT/('build/archer-special-station-exchange-universal' if station_exchange else 'build/archer-special-grant-probe-universal' if external_phy_grant else 'build/archer-special-drained-phy-probe-universal' if external_phy_drained else 'build/archer-special-phy-probe-universal' if external_phy else 'build/archer-special-external-probe-universal' if external_capture else 'build/archer-special-ack-probe-universal' if ack_capture else 'build/archer-special-monitored-probe-universal' if monitored else 'build/archer-special-unicast-probe-universal' if unicast else 'build/archer-special-probe-universal'),helper)
+        shutil.copy2(ROOT/('build/archer-special-eapol-rx-universal' if eapol_rx else 'build/archer-special-station-exchange-universal' if station_exchange else 'build/archer-special-grant-probe-universal' if external_phy_grant else 'build/archer-special-drained-phy-probe-universal' if external_phy_drained else 'build/archer-special-phy-probe-universal' if external_phy else 'build/archer-special-external-probe-universal' if external_capture else 'build/archer-special-ack-probe-universal' if ack_capture else 'build/archer-special-monitored-probe-universal' if monitored else 'build/archer-special-unicast-probe-universal' if unicast else 'build/archer-special-probe-universal'),helper)
         report.update(calibration_sha256=digest(evidence),ledger_before_sha256=digest(LEDGER),helper_sha256=digest(helper))
         save(output/'attempt.json',report)
         if external_capture:capture_guard()
-        marker=ROOT/('artifacts/37ad-0104-special-channel9-station-exchange-attempted' if station_exchange else 'artifacts/37ad-0104-special-channel9-grant-probe-attempted' if external_phy_grant else 'artifacts/37ad-0104-special-channel9-drained-phy-probe-attempted' if external_phy_drained else 'artifacts/37ad-0104-special-channel9-phy-probe-attempted' if external_phy else 'artifacts/37ad-0104-special-channel9-external-probe-attempted' if external_capture else 'artifacts/37ad-0104-special-channel9-ack-probe-attempted' if ack_capture else 'artifacts/37ad-0104-special-channel9-monitored-probe-attempted' if monitored else 'artifacts/37ad-0104-special-channel9-unicast-probe-attempted' if unicast else 'artifacts/37ad-0104-special-channel9-probe-attempted')
+        marker=ROOT/('artifacts/37ad-0104-special-channel9-eapol-rx-attempted' if eapol_rx else 'artifacts/37ad-0104-special-channel9-station-exchange-attempted' if station_exchange else 'artifacts/37ad-0104-special-channel9-grant-probe-attempted' if external_phy_grant else 'artifacts/37ad-0104-special-channel9-drained-phy-probe-attempted' if external_phy_drained else 'artifacts/37ad-0104-special-channel9-phy-probe-attempted' if external_phy else 'artifacts/37ad-0104-special-channel9-external-probe-attempted' if external_capture else 'artifacts/37ad-0104-special-channel9-ack-probe-attempted' if ack_capture else 'artifacts/37ad-0104-special-channel9-monitored-probe-attempted' if monitored else 'artifacts/37ad-0104-special-channel9-unicast-probe-attempted' if unicast else 'artifacts/37ad-0104-special-channel9-probe-attempted')
         permit=os.open(marker,os.O_RDWR|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600);fds.append(permit)
         fcntl.flock(permit,fcntl.LOCK_EX|fcntl.LOCK_NB)
         token=b'RECOVERY_RESERVED\n'
@@ -303,7 +332,7 @@ def execute(output, unicast=False, monitored=False, ack_capture=False, external_
         report['status']='started';save(output/'attempt.json',report)
         env=dict(os.environ,ARCHER_WORKFLOW_FD=str(owner),ARCHER_PROBE_RECOVERY_FD=str(permit))
         with (output/'probe.jsonl').open('w') as out,(output/'probe.stderr').open('w') as err:
-            result=subprocess.run([str(helper),'--single-special-channel9-station-exchange' if station_exchange else '--single-special-channel9-grant-probe' if external_phy_grant else '--single-special-channel9-drained-phy-probe' if external_phy_drained else '--single-special-channel9-phy-probe' if external_phy else '--single-special-channel9-external-probe' if external_capture else '--single-special-channel9-ack-probe' if ack_capture else '--single-special-channel9-monitored-probe' if monitored else '--single-special-channel9-unicast-probe' if unicast else '--single-special-channel9-probe',str(output/'capture')],
+            result=subprocess.run([str(helper),'--single-special-channel9-eapol-rx' if eapol_rx else '--single-special-channel9-station-exchange' if station_exchange else '--single-special-channel9-grant-probe' if external_phy_grant else '--single-special-channel9-drained-phy-probe' if external_phy_drained else '--single-special-channel9-phy-probe' if external_phy else '--single-special-channel9-external-probe' if external_capture else '--single-special-channel9-ack-probe' if ack_capture else '--single-special-channel9-monitored-probe' if monitored else '--single-special-channel9-unicast-probe' if unicast else '--single-special-channel9-probe',str(output/'capture')],
                 cwd=ROOT,env=env,pass_fds=(owner,permit),stdout=out,stderr=err,check=False)
         report.update(exit_code=result.returncode,stdout_sha256=digest(output/'probe.jsonl'),
                       stderr_sha256=digest(output/'probe.stderr'),ledger_after_sha256=digest(LEDGER))
@@ -312,8 +341,10 @@ def execute(output, unicast=False, monitored=False, ack_capture=False, external_
             report['measurement']=validate_measurement(rows)
         if external_phy and any(r.get('operation')=='single_probe_usb_write' for r in rows):
             report['phy_measurement']=validate_phy_measurement(rows)
+        if eapol_rx:
+            report['eapol_observation']=validate_eapol_observation(rows)
         if result.returncode:raise RuntimeError('Probe stopped; reservation retained, no retry')
-        report['validation']=validate_station_result(rows) if station_exchange else validate_result(rows,tag)
+        report['validation']=validate_station_result(rows,1 if eapol_rx else 0) if station_exchange else validate_result(rows,tag)
         report['status']='completed';save(output/'attempt.json',report)
     except BaseException as error:
         report.update(status='stopped',error=str(error));save(output/'attempt.json',report);raise

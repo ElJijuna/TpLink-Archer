@@ -6,6 +6,8 @@ from pathlib import Path
 import struct
 import subprocess
 import time
+from contextlib import nullcontext
+import wpa2_once
 from passive_workflow import ROOT, save, digest
 from special_probe_attempt import execute
 
@@ -24,15 +26,23 @@ def validate_live_decode(text):
         raise ValueError('Independent receiver has not captured Especial on channel9')
 
 
-def run(output,phy=False,drained=False,grant=False,station=False):
+def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa2=False):
+    if eapol:station=True
     if station:phy=True
     if grant:phy=True
     if drained:phy=True
     if os.geteuid()==0:raise ValueError('Run as your normal user after sudo -v; only monitor capture uses sudo')
     output=output.resolve();output.mkdir()
-    tag=10 if station else 9 if grant else 8 if drained else 7 if phy else 6
+    tag=13 if eapol else 10 if station else 9 if grant else 8 if drained else 7 if phy else 6
     report={'status':'preflight','automatic_retry':False,'tag':tag}
     monitor=None
+    credential_context=nullcontext(None)
+    if wpa2:
+        wpa2_once.admission()
+        credential_context=wpa2_once.credential_pipe()
+        report.update(attempt='wpa2_once',cleanup_report_tag=0)
+        report.pop('tag',None)
+    credential_fd=credential_context.__enter__()
     try:
         with (output/'preflight.jsonl').open('w') as out,(output/'preflight.stderr').open('w') as err:
             subprocess.run([str(ROOT/'build/archer-cleanup-verify-universal'),'--paused-channel9'],cwd=ROOT,stdout=out,stderr=err,check=True,timeout=30)
@@ -63,9 +73,10 @@ def run(output,phy=False,drained=False,grant=False,station=False):
             time.sleep(1)
             guard()
             report['status']='capture_live';save(output/'paired.json',report)
-            print(f'Independent capture live; submitting the unique tag{tag} attempt.',flush=True)
+            print('Independent capture live; submitting the unique WPA2 attempt.' if wpa2 else f'Independent capture live; submitting the unique tag{tag} attempt.',flush=True)
             try:
-                execute(output/'probe',external_capture=True,capture_guard=guard,external_phy=phy,external_phy_drained=drained,external_phy_grant=grant,station_exchange=station)
+                if wpa2:wpa2_once.execute(output/'probe',guard,credential_fd)
+                else:execute(output/'probe',external_capture=True,capture_guard=guard,external_phy=phy,external_phy_drained=drained,external_phy_grant=grant,station_exchange=station,eapol_rx=eapol)
                 report['probe_executor']='completed'
             except Exception as error:
                 report.update(probe_executor='stopped',probe_error=str(error))
@@ -78,6 +89,7 @@ def run(output,phy=False,drained=False,grant=False,station=False):
     except BaseException as error:
         report.update(status='stopped',error=str(error));raise
     finally:
+        credential_context.__exit__(None,None,None)
         # Do not interrupt an in-flight driver cleanup; the monitor self-stops at45s.
         if monitor is not None and monitor.poll() is None:
             try:monitor.wait(timeout=55)
@@ -92,5 +104,8 @@ if __name__=='__main__':
     parser.add_argument('--phy-drained',action='store_true',help='Unique tag8 after recorded pre-context tag7 stop and verified input drain')
     parser.add_argument('--phy-grant',action='store_true',help='Unique tag9 under reversible source v2 WLAN grant policy')
     parser.add_argument('--station-exchange',action='store_true',help='One auth/association/deauth experiment after validated tag9 response')
+    parser.add_argument('--eapol-rx',action='store_true',help='Unique tags13-15: associate, observe RSN M1 for up to3s, deauthenticate')
+    parser.add_argument('--wpa2-once',action='store_true',help='One WPA2 and encrypted DHCP DISCOVER experiment; hidden local passphrase prompt')
     args=parser.parse_args()
-    run(args.new_directory,args.phy,args.phy_drained,args.phy_grant,args.station_exchange)
+    if args.wpa2_once and any((args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx)):parser.error('--wpa2-once cannot be combined with prior experiments')
+    run(args.new_directory,args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx,args.wpa2_once)

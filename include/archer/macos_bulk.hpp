@@ -5,10 +5,13 @@
 #include <deque>
 #include <chrono>
 #include "archer/station_management.hpp"
+#ifdef ARCHER_WPA2_ONCE
+#include "archer/secure_network.hpp"
+#endif
 // Single-threaded channel: create, receive and close on the owning run-loop thread.
 // Async callbacks run only while that thread pumps the private run-loop mode.
 class MacBulkChannel {
-    IOUSBInterfaceInterface300** usb=nullptr;bool opened=false;UInt8 output=0,management_output=0;bool management_sent=false;std::vector<UInt8> inputs,input_addresses;
+    IOUSBInterfaceInterface300** usb=nullptr;bool opened=false;UInt8 output=0,management_output=0,data_output=0;bool management_sent=false;std::vector<UInt8> inputs,input_addresses;
     struct AsyncSlot {
         MacBulkChannel* owner=nullptr;unsigned index=0;bool pending=false;
         std::array<std::uint8_t,20480> bytes{};
@@ -18,6 +21,9 @@ class MacBulkChannel {
     CFRunLoopSourceRef source=nullptr;
     bool async_mode=false,stopping=false;unsigned pending=0;IOReturn async_error=0;
     archer::StationManagementSendGuard station_management_guard;bool station_management_started=false;
+#ifdef ARCHER_WPA2_ONCE
+    archer::SecureFrameSendGuard secure_guard;bool secure_started=false;
+#endif
     static CFStringRef mode(){return CFSTR("ArcherBulkReceive");}
     void submit(AsyncSlot& slot){
         auto status=(*usb)->ReadPipeAsyncTO(usb,inputs[slot.index],slot.bytes.data(),slot.bytes.size(),0,0,&completion,&slot);
@@ -83,6 +89,7 @@ public:
                 if((*usb)->GetPipeProperties(usb,pipe,&dir,&ep,&type,&packet,&interval))throw std::runtime_error("Cannot inspect boot pipes");
                 if(dir==kUSBIn&&type==kUSBBulk&&packet==512&&(ep==4||ep==8)){inputs.push_back(pipe);input_addresses.push_back(ep|0x80);}
                 if(dir==kUSBOut&&ep==5&&type==kUSBBulk&&packet==512){if(management_output)throw std::runtime_error("Ambiguous management output");management_output=pipe;}
+                if(dir==kUSBOut&&ep==9&&type==kUSBBulk&&packet==512){if(data_output)throw std::runtime_error("Ambiguous data output");data_output=pipe;}
                 if(dir==kUSBOut&&ep==7&&type==kUSBBulk&&packet==512){if(output)throw std::runtime_error("Ambiguous boot output");output=pipe;}
             }
             if(inputs.size()!=2)throw std::runtime_error("Expected two firmware input pipes");
@@ -115,17 +122,38 @@ public:
     void send_single_management_probe(const std::vector<std::uint8_t>& frame){
         if(!management_output||management_sent||station_management_started||(frame.size()!=96&&frame.size()!=104))
             throw std::runtime_error("Single management probe cannot be submitted");
+#ifdef ARCHER_WPA2_ONCE
+        if(secure_started)throw std::runtime_error("Secure transport already reserved");
+#endif
         management_sent=true; // A failed/uncertain submission cannot be retried.
         auto status=(*usb)->WritePipeTO(usb,management_output,const_cast<std::uint8_t*>(frame.data()),frame.size(),500,1000);
         std::cout<<"{\"operation\":\"single_probe_usb_write\",\"endpoint\":5,\"bytes\":"<<frame.size()<<",\"status\":"<<status<<"}"<<std::endl;
         if(status)throw std::runtime_error("Probe USB submission uncertain; no retry");
     }
-    void send_station_management_once(archer::StationManagementKind kind,const std::vector<std::uint8_t>& frame){
+    void send_station_management_once(archer::StationManagementKind kind,const std::vector<std::uint8_t>& frame,unsigned round=0){
         if(!management_output||management_sent)throw std::runtime_error("Station exchange cannot share a probe transport");
-        station_management_guard.issue(kind,frame);station_management_started=true;
+#ifdef ARCHER_WPA2_ONCE
+        if(secure_started)throw std::runtime_error("Secure transport already reserved");
+#endif
+        station_management_guard.issue(kind,frame,round);station_management_started=true;
         auto status=(*usb)->WritePipeTO(usb,management_output,const_cast<std::uint8_t*>(frame.data()),frame.size(),500,1000);
-        std::cout<<"{\"operation\":\"station_management_usb_write\",\"tag\":"<<unsigned(kind)<<",\"endpoint\":5,\"bytes\":"<<frame.size()<<",\"status\":"<<status<<"}"<<std::endl;
+        std::cout<<"{\"operation\":\"station_management_usb_write\",\"tag\":"<<(unsigned(kind)+3*round)<<",\"endpoint\":5,\"bytes\":"<<frame.size()<<",\"status\":"<<status<<"}"<<std::endl;
         if(status)throw std::runtime_error("Station management submission uncertain; no retry");
+    }
+#ifdef ARCHER_WPA2_ONCE
+    void send_secure_once(archer::SecureFramePhase phase,const std::vector<std::uint8_t>& packet){
+        const bool data=unsigned(phase)>=2&&unsigned(phase)<=4;
+        if(!management_output||!data_output||management_sent||station_management_started||packet.size()%512==0)
+            throw std::runtime_error("Secure transport unavailable or USB boundary unsupported");
+        secure_guard.issue(phase,packet);secure_started=true;
+        const auto status=(*usb)->WritePipeTO(usb,data?data_output:management_output,const_cast<std::uint8_t*>(packet.data()),packet.size(),500,1000);
+        std::cout<<"{\"operation\":\"secure_usb_write\",\"phase\":"<<unsigned(phase)<<",\"endpoint\":"<<(data?9:5)<<",\"bytes\":"<<packet.size()<<",\"status\":"<<status<<"}"<<std::endl;
+        if(status)throw std::runtime_error("Secure submission uncertain; no retry");
+    }
+#endif
+    bool has_completed_input(unsigned index)const{
+        if(index>=completed.size())throw std::invalid_argument("Invalid input queue");
+        return !completed[index].empty();
     }
     std::vector<std::uint8_t> receive(unsigned index,unsigned timeout_ms=20){
         if(index>=inputs.size()||(!timeout_ms&&!async_mode)||timeout_ms>1000)throw std::invalid_argument("Invalid bulk receive bound");

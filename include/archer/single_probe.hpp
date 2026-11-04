@@ -74,7 +74,7 @@ inline bool probe_report_terminal(const ProbeTxReport& r,unsigned limit){
     return r.state==0||r.count==limit;
 }
 inline std::optional<ProbeTxReport> single_probe_report(const std::uint8_t* p,std::size_t size,unsigned expected_tag=1){
-    if(expected_tag<1||expected_tag>15)throw std::invalid_argument("Invalid expected TX report tag");
+    if(expected_tag>15)throw std::invalid_argument("Invalid expected TX report tag");
     auto h=decode_c2h(p,size);
     if(h.category!=1||h.command_class!=9||h.function!=1)return {};
     if(size!=80)throw std::runtime_error("Unexpected RTL8922A TX report size");

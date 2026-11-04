@@ -960,6 +960,12 @@
     "artifacts/station-exchange-stage102/probe/capture/tx-8.bin": "4c5e0b140cf320bb293798bb60c89a9435ceb262f0787bbce78d3beb2de7ccf5",
     "artifacts/station-exchange-stage102/probe/probe.jsonl": "b8fc258951f57b6fb14d1e7477086b324112d455f7735b852f059f40113cae89",
     "artifacts/station-exchange-stage102/probe/probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "artifacts/station-exchange-stage103-crc.json": "2ee191bc04802a9680e770cd96a021cadcf4df3bacf6c07c51ebd4994efde3ae"
-  }
+    "artifacts/station-exchange-stage103-crc.json": "2ee191bc04802a9680e770cd96a021cadcf4df3bacf6c07c51ebd4994efde3ae",
+    "artifacts/station-exchange-stage103-postflight.jsonl": "02c8792b49650845107e6b0c8bcf7dce44bc55dbba741412a2d9857a08366078",
+    "artifacts/station-exchange-stage103-postflight.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/archer-special-eapol-rx-stage103": "538e7a454a67a85d25c1ab7c74703f24798565c55f211baf55aa4a5bb00532c4",
+    "artifacts/eapol-rx-stage103-tests.log": "bf130ac425b7903c97d53e82b69614ad58b931f0606f90a61425f0ebb69906e1",
+    "artifacts/eapol-rx-stage103-regression.log": "2bcf5c5d78336fb689f49ead75f00da4ef1ffe64cc8e919c9e82e3cf3010ecab"
+  },
+  "eapol_experiment": "prepared_not_executed"
 }

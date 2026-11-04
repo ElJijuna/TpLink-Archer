@@ -1,21 +1,21 @@
 # Archer USB — investigación y base de controlador
 
-## Checklist resumido — avance estimado: **52 %**
+## Checklist resumido — avance estimado: **56 %**
 
-Actualizado: **2026-11-03**, etapa98: lecturas repetidas y CRC externo validados; emisión aún no verificada. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-04**, etapa107: no se observó el estado frío requerido para recuperar el intento detenido. Contexto y transición DIRTY; ledger anterior intacto,143 secuencias libres. Emisión, asociación y M1 de etapas anteriores siguen documentados. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
 - [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
 - [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
-- [ ] Ruta completa de datos Wi-Fi TX/RX — **7/15**: RX/FCS y una trama de gestión con TX_DONE del firmware; faltan respuesta externa, datos TX y el resto del camino.
-- [ ] Escaneo, asociación y seguridad Wi-Fi — **5/15**: barrido pasivo1/6/11 con retorno; faltan ampliación, asociación y seguridad.
+- [ ] Ruta completa de datos Wi-Fi TX/RX — **9/15**: gestión TX/RX y respuesta de Especial corroboradas por captura independiente; faltan datos cifrados y el resto del camino.
+- [ ] Escaneo, asociación y seguridad Wi-Fi — **7/15**: barrido pasivo1/6/11, autenticación/asociación aceptadas y M1 recibido; faltan seguridad completa y ampliación.
 - [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
 - [ ] Validación física en Mac Intel — **0/5**.
 - [ ] Implementación y validación en Linux — **0/5**.
 
-**52/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
+**56/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
 no del tiempo restante. Compilar para Intel no equivale a validarlo físicamente.
 El adaptador todavía no ofrece conexión Wi-Fi utilizable.
 
@@ -25,10 +25,37 @@ La repetición desde firmware recargado terminó con respuestas OK de todos
 los comandos y RXDCK final limpio. IQK y TXGAPK reportan éxito; DPK no muestra
 timeouts/overflow, pero su máscara de estado y los estados de alineación TSSI
 siguen sin interpretación definitiva. No se afirma calidad RF plenamente validada.
-TX de red queda pausado tras una prueba de gestión con TX_DONE del firmware;
-hay barrido pasivo1/6/11, pero todavía no asociación ni interfaz de red.
+TX de red queda pausado. Especial aceptó autenticación y asociación (AID2),
+y el receptor nativo obtuvo M1 con FCS válido. WPA2 completo, datos cifrados e
+interfaz de red todavía no están verificados.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa107: enumeración37ad:0104; el perfil frío no aparece. La recuperación
+se detuvo antes de reset/carga/H2C y conservó el ledger. Continuación segura
+preparada y118 pruebas Python más suites C++ aprobadas; pendiente desconexión
+eléctrica e inspección fría. [Evidencia](research/STAGE107.md).
+
+Etapa106: el primer H2C (secuencia104) llegó por USB sin receive ACK.
+No hubo autenticación, EAPOL ni DHCP nuevos y la contraseña no fue puesta a prueba.
+Contexto DIRTY,113 secuencias consumidas/143 libres; intento y reservas conservados.
+No volver a ejecutar el comando105. [Evidencia y límites](research/STAGE106.md).
+
+Etapas102–104: la ventana reversible de concesiones Wi-Fi permitió obtener
+solicitud y respuesta de Especial en captura independiente (tag9). Después,
+autenticación y asociación fueron aceptadas y corroboradas externamente
+(tags10–12). Con tags13–15 se recibió M1 WPA2 nativo con FCS válido;
+la captura externa no corroboró M1. Concesiones/filtros restaurados, contexto
+CLEAN y152 secuencias disponibles. [Etapa102](research/STAGE102.md),
+[etapa103](research/STAGE103.md), [etapa104](research/STAGE104.md).
+
+Etapa105: intercambio WPA2, CCMP software y DHCP DISCOVER cifrado preparados.
+Suites C++ y116 pruebas Python aprobadas; ejecutable ARM/Intel compilado.
+Postflight físico sin TX/H2C correcto. Falta ejecutar con contraseña introducida
+localmente en Terminal; todavía no se afirma seguridad ni datos cifrados.
+[Instrucciones, alcance y límites](research/STAGE105.md).
+
+Historial de etapas anteriores (sus estados pendientes corresponden a esa fecha):
 
 Etapa101: tag8 ejecutado con captura independiente; CCK_TXEN/TXON0→1,
 OFDM0→0,pero RETRY_LIMIT/count1. CRC externo1979 válidos,835 inválidos,

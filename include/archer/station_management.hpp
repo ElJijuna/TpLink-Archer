@@ -9,9 +9,9 @@ inline bool station_fcs_valid(const std::uint8_t* p,std::size_t n){return n>=28&
 enum class StationManagementKind {authenticate=10,associate=11,deauthenticate=12};
 // Narrow legacy WPA2-PSK/CCMP management experiment, not a supplicant or linked
 // firmware data path. No credential, key material, EAPOL transmission or retry.
-inline std::vector<std::uint8_t> station_management_packet(StationManagementKind kind){
- const unsigned tag=unsigned(kind);
- if(tag<10||tag>12)throw std::invalid_argument("Invalid station management phase");
+inline std::vector<std::uint8_t> station_management_packet(StationManagementKind kind,unsigned round=0){
+ const unsigned tag=unsigned(kind)+3*round;
+ if(round>1||unsigned(kind)<10||unsigned(kind)>12)throw std::invalid_argument("Invalid station management phase");
  std::vector<std::uint8_t> frame(24);
  frame[0]=kind==StationManagementKind::authenticate?0xb0:kind==StationManagementKind::associate?0:0xc0;
  std::copy(station_target_ap.begin(),station_target_ap.end(),frame.begin()+4);
@@ -32,15 +32,15 @@ inline std::vector<std::uint8_t> station_management_packet(StationManagementKind
  packet.insert(packet.end(),frame.begin(),frame.end());return packet;
 }
 class StationManagementSendGuard {
- unsigned mask_=0;
+ unsigned mask_=0;std::optional<unsigned> round_;
 public:
- void issue(StationManagementKind kind,const std::vector<std::uint8_t>& frame){
+ void issue(StationManagementKind kind,const std::vector<std::uint8_t>& frame,unsigned round=0){
   const unsigned tag=unsigned(kind);
-  if(tag<10||tag>12||frame!=station_management_packet(kind))throw std::invalid_argument("Unbound station frame");
+  if(tag<10||tag>12||round>1||(round_&&*round_!=round)||frame!=station_management_packet(kind,round))throw std::invalid_argument("Unbound station frame");
   const unsigned bit=1u<<(tag-10);
   if((mask_&bit)||(mask_&4)||(tag==10&&mask_)||(tag!=10&&!(mask_&1)))
    throw std::logic_error("Station management order/retry forbidden");
-  mask_|=bit; // Consumed before a transport call, including uncertain writes.
+  round_=round;mask_|=bit; // Consumed before a transport call, including uncertain writes.
  }
 };
 struct StationManagementReply {StationManagementKind kind;unsigned status=0,aid=0;};

@@ -39,21 +39,52 @@ def new_epoch_bytes():
     return b'ARCHSEQ\x01' + bytes([1, 1]) + bytes(254)
 
 
-def transition(output, discard_dirty_context=False, cold=False, finish_cold=False):
+def validate_cold_preflight_stop(record, rows, stderr):
+    if (record.get('status')!='stopped' or record.get('mode')!='cold-reload-no-h2c'
+        or record.get('resuming_cold_preflight') or record.get('reload_exit')!=2
+        or stderr!='epoch-boot: Cold BB reset profile absent; keep transition fenced, no replay\n'):
+        raise ValueError('Only the preserved cold-profile preflight stop may continue')
+    if not rows or any(r.get('phase') or r.get('result') or
+                       r.get('operation') not in ('read','write') or
+                       r.get('status')!=0 or r.get('completed_bytes')!=r.get('width') for r in rows):
+        raise ValueError('Preflight has side effects or incomplete transfers')
+    writes=[r for r in rows if r['operation']=='write']
+    if ([r['address'] for r in writes]!=[0x74,0x270,0x270,0x270,0x74]
+        or [r['value'] for r in writes[1:4]]!=[0x81000041,0x810000fd,0x810000fe]):
+        raise ValueError('Unexpected preflight mutations')
+    windows=[r['value'] for r in rows if r['operation']=='read' and r['address']==0x74]
+    if len(windows)<2 or windows[0]!=windows[-1]:raise ValueError('Preflight window was not restored')
+
+
+def transition(output, discard_dirty_context=False, cold=False, finish_cold=False, resume_cold_preflight=False):
     output = output.resolve()
-    if not finish_cold:output.mkdir()
+    if finish_cold and resume_cold_preflight:raise ValueError('Choose one continuation')
+    continuing=finish_cold or resume_cold_preflight
+    if not continuing:output.mkdir()
     report = output / 'epoch.json'
     record = {'epoch_id': str(uuid.uuid4()), 'status': 'preflight',
               'mode': 'cold-reload-no-h2c' if cold else 'powered-reload-no-h2c', 'discard_dirty_context': discard_dirty_context, 'resident_version_readback': False}
     earlier_rows=[]
+    if resume_cold_preflight:
+        cold=True
+        record=json.loads(report.read_text())
+        if digest(output/'reload.jsonl')!=record.get('reload_stdout_sha256') or digest(output/'reload.stderr')!=record.get('reload_stderr_sha256'):
+            raise ValueError('Original preflight evidence changed')
+        validate_cold_preflight_stop(record,[json.loads(line) for line in (output/'reload.jsonl').read_text().splitlines()],(output/'reload.stderr').read_text())
+        if not discard_dirty_context:raise ValueError('Explicit archived context recovery required')
+        save(output/'preflight-stop.json',record)
+        record['preflight_stop_sha256']=digest(output/'preflight-stop.json')
+        record['resuming_cold_preflight']=True
     if finish_cold:
         cold=True
         record=json.loads(report.read_text())
         if record.get('status')!='stopped' or record.get('mode')!='cold-reload-no-h2c':
             raise ValueError('Only a stopped cold boundary may be finished')
-        if digest(output/'reload.jsonl')!=record.get('reload_stdout_sha256'):
+        boundary_log=output/record.get('boundary_stdout_file','reload.jsonl')
+        if boundary_log.name not in ('reload.jsonl','resume-cold.jsonl'):raise ValueError('Invalid boundary log')
+        if digest(boundary_log)!=record.get('reload_stdout_sha256'):
             raise ValueError('Original cold download log changed')
-        earlier_rows=[json.loads(line) for line in (output/'reload.jsonl').read_text().splitlines()]
+        earlier_rows=[json.loads(line) for line in boundary_log.read_text().splitlines()]
         for field in ('epoch_cold_profile_verified','cpu_reset','firmware_ready'):
             if sum(row.get('phase')==field for row in earlier_rows)!=1:
                 raise ValueError('Original cold download did not reach a unique ready phase')
@@ -72,9 +103,9 @@ def transition(output, discard_dirty_context=False, cold=False, finish_cold=Fals
             raise ValueError('Invalid workflow lock')
         fcntl.flock(owner, fcntl.LOCK_EX | fcntl.LOCK_NB)
         fence = Path(str(LEDGER) + '.epoch-transition')
-        if fence.is_symlink() or (fence.exists() and fence.read_bytes() != (b'DIRTY\n' if finish_cold else b'CLEAN\n')):
+        if fence.is_symlink() or (fence.exists() and fence.read_bytes() != (b'DIRTY\n' if continuing else b'CLEAN\n')):
             raise ValueError('Previous epoch transition incomplete; no automatic retry')
-        if finish_cold and not fence.exists():
+        if continuing and not fence.exists():
             raise ValueError('Original cold boundary fence is missing')
         lease = ROOT / 'artifacts/37ad-0104-context-reservation'
         context_fd = os.open(lease, os.O_RDWR | os.O_NOFOLLOW)
@@ -86,7 +117,7 @@ def transition(output, discard_dirty_context=False, cold=False, finish_cold=Fals
         previous_context = os.pread(context_fd, 7, 0)
         if previous_context != b'CLEAN\n' and not (discard_dirty_context and previous_context == b'DIRTY\n'):
             raise ValueError('Context uncertain; explicit discard after verified reload required')
-        if finish_cold:
+        if continuing:
             if (output/'previous-context.bin').read_bytes()!=previous_context:
                 raise ValueError('Context changed since failed cold boundary')
         else:
@@ -104,14 +135,16 @@ def transition(output, discard_dirty_context=False, cold=False, finish_cold=Fals
         old = os.pread(old_fd, 265, 0)
         record['available_before'] = available_sequences(old)
         archive = output / 'previous-ledger.bin'
-        if finish_cold:
+        if continuing:
             if archive.read_bytes()!=old:raise ValueError('Ledger changed since failed cold boundary')
         else:
             with archive.open('xb') as f:
                 f.write(old)
                 f.flush()
                 os.fsync(f.fileno())
-        helper = output / ('archer-epoch-boot-finish' if finish_cold else 'archer-epoch-boot')
+        if continuing and (digest(archive)!=record.get('old_ledger_sha256') or previous_context.decode().strip()!=record.get('previous_context')):
+            raise ValueError('Archived transaction identity changed')
+        helper = output / ('archer-epoch-boot-finish' if finish_cold else 'archer-epoch-boot-resume' if resume_cold_preflight else 'archer-epoch-boot')
         shutil.copy2(ROOT / 'build/archer-epoch-boot-universal', helper)
         record.update(old_ledger_sha256=digest(archive), helper_sha256=digest(helper))
         save(report, record)
@@ -121,7 +154,9 @@ def transition(output, discard_dirty_context=False, cold=False, finish_cold=Fals
         record['status'] = 'reload_started'
         save(report, record)
         env = dict(os.environ, ARCHER_WORKFLOW_FD=str(owner), ARCHER_EPOCH_LEDGER_FD=str(old_fd))
-        stdout, stderr = output / ('finish.jsonl' if finish_cold else 'reload.jsonl'), output / ('finish.stderr' if finish_cold else 'reload.stderr')
+        prefix='finish' if finish_cold else 'resume-cold' if resume_cold_preflight else 'reload'
+        stdout, stderr = output / (prefix+'.jsonl'), output / (prefix+'.stderr')
+        if not finish_cold:record['boundary_stdout_file']=stdout.name
         with stdout.open('w') as out, stderr.open('w') as err:
             process = subprocess.run([str(helper), '--finish-cold-boundary-no-h2c' if finish_cold else '--reload-cold-no-h2c' if cold else '--reload-powered-no-h2c', str(output / ('finish' if finish_cold else 'reload'))],
                                      cwd=ROOT, env=env, pass_fds=(owner, old_fd), stdout=out, stderr=err, check=False)
@@ -202,5 +237,6 @@ if __name__ == '__main__':
     parser.add_argument('--discard-dirty-context', action='store_true', help='Archive uncertain context and discard it only after verified MAC/DLE/CPU reload; does not permit another probe')
     parser.add_argument('--cold-after-reconnect', action='store_true', help='Require cold BB/RF baseline after physical reconnect and use cold-radio bootstrap')
     parser.add_argument('--finish-cold-boundary', action='store_true', help='Finish a preserved cold download using control verification/drain only; never reloads firmware')
+    parser.add_argument('--resume-cold-preflight', action='store_true', help='Continue once after the exact archived cold-profile rejection; preserves DIRTY until a verified cold reload')
     args = parser.parse_args()
-    transition(args.new_directory, args.discard_dirty_context, args.cold_after_reconnect, args.finish_cold_boundary)
+    transition(args.new_directory, args.discard_dirty_context, args.cold_after_reconnect, args.finish_cold_boundary, args.resume_cold_preflight)

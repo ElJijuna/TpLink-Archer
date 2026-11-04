@@ -63,6 +63,7 @@ int main(){
  decoded=archer::single_probe_report(rpt.data(),rpt.size());assert(decoded&&decoded->state==3);
  archer::channel_put32(rpt.data()+48,2<<12);assert(!archer::single_probe_report(rpt.data(),rpt.size()));
  decoded=archer::single_probe_report(rpt.data(),rpt.size(),2);assert(decoded&&decoded->state==0);
+ archer::channel_put32(rpt.data()+48,0);decoded=archer::single_probe_report(rpt.data(),rpt.size(),0);assert(decoded&&decoded->state==0&&decoded->count==1);assert(!archer::single_probe_report(rpt.data(),rpt.size(),1));
  archer::channel_put32(rpt.data()+48,1<<12);assert(!archer::single_probe_report(rpt.data(),rpt.size(),2));
  archer::channel_put32(rpt.data(),1|(1<<8));assert(!archer::single_probe_report(rpt.data(),rpt.size()));
  bool bad=false;archer::channel_put32(rpt.data(),1|(9<<2)|(1<<8));archer::channel_put32(rpt.data()+4,60);
