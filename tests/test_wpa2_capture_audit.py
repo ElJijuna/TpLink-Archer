@@ -30,4 +30,10 @@ class OfflineCaptureAuditTest(unittest.TestCase):
                     self.assertEqual(summary['matched_offers'],1);self.assertEqual(summary['pairwise_frames'],1);self.assertEqual(summary['reflected_discover_frames'],1)
                     self.assertTrue(summary['m3_authenticated']);self.assertTrue(summary['recorded_discover_verified'])
                     self.assertEqual(summary['network_submissions'],0)
+                    arp=[r for r in rows if r.get('ether_type')==2054]
+                    self.assertEqual(len(arp),1);self.assertEqual(arp[0]['arp_operation'],1)
+                    self.assertTrue(arp[0]['arp_sender_ip_zero']);self.assertFalse(arp[0]['arp_target_ip_zero'])
+                    self.assertTrue(arp[0]['arp_sender_is_ap']);self.assertTrue(arp[0]['arp_target_is_station'])
+                    self.assertNotIn('192.0.2.10',result.stdout)
+                    self.assertEqual(summary['authenticated_frames'],3);self.assertEqual(summary['rejected_frames'],0)
                 else:self.assertEqual(result.stdout,'')
