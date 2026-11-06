@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **60 %**
 
-Actualizado: **2026-11-06**, etapa123: el intento broadcast122 autenticó seis tramas CCMP de grupo, incluido DISCOVER propio reflejado; cero OFFER. Postflight correcto, contexto DIRTY,206 secuencias libres. Clasificación ARP offline preparada. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-06**, etapa124: auditoría offline ratifica seis tramas CCMP de grupo, incluido DISCOVER propio reflejado; cero OFFER. Cinco solicitudes ARP autenticadas, sin relación DHCP demostrada. Último contexto registrado DIRTY,206 secuencias libres. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -32,6 +32,12 @@ también se autenticaron tres tramas ARP. Faltan OFFER, lease, recepción
 unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa124: auditoría real completada,260 hashes de entrada verificados.
+M2/M4 reproducidos, M3 autenticado, DISCOVER reflejado y cinco solicitudes ARP
+verificados. Cero OFFER/pairwise; los metadatos ARP no permiten atribuir causa
+al fallo DHCP. Sin USB, TX nuevo ni liberación de contexto.
+[Resultados y límites](research/STAGE124.md).
 
 Etapa123: intento122 ejecutado; M3 autenticado, DISCOVER broadcast reflejado
 y cinco ARP autenticados nativamente, cero rechazos/OFFER/pairwise. El usuario

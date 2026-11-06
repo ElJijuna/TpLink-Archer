@@ -1,0 +1,37 @@
+{
+  "stage": 124,
+  "date": "2026-11-06",
+  "status": "offline_broadcast_discover_and_arp_authenticated_no_offer",
+  "verified_input_hashes": 260,
+  "summary": {
+    "result": "offline_wpa2_audited",
+    "m2_reproduced": true,
+    "m3_authenticated": true,
+    "m4_reproduced": true,
+    "recorded_discover_verified": true,
+    "protected_frames": 6,
+    "authenticated_frames": 6,
+    "rejected_frames": 0,
+    "pairwise_frames": 0,
+    "group_frames": 6,
+    "matched_offers": 0,
+    "reflected_discover_frames": 1,
+    "h2c_submissions": 0,
+    "network_submissions": 0
+  },
+  "arp_requests": 5,
+  "arp_sender_ip_zero": 0,
+  "arp_target_ip_zero": 0,
+  "arp_sender_matches_ap_mac": 0,
+  "arp_target_matches_station_mac": 0,
+  "dhcp_relationship_established": false,
+  "context_released": false,
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "evidence_sha256": {
+    "artifacts/wpa2-offline-stage123/audit.json": "aa72589d75c1923b433fa6eba7d38946f52cd353fbf11d1b431fa93851be7598",
+    "artifacts/wpa2-offline-stage123/audit.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/wpa2-offline-stage123/audit.jsonl": "6434a415a76d09033b79cd664f0ca3d3692461ae8197e0f417da682998b4fdb1",
+    "artifacts/wpa2-offline-stage123/archer-wpa2-capture-audit": "f916b302dd75a1291eb2476a16ed6dcb3a577b33f9e9cca914d085f6ca597107"
+  }
+}
