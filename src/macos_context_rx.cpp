@@ -118,6 +118,7 @@ int main(int argc,char** argv){
     if(!credential_env||errno||!credential_end||*credential_end||credential_fd<3||credential_fd>0x7fffffff)throw std::runtime_error("Private credential FD required");
     archer::Wpa2PskHandshake handshake(archer::pmk_from_credential_pipe(credential_fd),archer::fresh_wpa2_snonce());
     std::optional<archer::CcmpSession> ccmp;std::optional<archer::DhcpOffer> dhcp_offer;
+    archer::SecureDataObservation secure_data;
     std::vector<std::uint8_t> secure_m1,secure_m3;bool m2_sent=false;std::uint32_t dhcp_xid=0;
     if(CCRandomGenerateBytes(&dhcp_xid,sizeof(dhcp_xid))!=kCCSuccess||!dhcp_xid)throw std::runtime_error("DHCP random transaction unavailable");
 #endif
@@ -239,7 +240,13 @@ int main(int argc,char** argv){
                         const auto eapol=archer::target_rsn_eapol(frame,size);
                         if(eapol&&archer::eapol_be16(eapol->data()+5)==0x13ca)secure_m3=*eapol;
                     }
-                    if(ccmp&&!dhcp_offer){try{const auto plain=ccmp->decrypt_from_ap(frame,size);dhcp_offer=archer::decode_dhcp_offer(plain.bytes,dhcp_xid);}catch(const std::exception&){} }
+                    if(ccmp&&!dhcp_offer){
+                        const auto data=secure_data.observe(*ccmp,frame,size,dhcp_xid);
+                        if(data){
+                            if(data->offer)dhcp_offer=data->offer;
+                            std::cout<<"{\"operation\":\"secure_authenticated_data\",\"group\":"<<(data->group?"true":"false")<<",\"bytes\":"<<data->bytes<<",\"ether_type\":"<<data->ether_type<<",\"reflected_discover\":"<<(data->reflected_discover?"true":"false")<<",\"strict_offer\":"<<(data->offer?"true":"false")<<"}"<<std::endl;
+                        }
+                    }
                 }
 #elif defined(ARCHER_STATION_EAPOL_RX)
                 if(m.normal_80211_candidate()&&!station_m1){

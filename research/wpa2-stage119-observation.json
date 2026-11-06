@@ -1,0 +1,39 @@
+{
+  "stage": 119,
+  "date": "2026-11-06",
+  "status": "authenticated_rx_instrumentation_validated_cold_boundary_pending",
+  "cold_inspection": {
+    "result": "cold_profile_inspected",
+    "bb_control": 2160263175,
+    "bb_reset": 2147057657,
+    "firmware_control": 201326626,
+    "cold_profile": false,
+    "h2c_submissions": 0,
+    "firmware_resets": 0
+  },
+  "new_network_submissions": 0,
+  "new_h2c_submissions": 0,
+  "firmware_resets": 0,
+  "python_tests": 122,
+  "cpp_suites": "passed",
+  "build_architectures": [
+    "arm64",
+    "x86_64"
+  ],
+  "physical_validation_of_new_instrumentation": false,
+  "success_criterion_unchanged": "matching authenticated DHCP OFFER",
+  "context_release_policy_unchanged": true,
+  "sha256": {
+    "include/archer/secure_network.hpp": "c92713f6f3fd8b36247b9a17f791dc626b614c8822d4c7a8b941c23ad80063af",
+    "include/archer/secure_exchange.inc": "fcc3052bb4e718c671e2a0d4cc25ab5fcaf17f163b95e676093cdd7ca5e60f0b",
+    "src/macos_context_rx.cpp": "5aba4bfecde66a98b7a9f0ae25bf9133ff249a728c8709c80095bf112cd84498",
+    "tests/secure_network_test.cpp": "a1200f2702970ccffc26ff41c5ad0096e39f3be8022e58416cb56e8545262f2d",
+    "artifacts/wpa2-stage119-validation.log": "f42315e1f3b21c6d218bd034c15d281283a6f56ef23e13652b2d9b30f108ff4e",
+    "artifacts/wpa2-stage119-cold-inspect.jsonl": "dcb8c28b82327c9aae9a35b08a261fd6478a46b3836f633f4d1609d1b25ea52d",
+    "artifacts/wpa2-stage119-cold-inspect.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build/archer-special-wpa2-recovered-universal": "4300975a9167e078b91e070ef4f8c7d521cacfa4628bc1dad57cdf8bed6f5e67",
+    "artifacts/37ad-0104-sequences.bin": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+    "artifacts/37ad-0104-sequences.bin.epoch-id": "21dcfe83692c30c5588de355e028cb24344b2036169c0dda90c1e709f99ff109",
+    "artifacts/37ad-0104-sequences.bin.epoch-transition": "0b98843240a0b1a2384483206c02be8968dd809eb73838820be24cb7d6d6aeb9"
+  }
+}

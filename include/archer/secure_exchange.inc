@@ -58,7 +58,7 @@
                                     const auto m4=handshake.issue_m4();ccmp.emplace(handshake);
                                     secure_send(archer::SecureFramePhase::m4,archer::secure_eapol_packet(archer::SecureFramePhase::m4,m4));
                                     // Different queues share BE here. Give M4 a bounded transmit window;
-                                    // only a matched authenticated OFFER below confirms AP forwarding.
+                                    // only a matched authenticated OFFER below completes this experiment.
                                     const auto settle=std::chrono::steady_clock::now()+std::chrono::milliseconds(100);
                                     while(std::chrono::steady_clock::now()<settle){receive(0,true);receive(1,true);}
                                     archer::channel_bus_write(bus,0x10398,0x3ffff,0);
@@ -72,6 +72,7 @@
                                 station_expected_reply.reset();
                                 archer::channel_bus_write(bus,0x10398,0x3ffff,0);
                                 secure_capture_phy();
+                                std::cout<<"{\"operation\":\"secure_data_summary\",\"authenticated_frames\":"<<secure_data.authenticated<<",\"rejected_frames\":"<<secure_data.rejected<<",\"group_frames\":"<<secure_data.group<<",\"pairwise_frames\":"<<secure_data.pairwise<<",\"reflected_discover_frames\":"<<secure_data.reflected_discover<<",\"matched_offers\":"<<secure_data.offers<<",\"lease_acquired\":false}"<<std::endl;
                                 if(auth_attempted&&!secure_pending){
                                     try{
                                         secure_send(archer::SecureFramePhase::deauthenticate,archer::secure_management_packet(archer::SecureFramePhase::deauthenticate));

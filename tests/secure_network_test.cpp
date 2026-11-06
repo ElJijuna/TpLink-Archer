@@ -31,5 +31,31 @@ int main(){
  auto decoded=decode_dhcp_offer(offer,xid);assert(decoded&&decoded->address[3]==55&&decoded->server[3]==1);assert(!decode_dhcp_offer(offer,xid+1));
  for(unsigned at:{8u,18u,28u,36u,40u,64u,272u,280u}){auto bad=offer;bad[at]^=1;assert(!decode_dhcp_offer(bad,xid));}
  for(std::size_t n=0;n<offer.size();++n){auto short_offer=offer;short_offer.resize(n);assert(!decode_dhcp_offer(short_offer,xid));}
+ // Exercise the same authenticated observation seam used by the live RX callback.
+ const auto downlink=[&](const std::vector<std::uint8_t>& payload,bool group,unsigned pn,bool own_source=true){
+  std::vector<std::uint8_t> f(24);f[0]=8;f[1]=0x42;
+  std::copy(station_target_ap.begin(),station_target_ap.end(),f.begin()+10);
+  std::copy(station_test_mac.begin(),station_test_mac.end(),f.begin()+4);
+  if(group)std::fill(f.begin()+4,f.begin()+10,255);
+  const auto& source=own_source?station_test_mac:station_target_ap;std::copy(source.begin(),source.end(),f.begin()+16);
+  auto params=ccmp_parameters(f.data(),f.size(),pn);
+  auto cipher=ccm8_encrypt(group?hs.group_key():hs.pairwise_key(),params.nonce,params.aad,payload);
+  f.insert(f.end(),{std::uint8_t(pn),std::uint8_t(pn>>8),0,std::uint8_t(group?0x60:0x20),0,0,0,0});
+  f.insert(f.end(),cipher.begin(),cipher.end());auto n=f.size();f.resize(n+4);channel_put32(f.data()+n,ieee_fcs(f.data(),n));return f;
+ };
+ CcmpSession observed_session(hs);SecureDataObservation observed;
+ assert(!observed.observe(observed_session,m1.data(),m1.size(),xid));assert(observed.rejected==0);
+ auto echo=downlink(discover,true,1000);auto corrupt=echo;corrupt[40]^=1;channel_put32(corrupt.data()+corrupt.size()-4,ieee_fcs(corrupt.data(),corrupt.size()-4));
+ assert(!observed.observe(observed_session,corrupt.data(),corrupt.size(),xid));assert(observed.rejected==1);
+ auto reflected=observed.observe(observed_session,echo.data(),echo.size(),xid);
+ assert(reflected&&reflected->group&&reflected->reflected_discover&&!reflected->offer&&reflected->ether_type==0x800);
+ assert(!observed.observe(observed_session,echo.data(),echo.size(),xid)); // replay never increments authenticated
+ auto other_source=downlink(discover,true,1001,false);auto other=observed.observe(observed_session,other_source.data(),other_source.size(),xid);
+ assert(other&&!other->reflected_discover&&!other->offer);
+ auto wrong_transaction=downlink(dhcp_discover_msdu(xid+1),true,1002);auto wrong=observed.observe(observed_session,wrong_transaction.data(),wrong_transaction.size(),xid);
+ assert(wrong&&!wrong->reflected_discover&&!wrong->offer);
+ auto server=downlink(offer,false,1,false);auto accepted=observed.observe(observed_session,server.data(),server.size(),xid);
+ assert(accepted&&!accepted->group&&accepted->offer&&!accepted->reflected_discover);
+ assert(observed.authenticated==4&&observed.rejected==2&&observed.group==3&&observed.pairwise==1&&observed.reflected_discover==1&&observed.offers==1);
  std::cout<<"Secure frame one-shot ordering/descriptors, captured EAPOL extraction and matched DHCP OFFER bounds passed\n";
 }

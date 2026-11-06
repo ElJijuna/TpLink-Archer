@@ -33,6 +33,16 @@ unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 
+Etapa120: tras reconectar, Archer aparece como instalador Realtek0bda:1a2b.
+La expulsión requiere autenticación sudo local; sin recarga, H2C o TX nuevos.
+[Continuación de recuperación](research/STAGE120.md).
+
+Etapa119: receptor instrumentado para distinguir CCMP autenticado de grupo o
+unicast, DISCOVER reflejado y OFFER válido, también al finalizar por timeout.
+Suites C++ y122 pruebas Python pasan; compilación ARM/Intel. Inspección actual
+`cold_profile=false`: sin TX, H2C ni reset nuevos; recuperación fría pendiente.
+[Instrumentación y siguiente paso](research/STAGE119.md).
+
 Etapa118: auditoría real completada sin USB ni TX nuevo. Los253 hashes de
 entrada y el ejecutable preparado coinciden. Cuatro tramas CCMP autenticadas,
 cero rechazadas: DISCOVER propio reflejado y tres ARP; cero OFFER. Evidencia

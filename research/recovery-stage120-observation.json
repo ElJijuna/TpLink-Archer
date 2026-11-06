@@ -1,0 +1,22 @@
+{
+  "stage": 120,
+  "date": "2026-11-06",
+  "status": "installer_enumerated_local_sudo_authentication_required",
+  "usb_vendor": "0bda",
+  "usb_product": "1a2b",
+  "wifi_interface_verified": false,
+  "cold_profile_verified": false,
+  "sudo_exit": 1,
+  "sudo_stderr": "sudo: a password is required\n",
+  "firmware_reloads": 0,
+  "h2c_submissions": 0,
+  "network_submissions": 0,
+  "reservations_preserved": true,
+  "evidence_sha256": {
+    "artifacts/recovery-stage120-usb.txt": "ed95497a4e07f4a897ffb7a8632fd78aac087dfb9fa1a6073dd36cf66bd9ec40",
+    "artifacts/recovery-stage120-optical-eject.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage120-optical-eject.stderr": "9b3a3b7a78f239c4473bb193476b1a860c91f1c2b4fab9c7639eceea414a60fb",
+    "artifacts/37ad-0104-sequences.bin": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+    "artifacts/37ad-0104-sequences.bin.epoch-id": "21dcfe83692c30c5588de355e028cb24344b2036169c0dda90c1e709f99ff109"
+  }
+}

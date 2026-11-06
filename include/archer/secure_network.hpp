@@ -85,6 +85,34 @@ inline std::optional<DhcpOffer> decode_dhcp_offer(const std::vector<std::uint8_t
  }
  if(!type||!server||!end||!offer.server[0]||offer.server[0]>=224||offer.server[0]==127)return {};return offer;
 }
+// Metadata only: plaintext stays in the authenticated, wiping SecretVector.
+struct SecureDataMetadata {
+ bool group=false,reflected_discover=false;
+ unsigned bytes=0,ether_type=0;
+ std::optional<DhcpOffer> offer;
+};
+struct SecureDataObservation {
+ unsigned authenticated=0,rejected=0,group=0,pairwise=0,reflected_discover=0,offers=0;
+ std::optional<SecureDataMetadata> observe(CcmpSession& ccmp,const std::uint8_t* frame,std::size_t size,std::uint32_t xid){
+  // Ignore management, foreign receivers and unprotected data rather than
+  // counting them as failed CCMP authentication.
+  if(size<24||(management_u16(frame)&0x430c)!=0x4208||
+     !std::equal(station_target_ap.begin(),station_target_ap.end(),frame+10)||
+     (!(frame[4]&1)&&!std::equal(station_test_mac.begin(),station_test_mac.end(),frame+4)))return {};
+  std::optional<SecretVector> plain;
+  try{plain.emplace(ccmp.decrypt_from_ap(frame,size));}
+  catch(const std::exception&){++rejected;return {};}
+  SecureDataMetadata result;result.group=frame[4]&1;result.bytes=plain->bytes.size();
+  const std::array<std::uint8_t,6> snap{0xaa,0xaa,3,0,0,0};
+  if(plain->bytes.size()>=8&&std::equal(snap.begin(),snap.end(),plain->bytes.begin()))result.ether_type=eapol_be16(plain->bytes.data()+6);
+  result.reflected_discover=xid&&plain->bytes==dhcp_discover_msdu(xid)&&
+      std::equal(station_test_mac.begin(),station_test_mac.end(),frame+16);
+  result.offer=decode_dhcp_offer(plain->bytes,xid);
+  ++authenticated;if(result.group)++group;else ++pairwise;
+  reflected_discover+=result.reflected_discover;offers+=bool(result.offer);
+  return result;
+ }
+};
 inline std::optional<std::vector<std::uint8_t>> target_rsn_eapol(const std::uint8_t* p,std::size_t size){
  if(!station_fcs_valid(p,size)||size<28)return {};size-=4;const auto fc=management_u16(p);
  if(((fc&0x03ff)!=0x0208&&(fc&0x03ff)!=0x0288)||fc&0xc400||management_u16(p+22)&15||
