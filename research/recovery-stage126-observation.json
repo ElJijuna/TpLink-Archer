@@ -1,0 +1,30 @@
+{
+  "stage": 126,
+  "date": "2026-11-06",
+  "status": "cold_boundary_not_observed_usb_session_unchanged",
+  "usb_session_id": 13471290465223,
+  "io_registry_device_id": "0x100258009",
+  "matches_stage121_usb_identity": true,
+  "cold_inspection": {
+    "result": "cold_profile_inspected",
+    "bb_control": 2160263175,
+    "bb_reset": 2147057657,
+    "firmware_control": 201326626,
+    "cold_profile": false,
+    "h2c_submissions": 0,
+    "firmware_resets": 0
+  },
+  "context": "DIRTY",
+  "remaining_sequences": 206,
+  "firmware_reloads": 0,
+  "h2c_submissions": 0,
+  "network_submissions": 0,
+  "evidence_sha256": {
+    "artifacts/recovery-stage126-usb.txt": "0701fc915b75a9dfe4907d7d7e9a4b070f59e91691ba8ada7dd713351941afc8",
+    "artifacts/recovery-stage126-cold.jsonl": "dcb8c28b82327c9aae9a35b08a261fd6478a46b3836f633f4d1609d1b25ea52d",
+    "artifacts/recovery-stage126-cold.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage121-usb-after.txt": "a29bc58287c280f604000d2d1863867ed6a7a464db3daa61a087c4f0c9d2b609",
+    "artifacts/37ad-0104-sequences.bin": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+    "artifacts/37ad-0104-context-reservation": "37fbc5d84a74b9ac79e59b639426000390ce2ed15b2510215954d866e000e0eb"
+  }
+}

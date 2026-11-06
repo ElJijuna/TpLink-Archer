@@ -1,0 +1,82 @@
+{
+  "stage": 130,
+  "date": "2026-11-06",
+  "status": "prepared_not_executed",
+  "epoch_id": "51e59f80-528b-446c-b79f-3c9ac307bca2",
+  "context": "CLEAN",
+  "remaining_sequences": 215,
+  "ledger_sha256": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "validation": {
+    "python_tests": 123,
+    "cpp_suites_passed": true,
+    "native_architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "dhcp_broadcast_reply_requested": true,
+  "dhcp_wait_ms": 10000,
+  "experiment_deadline_ms": 20000,
+  "cleanup_grace_ms": 3000,
+  "physical_timing_hypothesis_validation_pending": true,
+  "planned_attempt": {
+    "wifi_sequences": [
+      40,
+      41,
+      42,
+      43,
+      44,
+      45
+    ],
+    "cleanup_report_tag": 4,
+    "h2c_reservations": [
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ],
+    "automatic_retry": false,
+    "lease_acquired": false,
+    "os_interface": false
+  },
+  "build_evidence": {
+    "Makefile": "80b7d7ee31f36ab334a55219df7a8aaff6e95b5580d1b766be435c30452ef23a",
+    "artifacts/archer-special-wpa2-recovered-stage130": "4187da8d81887296e14dc0fa048992aaae953e82c4335dce0e478d925778a6d6",
+    "artifacts/recovery-stage129-postflight.jsonl": "8b0d633078a222d6dbfb8d2cfe86f074c6e8bd54077ab273ade282b7c969b173",
+    "artifacts/recovery-stage129-postflight.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/wpa2-stage130-validation.log": "e4ad17ed7817709bce1c3c8f5ed70df1e74e860abec420837458e2c5ead51722",
+    "build/archer-cleanup-verify-universal": "1f520a4113ff51ae4f636b964218f230a03b7d6dad1d11549ee342ba127e33dd",
+    "build/archer-monitor-capture-universal": "aa4a212f0f2bfe6430aae248beab3e2ac199eb7818adbdd6ba7ab021872e47b5",
+    "build/archer-special-wpa2-recovered-universal": "4187da8d81887296e14dc0fa048992aaae953e82c4335dce0e478d925778a6d6",
+    "include/archer/ccmp.hpp": "d0cd87c1e1f9b2acb353639d839da2969526cefefb39719898b8d65fb63601e4",
+    "include/archer/credential_pipe.hpp": "3394d5778bd016e658803ec6080ca3e58eeb20fa6e513ba9db67142d5796d9f4",
+    "include/archer/eapol_m1.hpp": "2f5d2bdf45c58752e6126dda1f4ddc795f8f6da685f20ebd06d1ee5a2639dcdc",
+    "include/archer/macos_bulk.hpp": "3ae3de42d29bbcf0d24a5b3a12f058d7f251adfd900dc9abfe63732f127e5ca3",
+    "include/archer/secure_exchange.inc": "7b23d59f348656d918283ec7d89bd6d71e4bff7822a8874955855322bb9c2794",
+    "include/archer/secure_network.hpp": "47c88ed74693def1d761fab7408403b2cba502903e08c033e216ac12973f39bc",
+    "include/archer/single_probe.hpp": "252f296c40653bd7b0e1cd0e7874aa2ec177043749f1ddab8f81dad1f180e288",
+    "include/archer/station_management.hpp": "3af627f5805fcef2dc3e394f43298acb90763b60a27f0cdb4af59eaf4ce86702",
+    "include/archer/wpa2_handshake.hpp": "aacbb18fdeb17b734bb2a0cec7fb28a4c1e80cb377a59be423a36ab17d4b70b5",
+    "research/recovery-stage129-observation.json": "9b76f0bc2b20047a1680961bb8ae78435d565d58eab98de25580d6bf9a7e95e7",
+    "src/macos_context_rx.cpp": "8975c28ff3d5ece29bb198f657cc55be676bd2c04e3b4e1944e61f797da49f4d",
+    "src/wpa2_capture_audit.cpp": "c8f1c8ed6c68104da0d8166255ae0a0f5c816f042f51447e1a9ad710af14d269",
+    "tests/ccmp_test.cpp": "38ad6b5fb339767b72fb06dd6e92cabf2f8ededd7c2d8fe3e0c9b570e51f26f4",
+    "tests/credential_pipe_test.cpp": "1cbdaf01ea547d6fd1de7612dd0ace4861c78014856a95be65a3940ca148e3ac",
+    "tests/secure_network_test.cpp": "8421f2cf1fd1937ce473d72737c9979036b71f0a3de2180eb2be84d8be829540",
+    "tests/test_sequence_epoch.py": "1969167a7c6fd8cfe05a05e1ad5be2d07d7048e11152b0a7ce7ec13d3c63d7ce",
+    "tests/test_wpa2_capture_audit.py": "99434623835b1fb94eb5bbc2775e6a981a423af76fff73ae5545aaf9c4f58e68",
+    "tests/test_wpa2_once.py": "f646cf84a79a5b142498d8993c57115eac9be507d81227f8b0dd6847457df30d",
+    "tests/wpa2_audit_fixture.cpp": "bf6a1f1f7312c225c7ec569c6454cfbd5e6339fe9aeb7adc97a03e5fd5989658",
+    "tests/wpa2_handshake_test.cpp": "c0d0b4decfe79c635f66d53ba3af27603eef1352f029307917a203d28a8a738f",
+    "tools/external_probe_capture.py": "2550aa98db67ef8cc8cd011af557404931e0240a0656e42b7145878fda93f047",
+    "tools/sequence_epoch.py": "11366132d07929376a128d1f7a8f56a36cf3bcc4499c2e569dcea77bd4f6874f",
+    "tools/wpa2_once.py": "032523d5aecd80aa52c9e74ebf80bd2319f8215561946a617edf3393d07ca757"
+  }
+}

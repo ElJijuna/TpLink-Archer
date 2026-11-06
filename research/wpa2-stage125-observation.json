@@ -1,0 +1,46 @@
+{
+  "stage": 125,
+  "date": "2026-11-06",
+  "status": "extended_dhcp_wait_compiled_recovery_pending",
+  "planned_dhcp_wait_ms": 10000,
+  "previous_dhcp_wait_ms": 3000,
+  "experiment_limit_ms": 20000,
+  "cleanup_grace_ms": 3000,
+  "automatic_retry": false,
+  "new_network_submissions": 0,
+  "new_h2c_submissions": 0,
+  "context": "DIRTY",
+  "remaining_sequences": 206,
+  "cold_inspection": {
+    "result": "cold_profile_inspected",
+    "bb_control": 2160263175,
+    "bb_reset": 2147057657,
+    "firmware_control": 201326626,
+    "cold_profile": false,
+    "h2c_submissions": 0,
+    "firmware_resets": 0
+  },
+  "new_attempt_admitted": false,
+  "old_marker_retained": true,
+  "validation": {
+    "python_tests": 123,
+    "cpp_suites_passed": true,
+    "native_architectures": [
+      "arm64",
+      "x86_64"
+    ],
+    "deadline_tests": "deterministic clock points, no sleeps"
+  },
+  "evidence_sha256": {
+    "include/archer/secure_network.hpp": "3f73b5e8e223a849c573691189fe16159dff02ce688ca712b27ffd1b5067df2f",
+    "include/archer/secure_exchange.inc": "7b23d59f348656d918283ec7d89bd6d71e4bff7822a8874955855322bb9c2794",
+    "tests/secure_network_test.cpp": "8421f2cf1fd1937ce473d72737c9979036b71f0a3de2180eb2be84d8be829540",
+    "build/archer-special-wpa2-recovered-universal": "a92c5ab601e190e798eeadae3c1798bc75443192c6a77f10f1cebde612b72ee0",
+    "artifacts/wpa2-stage125-validation.log": "160b7d09f8f5ffb992ab18bd39244d373dfe115161fd68f32cba89dbd366c02d",
+    "artifacts/wpa2-stage125-cold-inspect.jsonl": "dcb8c28b82327c9aae9a35b08a261fd6478a46b3836f633f4d1609d1b25ea52d",
+    "artifacts/wpa2-stage125-cold-inspect.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/37ad-0104-context-reservation": "37fbc5d84a74b9ac79e59b639426000390ce2ed15b2510215954d866e000e0eb",
+    "artifacts/37ad-0104-sequences.bin": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+    "artifacts/37ad-0104-sequences.bin.epoch-id": "271a11725cf9d04e37aa5bab32f8583f7f840d4a36e1366df5347b9d399d4184"
+  }
+}

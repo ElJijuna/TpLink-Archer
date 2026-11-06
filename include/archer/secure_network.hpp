@@ -1,13 +1,24 @@
 #pragma once
 #include "archer/ccmp.hpp"
+#include <chrono>
 namespace archer {
 #ifdef ARCHER_WPA2_RECOVERED
-inline constexpr unsigned secure_first_sequence=34,secure_cleanup_tag=3;
+inline constexpr unsigned secure_first_sequence=40,secure_cleanup_tag=4;
 inline constexpr bool secure_dhcp_broadcast=true;
 #else
 inline constexpr unsigned secure_first_sequence=16,secure_cleanup_tag=0;
 inline constexpr bool secure_dhcp_broadcast=false;
 #endif
+#ifdef ARCHER_WPA2_RECOVERED
+inline constexpr unsigned secure_dhcp_wait_ms=10000;
+#else
+inline constexpr unsigned secure_dhcp_wait_ms=3000;
+#endif
+inline std::chrono::steady_clock::time_point secure_response_deadline(
+ std::chrono::steady_clock::time_point now,std::chrono::steady_clock::time_point experiment_deadline,
+ unsigned budget_ms,bool cleanup=false){
+ return std::min(now+std::chrono::milliseconds(budget_ms),experiment_deadline+std::chrono::seconds(cleanup?3:0));
+}
 enum class SecureFramePhase:unsigned {authenticate,associate,m2,m4,discover,deauthenticate};
 inline unsigned secure_frame_sequence(SecureFramePhase phase){if(unsigned(phase)>5)throw std::invalid_argument("Invalid secure phase");return secure_first_sequence+unsigned(phase);}
 inline std::vector<std::uint8_t> secure_tx_packet(SecureFramePhase phase,const std::vector<std::uint8_t>& frame){

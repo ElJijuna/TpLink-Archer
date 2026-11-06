@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **60 %**
 
-Actualizado: **2026-11-06**, etapa124: auditoría offline ratifica seis tramas CCMP de grupo, incluido DISCOVER propio reflejado; cero OFFER. Cinco solicitudes ARP autenticadas, sin relación DHCP demostrada. Último contexto registrado DIRTY,206 secuencias libres. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-06**, etapa124: auditoría offline ratifica seis tramas CCMP de grupo, incluido DISCOVER propio reflejado; cero OFFER. Cinco solicitudes ARP autenticadas, sin relación DHCP demostrada. Recuperación129 verificada: contexto CLEAN,215 secuencias libres; contraste130 con escucha ampliada preparado. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -32,6 +32,32 @@ también se autenticaron tres tramas ARP. Faltan OFFER, lease, recepción
 unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas129–130: época fría nueva, contexto CLEAN,215 secuencias libres y
+postflight210 registros correcto. Preparado contraste DHCP de hasta10s con
+un solo DISCOVER broadcast, marcador nuevo y admisión verificada. Suites C++
+y123 pruebas Python aprobadas; sin ensayo de radio nuevo todavía.
+[Recuperación129](research/STAGE129.md), [ejecución130](research/STAGE130.md).
+
+Etapa128: nueva sesión USB comprobada después de la ausencia; Archer en
+modo instalador0bda:1a2b. Expulsión óptica pendiente de sudo en Terminal.
+[Continuación](research/STAGE128.md).
+
+Etapa127: ausencia del Archer comprobada con el USB retirado; ya no aparecen
+proveedor, sesión u objeto anteriores. Pendiente reconectar y verificar nuevo
+perfil frío antes de recuperar. Sin H2C, TX o recarga.
+[Evidencia de desconexión](research/STAGE127.md).
+
+Etapa126: misma sesión USB que121 y `cold_profile=false`; ninguna recarga
+iniciada. Contexto DIRTY y206 secuencias conservados. Pendiente comprobar
+ausencia del Archer mientras esté físicamente desconectado.
+[Comprobación de frontera](research/STAGE126.md).
+
+Etapa125: escucha DHCP de hasta10 segundos preparada, con límite global20s
+y gracia de limpieza3s. Pruebas deterministas, suites C++ y123 pruebas Python
+aprobadas; compilación ARM/Intel. Sin nuevo TX; `cold_profile=false`, contexto
+DIRTY y recuperación física pendiente. Ningún intento nuevo admitido.
+[Preparación y continuación](research/STAGE125.md).
 
 Etapa124: auditoría real completada,260 hashes de entrada verificados.
 M2/M4 reproducidos, M3 autenticado, DISCOVER reflejado y cinco solicitudes ARP

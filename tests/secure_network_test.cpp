@@ -6,6 +6,18 @@ using namespace archer;
 template<class F>void rejects(F f){bool bad=false;try{f();}catch(...){bad=true;}assert(bad);}
 std::vector<std::uint8_t> read(const char* path){std::ifstream f(path,std::ios::binary);assert(f);return {(std::istreambuf_iterator<char>(f)),{}};}
 int main(){
+ using Clock=std::chrono::steady_clock;using namespace std::chrono;
+ const auto start=Clock::time_point{},deadline=start+seconds(20);
+ assert(secure_response_deadline(start,deadline,10000)==start+seconds(10));
+ assert(secure_response_deadline(start+seconds(17),deadline,10000)==deadline);
+ assert(secure_response_deadline(start+seconds(21),deadline,3000)==deadline);
+ assert(secure_response_deadline(start+seconds(21),deadline,3000,true)==deadline+seconds(3));
+ assert(secure_response_deadline(start,deadline,3000)==start+seconds(3));
+#ifdef ARCHER_WPA2_RECOVERED
+ static_assert(secure_dhcp_wait_ms==10000);
+#else
+ static_assert(secure_dhcp_wait_ms==3000);
+#endif
  SecureFrameSendGuard guard;
  const auto auth=secure_management_packet(SecureFramePhase::authenticate),assoc=secure_management_packet(SecureFramePhase::associate),deauth=secure_management_packet(SecureFramePhase::deauthenticate);
  assert(channel_u32(deauth.data()+36)==(secure_cleanup_tag<<28));

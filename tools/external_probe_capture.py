@@ -48,7 +48,7 @@ def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa
     if wpa2:
         wpa2_once.admission(recovered)
         credential_context=wpa2_once.credential_pipe()
-        report.update(attempt='wpa2_recovered' if recovered else 'wpa2_once',cleanup_report_tag=3 if recovered else 0)
+        report.update(attempt='wpa2_recovered' if recovered else 'wpa2_once',cleanup_report_tag=4 if recovered else 0)
         report.pop('tag',None)
     credential_fd=credential_context.__enter__()
     try:
@@ -114,7 +114,7 @@ if __name__=='__main__':
     parser.add_argument('--station-exchange',action='store_true',help='One auth/association/deauth experiment after validated tag9 response')
     parser.add_argument('--eapol-rx',action='store_true',help='Unique tags13-15: associate, observe RSN M1 for up to3s, deauthenticate')
     parser.add_argument('--wpa2-once',action='store_true',help='One WPA2 and encrypted DHCP DISCOVER experiment; hidden local passphrase prompt')
-    parser.add_argument('--wpa2-recovered',action='store_true',help='New one-shot WPA2 experiment after verified cold recovery; sequences34–39, fresh epoch report3, DHCP broadcast reply requested')
+    parser.add_argument('--wpa2-recovered',action='store_true',help='New one-shot WPA2 experiment after verified cold recovery; sequences40–45, fresh epoch report4, DHCP broadcast reply and up to10s observation')
     args=parser.parse_args()
     if args.wpa2_recovered and args.wpa2_once:parser.error('Choose one WPA2 experiment')
     if (args.wpa2_once or args.wpa2_recovered) and any((args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx)):parser.error('--wpa2-once cannot be combined with prior experiments')

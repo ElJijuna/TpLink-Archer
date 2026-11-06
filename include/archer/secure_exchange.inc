@@ -12,10 +12,14 @@
                         std::cout<<"],\"modulo_delta\":[";for(unsigned i=0;i<4;++i){if(i)std::cout<<',';std::cout<<delta[i];}
                         std::cout<<"],\"antenna_emission_proven\":false}"<<std::endl;
                     };
-                    const auto secure_wait=[&](const auto& ready){
-                        const auto end=std::min(secure_deadline+std::chrono::seconds(3),std::chrono::steady_clock::now()+std::chrono::seconds(3));
+                    const auto secure_wait=[&](const auto& ready,unsigned budget_ms=3000,bool cleanup=false){
+                        const auto started=std::chrono::steady_clock::now();
+                        const auto end=archer::secure_response_deadline(started,secure_deadline,budget_ms,cleanup);
                         while(!ready()&&std::chrono::steady_clock::now()<end){receive(0,true);receive(1,true);}
-                        if(!ready())throw std::runtime_error("Secure phase response timeout; no retry");
+                        const bool received=ready();
+                        const auto elapsed=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-started).count();
+                        std::cout<<"{\"operation\":\"secure_response_wait\",\"budget_ms\":"<<budget_ms<<",\"elapsed_ms\":"<<elapsed<<",\"cleanup\":"<<(cleanup?"true":"false")<<",\"response_received\":"<<(received?"true":"false")<<"}"<<std::endl;
+                        if(!received)throw std::runtime_error("Secure phase response timeout; no retry");
                     };
                     const auto secure_send=[&](archer::SecureFramePhase phase,const std::vector<std::uint8_t>& packet){
                         if(std::chrono::steady_clock::now()>secure_deadline+(phase==archer::SecureFramePhase::deauthenticate?std::chrono::seconds(3):std::chrono::seconds(0)))throw std::runtime_error("Secure capture deadline expired; no submission");
@@ -66,7 +70,7 @@
                                     const std::array<std::uint8_t,6> broadcast{255,255,255,255,255,255};
                                     const auto discover=ccmp->encrypt_to_ap(archer::dhcp_discover_msdu(dhcp_xid,archer::secure_dhcp_broadcast),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::discover));
                                     secure_send(archer::SecureFramePhase::discover,archer::secure_tx_packet(archer::SecureFramePhase::discover,discover));
-                                    secure_wait([&]{return bool(dhcp_offer);});secure_confirm();
+                                    secure_wait([&]{return bool(dhcp_offer);},archer::secure_dhcp_wait_ms);secure_confirm();
                                     std::cout<<"{\"operation\":\"secure_dhcp_offer\",\"matched_transaction\":true,\"ccmp_authenticated\":true,\"security_established\":true,\"data_path_established\":true,\"lease_acquired\":false}"<<std::endl;
                                 }catch(...){secure_error=std::current_exception();}
                                 station_expected_reply.reset();
@@ -76,7 +80,7 @@
                                 if(auth_attempted&&!secure_pending){
                                     try{
                                         secure_send(archer::SecureFramePhase::deauthenticate,archer::secure_management_packet(archer::SecureFramePhase::deauthenticate));
-                                        secure_wait([&]{return bool(probe_report);});secure_confirm();probe_submitted=false;
+                                        secure_wait([&]{return bool(probe_report);},3000,true);secure_confirm();probe_submitted=false;
                                         if(probe_report->state!=0||probe_report->count!=1)throw std::runtime_error("Secure deauthentication not TX_DONE/count1");
                                         secure_deauth_completed=true;
                                     }catch(...){if(!secure_error)secure_error=std::current_exception();}
