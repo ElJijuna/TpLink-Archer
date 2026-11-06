@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **56 %**
 
-Actualizado: **2026-11-05**, etapa112: recuperación fría111 y contexto físico verificados, CLEAN y215 secuencias libres. Nuevo WPA2/CCMP compilado y admitido, pendiente de ejecución local con contraseña. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-06**, etapa116: nueva recuperación fría115 verificada, contexto CLEAN y215 secuencias libres. Contraste WPA2 con descriptor de datos corregido y PHY por fase compilado/admitido; pendiente por radio. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -30,6 +30,23 @@ y el receptor nativo obtuvo M1 con FCS válido. WPA2 completo, datos cifrados e
 interfaz de red todavía no están verificados.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas115–116: época nueva y contexto pasivo verificados;215 secuencias
+libres, TX pausado y210 registros correctos. Nuevo intento con SW_MLD de datos
+corregido y contadores PHY por fase preparado;120 pruebas Python y suites C++
+aprobadas. El efecto sobre M2/M3 sigue pendiente por radio.
+[Recuperación115](research/STAGE115.md), [instrucciones116](research/STAGE116.md).
+
+Etapa114: lectura física confirma37ad:0104 con `cold_profile=false`;
+no se inició reset, H2C ni nuevo intento. Ledger206 libres y contexto DIRTY
+conservados. [Estado y evidencia](research/STAGE114.md).
+
+Etapa113: Especial aceptó asociación/AID1 y envió cuatro M1. M2 se entregó
+por USB09, pero no llegó M3 ni se encontró M2 en captura externa. Se corrigió
+un SW_MLD heredado indebidamente en datos, con regresión que falla antes y
+pasa después;120 pruebas Python y suites C++ aprobadas. Causalidad por radio
+aún pendiente. TX pausado, concesión restaurada, contexto DIRTY,206 libres.
+[Evidencia y recuperación necesaria](research/STAGE113.md).
 
 Etapas111–112: nueva época fría identificada, bootstrap y canal9 restaurados;
 contexto creado/retirado con ocho ACK,408 paquetes normales y TX pausado.

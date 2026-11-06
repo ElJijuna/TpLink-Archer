@@ -1,5 +1,17 @@
 // Included inside the owned context scope; bounded one-shot WPA2/data experiment.
                     bool secure_deauth_completed=false,secure_pending=false;
+                    std::optional<archer::PhyTxSnapshot> secure_phy_before;unsigned secure_phy_phase=0;
+                    const auto secure_capture_phy=[&]{
+                        if(!secure_phy_before)return;
+                        const auto before=*secure_phy_before,after=archer::read_phy_tx_snapshot(bus);
+                        const auto delta=archer::phy_tx_modulo_delta(before,after);
+                        secure_phy_before.reset();
+                        std::cout<<"{\"operation\":\"secure_phy_delta\",\"phase\":"<<secure_phy_phase<<",\"before\":[";
+                        for(unsigned i=0;i<4;++i){if(i)std::cout<<',';std::cout<<before.counts()[i];}
+                        std::cout<<"],\"after\":[";for(unsigned i=0;i<4;++i){if(i)std::cout<<',';std::cout<<after.counts()[i];}
+                        std::cout<<"],\"modulo_delta\":[";for(unsigned i=0;i<4;++i){if(i)std::cout<<',';std::cout<<delta[i];}
+                        std::cout<<"],\"antenna_emission_proven\":false}"<<std::endl;
+                    };
                     const auto secure_wait=[&](const auto& ready){
                         const auto end=std::min(secure_deadline+std::chrono::seconds(3),std::chrono::steady_clock::now()+std::chrono::seconds(3));
                         while(!ready()&&std::chrono::steady_clock::now()<end){receive(0,true);receive(1,true);}
@@ -12,6 +24,8 @@
                         if(!file)throw std::runtime_error("Secure wire packet preservation failed");
                         const bool data=unsigned(phase)>=2&&unsigned(phase)<=4;
                         const bool cleanup=phase==archer::SecureFramePhase::deauthenticate;
+                        secure_phy_before=archer::read_phy_tx_snapshot(bus);secure_phy_phase=unsigned(phase);
+                        if(!secure_phy_before->enabled())throw std::runtime_error("Secure PHY counters disabled");
                         probe_report.reset();probe_submitted=cleanup;secure_pending=true;
                         try{
                             archer::channel_bus_write(bus,0x10398,0x3ffff,data?1:0x100);
@@ -20,7 +34,7 @@
                             // The enclosing phase wait pauses it before any subsequent submission.
                         }catch(...){archer::channel_bus_write(bus,0x10398,0x3ffff,0);probe_submitted=false;throw;}
                     };
-                    const auto secure_confirm=[&]{archer::channel_bus_write(bus,0x10398,0x3ffff,0);secure_pending=false;};
+                    const auto secure_confirm=[&]{archer::channel_bus_write(bus,0x10398,0x3ffff,0);secure_capture_phy();secure_pending=false;};
                     try{
                         archer::with_scc_wlan_grant_window(bus,[&]{
                             archer::log_probe_grant_policy(bus,"enabled",std::cout);
@@ -48,6 +62,7 @@
                                     const auto settle=std::chrono::steady_clock::now()+std::chrono::milliseconds(100);
                                     while(std::chrono::steady_clock::now()<settle){receive(0,true);receive(1,true);}
                                     archer::channel_bus_write(bus,0x10398,0x3ffff,0);
+                                    secure_capture_phy();
                                     const std::array<std::uint8_t,6> broadcast{255,255,255,255,255,255};
                                     const auto discover=ccmp->encrypt_to_ap(archer::dhcp_discover_msdu(dhcp_xid),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::discover));
                                     secure_send(archer::SecureFramePhase::discover,archer::secure_tx_packet(archer::SecureFramePhase::discover,discover));
@@ -56,6 +71,7 @@
                                 }catch(...){secure_error=std::current_exception();}
                                 station_expected_reply.reset();
                                 archer::channel_bus_write(bus,0x10398,0x3ffff,0);
+                                secure_capture_phy();
                                 if(auth_attempted&&!secure_pending){
                                     try{
                                         secure_send(archer::SecureFramePhase::deauthenticate,archer::secure_management_packet(archer::SecureFramePhase::deauthenticate));

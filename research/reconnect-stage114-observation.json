@@ -1,0 +1,31 @@
+{
+  "stage": 114,
+  "date": "2026-11-06",
+  "status": "awaiting_physical_cold_boundary",
+  "enumeration": "37ad:0104",
+  "cold_profile": false,
+  "cold_inspection": {
+    "result": "cold_profile_inspected",
+    "bb_control": 2160263175,
+    "bb_reset": 2147057657,
+    "firmware_control": 201326626,
+    "cold_profile": false,
+    "h2c_submissions": 0,
+    "firmware_resets": 0
+  },
+  "context": "DIRTY",
+  "epoch_transition": "CLEAN",
+  "remaining_sequences": 206,
+  "ledger_sha256": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+  "epoch_id": "3c61dfdb-22b1-462b-8f28-473ac2b0314b",
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "firmware_resets": 0,
+  "recovery_coordinator_started": false,
+  "evidence": {
+    "artifacts/reconnect-stage114-enumeration.jsonl": "12956651d796f94c755c6463dbf82892a5abd81d36239fade190e0a8e16e3be6",
+    "artifacts/reconnect-stage114-cold.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/reconnect-stage114-cold.jsonl": "dcb8c28b82327c9aae9a35b08a261fd6478a46b3836f633f4d1609d1b25ea52d",
+    "artifacts/reconnect-stage114-enumeration.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

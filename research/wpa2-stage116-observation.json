@@ -1,0 +1,80 @@
+{
+  "stage": 116,
+  "date": "2026-11-06",
+  "status": "prepared_not_executed",
+  "epoch_id": "7d0f24fb-7287-42c1-ad06-93306badec56",
+  "context": "CLEAN",
+  "remaining_sequences": 215,
+  "ledger_sha256": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "security_established": false,
+  "data_path_established": false,
+  "validation": {
+    "python_tests": 120,
+    "cpp_suites_passed": true,
+    "native_architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "data_sw_mld": false,
+  "phase_phy_instrumentation": true,
+  "physical_fix_validation_pending": true,
+  "planned_attempt": {
+    "wifi_sequences": [
+      28,
+      29,
+      30,
+      31,
+      32,
+      33
+    ],
+    "cleanup_report_tag": 2,
+    "report_namespace": "verified firmware epoch 7d0f24fb-7287-42c1-ad06-93306badec56",
+    "h2c_reservations": [
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ],
+    "automatic_retry": false,
+    "lease_acquired": false,
+    "os_interface": false
+  },
+  "build_evidence": {
+    "src/macos_context_rx.cpp": "23b86a099a175b9e7c99b3d7da7498c69eef1a269aae1096daba8e6567bcf635",
+    "include/archer/macos_bulk.hpp": "3ae3de42d29bbcf0d24a5b3a12f058d7f251adfd900dc9abfe63732f127e5ca3",
+    "include/archer/single_probe.hpp": "252f296c40653bd7b0e1cd0e7874aa2ec177043749f1ddab8f81dad1f180e288",
+    "include/archer/wpa2_handshake.hpp": "aacbb18fdeb17b734bb2a0cec7fb28a4c1e80cb377a59be423a36ab17d4b70b5",
+    "include/archer/ccmp.hpp": "d0cd87c1e1f9b2acb353639d839da2969526cefefb39719898b8d65fb63601e4",
+    "include/archer/secure_network.hpp": "a6b9bdbd8b6ee62c927fbf85e3200502dea95a17f673900e1b6565fe77d9fcf7",
+    "include/archer/credential_pipe.hpp": "3394d5778bd016e658803ec6080ca3e58eeb20fa6e513ba9db67142d5796d9f4",
+    "include/archer/secure_exchange.inc": "db615dce4032d866208f7130ae131fe89db77d155a44786d7cf17386b2a6c68b",
+    "include/archer/eapol_m1.hpp": "2f5d2bdf45c58752e6126dda1f4ddc795f8f6da685f20ebd06d1ee5a2639dcdc",
+    "include/archer/station_management.hpp": "3af627f5805fcef2dc3e394f43298acb90763b60a27f0cdb4af59eaf4ce86702",
+    "tools/wpa2_once.py": "211db324adf030e14df77f0e1b86894720346f870dab25decb5562d0253f09c7",
+    "tools/external_probe_capture.py": "6af920caa23345d8ab08727456bdf1bd14acfe564f4156bbe1be587be199e10a",
+    "tools/sequence_epoch.py": "11366132d07929376a128d1f7a8f56a36cf3bcc4499c2e569dcea77bd4f6874f",
+    "Makefile": "10af2944e204a0321dffcdc5e3c5a7abbbc8ff7b6faf32952436155869414702",
+    "build/archer-special-wpa2-recovered-universal": "26aa170a5eea3e0f6710f57b52e3df1db70c8a6be23e0e90dd637b0d5b32144a",
+    "build/archer-monitor-capture-universal": "aa4a212f0f2bfe6430aae248beab3e2ac199eb7818adbdd6ba7ab021872e47b5",
+    "build/archer-cleanup-verify-universal": "1f520a4113ff51ae4f636b964218f230a03b7d6dad1d11549ee342ba127e33dd",
+    "research/recovery-stage115-observation.json": "3dfec97db6b19f5b0cdf52ed0786c0fd7570449d6de57a57f9c62e165b7f8bb7",
+    "artifacts/archer-special-wpa2-recovered-stage116": "26aa170a5eea3e0f6710f57b52e3df1db70c8a6be23e0e90dd637b0d5b32144a",
+    "artifacts/wpa2-stage116-validation.log": "07f731a8d466c9078d19e52c2665c76119f7f0914e76f796d9c0354f67aeb668",
+    "artifacts/wpa2-stage116-preflight.jsonl": "8b0d633078a222d6dbfb8d2cfe86f074c6e8bd54077ab273ade282b7c969b173",
+    "artifacts/wpa2-stage116-preflight.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tests/wpa2_handshake_test.cpp": "c0d0b4decfe79c635f66d53ba3af27603eef1352f029307917a203d28a8a738f",
+    "tests/ccmp_test.cpp": "5342a4451504ab06ff0376015afa4ed2aca7dc822273c1f6df1c7ee492a2a1b7",
+    "tests/secure_network_test.cpp": "71a1139c2533263ee376b65b7278cdf1eb1e10aae72f907e06f47e684bb05407",
+    "tests/credential_pipe_test.cpp": "1cbdaf01ea547d6fd1de7612dd0ace4861c78014856a95be65a3940ca148e3ac",
+    "tests/test_wpa2_once.py": "6d3fe9c48029da1eba7e960e8d010fca68c854aef9d74d6b5b4e754006d6ddf3",
+    "tests/test_sequence_epoch.py": "1969167a7c6fd8cfe05a05e1ad5be2d07d7048e11152b0a7ce7ec13d3c63d7ce"
+  }
+}

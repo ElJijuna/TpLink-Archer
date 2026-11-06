@@ -2,7 +2,7 @@
 #include "archer/ccmp.hpp"
 namespace archer {
 #ifdef ARCHER_WPA2_RECOVERED
-inline constexpr unsigned secure_first_sequence=22,secure_cleanup_tag=1;
+inline constexpr unsigned secure_first_sequence=28,secure_cleanup_tag=2;
 #else
 inline constexpr unsigned secure_first_sequence=16,secure_cleanup_tag=0;
 #endif
@@ -16,7 +16,8 @@ inline std::vector<std::uint8_t> secure_tx_packet(SecureFramePhase phase,const s
  auto packet=special_channel9_grant_probe_packet();packet.resize(64);
  // Source body0 HDR_LLC_LEN is ieee80211_hdrlen/2, including for software crypto.
  channel_put32(packet.data(),data?0x00406480:0x00486480); // DMA0/BE via USB09; MGQ/DMA8 via USB05.
- channel_put32(packet.data()+8,(data?0:0x00240000)|frame.size());channel_put32(packet.data()+12,0x2000|sequence);
+ channel_put32(packet.data()+8,(data?0:0x00240000)|frame.size());// rtw89_core_tx_update_data_info clears sw_mld; management sets it.
+ channel_put32(packet.data()+12,(data?0:0x2000)|sequence);
  channel_put32(packet.data()+36,phase==SecureFramePhase::deauthenticate?secure_cleanup_tag<<28:0); // Only final cleanup requests a report in this firmware epoch.
  channel_put32(packet.data()+40,phase==SecureFramePhase::deauthenticate?0x40000000:0);
  packet.insert(packet.end(),frame.begin(),frame.end());return packet;
