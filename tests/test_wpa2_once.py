@@ -72,3 +72,15 @@ class Wpa2OnceTest(unittest.TestCase):
         self.assertTrue(w.validate_result(recovered_rows,True)['data_path_established'])
         with self.assertRaises(ValueError):w.validate_result(recovered_rows,False)
         with self.assertRaises(ValueError):w.validate_result(rows(),True)
+
+    def test_existing_capture_stops_before_credentials_admission_or_usb(self):
+        import tempfile
+        import external_probe_capture as capture
+        with tempfile.TemporaryDirectory() as folder:
+            output=Path(folder);previous=output/'paired.json';previous.write_bytes(b'preserved')
+            with patch.object(capture.os,'geteuid',return_value=501),patch.object(capture.wpa2_once,'admission') as admit,patch.object(capture.wpa2_once,'credential_pipe') as secret,patch.object(capture.subprocess,'run') as launch:
+                with self.assertRaisesRegex(capture.ExistingCaptureDirectory,'do not retry'):
+                    capture.run(output,recovered=True)
+                admit.assert_not_called();secret.assert_not_called();launch.assert_not_called()
+            self.assertEqual(previous.read_bytes(),b'preserved')
+            self.assertEqual(list(output.iterdir()),[previous])

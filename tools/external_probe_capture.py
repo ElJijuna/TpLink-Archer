@@ -26,6 +26,10 @@ def validate_live_decode(text):
         raise ValueError('Independent receiver has not captured Especial on channel9')
 
 
+class ExistingCaptureDirectory(ValueError):
+    """A prior capture must remain intact and must not be retried."""
+
+
 def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa2=False,recovered=False):
     if recovered:wpa2=True
     if eapol:station=True
@@ -33,7 +37,10 @@ def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa
     if grant:phy=True
     if drained:phy=True
     if os.geteuid()==0:raise ValueError('Run as your normal user after sudo -v; only monitor capture uses sudo')
-    output=output.resolve();output.mkdir()
+    output=output.resolve()
+    try:output.mkdir()
+    except FileExistsError:
+        raise ExistingCaptureDirectory(f"Capture directory already exists: {output}. Previous results are preserved; do not retry the experiment. Inspect paired.json and probe/attempt.json.") from None
     tag=13 if eapol else 10 if station else 9 if grant else 8 if drained else 7 if phy else 6
     report={'status':'preflight','automatic_retry':False,'tag':tag}
     monitor=None
@@ -111,4 +118,5 @@ if __name__=='__main__':
     args=parser.parse_args()
     if args.wpa2_recovered and args.wpa2_once:parser.error('Choose one WPA2 experiment')
     if (args.wpa2_once or args.wpa2_recovered) and any((args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx)):parser.error('--wpa2-once cannot be combined with prior experiments')
-    run(args.new_directory,args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx,args.wpa2_once,args.wpa2_recovered)
+    try:run(args.new_directory,args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx,args.wpa2_once,args.wpa2_recovered)
+    except ExistingCaptureDirectory as error:parser.exit(2,str(error)+"\n")

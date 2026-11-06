@@ -16,7 +16,7 @@ int main(){
  for(unsigned n:{0u,1u,15u,16u,17u,255u,256u,4096u}){std::vector<std::uint8_t> input(n,0x5a);auto c=ccm8_encrypt(key.data(),nonce,{},input);assert(ccm8_decrypt(key.data(),nonce,{},c.data(),c.size()).bytes==input);}
  std::array<std::uint8_t,32> snonce{};for(unsigned i=0;i<32;++i)snonce[i]=i+1;
  Wpa2PskHandshake hs(derive_wpa2_pmk("password","Especial"),snonce);auto m1=read("tests/fixtures/special-eapol-m1-stage104.bin");hs.accept_m1(m1.data(),m1.size());hs.issue_m2();hs.accept_m3(read("tests/fixtures/wpa2-test-m3.bin"));hs.issue_m4();
- CcmpSession session(hs);auto outgoing=session.encrypt_to_ap(plain,station_target_ap,16);auto next=session.encrypt_to_ap(plain,station_target_ap,17);assert(outgoing[24]==1&&next[24]==2);
+ CcmpSession session(hs);auto outgoing=session.encrypt_to_ap(plain,station_target_ap,16);auto next=session.encrypt_to_ap(plain,station_target_ap,17);assert(outgoing[24]==1&&next[24]==2);assert(outgoing==read("tests/fixtures/ccmp-openssl-test-frame.bin"));
  std::vector<std::uint8_t> incoming(24);incoming[0]=8;incoming[1]=0x42;std::copy(station_test_mac.begin(),station_test_mac.end(),incoming.begin()+4);std::copy(station_target_ap.begin(),station_target_ap.end(),incoming.begin()+10);std::copy(station_target_ap.begin(),station_target_ap.end(),incoming.begin()+16);
  auto params=ccmp_parameters(incoming.data(),incoming.size(),1);auto encrypted=ccm8_encrypt(hs.pairwise_key(),params.nonce,params.aad,plain);
  incoming.insert(incoming.end(),{1,0,0,0x20,0,0,0,0});incoming.insert(incoming.end(),encrypted.begin(),encrypted.end());fcs(incoming);

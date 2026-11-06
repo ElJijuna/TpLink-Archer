@@ -1,0 +1,96 @@
+{
+  "stage": 118,
+  "date": "2026-11-06",
+  "status": "authenticated_encrypted_broadcast_roundtrip_no_dhcp_offer",
+  "offline": true,
+  "verified_capture_input_hashes": 253,
+  "helper_matches_prepared_stage117": true,
+  "summary": {
+    "result": "offline_wpa2_audited",
+    "m2_reproduced": true,
+    "m3_authenticated": true,
+    "m4_reproduced": true,
+    "recorded_discover_verified": true,
+    "protected_frames": 4,
+    "authenticated_frames": 4,
+    "rejected_frames": 0,
+    "pairwise_frames": 0,
+    "group_frames": 4,
+    "matched_offers": 0,
+    "reflected_discover_frames": 1,
+    "h2c_submissions": 0,
+    "network_submissions": 0
+  },
+  "authenticated_data": [
+    {
+      "operation": "offline_authenticated_data",
+      "group": true,
+      "bytes": 336,
+      "ether_type": 2048,
+      "udp_source": 68,
+      "udp_destination": 67,
+      "dhcp_message_type": 1,
+      "xid_matches": true,
+      "chaddr_matches": true,
+      "matches_recorded_discover": true,
+      "strict_offer": false
+    },
+    {
+      "operation": "offline_authenticated_data",
+      "group": true,
+      "bytes": 36,
+      "ether_type": 2054,
+      "udp_source": 0,
+      "udp_destination": 0,
+      "dhcp_message_type": 0,
+      "xid_matches": false,
+      "chaddr_matches": false,
+      "matches_recorded_discover": false,
+      "strict_offer": false
+    },
+    {
+      "operation": "offline_authenticated_data",
+      "group": true,
+      "bytes": 36,
+      "ether_type": 2054,
+      "udp_source": 0,
+      "udp_destination": 0,
+      "dhcp_message_type": 0,
+      "xid_matches": false,
+      "chaddr_matches": false,
+      "matches_recorded_discover": false,
+      "strict_offer": false
+    },
+    {
+      "operation": "offline_authenticated_data",
+      "group": true,
+      "bytes": 36,
+      "ether_type": 2054,
+      "udp_source": 0,
+      "udp_destination": 0,
+      "dhcp_message_type": 0,
+      "xid_matches": false,
+      "chaddr_matches": false,
+      "matches_recorded_discover": false,
+      "strict_offer": false
+    }
+  ],
+  "context_released": false,
+  "context_last_recorded": "DIRTY",
+  "remaining_sequences_last_recorded": 206,
+  "new_usb_accesses": 0,
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "limits": [
+    "No matching DHCP OFFER or lease",
+    "No authenticated pairwise downlink in this capture",
+    "No OS network interface or usable IP connection",
+    "Independent monitor did not corroborate encrypted data frames; proof uses authenticated native capture"
+  ],
+  "evidence_sha256": {
+    "artifacts/wpa2-offline-stage117/audit.json": "b2b8cbe46ff1b5dd413be56c8364e4787f9fa7d9b74414dd99668040356b8ce1",
+    "artifacts/wpa2-offline-stage117/audit.jsonl": "5e4c7b3ce19d19164c46c98e98a69d92da598c67b12314624130af9417fb64e6",
+    "artifacts/wpa2-offline-stage117/audit.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/wpa2-offline-stage117/archer-wpa2-capture-audit": "41275777a7ce2aa7d027633fe8e05f1bbb326c53b5219e4677d52f4ec12ae273"
+  }
+}

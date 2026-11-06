@@ -1,21 +1,21 @@
 # Archer USB — investigación y base de controlador
 
-## Checklist resumido — avance estimado: **56 %**
+## Checklist resumido — avance estimado: **60 %**
 
-Actualizado: **2026-11-06**, etapa116: nueva recuperación fría115 verificada, contexto CLEAN y215 secuencias libres. Contraste WPA2 con descriptor de datos corregido y PHY por fase compilado/admitido; pendiente por radio. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-06**, etapa118: auditoría offline confirma M3 y cuatro tramas CCMP de grupo, incluida una copia exacta de nuestro DISCOVER reenviada por el AP. Sin OFFER ni lease. Último contexto registrado DIRTY,206 secuencias libres. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
 - [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
 - [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
-- [ ] Ruta completa de datos Wi-Fi TX/RX — **9/15**: gestión TX/RX y respuesta de Especial corroboradas por captura independiente; faltan datos cifrados y el resto del camino.
-- [ ] Escaneo, asociación y seguridad Wi-Fi — **7/15**: barrido pasivo1/6/11, autenticación/asociación aceptadas y M1 recibido; faltan seguridad completa y ampliación.
+- [ ] Ruta completa de datos Wi-Fi TX/RX — **11/15**: gestión corroborada externamente y tráfico cifrado de ida/vuelta de grupo autenticado en captura nativa; faltan recepción unicast, DHCP/IP y el resto del camino.
+- [ ] Escaneo, asociación y seguridad Wi-Fi — **9/15**: barrido pasivo1/6/11, asociación aceptada, M3 autenticado, M2/M4 reproducidos y CCMP de grupo validado; faltan ciclo de claves completo y ampliación.
 - [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
 - [ ] Validación física en Mac Intel — **0/5**.
 - [ ] Implementación y validación en Linux — **0/5**.
 
-**56/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
+**60/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
 no del tiempo restante. Compilar para Intel no equivale a validarlo físicamente.
 El adaptador todavía no ofrece conexión Wi-Fi utilizable.
 
@@ -25,11 +25,27 @@ La repetición desde firmware recargado terminó con respuestas OK de todos
 los comandos y RXDCK final limpio. IQK y TXGAPK reportan éxito; DPK no muestra
 timeouts/overflow, pero su máscara de estado y los estados de alineación TSSI
 siguen sin interpretación definitiva. No se afirma calidad RF plenamente validada.
-TX de red queda pausado. Especial aceptó autenticación y asociación (AID2),
-y el receptor nativo obtuvo M1 con FCS válido. WPA2 completo, datos cifrados e
-interfaz de red todavía no están verificados.
+El último postflight dejó TX de red pausado. Especial aceptó autenticación y
+asociación (AID1 en116); M3 fue autenticado y M2/M4 reproducidos offline.
+El AP reenvió por CCMP de grupo una copia exacta del DISCOVER cifrado enviado;
+también se autenticaron tres tramas ARP. Faltan OFFER, lease, recepción
+unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa118: auditoría real completada sin USB ni TX nuevo. Los253 hashes de
+entrada y el ejecutable preparado coinciden. Cuatro tramas CCMP autenticadas,
+cero rechazadas: DISCOVER propio reflejado y tres ARP; cero OFFER. Evidencia
+de ida/vuelta cifrada de grupo, con contexto DIRTY conservado.
+[Resultados y límites](research/STAGE118.md).
+
+Historial reciente (los pendientes describen el estado de cada etapa):
+
+Etapa117: el intento116 ya se ejecutó. M3 verificado y M4/DISCOVER enviados;
+la espera falló al no confirmar OFFER. Cuatro tramas cifradas del AP permiten
+seguir mediante auditoría offline, sin otro TX. Error de directorio existente
+aclarado;122 pruebas Python y suites C++ aprobadas.
+[Resultados y comando de auditoría](research/STAGE117.md).
 
 Etapas115–116: época nueva y contexto pasivo verificados;215 secuencias
 libres, TX pausado y210 registros correctos. Nuevo intento con SW_MLD de datos

@@ -428,7 +428,7 @@ special-ack-probe-universal: | build
 build/wpa2-handshake-test: tests/wpa2_handshake_test.cpp include/archer/wpa2_handshake.hpp include/archer/wpa2_handshake.hpp include/archer/ccmp.hpp include/archer/station_management.hpp $(wildcard tests/fixtures/wpa2-test-*.bin) | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/wpa2-handshake-test
-build/ccmp-test: tests/ccmp_test.cpp include/archer/ccmp.hpp include/archer/wpa2_handshake.hpp include/archer/ccmp.hpp include/archer/station_management.hpp $(wildcard tests/fixtures/wpa2-test-*.bin) | build
+build/ccmp-test: tests/ccmp_test.cpp tests/fixtures/ccmp-openssl-test-frame.bin include/archer/ccmp.hpp include/archer/wpa2_handshake.hpp include/archer/ccmp.hpp include/archer/station_management.hpp $(wildcard tests/fixtures/wpa2-test-*.bin) | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 test: build/ccmp-test
 build/secure-network-test: tests/secure_network_test.cpp include/archer/secure_network.hpp include/archer/wpa2_handshake.hpp include/archer/ccmp.hpp include/archer/station_management.hpp $(wildcard tests/fixtures/wpa2-test-*.bin) | build
@@ -458,3 +458,13 @@ special-wpa2-recovered-universal: | build
 build/secure-network-recovered-test: tests/secure_network_test.cpp include/archer/secure_network.hpp include/archer/wpa2_handshake.hpp include/archer/ccmp.hpp | build
 	$(CXX) $(CXXFLAGS) -DARCHER_WPA2_RECOVERED $< -o $@
 test: build/secure-network-recovered-test
+
+.PHONY: wpa2-capture-audit-universal
+wpa2-capture-audit-universal: | build
+	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/wpa2_capture_audit.cpp -o build/archer-wpa2-capture-audit-universal
+
+build/archer-wpa2-capture-audit: src/wpa2_capture_audit.cpp include/archer/secure_network.hpp include/archer/credential_pipe.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+build/wpa2-audit-fixture: tests/wpa2_audit_fixture.cpp include/archer/secure_network.hpp | build
+	$(CXX) $(CXXFLAGS) $< -o $@
+test: build/archer-wpa2-capture-audit build/wpa2-audit-fixture
