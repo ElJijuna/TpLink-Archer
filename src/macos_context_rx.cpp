@@ -34,7 +34,7 @@ int main(int argc,char** argv){
 #ifdef ARCHER_WPA2_ONCE
  constexpr unsigned probe_channel=9;
 #ifdef ARCHER_WPA2_RECOVERED
- const char* marker_path="artifacts/37ad-0104-special-channel9-wpa2-recovered-stage116-attempted";
+ const char* marker_path="artifacts/37ad-0104-special-channel9-wpa2-recovered-stage122-attempted";
 #else
  const char* marker_path="artifacts/37ad-0104-special-channel9-wpa2-attempted";
 #endif
@@ -241,7 +241,7 @@ int main(int argc,char** argv){
                         if(eapol&&archer::eapol_be16(eapol->data()+5)==0x13ca)secure_m3=*eapol;
                     }
                     if(ccmp&&!dhcp_offer){
-                        const auto data=secure_data.observe(*ccmp,frame,size,dhcp_xid);
+                        const auto data=secure_data.observe(*ccmp,frame,size,dhcp_xid,archer::secure_dhcp_broadcast);
                         if(data){
                             if(data->offer)dhcp_offer=data->offer;
                             std::cout<<"{\"operation\":\"secure_authenticated_data\",\"group\":"<<(data->group?"true":"false")<<",\"bytes\":"<<data->bytes<<",\"ether_type\":"<<data->ether_type<<",\"reflected_discover\":"<<(data->reflected_discover?"true":"false")<<",\"strict_offer\":"<<(data->offer?"true":"false")<<"}"<<std::endl;

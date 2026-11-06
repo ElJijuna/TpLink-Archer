@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **60 %**
 
-Actualizado: **2026-11-06**, etapa118: auditoría offline confirma M3 y cuatro tramas CCMP de grupo, incluida una copia exacta de nuestro DISCOVER reenviada por el AP. Sin OFFER ni lease. Último contexto registrado DIRTY,206 secuencias libres. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-06**, etapa118: auditoría offline confirma M3 y cuatro tramas CCMP de grupo, incluida una copia exacta de nuestro DISCOVER reenviada por el AP. Sin OFFER ni lease. Después de recuperar en121: contexto CLEAN,215 secuencias libres; contraste DHCP broadcast122 preparado. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -32,6 +32,12 @@ también se autenticaron tres tramas ARP. Faltan OFFER, lease, recepción
 unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas121–122: recuperación fría verificada, nueva época, contexto CLEAN,
+215 secuencias libres y210 registros coincidentes. Preparado un intento nuevo
+que solicita OFFER broadcast, con observación CCMP por tipo de recepción;
+123 pruebas Python y suites C++ pasan. Sin nuevo TX Wi-Fi ni OFFER todavía.
+[Recuperación121](research/STAGE121.md), [contraste122](research/STAGE122.md).
 
 Etapa120: tras reconectar, Archer aparece como instalador Realtek0bda:1a2b.
 La expulsión requiere autenticación sudo local; sin recarga, H2C o TX nuevos.

@@ -37,7 +37,8 @@ int main(int argc,char** argv){
   const auto* iv=tx+24;const std::uint64_t pn=std::uint64_t(iv[0])|(std::uint64_t(iv[1])<<8)|(std::uint64_t(iv[4])<<16)|(std::uint64_t(iv[5])<<24)|(std::uint64_t(iv[6])<<32)|(std::uint64_t(iv[7])<<40);
   const auto params=archer::ccmp_parameters(tx,txsize,pn);auto txplain=archer::ccm8_decrypt(hs.pairwise_key(),params.nonce,params.aad,iv+8,txsize-32);
   if(txplain.bytes.size()<48)throw std::runtime_error("Recorded DHCP payload too short");const auto xid=archer::network_u32(txplain.bytes.data()+40);
-  if(txplain.bytes!=archer::dhcp_discover_msdu(xid))throw std::runtime_error("Recorded encrypted DISCOVER does not reproduce expected payload");
+  const auto flags=archer::eapol_be16(txplain.bytes.data()+46);
+  if((flags!=0&&flags!=0x8000)||txplain.bytes!=archer::dhcp_discover_msdu(xid,flags==0x8000))throw std::runtime_error("Recorded encrypted DISCOVER does not reproduce expected payload");
   archer::CcmpSession ccmp(hs);unsigned accepted=0,rejected=0,pairwise=0,group=0,offers=0,reflected=0;
   for(auto& frame:protected_frames){
    try{

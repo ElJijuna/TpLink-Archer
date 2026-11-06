@@ -9,9 +9,15 @@ ROOT=Path(__file__).parents[1]
 
 class OfflineCaptureAuditTest(unittest.TestCase):
     def test_recorded_handshake_and_encrypted_offer_with_public_dummy_key(self):
+        self.audit_fixture(False)
+
+    def test_broadcast_discover_is_auditable_without_becoming_an_offer(self):
+        self.audit_fixture(True)
+
+    def audit_fixture(self,broadcast):
         with tempfile.TemporaryDirectory() as tmp:
             capture=Path(tmp)/'capture'
-            subprocess.run([str(ROOT/'build/wpa2-audit-fixture'),str(capture)],cwd=ROOT,check=True)
+            subprocess.run([str(ROOT/'build/wpa2-audit-fixture'),str(capture)]+(['broadcast'] if broadcast else []),cwd=ROOT,check=True)
             for credential,success in [(b'password',True),(b'wrong-password',False)]:
                 fd,writer=os.pipe();os.write(writer,credential);os.close(writer)
                 try:

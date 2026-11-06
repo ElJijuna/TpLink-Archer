@@ -24,6 +24,10 @@ int main(){
  SecureFrameSendGuard early;early.issue(SecureFramePhase::authenticate,auth);early.issue(SecureFramePhase::deauthenticate,deauth);rejects([&]{early.issue(SecureFramePhase::associate,assoc);});
  auto m1=read("tests/fixtures/special-eapol-m1-stage104.bin");auto e=target_rsn_eapol(m1.data(),m1.size());assert(e&&e->size()==99);for(std::size_t n=0;n<m1.size();++n)assert(!target_rsn_eapol(m1.data(),n));
  const unsigned xid=0x12345678;auto discover=dhcp_discover_msdu(xid);assert(discover.size()==336&&internet_checksum(discover.data()+8,20)==0);assert(!decode_dhcp_offer(discover,xid));rejects([]{dhcp_discover_msdu(0);});
+ auto broadcast_discover=dhcp_discover_msdu(xid,true);assert(broadcast_discover.size()==discover.size());
+ assert(eapol_be16(broadcast_discover.data()+46)==0x8000&&eapol_be16(discover.data()+46)==0);
+ auto only_flag=broadcast_discover;only_flag[46]=0;assert(only_flag==discover);
+ assert(!decode_dhcp_offer(broadcast_discover,xid));
  // Construct a server OFFER independently at the BOOTP/IP boundaries.
  auto offer=discover;auto* ip=offer.data()+8;auto* udp=ip+20;auto* b=udp+8;b[0]=2;b[16]=192;b[17]=168;b[18]=1;b[19]=55;
  b[240]=53;b[241]=1;b[242]=2;b[243]=54;b[244]=4;b[245]=192;b[246]=168;b[247]=1;b[248]=1;b[249]=255;
@@ -56,6 +60,8 @@ int main(){
  assert(wrong&&!wrong->reflected_discover&&!wrong->offer);
  auto server=downlink(offer,false,1,false);auto accepted=observed.observe(observed_session,server.data(),server.size(),xid);
  assert(accepted&&!accepted->group&&accepted->offer&&!accepted->reflected_discover);
- assert(observed.authenticated==4&&observed.rejected==2&&observed.group==3&&observed.pairwise==1&&observed.reflected_discover==1&&observed.offers==1);
+ auto broadcast_echo=downlink(broadcast_discover,true,1003);auto be=observed.observe(observed_session,broadcast_echo.data(),broadcast_echo.size(),xid,true);
+ assert(be&&be->reflected_discover&&!be->offer);
+ assert(observed.authenticated==5&&observed.rejected==2&&observed.group==4&&observed.pairwise==1&&observed.reflected_discover==2&&observed.offers==1);
  std::cout<<"Secure frame one-shot ordering/descriptors, captured EAPOL extraction and matched DHCP OFFER bounds passed\n";
 }

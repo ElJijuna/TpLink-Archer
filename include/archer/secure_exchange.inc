@@ -64,7 +64,7 @@
                                     archer::channel_bus_write(bus,0x10398,0x3ffff,0);
                                     secure_capture_phy();
                                     const std::array<std::uint8_t,6> broadcast{255,255,255,255,255,255};
-                                    const auto discover=ccmp->encrypt_to_ap(archer::dhcp_discover_msdu(dhcp_xid),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::discover));
+                                    const auto discover=ccmp->encrypt_to_ap(archer::dhcp_discover_msdu(dhcp_xid,archer::secure_dhcp_broadcast),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::discover));
                                     secure_send(archer::SecureFramePhase::discover,archer::secure_tx_packet(archer::SecureFramePhase::discover,discover));
                                     secure_wait([&]{return bool(dhcp_offer);});secure_confirm();
                                     std::cout<<"{\"operation\":\"secure_dhcp_offer\",\"matched_transaction\":true,\"ccmp_authenticated\":true,\"security_established\":true,\"data_path_established\":true,\"lease_acquired\":false}"<<std::endl;

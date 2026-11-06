@@ -2,9 +2,11 @@
 #include "archer/ccmp.hpp"
 namespace archer {
 #ifdef ARCHER_WPA2_RECOVERED
-inline constexpr unsigned secure_first_sequence=28,secure_cleanup_tag=2;
+inline constexpr unsigned secure_first_sequence=34,secure_cleanup_tag=3;
+inline constexpr bool secure_dhcp_broadcast=true;
 #else
 inline constexpr unsigned secure_first_sequence=16,secure_cleanup_tag=0;
+inline constexpr bool secure_dhcp_broadcast=false;
 #endif
 enum class SecureFramePhase:unsigned {authenticate,associate,m2,m4,discover,deauthenticate};
 inline unsigned secure_frame_sequence(SecureFramePhase phase){if(unsigned(phase)>5)throw std::invalid_argument("Invalid secure phase");return secure_first_sequence+unsigned(phase);}
@@ -53,9 +55,10 @@ public:
 inline unsigned internet_checksum(const std::uint8_t* p,std::size_t n){unsigned sum=0;while(n>1){sum+=eapol_be16(p);p+=2;n-=2;}if(n)sum+=unsigned(*p)<<8;while(sum>>16)sum=(sum&0xffff)+(sum>>16);return (~sum)&0xffff;}
 inline void network_put32(std::uint8_t* p,std::uint32_t value){for(unsigned i=0;i<4;++i)p[i]=value>>(24-8*i);}
 inline std::uint32_t network_u32(const std::uint8_t* p){return (std::uint32_t(p[0])<<24)|(std::uint32_t(p[1])<<16)|(unsigned(p[2])<<8)|p[3];}
-inline std::vector<std::uint8_t> dhcp_discover_msdu(std::uint32_t xid){
+inline std::vector<std::uint8_t> dhcp_discover_msdu(std::uint32_t xid,bool broadcast_reply=false){
  if(!xid)throw std::invalid_argument("Nonzero DHCP transaction required");
  std::vector<std::uint8_t> bootp(240);bootp[0]=1;bootp[1]=1;bootp[2]=6;network_put32(bootp.data()+4,xid);
+ if(broadcast_reply)eapol_put_be16(bootp.data()+10,0x8000); // RFC2131 section4.1; no pre-IP unicast dependency.
  std::copy(station_test_mac.begin(),station_test_mac.end(),bootp.begin()+28);network_put32(bootp.data()+236,0x63825363);
  bootp.insert(bootp.end(),{53,1,1,61,7,1});bootp.insert(bootp.end(),station_test_mac.begin(),station_test_mac.end());bootp.insert(bootp.end(),{55,3,1,3,6,255});bootp.resize(300); // BOOTP minimum interoperability padding.
  std::vector<std::uint8_t> ip(28+bootp.size());ip[0]=0x45;eapol_put_be16(ip.data()+2,ip.size());ip[8]=64;ip[9]=17;std::fill(ip.begin()+16,ip.begin()+20,255);
@@ -93,7 +96,7 @@ struct SecureDataMetadata {
 };
 struct SecureDataObservation {
  unsigned authenticated=0,rejected=0,group=0,pairwise=0,reflected_discover=0,offers=0;
- std::optional<SecureDataMetadata> observe(CcmpSession& ccmp,const std::uint8_t* frame,std::size_t size,std::uint32_t xid){
+ std::optional<SecureDataMetadata> observe(CcmpSession& ccmp,const std::uint8_t* frame,std::size_t size,std::uint32_t xid,bool broadcast_reply=false){
   // Ignore management, foreign receivers and unprotected data rather than
   // counting them as failed CCMP authentication.
   if(size<24||(management_u16(frame)&0x430c)!=0x4208||
@@ -105,7 +108,7 @@ struct SecureDataObservation {
   SecureDataMetadata result;result.group=frame[4]&1;result.bytes=plain->bytes.size();
   const std::array<std::uint8_t,6> snap{0xaa,0xaa,3,0,0,0};
   if(plain->bytes.size()>=8&&std::equal(snap.begin(),snap.end(),plain->bytes.begin()))result.ether_type=eapol_be16(plain->bytes.data()+6);
-  result.reflected_discover=xid&&plain->bytes==dhcp_discover_msdu(xid)&&
+  result.reflected_discover=xid&&plain->bytes==dhcp_discover_msdu(xid,broadcast_reply)&&
       std::equal(station_test_mac.begin(),station_test_mac.end(),frame+16);
   result.offer=decode_dhcp_offer(plain->bytes,xid);
   ++authenticated;if(result.group)++group;else ++pairwise;
