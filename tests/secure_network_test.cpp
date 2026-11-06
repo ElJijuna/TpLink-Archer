@@ -8,6 +8,7 @@ std::vector<std::uint8_t> read(const char* path){std::ifstream f(path,std::ios::
 int main(){
  SecureFrameSendGuard guard;
  const auto auth=secure_management_packet(SecureFramePhase::authenticate),assoc=secure_management_packet(SecureFramePhase::associate),deauth=secure_management_packet(SecureFramePhase::deauthenticate);
+ assert(channel_u32(deauth.data()+36)==(secure_cleanup_tag<<28));
  assert(auth.size()==94&&assoc.size()==130&&deauth.size()==90);
  assert(management_u16(auth.data()+86)==secure_first_sequence*16&&management_u16(deauth.data()+86)==(secure_first_sequence+5)*16);
  rejects([&]{guard.issue(SecureFramePhase::associate,assoc);});

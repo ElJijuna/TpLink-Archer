@@ -1,0 +1,77 @@
+{
+  "stage": 112,
+  "date": "2026-11-05",
+  "status": "prepared_not_executed",
+  "epoch_id": "3c61dfdb-22b1-462b-8f28-473ac2b0314b",
+  "context": "CLEAN",
+  "remaining_sequences": 215,
+  "ledger_sha256": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "security_established": false,
+  "data_path_established": false,
+  "validation": {
+    "python_tests": 120,
+    "cpp_suites_passed": true,
+    "native_architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "planned_attempt": {
+    "wifi_sequences": [
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "cleanup_report_tag": 1,
+    "report_namespace": "verified firmware epoch 3c61dfdb-22b1-462b-8f28-473ac2b0314b",
+    "h2c_reservations": [
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ],
+    "automatic_retry": false,
+    "lease_acquired": false,
+    "os_interface": false
+  },
+  "build_evidence": {
+    "src/macos_context_rx.cpp": "1c95b66f9dd6bbdae04c2f5417b9400b3e74a71254ddeda185a74adbb93319b9",
+    "include/archer/macos_bulk.hpp": "3ae3de42d29bbcf0d24a5b3a12f058d7f251adfd900dc9abfe63732f127e5ca3",
+    "include/archer/single_probe.hpp": "252f296c40653bd7b0e1cd0e7874aa2ec177043749f1ddab8f81dad1f180e288",
+    "include/archer/wpa2_handshake.hpp": "aacbb18fdeb17b734bb2a0cec7fb28a4c1e80cb377a59be423a36ab17d4b70b5",
+    "include/archer/ccmp.hpp": "d0cd87c1e1f9b2acb353639d839da2969526cefefb39719898b8d65fb63601e4",
+    "include/archer/secure_network.hpp": "fe6dcc76713ea17551390c5f5606a8b7c908890d67cf84195546d567e9e35456",
+    "include/archer/credential_pipe.hpp": "3394d5778bd016e658803ec6080ca3e58eeb20fa6e513ba9db67142d5796d9f4",
+    "include/archer/secure_exchange.inc": "950874e085369661eaf0c6a45755f71979d066fc58e8332d94a6b0cd11ed9e49",
+    "include/archer/eapol_m1.hpp": "2f5d2bdf45c58752e6126dda1f4ddc795f8f6da685f20ebd06d1ee5a2639dcdc",
+    "include/archer/station_management.hpp": "3af627f5805fcef2dc3e394f43298acb90763b60a27f0cdb4af59eaf4ce86702",
+    "tools/wpa2_once.py": "3e8ddba18d07ed563d00d1020331c23e94d4138a7f21a5097e81216347e55eb4",
+    "tools/external_probe_capture.py": "1841bafadaf49289557b48fa5a4035d40463000899a5afcc6abec4c71b961a22",
+    "tools/sequence_epoch.py": "11366132d07929376a128d1f7a8f56a36cf3bcc4499c2e569dcea77bd4f6874f",
+    "Makefile": "10af2944e204a0321dffcdc5e3c5a7abbbc8ff7b6faf32952436155869414702",
+    "build/archer-special-wpa2-recovered-universal": "c90cbc146e428bc0594f530b2ceba269f3453a9ca5a3bf69b7279b0465f853e3",
+    "build/archer-monitor-capture-universal": "aa4a212f0f2bfe6430aae248beab3e2ac199eb7818adbdd6ba7ab021872e47b5",
+    "build/archer-cleanup-verify-universal": "1f520a4113ff51ae4f636b964218f230a03b7d6dad1d11549ee342ba127e33dd",
+    "research/recovery-stage111-observation.json": "312449226bba510f2616e98b58c29026a986ea9900691f3e5505f73a63472f8e",
+    "artifacts/archer-special-wpa2-recovered-stage112": "c90cbc146e428bc0594f530b2ceba269f3453a9ca5a3bf69b7279b0465f853e3",
+    "artifacts/wpa2-stage112-validation.log": "e50d55cd778fda4a313564229ee54fb0b193fdba884dea07cc967e4045005c4a",
+    "artifacts/wpa2-stage112-preflight.jsonl": "8b0d633078a222d6dbfb8d2cfe86f074c6e8bd54077ab273ade282b7c969b173",
+    "artifacts/wpa2-stage112-preflight.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tests/wpa2_handshake_test.cpp": "c0d0b4decfe79c635f66d53ba3af27603eef1352f029307917a203d28a8a738f",
+    "tests/ccmp_test.cpp": "5342a4451504ab06ff0376015afa4ed2aca7dc822273c1f6df1c7ee492a2a1b7",
+    "tests/secure_network_test.cpp": "08541ce0007b17a054ac67be5fe24f36ce86c958ef40abbcddaebc11c8f4d79d",
+    "tests/credential_pipe_test.cpp": "1cbdaf01ea547d6fd1de7612dd0ace4861c78014856a95be65a3940ca148e3ac",
+    "tests/test_wpa2_once.py": "ff7e17b3b89cdfebeab9625950ca88847170abfe59d76aa339d7a0e6cbd39177",
+    "tests/test_sequence_epoch.py": "1969167a7c6fd8cfe05a05e1ad5be2d07d7048e11152b0a7ce7ec13d3c63d7ce"
+  }
+}

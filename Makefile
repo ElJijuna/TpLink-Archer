@@ -455,6 +455,6 @@ special-wpa2-recovered-universal: | build
 	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -DARCHER_SPECIAL_ACK_CAPTURE -DARCHER_SPECIAL_EXTERNAL_CAPTURE -DARCHER_SPECIAL_PHY_CAPTURE -DARCHER_SPECIAL_DRAINED_PHY_CAPTURE -DARCHER_SPECIAL_GRANT_CAPTURE -DARCHER_STATION_EXCHANGE -DARCHER_WPA2_ONCE -DARCHER_WPA2_RECOVERED -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-wpa2-recovered-universal
 
 
-build/secure-network-recovered-test: tests/secure_network_test.cpp include/archer/secure_network.hpp | build
+build/secure-network-recovered-test: tests/secure_network_test.cpp include/archer/secure_network.hpp include/archer/wpa2_handshake.hpp include/archer/ccmp.hpp | build
 	$(CXX) $(CXXFLAGS) -DARCHER_WPA2_RECOVERED $< -o $@
 test: build/secure-network-recovered-test

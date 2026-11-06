@@ -28,12 +28,13 @@ class EpochTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 e.validate_reload(case)
 
-    def run_transition(self, fail, dirty=False, cold=False):
+    def run_transition(self, fail, dirty=False, cold=False, old_identity=None):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp);(root / 'artifacts').mkdir();(root / 'build').mkdir()
             ledger = root / 'artifacts/37ad-0104-sequences.bin'
             previous = b'ARCHSEQ\x01' + bytes([1] * 245 + [0] * 11)
             ledger.write_bytes(previous)
+            if old_identity:Path(str(ledger)+'.epoch-id').write_bytes(old_identity)
             (root / 'artifacts/37ad-0104-context-reservation').write_text('DIRTY\n' if dirty else 'CLEAN\n')
             helper = root / 'build/archer-epoch-boot-universal'
             rows=evidence()
@@ -47,12 +48,23 @@ class EpochTest(unittest.TestCase):
                         e.transition(output, discard_dirty_context=dirty, cold=cold)
                 else:
                     e.transition(output, discard_dirty_context=dirty, cold=cold)
+            identity=Path(str(ledger)+'.epoch-id')
+            if fail:
+                if old_identity:self.assertEqual(identity.read_bytes(),old_identity)
+                else:self.assertFalse(identity.exists())
+            else:self.assertEqual(identity.read_text().strip(),json.loads((output/'epoch.json').read_text())['epoch_id'])
+            self.assertEqual((output/'previous-epoch-id.bin').read_bytes(),old_identity or b'')
             self.assertEqual((output/'previous-context.bin').read_bytes(), b'DIRTY\n' if dirty else b'CLEAN\n')
             self.assertEqual((root/'artifacts/37ad-0104-context-reservation').read_bytes(), b'DIRTY\n' if dirty and fail else b'CLEAN\n')
             self.assertEqual((output / 'previous-ledger.bin').read_bytes(), previous)
             self.assertEqual(ledger.read_bytes(), previous if fail else e.new_epoch_bytes())
             self.assertEqual(Path(str(ledger) + '.epoch-transition').read_text(), 'DIRTY\n' if fail else 'CLEAN\n')
             self.assertEqual(json.loads((output / 'epoch.json').read_text())['status'], 'stopped' if fail else 'committed')
+
+    def test_epoch_identity_is_archived_and_changes_only_after_verified_reload(self):
+        prior=b'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\n'
+        self.run_transition(True,old_identity=prior)
+        self.run_transition(False,old_identity=prior)
 
     def test_reload_failure_preserves_old_ledger_and_fence(self):
         self.run_transition(True)

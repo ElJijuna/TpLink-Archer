@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **56 %**
 
-Actualizado: **2026-11-04**, etapa108: Archer en modo CD instalador tras reconexión; expulsión nativa pendiente de sudo local. Contexto/transición DIRTY y ledger anterior intacto con143 secuencias libres. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-05**, etapa112: recuperación fría111 y contexto físico verificados, CLEAN y215 secuencias libres. Nuevo WPA2/CCMP compilado y admitido, pendiente de ejecución local con contraseña. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -30,6 +30,19 @@ y el receptor nativo obtuvo M1 con FCS válido. WPA2 completo, datos cifrados e
 interfaz de red todavía no están verificados.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas111–112: nueva época fría identificada, bootstrap y canal9 restaurados;
+contexto creado/retirado con ocho ACK,408 paquetes normales y TX pausado.
+Postflight210 registros correcto. Nuevo intento WPA2 con secuencias22–27
+preparado;120 pruebas Python y suites C++ aprobadas. Sin WPA2/datos nuevos
+todavía. [Recuperación111](research/STAGE111.md),
+[instrucciones y límites112](research/STAGE112.md).
+
+Etapas109–110: recarga fría completa, radio/canal9 y contexto pasivo verificados;
+215 secuencias libres al cerrar109. La enumeración actual volvió a0bda:1a2b,
+por lo que ese estado histórico no se trata como firmware vivo. Nuevo intento
+WPA2 compilado pero bloqueado;120 pruebas Python y suites C++ aprobadas.
+[Recuperación109](research/STAGE109.md), [estado e instrucciones110](research/STAGE110.md).
 
 Etapa108: modo instalador0bda:1a2b y CD Realtek verificado. La interfaz USB
 está ocupada; expulsión óptica pendiente de autenticación en Terminal. Sin

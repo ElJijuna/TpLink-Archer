@@ -150,6 +150,20 @@ def transition(output, discard_dirty_context=False, cold=False, finish_cold=Fals
             raise ValueError('Invalid old ledger')
         fcntl.flock(old_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         old = os.pread(old_fd, 265, 0)
+        identity=Path(str(LEDGER)+'.epoch-id')
+        if identity.is_symlink():raise ValueError('Invalid epoch identity path')
+        old_identity=identity.read_bytes() if identity.exists() else b''
+        if old_identity:
+            parsed=str(uuid.UUID(old_identity.decode().strip())).encode()+b'\n'
+            if old_identity!=parsed:raise ValueError('Malformed epoch identity')
+        identity_archive=output/'previous-epoch-id.bin'
+        if continuing:
+            if identity_archive.exists():
+                if identity_archive.read_bytes()!=old_identity:raise ValueError('Epoch identity changed during transition')
+            elif old_identity:raise ValueError('Missing archived epoch identity')
+        else:
+            with identity_archive.open('xb') as f:
+                f.write(old_identity);f.flush();os.fsync(f.fileno())
         record['available_before'] = available_sequences(old)
         archive = output / 'previous-ledger.bin'
         if continuing:
@@ -213,6 +227,9 @@ def transition(output, discard_dirty_context=False, cold=False, finish_cold=Fals
         os.fsync(context_fd)
         record['context_after'] = 'CLEAN'
         save(report, record)
+        set_fence(identity, (record['epoch_id']+'\n').encode())
+        record['epoch_identity_sha256']=digest(identity)
+        save(report,record)
         set_fence(fence, b'CLEAN\n')
         record['status'] = 'committed'
         save(report, record)

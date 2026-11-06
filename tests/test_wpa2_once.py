@@ -54,3 +54,21 @@ class Wpa2OnceTest(unittest.TestCase):
                 changed=copy.deepcopy(history);changed[key]=value
                 with self.assertRaises(ValueError):w.validate_history(changed,ledger)
             with self.assertRaises(ValueError):w.validate_history(history,ledger[:-1]+b'\x01')
+
+    def test_recovered_epoch_is_separate_and_requires_context_ack(self):
+        ledger=b'ARCHSEQ\x01'+bytes([1])*41+bytes(215)
+        history=dict(stage=111,status='cold_recovery_and_context_verified',context='CLEAN',epoch_transition='CLEAN',remaining_sequences=215,ledger_sha256='fresh',epoch_boundary=dict(status='committed',epoch_id='new-epoch'),context_check=dict(ack_steps=[0,1,2,3,4,6,7,8],network_tx_paused=True),postflight=dict(registers=210),evidence={'raw':'hash'})
+        with patch.object(w,'digest',return_value='fresh'):
+            w.validate_recovered_history(history,ledger,'new-epoch')
+            with self.assertRaises(ValueError):w.validate_recovered_history(history,b'ARCHSEQ\x01'+bytes([1])*104+bytes(152),'new-epoch')
+            with self.assertRaises(ValueError):w.validate_recovered_history(history,ledger,'other-epoch')
+            changed=copy.deepcopy(history);changed['context_check']['ack_steps'].remove(0)
+            with self.assertRaises(ValueError):w.validate_recovered_history(changed,ledger,'new-epoch')
+            changed=copy.deepcopy(history);changed['epoch_boundary']['status']='stopped'
+            with self.assertRaises(ValueError):w.validate_recovered_history(changed,ledger,'new-epoch')
+        recovered_rows=rows()
+        for row in recovered_rows:
+            if row.get('operation')=='single_probe_tx_report':row['tag']=1
+        self.assertTrue(w.validate_result(recovered_rows,True)['data_path_established'])
+        with self.assertRaises(ValueError):w.validate_result(recovered_rows,False)
+        with self.assertRaises(ValueError):w.validate_result(rows(),True)

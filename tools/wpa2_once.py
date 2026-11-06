@@ -26,22 +26,42 @@ def validate_history(history, ledger):
     if not history.get('evidence'):raise ValueError('Retained physical evidence required')
 
 
-def admission():
-    readiness=json.loads((ROOT/'research/wpa2-stage105-observation.json').read_text())
-    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=105:raise ValueError('Validated stage105 build required')
+RECOVERED_HISTORY=ROOT/'research/recovery-stage111-observation.json'
+RECOVERED_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-wpa2-recovered-stage112-attempted'
+
+def validate_recovered_history(history,ledger,epoch_id):
+    if (history.get('stage')!=111 or history.get('status')!='cold_recovery_and_context_verified'
+        or history.get('context')!='CLEAN' or history.get('epoch_transition')!='CLEAN'
+        or history.get('remaining_sequences')!=215 or history.get('ledger_sha256')!=digest(LEDGER)
+        or ledger!=b'ARCHSEQ\x01'+bytes([1])*41+bytes(215)
+        or history.get('epoch_boundary',{}).get('status')!='committed'
+        or not epoch_id or history.get('epoch_boundary',{}).get('epoch_id')!=epoch_id
+        or history.get('context_check',{}).get('ack_steps')!=[0,1,2,3,4,6,7,8]
+        or history.get('context_check',{}).get('network_tx_paused') is not True
+        or history.get('postflight',{}).get('registers')!=210):
+        raise ValueError('Verified cold epoch and passive context check required')
+    if not history.get('evidence'):raise ValueError('Retained recovered evidence required')
+
+
+def admission(recovered=False):
+    readiness=json.loads((ROOT/('research/wpa2-stage112-observation.json' if recovered else 'research/wpa2-stage105-observation.json')).read_text())
+    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=(112 if recovered else 105):raise ValueError('WPA2 state/build not prepared: '+str(readiness.get('status')))
     for name,sha in readiness['build_evidence'].items():
         path=(ROOT/name).resolve()
-        if not path.is_relative_to(ROOT) or digest(path)!=sha:raise ValueError('Stage105 tested build/source changed')
-    history=json.loads(HISTORY.read_text());validate_history(history,LEDGER.read_bytes())
+        if not path.is_relative_to(ROOT) or digest(path)!=sha:raise ValueError('Tested WPA2 build/source changed')
+    history=json.loads((RECOVERED_HISTORY if recovered else HISTORY).read_text())
+    if recovered:validate_recovered_history(history,LEDGER.read_bytes(),Path(str(LEDGER)+'.epoch-id').read_text().strip())
+    else:validate_history(history,LEDGER.read_bytes())
     for name,sha in history['evidence'].items():
         path=(ROOT/name).resolve()
         if not path.is_relative_to(ROOT/'artifacts') or digest(path)!=sha:
-            raise ValueError('Stage104 retained evidence changed')
+            raise ValueError('Retained physical evidence changed')
     for path in (ROOT/'artifacts/37ad-0104-context-reservation',Path(str(LEDGER)+'.epoch-transition')):
         if path.read_bytes()!=b'CLEAN\n':raise ValueError('Context/epoch not CLEAN')
     if (ROOT/'artifacts/37ad-0104-special-channel9-eapol-rx-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':
         raise ValueError('Prior one-shot marker must remain intact')
-    if MARKER.exists():raise ValueError('WPA2 attempt already reserved; no retry')
+    if recovered and MARKER.read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Original WPA2 reservation must remain intact')
+    if (RECOVERED_MARKER if recovered else MARKER).exists():raise ValueError('WPA2 attempt already reserved; no retry')
 
 
 @contextmanager
@@ -63,7 +83,7 @@ def credential_pipe():
         if read_fd is not None:os.close(read_fd)
 
 
-def validate_result(rows):
+def validate_result(rows,recovered=False):
     writes=[r for r in rows if r.get('operation')=='secure_usb_write']
     if [r.get('phase') for r in writes]!=list(range(6)) or any(r.get('status')!=0 for r in writes):
         raise ValueError('Six unique successful USB submissions required')
@@ -78,7 +98,7 @@ def validate_result(rows):
     if [r.get('kind') for r in replies]!=[10,11] or any(r.get('status')!=0 for r in replies):raise ValueError('AP authentication and association required')
     if not 1<=replies[1].get('aid',0)<=2007:raise ValueError('Valid association AID required')
     reports=[r for r in rows if r.get('operation')=='single_probe_tx_report']
-    if not reports or any((r.get('tag'),r.get('state'),r.get('tx_count'))!=(0,0,1) for r in reports):raise ValueError('Fresh tag0 cleanup TX_DONE required')
+    if not reports or any((r.get('tag'),r.get('state'),r.get('tx_count'))!=((1 if recovered else 0),0,1) for r in reports):raise ValueError('Fresh epoch cleanup TX_DONE required')
     if not any(r.get('result')=='context_cleanup_acknowledged' and r.get('network_tx_paused') is True for r in rows):raise ValueError('Context cleanup required')
     if not any(r.get('operation')=='bulk_async_drained' and r.get('pending')==0 for r in rows):raise ValueError('Async drain required')
     # Native window helpers enforce restoration; require both logged grant boundaries.
@@ -86,20 +106,22 @@ def validate_result(rows):
     return dict(security_established=True,data_path_established=True,lease_acquired=False,os_interface=False)
 
 
-def execute(output,capture_guard,credential_fd):
+def execute(output,capture_guard,credential_fd,recovered=False):
     output=output.resolve();output.mkdir();fds=[]
-    report=dict(status='preflight',attempt='wpa2_once',wifi_sequences=list(range(16,22)),cleanup_report_tag=0,automatic_retry=False)
+    report=dict(status='preflight',attempt='wpa2_recovered' if recovered else 'wpa2_once',wifi_sequences=list(range(22,28) if recovered else range(16,22)),cleanup_report_tag=1 if recovered else 0,automatic_retry=False)
     try:
         owner=os.open(str(LEDGER)+'.workflow',os.O_RDWR|os.O_CREAT|os.O_NOFOLLOW,0o600);fds.append(owner);fcntl.flock(owner,fcntl.LOCK_EX|fcntl.LOCK_NB)
-        admission()
-        helper=output/'archer-special-wpa2';shutil.copy2(ROOT/'build/archer-special-wpa2-universal',helper)
-        report.update(history_sha256=digest(HISTORY),helper_sha256=digest(helper),ledger_before_sha256=digest(LEDGER));save(output/'attempt.json',report)
+        admission(recovered)
+        if recovered:report['epoch_id']=Path(str(LEDGER)+'.epoch-id').read_text().strip()
+        helper=output/'archer-special-wpa2';shutil.copy2(ROOT/('build/archer-special-wpa2-recovered-universal' if recovered else 'build/archer-special-wpa2-universal'),helper)
+        report.update(history_sha256=digest(RECOVERED_HISTORY if recovered else HISTORY),helper_sha256=digest(helper),ledger_before_sha256=digest(LEDGER));save(output/'attempt.json',report)
         capture_guard()
-        permit=os.open(MARKER,os.O_RDWR|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600);fds.append(permit);fcntl.flock(permit,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        marker=RECOVERED_MARKER if recovered else MARKER
+        permit=os.open(marker,os.O_RDWR|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600);fds.append(permit);fcntl.flock(permit,fcntl.LOCK_EX|fcntl.LOCK_NB)
         token=b'RECOVERY_RESERVED\n'
         if os.write(permit,token)!=len(token):raise OSError('Incomplete attempt reservation')
         os.fsync(permit)
-        parent=os.open(MARKER.parent,os.O_RDONLY)
+        parent=os.open(marker.parent,os.O_RDONLY)
         try:os.fsync(parent)
         finally:os.close(parent)
         report['status']='started';save(output/'attempt.json',report)
@@ -108,7 +130,7 @@ def execute(output,capture_guard,credential_fd):
             result=subprocess.run([str(helper),'--single-special-channel9-wpa2',str(output/'capture')],cwd=ROOT,env=env,pass_fds=(owner,permit,credential_fd),stdout=out,stderr=err,check=False)
         report.update(exit_code=result.returncode,stdout_sha256=digest(output/'probe.jsonl'),stderr_sha256=digest(output/'probe.stderr'),ledger_after_sha256=digest(LEDGER))
         if result.returncode:raise RuntimeError('WPA2 attempt stopped; reservation retained, no retry')
-        report['validation']=validate_result([json.loads(line) for line in (output/'probe.jsonl').read_text().splitlines()])
+        report['validation']=validate_result([json.loads(line) for line in (output/'probe.jsonl').read_text().splitlines()],recovered)
         report['status']='completed';save(output/'attempt.json',report)
     except BaseException as error:
         report.update(status='stopped',error=str(error));save(output/'attempt.json',report);raise

@@ -1,0 +1,42 @@
+{
+  "stage": 110,
+  "date": "2026-11-05",
+  "status": "blocked_installer_mode",
+  "enumeration": "0bda:1a2b",
+  "current_firmware_generation_unverified": true,
+  "context_file": "CLEAN",
+  "epoch_fence_file": "CLEAN",
+  "ledger_available_recorded": 215,
+  "ledger_sha256": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+  "active_epoch_identity_file_exists": false,
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "new_wpa2_marker_exists": false,
+  "validation": {
+    "python_tests": 120,
+    "cpp_suites_passed": true,
+    "recovered_build_architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "attempt_ready_for_execution": false,
+  "build_evidence": {
+    "artifacts/wpa2-stage110-preflight.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/wpa2-stage110-build.log": "3004aae0c92da67d44e35df11e3ab12547a2575980904b1a1f1453cad35798b7",
+    "artifacts/wpa2-stage110-validation.log": "0f1beee6d35b8cf74725230a9e7dcf0e91d0063f808ccecfe91a66ea3fbf0046",
+    "artifacts/wpa2-stage110-preflight.stderr": "bb290de066b96505330ffddbc69ce66d81be883be24ac81a04faed4239b3bf26",
+    "artifacts/reconnect-stage110-eject.stderr": "9b3a3b7a78f239c4473bb193476b1a860c91f1c2b4fab9c7639eceea414a60fb",
+    "artifacts/reconnect-stage110-optical.jsonl": "f316ec84ec043a7c3e0b9667755ceeadede5e69c91d35de921e24901942f8226",
+    "artifacts/reconnect-stage110-eject.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/reconnect-stage110-optical.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tools/sequence_epoch.py": "11366132d07929376a128d1f7a8f56a36cf3bcc4499c2e569dcea77bd4f6874f",
+    "tools/wpa2_once.py": "b9fec533f4b12d3e00254c3908506dd67139e498c535f721abc2ac4d1f6730e8",
+    "tools/external_probe_capture.py": "1841bafadaf49289557b48fa5a4035d40463000899a5afcc6abec4c71b961a22",
+    "tests/test_sequence_epoch.py": "1969167a7c6fd8cfe05a05e1ad5be2d07d7048e11152b0a7ce7ec13d3c63d7ce",
+    "tests/test_wpa2_once.py": "df1d79c1fab29425a74da1743e8d9fad98c93cdaa47d19b4d9a5b348f37c9cd1",
+    "include/archer/secure_network.hpp": "fe6dcc76713ea17551390c5f5606a8b7c908890d67cf84195546d567e9e35456",
+    "src/macos_context_rx.cpp": "46ac9487072375d66518121186642f09d47cc2d8760aacb67838afa2ceacc680",
+    "Makefile": "10af2944e204a0321dffcdc5e3c5a7abbbc8ff7b6faf32952436155869414702"
+  }
+}
