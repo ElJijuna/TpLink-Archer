@@ -1,0 +1,25 @@
+{
+  "stage": 131,
+  "date": "2026-11-08",
+  "status": "installer_present_attempt130_not_executed",
+  "attempt130_output_exists": false,
+  "attempt130_marker_exists": false,
+  "stored_admission_passed": true,
+  "live_firmware_readiness_verified": false,
+  "usb_vendor": "0bda",
+  "usb_product": "1a2b",
+  "usb_session_id": 16556184056852,
+  "context": "CLEAN",
+  "epoch_transition": "CLEAN",
+  "remaining_sequences": 215,
+  "sudo_exit": 1,
+  "sudo_error": "sudo: a password is required",
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "firmware_reloads": 0,
+  "evidence_sha256": {
+    "artifacts/preflight-stage131-usb.txt": "dba22b56bb571950d1a3da5a5d54c75201c6c54b7a0017bd35682e8d9442e8d1",
+    "artifacts/preflight-stage131-optical.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/preflight-stage131-optical.stderr": "9b3a3b7a78f239c4473bb193476b1a860c91f1c2b4fab9c7639eceea414a60fb"
+  }
+}

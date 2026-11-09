@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **60 %**
 
-Actualizado: **2026-11-06**, etapa124: auditoría offline ratifica seis tramas CCMP de grupo, incluido DISCOVER propio reflejado; cero OFFER. Cinco solicitudes ARP autenticadas, sin relación DHCP demostrada. Recuperación129 verificada: contexto CLEAN,215 secuencias libres; contraste130 con escucha ampliada preparado. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-06**, etapa124: auditoría offline ratifica seis tramas CCMP de grupo, incluido DISCOVER propio reflejado; cero OFFER. Cinco solicitudes ARP autenticadas, sin relación DHCP demostrada. Recuperación132 verificada el2026-11-08: contexto CLEAN,215 secuencias libres; contraste133 con escucha ampliada preparado. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -32,6 +32,17 @@ también se autenticaron tres tramas ARP. Faltan OFFER, lease, recepción
 unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas132–133 (2026-11-08): recuperación actual verificada, época nueva,
+contexto CLEAN y215 secuencias libres. Preparado intento133 con escucha DHCP
+de hasta10s, marcador nuevo y admisión correcta; ARM/Intel, suites C++ y123
+pruebas Python pasan. Sin nuevo ensayo de radio.
+[Recuperación132](research/STAGE132.md), [ejecución133](research/STAGE133.md).
+
+Etapa131 (2026-11-08):130 no ejecutado, marcador ausente. El Archer aparece
+como instalador0bda:1a2b; la recuperación129 es histórica y requiere nueva
+verificación. Expulsión pendiente de sudo local; sin H2C/TX nuevos.
+[Estado actual y continuación](research/STAGE131.md).
 
 Etapas129–130: época fría nueva, contexto CLEAN,215 secuencias libres y
 postflight210 registros correcto. Preparado contraste DHCP de hasta10s con
