@@ -1,21 +1,21 @@
 # Archer USB — investigación y base de controlador
 
-## Checklist resumido — avance estimado: **60 %**
+## Checklist resumido — avance estimado: **64 %**
 
-Actualizado: **2026-11-06**, etapa124: auditoría offline ratifica seis tramas CCMP de grupo, incluido DISCOVER propio reflejado; cero OFFER. Cinco solicitudes ARP autenticadas, sin relación DHCP demostrada. Recuperación132 verificada el2026-11-08: contexto CLEAN,215 secuencias libres; contraste133 con escucha ampliada preparado. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-08**, etapa139: WPA2 experimental y OFFER DHCP cifrado coincidente confirmados. Respuesta tras3361 ms; desautenticación y limpieza completadas. Contexto CLEAN,206 secuencias libres. Sin lease ni interfaz de red. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
 - [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
 - [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
-- [ ] Ruta completa de datos Wi-Fi TX/RX — **11/15**: gestión corroborada externamente y tráfico cifrado de ida/vuelta de grupo autenticado en captura nativa; faltan recepción unicast, DHCP/IP y el resto del camino.
-- [ ] Escaneo, asociación y seguridad Wi-Fi — **9/15**: barrido pasivo1/6/11, asociación aceptada, M3 autenticado, M2/M4 reproducidos y CCMP de grupo validado; faltan ciclo de claves completo y ampliación.
+- [ ] Ruta completa de datos Wi-Fi TX/RX — **13/15**: DISCOVER/OFFER cifrados y coincidentes verificados nativamente, con limpieza; faltan recepción unicast, lease/IP e integración.
+- [ ] Escaneo, asociación y seguridad Wi-Fi — **11/15**: barrido pasivo1/6/11, asociación/WPA2 y CCMP de grupo con OFFER verificados; faltan ciclo completo de claves, reconexión y ampliación.
 - [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
 - [ ] Validación física en Mac Intel — **0/5**.
 - [ ] Implementación y validación en Linux — **0/5**.
 
-**60/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
+**64/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
 no del tiempo restante. Compilar para Intel no equivale a validarlo físicamente.
 El adaptador todavía no ofrece conexión Wi-Fi utilizable.
 
@@ -27,11 +27,28 @@ timeouts/overflow, pero su máscara de estado y los estados de alineación TSSI
 siguen sin interpretación definitiva. No se afirma calidad RF plenamente validada.
 El último postflight dejó TX de red pausado. Especial aceptó autenticación y
 asociación (AID1 en116); M3 fue autenticado y M2/M4 reproducidos offline.
-El AP reenvió por CCMP de grupo una copia exacta del DISCOVER cifrado enviado;
-también se autenticaron tres tramas ARP. Faltan OFFER, lease, recepción
-unicast cifrada e interfaz de red.
+El AP reenvió por CCMP de grupo el DISCOVER propio y se recibió un OFFER
+autenticado con XID/chaddr coincidentes tras3361 ms en138. Limpieza CLEAN.
+Faltan DHCP REQUEST/ACK, lease, recepción unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa139: intento138 completado; OFFER DHCP autenticado y coincidente
+tras3361 ms, cuatro recepciones CCMP de grupo y cero rechazos. Desautenticación
+TX_DONE, contexto CLEAN,206 secuencias libres y postflight210 registros correcto.
+Sin lease/IP ni recepción pairwise todavía. Avance64 %.
+[Resultado y límites](research/STAGE139.md).
+
+Etapas135–138: ausencia USB y perfil frío comprobados; recuperación137
+verificada, contexto CLEAN,215 secuencias libres y210 registros correctos.
+Intento138 preparado con doble entrada local oculta y escucha DHCP hasta10s.
+124 pruebas Python, suites C++ y compilación ARM/Intel pasan; sin nuevo TX.
+[Recuperación137](research/STAGE137.md), [ejecución138](research/STAGE138.md).
+
+Etapa134: usuario informa clave incorrecta en133; M2 enviado, timeout sin
+M3, M4 ni DISCOVER. Escucha DHCP ampliada aún no probada. Marcador consumido,
+contexto DIRTY y206 secuencias libres; no repetir133.
+[Resultado y recuperación](research/STAGE134.md).
 
 Etapas132–133 (2026-11-08): recuperación actual verificada, época nueva,
 contexto CLEAN y215 secuencias libres. Preparado intento133 con escucha DHCP

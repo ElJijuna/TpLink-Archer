@@ -46,6 +46,15 @@ class Wpa2OnceTest(unittest.TestCase):
                 with w.credential_pipe():self.fail('TTY required')
             prompt.assert_not_called()
 
+    def test_radio_confirmation_precedes_pipe_and_rejects_mismatch(self):
+        with patch.object(w.os,'isatty',return_value=True),patch.object(w.getpass,'getpass',side_effect=['dummy-password','different-dummy']),patch.object(w.os,'pipe') as pipe:
+            with self.assertRaisesRegex(ValueError,'Passphrases differ'):
+                with w.credential_pipe(confirm=True):self.fail('Mismatch accepted')
+            pipe.assert_not_called()
+        with patch.object(w.os,'isatty',return_value=True),patch.object(w.getpass,'getpass',side_effect=['dummy-password','dummy-password']) as prompt:
+            with w.credential_pipe(confirm=True) as fd:self.assertEqual(os.read(fd,64),b'dummy-password')
+            self.assertEqual(prompt.call_count,2)
+
     def test_history_pins_native_m1_and_sequence_domain(self):
         history=json.loads(w.HISTORY.read_text());ledger=b'ARCHSEQ\x01'+bytes([1])*104+bytes(152)
         with patch.object(w,'digest',return_value=history['ledger_sha256']):
@@ -57,7 +66,7 @@ class Wpa2OnceTest(unittest.TestCase):
 
     def test_recovered_epoch_is_separate_and_requires_context_ack(self):
         ledger=b'ARCHSEQ\x01'+bytes([1])*41+bytes(215)
-        history=dict(stage=132,status='cold_recovery_and_context_verified',context='CLEAN',epoch_transition='CLEAN',remaining_sequences=215,ledger_sha256='fresh',epoch_boundary=dict(status='committed',epoch_id='new-epoch'),context_check=dict(ack_steps=[0,1,2,3,4,6,7,8],network_tx_paused=True),postflight=dict(registers=210),evidence={'raw':'hash'})
+        history=dict(stage=137,status='cold_recovery_and_context_verified',context='CLEAN',epoch_transition='CLEAN',remaining_sequences=215,ledger_sha256='fresh',epoch_boundary=dict(status='committed',epoch_id='new-epoch'),context_check=dict(ack_steps=[0,1,2,3,4,6,7,8],network_tx_paused=True),postflight=dict(registers=210),evidence={'raw':'hash'})
         with patch.object(w,'digest',return_value='fresh'):
             w.validate_recovered_history(history,ledger,'new-epoch')
             with self.assertRaises(ValueError):w.validate_recovered_history(history,b'ARCHSEQ\x01'+bytes([1])*104+bytes(152),'new-epoch')
@@ -68,7 +77,7 @@ class Wpa2OnceTest(unittest.TestCase):
             with self.assertRaises(ValueError):w.validate_recovered_history(changed,ledger,'new-epoch')
         recovered_rows=rows()
         for row in recovered_rows:
-            if row.get('operation')=='single_probe_tx_report':row['tag']=5
+            if row.get('operation')=='single_probe_tx_report':row['tag']=6
         self.assertTrue(w.validate_result(recovered_rows,True)['data_path_established'])
         with self.assertRaises(ValueError):w.validate_result(recovered_rows,False)
         with self.assertRaises(ValueError):w.validate_result(rows(),True)

@@ -1,6 +1,7 @@
 """One owned Especial WPA2/CCMP experiment; no credential in files or arguments."""
 import fcntl
 import getpass
+import hmac
 import json
 import os
 from pathlib import Path
@@ -26,11 +27,11 @@ def validate_history(history, ledger):
     if not history.get('evidence'):raise ValueError('Retained physical evidence required')
 
 
-RECOVERED_HISTORY=ROOT/'research/recovery-stage132-observation.json'
-RECOVERED_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-wpa2-recovered-stage133-attempted'
+RECOVERED_HISTORY=ROOT/'research/recovery-stage137-observation.json'
+RECOVERED_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-wpa2-recovered-stage138-attempted'
 
 def validate_recovered_history(history,ledger,epoch_id):
-    if (history.get('stage')!=132 or history.get('status')!='cold_recovery_and_context_verified'
+    if (history.get('stage')!=137 or history.get('status')!='cold_recovery_and_context_verified'
         or history.get('context')!='CLEAN' or history.get('epoch_transition')!='CLEAN'
         or history.get('remaining_sequences')!=215 or history.get('ledger_sha256')!=digest(LEDGER)
         or ledger!=b'ARCHSEQ\x01'+bytes([1])*41+bytes(215)
@@ -44,8 +45,8 @@ def validate_recovered_history(history,ledger,epoch_id):
 
 
 def admission(recovered=False):
-    readiness=json.loads((ROOT/('research/wpa2-stage133-observation.json' if recovered else 'research/wpa2-stage105-observation.json')).read_text())
-    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=(133 if recovered else 105):raise ValueError('WPA2 state/build not prepared: '+str(readiness.get('status')))
+    readiness=json.loads((ROOT/('research/wpa2-stage138-observation.json' if recovered else 'research/wpa2-stage105-observation.json')).read_text())
+    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=(138 if recovered else 105):raise ValueError('WPA2 state/build not prepared: '+str(readiness.get('status')))
     for name,sha in readiness['build_evidence'].items():
         path=(ROOT/name).resolve()
         if not path.is_relative_to(ROOT) or digest(path)!=sha:raise ValueError('Tested WPA2 build/source changed')
@@ -63,17 +64,23 @@ def admission(recovered=False):
     if recovered and MARKER.read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Original WPA2 reservation must remain intact')
     if recovered and (ROOT/'artifacts/37ad-0104-special-channel9-wpa2-recovered-stage116-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage116 reservation must remain intact')
     if recovered and (ROOT/'artifacts/37ad-0104-special-channel9-wpa2-recovered-stage122-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage122 reservation must remain intact')
+    if recovered and (ROOT/'artifacts/37ad-0104-special-channel9-wpa2-recovered-stage133-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage133 reservation must remain intact')
     if (RECOVERED_MARKER if recovered else MARKER).exists():raise ValueError('WPA2 attempt already reserved; no retry')
 
 
 @contextmanager
-def credential_pipe():
+def credential_pipe(confirm=False):
     if not os.isatty(0):raise ValueError('Enter the passphrase locally in an interactive Terminal')
     secret=getpass.getpass('Especial WPA2 passphrase (local, hidden): ')
     encoded=bytearray(secret,'utf-8');del secret
     read_fd=write_fd=None
     try:
         if not 8<=len(encoded)<=63 or 0 in encoded:raise ValueError('Passphrase must be8–63 UTF-8 bytes without NUL')
+        if confirm:
+            confirmation=bytearray(getpass.getpass('Repeat Especial passphrase (local, hidden): '),'utf-8')
+            try:
+                if not hmac.compare_digest(encoded,confirmation):raise ValueError('Passphrases differ; no credential transfer or radio submission')
+            finally:confirmation[:]=bytes(len(confirmation))
         read_fd,write_fd=os.pipe()
         if os.write(write_fd,encoded)!=len(encoded):raise OSError('Incomplete private credential transfer')
         os.close(write_fd);write_fd=None
@@ -100,7 +107,7 @@ def validate_result(rows,recovered=False):
     if [r.get('kind') for r in replies]!=[10,11] or any(r.get('status')!=0 for r in replies):raise ValueError('AP authentication and association required')
     if not 1<=replies[1].get('aid',0)<=2007:raise ValueError('Valid association AID required')
     reports=[r for r in rows if r.get('operation')=='single_probe_tx_report']
-    if not reports or any((r.get('tag'),r.get('state'),r.get('tx_count'))!=((5 if recovered else 0),0,1) for r in reports):raise ValueError('Fresh epoch cleanup TX_DONE required')
+    if not reports or any((r.get('tag'),r.get('state'),r.get('tx_count'))!=((6 if recovered else 0),0,1) for r in reports):raise ValueError('Fresh epoch cleanup TX_DONE required')
     if not any(r.get('result')=='context_cleanup_acknowledged' and r.get('network_tx_paused') is True for r in rows):raise ValueError('Context cleanup required')
     if not any(r.get('operation')=='bulk_async_drained' and r.get('pending')==0 for r in rows):raise ValueError('Async drain required')
     # Native window helpers enforce restoration; require both logged grant boundaries.
@@ -110,7 +117,7 @@ def validate_result(rows,recovered=False):
 
 def execute(output,capture_guard,credential_fd,recovered=False):
     output=output.resolve();output.mkdir();fds=[]
-    report=dict(status='preflight',attempt='wpa2_recovered' if recovered else 'wpa2_once',wifi_sequences=list(range(46,52) if recovered else range(16,22)),cleanup_report_tag=5 if recovered else 0,automatic_retry=False)
+    report=dict(status='preflight',attempt='wpa2_recovered' if recovered else 'wpa2_once',wifi_sequences=list(range(52,58) if recovered else range(16,22)),cleanup_report_tag=6 if recovered else 0,automatic_retry=False)
     try:
         owner=os.open(str(LEDGER)+'.workflow',os.O_RDWR|os.O_CREAT|os.O_NOFOLLOW,0o600);fds.append(owner);fcntl.flock(owner,fcntl.LOCK_EX|fcntl.LOCK_NB)
         admission(recovered)

@@ -3,7 +3,7 @@
 #include <chrono>
 namespace archer {
 #ifdef ARCHER_WPA2_RECOVERED
-inline constexpr unsigned secure_first_sequence=46,secure_cleanup_tag=5;
+inline constexpr unsigned secure_first_sequence=52,secure_cleanup_tag=6;
 inline constexpr bool secure_dhcp_broadcast=true;
 #else
 inline constexpr unsigned secure_first_sequence=16,secure_cleanup_tag=0;
