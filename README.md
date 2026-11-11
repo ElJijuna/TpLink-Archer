@@ -33,6 +33,12 @@ Faltan DHCP REQUEST/ACK, lease, recepción unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 
+Etapa142: intento141 se detuvo antes de REQUEST:34 tramas CCMP de grupo
+autenticadas, DISCOVER reflejado y ningún OFFER aceptado en10s. Postflight
+correcto; contexto DIRTY,206 secuencias libres. Auditoría offline preparada
+para distinguir ausencia de DHCP de rechazo del parser. No repetir141.
+[Resultado y siguiente comprobación](research/STAGE142.md).
+
 Etapas140–141 (2026-11-11): recuperación actual CLEAN,215 secuencias libres
 y210 registros correctos. Continuación REQUEST/ACK/RELEASE preparada con
 validación de servidor/dirección/lease y ocho fases sin reintentos.125 pruebas
