@@ -142,7 +142,7 @@ public:
     }
 #ifdef ARCHER_WPA2_ONCE
     void send_secure_once(archer::SecureFramePhase phase,const std::vector<std::uint8_t>& packet){
-        const bool data=unsigned(phase)>=2&&unsigned(phase)<=4;
+        const bool data=archer::secure_data_phase(phase);
         if(!management_output||!data_output||management_sent||station_management_started||packet.size()%512==0)
             throw std::runtime_error("Secure transport unavailable or USB boundary unsupported");
         secure_guard.issue(phase,packet);secure_started=true;

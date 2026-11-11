@@ -72,6 +72,11 @@ int main(){
  assert(wrong&&!wrong->reflected_discover&&!wrong->offer);
  auto server=downlink(offer,false,1,false);auto accepted=observed.observe(observed_session,server.data(),server.size(),xid);
  assert(accepted&&!accepted->group&&accepted->offer&&!accepted->reflected_discover);
+ CcmpSession consumed_session(hs);SecureDataObservation consumed;unsigned consumer_calls=0;
+ const auto consumer=[&](const std::vector<std::uint8_t>& msdu){++consumer_calls;assert(decode_dhcp_offer(msdu,xid));};
+ assert(!consumed.observe(consumed_session,corrupt.data(),corrupt.size(),xid,false,consumer));assert(consumer_calls==0);
+ assert(consumed.observe(consumed_session,server.data(),server.size(),xid,false,consumer));assert(consumer_calls==1);
+ assert(!consumed.observe(consumed_session,server.data(),server.size(),xid,false,consumer));assert(consumer_calls==1);
  auto broadcast_echo=downlink(broadcast_discover,true,1003);auto be=observed.observe(observed_session,broadcast_echo.data(),broadcast_echo.size(),xid,true);
  assert(be&&be->reflected_discover&&!be->offer);
  assert(observed.authenticated==5&&observed.rejected==2&&observed.group==4&&observed.pairwise==1&&observed.reflected_discover==2&&observed.offers==1);

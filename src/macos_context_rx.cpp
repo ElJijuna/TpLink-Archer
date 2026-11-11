@@ -29,11 +29,16 @@
 #include "archer/eapol_m1.hpp"
 #ifdef ARCHER_WPA2_ONCE
 #include "archer/credential_pipe.hpp"
+#ifdef ARCHER_DHCP_LEASE
+#include "archer/dhcp_selecting.hpp"
+#endif
 #endif
 int main(int argc,char** argv){
 #ifdef ARCHER_WPA2_ONCE
  constexpr unsigned probe_channel=9;
-#ifdef ARCHER_WPA2_RECOVERED
+#ifdef ARCHER_DHCP_LEASE
+ const char* marker_path="artifacts/37ad-0104-special-channel9-dhcp-lease-stage141-attempted";
+#elif defined(ARCHER_WPA2_RECOVERED)
  const char* marker_path="artifacts/37ad-0104-special-channel9-wpa2-recovered-stage138-attempted";
 #else
  const char* marker_path="artifacts/37ad-0104-special-channel9-wpa2-attempted";
@@ -121,6 +126,10 @@ int main(int argc,char** argv){
     archer::SecureDataObservation secure_data;
     std::vector<std::uint8_t> secure_m1,secure_m3;bool m2_sent=false;std::uint32_t dhcp_xid=0;
     if(CCRandomGenerateBytes(&dhcp_xid,sizeof(dhcp_xid))!=kCCSuccess||!dhcp_xid)throw std::runtime_error("DHCP random transaction unavailable");
+#ifdef ARCHER_DHCP_LEASE
+    archer::DhcpSelectingExchange dhcp_selecting(dhcp_xid);bool dhcp_ack=false;
+    std::array<std::uint8_t,6> dhcp_server_mac{};
+#endif
 #endif
 #ifdef ARCHER_STATION_EXCHANGE
     std::ifstream target_file("artifacts/special-probe-response-stage102.bin",std::ios::binary);
@@ -240,8 +249,21 @@ int main(int argc,char** argv){
                         const auto eapol=archer::target_rsn_eapol(frame,size);
                         if(eapol&&archer::eapol_be16(eapol->data()+5)==0x13ca)secure_m3=*eapol;
                     }
-                    if(ccmp&&!dhcp_offer){
-                        const auto data=secure_data.observe(*ccmp,frame,size,dhcp_xid,archer::secure_dhcp_broadcast);
+                    if(ccmp&&(!dhcp_offer
+#ifdef ARCHER_DHCP_LEASE
+                         ||!dhcp_ack
+#endif
+                    )){
+                        const auto data=secure_data.observe(*ccmp,frame,size,dhcp_xid,archer::secure_dhcp_broadcast
+#ifdef ARCHER_DHCP_LEASE
+                         ,[&](const std::vector<std::uint8_t>& msdu){
+                            if(!dhcp_offer)dhcp_selecting.accept_authenticated_offer(msdu);
+                            else if(dhcp_selecting.accept_authenticated_ack(msdu)){
+                                dhcp_ack=true;std::copy_n(frame+16,6,dhcp_server_mac.begin());
+                            }
+                         }
+#endif
+                        );
                         if(data){
                             if(data->offer)dhcp_offer=data->offer;
                             std::cout<<"{\"operation\":\"secure_authenticated_data\",\"group\":"<<(data->group?"true":"false")<<",\"bytes\":"<<data->bytes<<",\"ether_type\":"<<data->ether_type<<",\"reflected_discover\":"<<(data->reflected_discover?"true":"false")<<",\"strict_offer\":"<<(data->offer?"true":"false")<<"}"<<std::endl;

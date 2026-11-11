@@ -33,6 +33,13 @@ Faltan DHCP REQUEST/ACK, lease, recepción unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 
+Etapas140–141 (2026-11-11): recuperación actual CLEAN,215 secuencias libres
+y210 registros correctos. Continuación REQUEST/ACK/RELEASE preparada con
+validación de servidor/dirección/lease y ocho fases sin reintentos.125 pruebas
+Python y suites C++ pasan; ARM/Intel compilados. Sin ACK de lease por radio
+todavía; interfaz macOS y recepción unicast siguen pendientes.
+[Validación140](research/STAGE140.md), [ensayo141](research/STAGE141.md).
+
 Etapa139: intento138 completado; OFFER DHCP autenticado y coincidente
 tras3361 ms, cuatro recepciones CCMP de grupo y cero rechazos. Desautenticación
 TX_DONE, contexto CLEAN,206 secuencias libres y postflight210 registros correcto.

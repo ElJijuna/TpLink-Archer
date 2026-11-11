@@ -2,7 +2,10 @@
 #include "archer/ccmp.hpp"
 #include <chrono>
 namespace archer {
-#ifdef ARCHER_WPA2_RECOVERED
+#ifdef ARCHER_DHCP_LEASE
+inline constexpr unsigned secure_first_sequence=58,secure_cleanup_tag=8,secure_release_tag=7;
+inline constexpr bool secure_dhcp_broadcast=true;
+#elif defined(ARCHER_WPA2_RECOVERED)
 inline constexpr unsigned secure_first_sequence=52,secure_cleanup_tag=6;
 inline constexpr bool secure_dhcp_broadcast=true;
 #else
@@ -19,10 +22,27 @@ inline std::chrono::steady_clock::time_point secure_response_deadline(
  unsigned budget_ms,bool cleanup=false){
  return std::min(now+std::chrono::milliseconds(budget_ms),experiment_deadline+std::chrono::seconds(cleanup?3:0));
 }
-enum class SecureFramePhase:unsigned {authenticate,associate,m2,m4,discover,deauthenticate};
-inline unsigned secure_frame_sequence(SecureFramePhase phase){if(unsigned(phase)>5)throw std::invalid_argument("Invalid secure phase");return secure_first_sequence+unsigned(phase);}
+enum class SecureFramePhase:unsigned {authenticate,associate,m2,m4,discover,
+#ifdef ARCHER_DHCP_LEASE
+ request,release,
+#endif
+ deauthenticate};
+inline bool secure_data_phase(SecureFramePhase phase){return unsigned(phase)>=2&&unsigned(phase)<unsigned(SecureFramePhase::deauthenticate);}
+inline unsigned secure_report_tag(SecureFramePhase phase){
+#ifdef ARCHER_DHCP_LEASE
+ if(phase==SecureFramePhase::release)return secure_release_tag;
+#endif
+ return phase==SecureFramePhase::deauthenticate?secure_cleanup_tag:0;
+}
+inline bool secure_report_requested(SecureFramePhase phase){
+#ifdef ARCHER_DHCP_LEASE
+ if(phase==SecureFramePhase::release)return true;
+#endif
+ return phase==SecureFramePhase::deauthenticate;
+}
+inline unsigned secure_frame_sequence(SecureFramePhase phase){if(unsigned(phase)>unsigned(SecureFramePhase::deauthenticate))throw std::invalid_argument("Invalid secure phase");return secure_first_sequence+unsigned(phase);}
 inline std::vector<std::uint8_t> secure_tx_packet(SecureFramePhase phase,const std::vector<std::uint8_t>& frame){
- const auto sequence=secure_frame_sequence(phase);const bool data=unsigned(phase)>=2&&unsigned(phase)<=4;
+ const auto sequence=secure_frame_sequence(phase);const bool data=secure_data_phase(phase);
  if(frame.size()<24||frame.size()>4096||management_u16(frame.data()+22)!=(sequence<<4)||
     !std::equal(station_target_ap.begin(),station_target_ap.end(),frame.begin()+4)||
     !std::equal(station_test_mac.begin(),station_test_mac.end(),frame.begin()+10))throw std::invalid_argument("Secure packet identity/sequence mismatch");
@@ -31,8 +51,8 @@ inline std::vector<std::uint8_t> secure_tx_packet(SecureFramePhase phase,const s
  channel_put32(packet.data(),data?0x00406480:0x00486480); // DMA0/BE via USB09; MGQ/DMA8 via USB05.
  channel_put32(packet.data()+8,(data?0:0x00240000)|frame.size());// rtw89_core_tx_update_data_info clears sw_mld; management sets it.
  channel_put32(packet.data()+12,(data?0:0x2000)|sequence);
- channel_put32(packet.data()+36,phase==SecureFramePhase::deauthenticate?secure_cleanup_tag<<28:0); // Only final cleanup requests a report in this firmware epoch.
- channel_put32(packet.data()+40,phase==SecureFramePhase::deauthenticate?0x40000000:0);
+ channel_put32(packet.data()+36,secure_report_requested(phase)?secure_report_tag(phase)<<28:0); // Only final cleanup requests a report in this firmware epoch.
+ channel_put32(packet.data()+40,secure_report_requested(phase)?0x40000000:0);
  packet.insert(packet.end(),frame.begin(),frame.end());return packet;
 }
 inline std::vector<std::uint8_t> secure_management_packet(SecureFramePhase phase){
@@ -52,12 +72,12 @@ class SecureFrameSendGuard {
  unsigned mask_=0;
 public:
  void issue(SecureFramePhase phase,const std::vector<std::uint8_t>& packet){
-  const auto i=unsigned(phase);if(i>5||packet.size()<88)throw std::invalid_argument("Invalid secure submission");
+  const auto i=unsigned(phase),last=unsigned(SecureFramePhase::deauthenticate);if(i>last||packet.size()<88)throw std::invalid_argument("Invalid secure submission");
   const unsigned bit=1u<<i;
-  if(mask_&bit||mask_&32||(i<5&&mask_!=bit-1)||(i==5&&!(mask_&1)))throw std::logic_error("Secure frame order/retry forbidden");
+  if(mask_&bit||mask_&(1u<<last)||(i<last&&mask_!=bit-1)||(i==last&&!(mask_&1)))throw std::logic_error("Secure frame order/retry forbidden");
   const std::vector<std::uint8_t> frame(packet.begin()+64,packet.end());
   if(packet!=secure_tx_packet(phase,frame))throw std::invalid_argument("Secure descriptor differs from bound source profile");
-  if(i==0||i==1||i==5){if(packet!=secure_management_packet(phase))throw std::invalid_argument("Unbound secure management packet");}
+  if(i==0||i==1||i==last){if(packet!=secure_management_packet(phase))throw std::invalid_argument("Unbound secure management packet");}
   else if(i==2||i==3){if(frame.size()<32||!std::equal(frame.begin()+24,frame.begin()+32,std::array<std::uint8_t,8>{0xaa,0xaa,3,0,0,0,0x88,0x8e}.begin())||packet!=secure_eapol_packet(phase,{frame.begin()+32,frame.end()}))throw std::invalid_argument("Unbound EAPOL payload");}
   else if(management_u16(frame.data())!=0x4108||frame.size()<40)throw std::invalid_argument("Encrypted data frame required");
   mask_|=bit;
@@ -76,8 +96,9 @@ inline std::vector<std::uint8_t> dhcp_discover_msdu(std::uint32_t xid,bool broad
  eapol_put_be16(ip.data()+10,internet_checksum(ip.data(),20));eapol_put_be16(ip.data()+20,68);eapol_put_be16(ip.data()+22,67);eapol_put_be16(ip.data()+24,bootp.size()+8);
  std::copy(bootp.begin(),bootp.end(),ip.begin()+28);std::vector<std::uint8_t> result{0xaa,0xaa,3,0,0,0,8,0};result.insert(result.end(),ip.begin(),ip.end());return result;
 }
-struct DhcpOffer {std::array<std::uint8_t,4> address{},server{};};
-inline std::optional<DhcpOffer> decode_dhcp_offer(const std::vector<std::uint8_t>& msdu,std::uint32_t xid){
+struct DhcpOffer {std::array<std::uint8_t,4> address{},server{};std::uint32_t lease_seconds=0;};
+inline std::optional<DhcpOffer> decode_dhcp_reply(const std::vector<std::uint8_t>& msdu,std::uint32_t xid,unsigned expected_type){
+ if(!xid||(expected_type!=2&&expected_type!=5))return {};
  const std::array<std::uint8_t,8> snap{0xaa,0xaa,3,0,0,0,8,0};
  if(msdu.size()<8+20+8+240||!std::equal(snap.begin(),snap.end(),msdu.begin()))return {};
  const auto* ip=msdu.data()+8;const unsigned ihl=(ip[0]&15)*4,total=eapol_be16(ip+2);
@@ -90,15 +111,18 @@ inline std::optional<DhcpOffer> decode_dhcp_offer(const std::vector<std::uint8_t
  }
  const auto* b=udp+8;const unsigned size=length-8;
  if(b[0]!=2||b[1]!=1||b[2]!=6||network_u32(b+4)!=xid||!std::equal(station_test_mac.begin(),station_test_mac.end(),b+28)||network_u32(b+236)!=0x63825363)return {};
- bool type=false,server=false,end=false;DhcpOffer offer;std::copy_n(b+16,4,offer.address.begin());
+ bool type=false,server=false,end=false,lease=false;DhcpOffer offer;std::copy_n(b+16,4,offer.address.begin());
  if(!offer.address[0]||offer.address[0]>=224||offer.address[0]==127)return {};
  for(unsigned at=240;at<size;){const unsigned id=b[at++];if(id==0)continue;if(id==255){end=true;break;}if(at>=size||b[at]>size-at-1)return {};const unsigned n=b[at++];
-  if(id==53){if(type||n!=1||b[at]!=2)return {};type=true;}
+  if(id==53){if(type||n!=1||b[at]!=expected_type)return {};type=true;}
   if(id==54){if(server||n!=4)return {};std::copy_n(b+at,4,offer.server.begin());server=true;}
+  if(id==51){if(lease||n!=4)return {};offer.lease_seconds=network_u32(b+at);lease=true;}
   at+=n;
  }
+ if(expected_type==5&&(!lease||!offer.lease_seconds))return {};
  if(!type||!server||!end||!offer.server[0]||offer.server[0]>=224||offer.server[0]==127)return {};return offer;
 }
+inline std::optional<DhcpOffer> decode_dhcp_offer(const std::vector<std::uint8_t>& msdu,std::uint32_t xid){return decode_dhcp_reply(msdu,xid,2);}
 // Metadata only: plaintext stays in the authenticated, wiping SecretVector.
 struct SecureDataMetadata {
  bool group=false,reflected_discover=false;
@@ -107,7 +131,7 @@ struct SecureDataMetadata {
 };
 struct SecureDataObservation {
  unsigned authenticated=0,rejected=0,group=0,pairwise=0,reflected_discover=0,offers=0;
- std::optional<SecureDataMetadata> observe(CcmpSession& ccmp,const std::uint8_t* frame,std::size_t size,std::uint32_t xid,bool broadcast_reply=false){
+ std::optional<SecureDataMetadata> observe(CcmpSession& ccmp,const std::uint8_t* frame,std::size_t size,std::uint32_t xid,bool broadcast_reply=false,const std::function<void(const std::vector<std::uint8_t>&)>& authenticated_consumer={}){
   // Ignore management, foreign receivers and unprotected data rather than
   // counting them as failed CCMP authentication.
   if(size<24||(management_u16(frame)&0x430c)!=0x4208||
@@ -116,6 +140,7 @@ struct SecureDataObservation {
   std::optional<SecretVector> plain;
   try{plain.emplace(ccmp.decrypt_from_ap(frame,size));}
   catch(const std::exception&){++rejected;return {};}
+  if(authenticated_consumer)authenticated_consumer(plain->bytes);
   SecureDataMetadata result;result.group=frame[4]&1;result.bytes=plain->bytes.size();
   const std::array<std::uint8_t,6> snap{0xaa,0xaa,3,0,0,0};
   if(plain->bytes.size()>=8&&std::equal(snap.begin(),snap.end(),plain->bytes.begin()))result.ether_type=eapol_be16(plain->bytes.data()+6);

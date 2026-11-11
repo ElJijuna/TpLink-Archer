@@ -1,5 +1,5 @@
 // Included inside the owned context scope; bounded one-shot WPA2/data experiment.
-                    bool secure_deauth_completed=false,secure_pending=false;
+                    bool secure_deauth_completed=false,secure_pending=false,secure_lease_acquired=false;
                     std::optional<archer::PhyTxSnapshot> secure_phy_before;unsigned secure_phy_phase=0;
                     const auto secure_capture_phy=[&]{
                         if(!secure_phy_before)return;
@@ -26,11 +26,10 @@
                         std::ofstream file(dir/("secure-tx-"+std::to_string(unsigned(phase))+".bin"),std::ios::binary);
                         file.write(reinterpret_cast<const char*>(packet.data()),packet.size());file.close();
                         if(!file)throw std::runtime_error("Secure wire packet preservation failed");
-                        const bool data=unsigned(phase)>=2&&unsigned(phase)<=4;
-                        const bool cleanup=phase==archer::SecureFramePhase::deauthenticate;
+                        const bool data=archer::secure_data_phase(phase);
                         secure_phy_before=archer::read_phy_tx_snapshot(bus);secure_phy_phase=unsigned(phase);
                         if(!secure_phy_before->enabled())throw std::runtime_error("Secure PHY counters disabled");
-                        probe_report.reset();probe_submitted=cleanup;secure_pending=true;
+                        probe_report.reset();probe_submitted=archer::secure_report_requested(phase);station_tx_tag=archer::secure_report_tag(phase);secure_pending=true;
                         try{
                             archer::channel_bus_write(bus,0x10398,0x3ffff,data?1:0x100);
                             usb.send_secure_once(phase,packet);
@@ -72,11 +71,25 @@
                                     secure_send(archer::SecureFramePhase::discover,archer::secure_tx_packet(archer::SecureFramePhase::discover,discover));
                                     secure_wait([&]{return bool(dhcp_offer);},archer::secure_dhcp_wait_ms);secure_confirm();
                                     std::cout<<"{\"operation\":\"secure_dhcp_offer\",\"matched_transaction\":true,\"ccmp_authenticated\":true,\"security_established\":true,\"data_path_established\":true,\"lease_acquired\":false}"<<std::endl;
+
+#ifdef ARCHER_DHCP_LEASE
+                                    const auto request=ccmp->encrypt_to_ap(dhcp_selecting.issue_request(),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::request));
+                                    secure_send(archer::SecureFramePhase::request,archer::secure_tx_packet(archer::SecureFramePhase::request,request));
+                                    secure_wait([&]{return dhcp_ack;},10000);secure_confirm();
+                                    secure_lease_acquired=true;
+                                    std::cout<<"{\"operation\":\"secure_dhcp_ack\",\"ccmp_authenticated\":true,\"lease_acknowledged\":true,\"os_interface\":false}"<<std::endl;
+                                    if(dhcp_server_mac[0]&1)throw std::runtime_error("DHCP server source MAC is not unicast");
+                                    const auto release=ccmp->encrypt_to_ap(dhcp_selecting.issue_release(),dhcp_server_mac,archer::secure_frame_sequence(archer::SecureFramePhase::release));
+                                    secure_send(archer::SecureFramePhase::release,archer::secure_tx_packet(archer::SecureFramePhase::release,release));
+                                    secure_wait([&]{return bool(probe_report);});secure_confirm();probe_submitted=false;
+                                    if(probe_report->state!=0||probe_report->count!=1)throw std::runtime_error("DHCP RELEASE not TX_DONE/count1");
+                                    std::cout<<"{\"operation\":\"secure_dhcp_release\",\"tx_done\":true,\"server_release_confirmed\":false}"<<std::endl;
+#endif
                                 }catch(...){secure_error=std::current_exception();}
                                 station_expected_reply.reset();
                                 archer::channel_bus_write(bus,0x10398,0x3ffff,0);
                                 secure_capture_phy();
-                                std::cout<<"{\"operation\":\"secure_data_summary\",\"authenticated_frames\":"<<secure_data.authenticated<<",\"rejected_frames\":"<<secure_data.rejected<<",\"group_frames\":"<<secure_data.group<<",\"pairwise_frames\":"<<secure_data.pairwise<<",\"reflected_discover_frames\":"<<secure_data.reflected_discover<<",\"matched_offers\":"<<secure_data.offers<<",\"lease_acquired\":false}"<<std::endl;
+                                std::cout<<"{\"operation\":\"secure_data_summary\",\"authenticated_frames\":"<<secure_data.authenticated<<",\"rejected_frames\":"<<secure_data.rejected<<",\"group_frames\":"<<secure_data.group<<",\"pairwise_frames\":"<<secure_data.pairwise<<",\"reflected_discover_frames\":"<<secure_data.reflected_discover<<",\"matched_offers\":"<<secure_data.offers<<",\"lease_acquired\":"<<(secure_lease_acquired?"true":"false")<<"}"<<std::endl;
                                 if(auth_attempted&&!secure_pending){
                                     try{
                                         secure_send(archer::SecureFramePhase::deauthenticate,archer::secure_management_packet(archer::SecureFramePhase::deauthenticate));
