@@ -12,14 +12,15 @@
                         std::cout<<"],\"modulo_delta\":[";for(unsigned i=0;i<4;++i){if(i)std::cout<<',';std::cout<<delta[i];}
                         std::cout<<"],\"antenna_emission_proven\":false}"<<std::endl;
                     };
-                    const auto secure_wait=[&](const auto& ready,unsigned budget_ms=3000,bool cleanup=false){
+                    const auto secure_wait=[&](const auto& ready,unsigned budget_ms=3000,bool cleanup=false,bool allow_timeout=false){
                         const auto started=std::chrono::steady_clock::now();
                         const auto end=archer::secure_response_deadline(started,secure_deadline,budget_ms,cleanup);
                         while(!ready()&&std::chrono::steady_clock::now()<end){receive(0,true);receive(1,true);}
                         const bool received=ready();
                         const auto elapsed=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-started).count();
                         std::cout<<"{\"operation\":\"secure_response_wait\",\"budget_ms\":"<<budget_ms<<",\"elapsed_ms\":"<<elapsed<<",\"cleanup\":"<<(cleanup?"true":"false")<<",\"response_received\":"<<(received?"true":"false")<<"}"<<std::endl;
-                        if(!received)throw std::runtime_error("Secure phase response timeout; no retry");
+                        if(!received&&!allow_timeout)throw std::runtime_error("Secure phase response timeout; no retry");
+                        return received;
                     };
                     const auto secure_send=[&](archer::SecureFramePhase phase,const std::vector<std::uint8_t>& packet){
                         if(std::chrono::steady_clock::now()>secure_deadline+(phase==archer::SecureFramePhase::deauthenticate?std::chrono::seconds(3):std::chrono::seconds(0)))throw std::runtime_error("Secure capture deadline expired; no submission");
@@ -69,11 +70,29 @@
                                     const std::array<std::uint8_t,6> broadcast{255,255,255,255,255,255};
                                     const auto discover=ccmp->encrypt_to_ap(archer::dhcp_discover_msdu(dhcp_xid,archer::secure_dhcp_broadcast),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::discover));
                                     secure_send(archer::SecureFramePhase::discover,archer::secure_tx_packet(archer::SecureFramePhase::discover,discover));
+#ifdef ARCHER_DHCP_LEASE
+                                    const auto acquisition_started=std::chrono::steady_clock::now();
+                                    const unsigned first_wait=archer::dhcp_discover_backoff_ms(0,arc4random_uniform(2001));
+                                    if(!secure_wait([&]{return bool(dhcp_offer);},first_wait,false,true)){
+                                        // Drain once more before consuming the single retry slot.
+                                        receive(0,true);receive(1,true);
+                                        if(!dhcp_offer){
+                                            const auto seconds=std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now()-acquisition_started).count();
+                                            archer::channel_bus_write(bus,0x10398,0x3ffff,0);secure_capture_phy();
+                                            const auto retry=ccmp->encrypt_to_ap(archer::dhcp_discover_msdu(dhcp_xid,true,unsigned(seconds)),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::discover_retry));
+                                            std::cout<<"{\"operation\":\"secure_discover_retry\",\"ordinal\":1,\"same_xid\":true,\"fresh_pn_and_sequence\":true,\"secs\":"<<seconds<<"}"<<std::endl;
+                                            secure_send(archer::SecureFramePhase::discover_retry,archer::secure_tx_packet(archer::SecureFramePhase::discover_retry,retry));
+                                            secure_wait([&]{return bool(dhcp_offer);},archer::dhcp_discover_backoff_ms(1,arc4random_uniform(2001)));
+                                        }
+                                    }
+                                    secure_confirm();
+#else
                                     secure_wait([&]{return bool(dhcp_offer);},archer::secure_dhcp_wait_ms);secure_confirm();
+#endif
                                     std::cout<<"{\"operation\":\"secure_dhcp_offer\",\"matched_transaction\":true,\"ccmp_authenticated\":true,\"security_established\":true,\"data_path_established\":true,\"lease_acquired\":false}"<<std::endl;
 
 #ifdef ARCHER_DHCP_LEASE
-                                    const auto request=ccmp->encrypt_to_ap(dhcp_selecting.issue_request(),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::request));
+                                    const auto request=ccmp->encrypt_to_ap(dhcp_selecting.issue_request(unsigned(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now()-acquisition_started).count())),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::request));
                                     secure_send(archer::SecureFramePhase::request,archer::secure_tx_packet(archer::SecureFramePhase::request,request));
                                     secure_wait([&]{return dhcp_ack;},10000);secure_confirm();
                                     secure_lease_acquired=true;

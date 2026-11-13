@@ -85,11 +85,17 @@ class Wpa2OnceTest(unittest.TestCase):
     def test_lease_result_requires_ack_release_and_both_reports(self):
         base=rows();writes=[r for r in base if r.get('operation')=='secure_usb_write']
         trace=writes[:5]+[r for r in base if r.get('operation') in ('secure_m1_accepted','secure_m3_authenticated','secure_dhcp_offer','station_management_reply')]
-        trace += [dict(operation='secure_usb_write',phase=5,endpoint=9,bytes=440,status=0),dict(operation='secure_dhcp_ack',ccmp_authenticated=True,lease_acknowledged=True,os_interface=False),dict(operation='secure_usb_write',phase=6,endpoint=9,bytes=440,status=0),dict(operation='single_probe_tx_report',tag=7,state=0,tx_count=1),dict(operation='secure_dhcp_release',tx_done=True,server_release_confirmed=False),dict(operation='secure_usb_write',phase=7,endpoint=5,bytes=90,status=0),dict(operation='single_probe_tx_report',tag=8,state=0,tx_count=1)]
+        trace += [dict(operation='secure_usb_write',phase=6,endpoint=9,bytes=440,status=0),dict(operation='secure_dhcp_ack',ccmp_authenticated=True,lease_acknowledged=True,os_interface=False),dict(operation='secure_usb_write',phase=7,endpoint=9,bytes=440,status=0),dict(operation='single_probe_tx_report',tag=9,state=0,tx_count=1),dict(operation='secure_dhcp_release',tx_done=True,server_release_confirmed=False),dict(operation='secure_usb_write',phase=8,endpoint=5,bytes=90,status=0),dict(operation='single_probe_tx_report',tag=10,state=0,tx_count=1)]
         trace += [r for r in base if r.get('operation') in ('bulk_async_drained','probe_grant_policy') or r.get('result')=='context_cleanup_acknowledged']
         result=w.validate_lease_result(trace);self.assertTrue(result['lease_acquired']);self.assertTrue(result['release_submitted']);self.assertFalse(result['server_release_confirmed']);self.assertFalse(result['os_interface'])
         for i in range(len(trace)):
             changed=copy.deepcopy(trace);del changed[i]
+            with self.assertRaises(ValueError):w.validate_lease_result(changed)
+        retried=copy.deepcopy(trace);at=next(i for i,r in enumerate(retried) if r.get('operation')=='secure_dhcp_offer')
+        retried[at:at]=[dict(operation='secure_discover_retry',ordinal=1,same_xid=True,fresh_pn_and_sequence=True,secs=4),dict(operation='secure_usb_write',phase=5,endpoint=9,bytes=440,status=0)]
+        self.assertTrue(w.validate_lease_result(retried)['lease_acquired'])
+        for key,value in [('ordinal',2),('secs',0),('same_xid',False),('fresh_pn_and_sequence',False)]:
+            changed=copy.deepcopy(retried);next(r for r in changed if r.get('operation')=='secure_discover_retry')[key]=value
             with self.assertRaises(ValueError):w.validate_lease_result(changed)
         late=copy.deepcopy(trace);ack=next(r for r in late if r.get('operation')=='secure_dhcp_ack');late.remove(ack);late.append(ack)
         with self.assertRaises(ValueError):w.validate_lease_result(late)

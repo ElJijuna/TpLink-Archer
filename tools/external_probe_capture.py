@@ -49,7 +49,7 @@ def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa
     if wpa2:
         wpa2_once.admission(recovered,lease)
         credential_context=wpa2_once.credential_pipe(confirm=True)
-        report.update(attempt='dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',cleanup_report_tag=8 if lease else 6 if recovered else 0)
+        report.update(attempt='dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',cleanup_report_tag=10 if lease else 6 if recovered else 0,protocol_discover_retransmissions_max=1 if lease else 0)
         report.pop('tag',None)
     credential_fd=credential_context.__enter__()
     try:
@@ -116,7 +116,7 @@ if __name__=='__main__':
     parser.add_argument('--eapol-rx',action='store_true',help='Unique tags13-15: associate, observe RSN M1 for up to3s, deauthenticate')
     parser.add_argument('--wpa2-once',action='store_true',help='One WPA2 and encrypted DHCP DISCOVER experiment; hidden local passphrase prompt')
     parser.add_argument('--wpa2-recovered',action='store_true',help='New one-shot WPA2 experiment after verified cold recovery; sequences52–57, fresh epoch report6, DHCP broadcast reply and up to10s observation')
-    parser.add_argument('--dhcp-lease',action='store_true',help='One REQUEST/ACK/RELEASE experiment after verified recovery; no OS interface')
+    parser.add_argument('--dhcp-lease',action='store_true',help='At most two DISCOVER frames and one REQUEST/ACK/RELEASE experiment; no OS interface')
     args=parser.parse_args()
     if args.dhcp_lease and any((args.wpa2_recovered,args.wpa2_once,args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx)):parser.error('Choose only --dhcp-lease')
     if args.wpa2_recovered and args.wpa2_once:parser.error('Choose one WPA2 experiment')

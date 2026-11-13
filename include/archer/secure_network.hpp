@@ -3,7 +3,7 @@
 #include <chrono>
 namespace archer {
 #ifdef ARCHER_DHCP_LEASE
-inline constexpr unsigned secure_first_sequence=58,secure_cleanup_tag=8,secure_release_tag=7;
+inline constexpr unsigned secure_first_sequence=67,secure_cleanup_tag=10,secure_release_tag=9;
 inline constexpr bool secure_dhcp_broadcast=true;
 #elif defined(ARCHER_WPA2_RECOVERED)
 inline constexpr unsigned secure_first_sequence=52,secure_cleanup_tag=6;
@@ -24,7 +24,7 @@ inline std::chrono::steady_clock::time_point secure_response_deadline(
 }
 enum class SecureFramePhase:unsigned {authenticate,associate,m2,m4,discover,
 #ifdef ARCHER_DHCP_LEASE
- request,release,
+ discover_retry,request,release,
 #endif
  deauthenticate};
 inline bool secure_data_phase(SecureFramePhase phase){return unsigned(phase)>=2&&unsigned(phase)<unsigned(SecureFramePhase::deauthenticate);}
@@ -74,7 +74,13 @@ public:
  void issue(SecureFramePhase phase,const std::vector<std::uint8_t>& packet){
   const auto i=unsigned(phase),last=unsigned(SecureFramePhase::deauthenticate);if(i>last||packet.size()<88)throw std::invalid_argument("Invalid secure submission");
   const unsigned bit=1u<<i;
-  if(mask_&bit||mask_&(1u<<last)||(i<last&&mask_!=bit-1)||(i==last&&!(mask_&1)))throw std::logic_error("Secure frame order/retry forbidden");
+  unsigned expected=bit-1;
+#ifdef ARCHER_DHCP_LEASE
+  // REQUEST may follow the first OFFER without using the optional retry slot.
+  if(phase==SecureFramePhase::request&&mask_==((1u<<unsigned(SecureFramePhase::discover_retry))-1))expected=mask_;
+  if(phase==SecureFramePhase::release&&mask_==((bit-1)&~(1u<<unsigned(SecureFramePhase::discover_retry))))expected=mask_;
+#endif
+  if(mask_&bit||mask_&(1u<<last)||(i<last&&mask_!=expected)||(i==last&&!(mask_&1)))throw std::logic_error("Secure frame order/retry forbidden");
   const std::vector<std::uint8_t> frame(packet.begin()+64,packet.end());
   if(packet!=secure_tx_packet(phase,frame))throw std::invalid_argument("Secure descriptor differs from bound source profile");
   if(i==0||i==1||i==last){if(packet!=secure_management_packet(phase))throw std::invalid_argument("Unbound secure management packet");}
@@ -86,9 +92,10 @@ public:
 inline unsigned internet_checksum(const std::uint8_t* p,std::size_t n){unsigned sum=0;while(n>1){sum+=eapol_be16(p);p+=2;n-=2;}if(n)sum+=unsigned(*p)<<8;while(sum>>16)sum=(sum&0xffff)+(sum>>16);return (~sum)&0xffff;}
 inline void network_put32(std::uint8_t* p,std::uint32_t value){for(unsigned i=0;i<4;++i)p[i]=value>>(24-8*i);}
 inline std::uint32_t network_u32(const std::uint8_t* p){return (std::uint32_t(p[0])<<24)|(std::uint32_t(p[1])<<16)|(unsigned(p[2])<<8)|p[3];}
-inline std::vector<std::uint8_t> dhcp_discover_msdu(std::uint32_t xid,bool broadcast_reply=false){
+inline std::vector<std::uint8_t> dhcp_discover_msdu(std::uint32_t xid,bool broadcast_reply=false,unsigned elapsed_seconds=0){
+ if(elapsed_seconds>65535)throw std::invalid_argument("DHCP elapsed seconds overflow");
  if(!xid)throw std::invalid_argument("Nonzero DHCP transaction required");
- std::vector<std::uint8_t> bootp(240);bootp[0]=1;bootp[1]=1;bootp[2]=6;network_put32(bootp.data()+4,xid);
+ std::vector<std::uint8_t> bootp(240);bootp[0]=1;bootp[1]=1;bootp[2]=6;network_put32(bootp.data()+4,xid);eapol_put_be16(bootp.data()+8,elapsed_seconds);
  if(broadcast_reply)eapol_put_be16(bootp.data()+10,0x8000); // RFC2131 section4.1; no pre-IP unicast dependency.
  std::copy(station_test_mac.begin(),station_test_mac.end(),bootp.begin()+28);network_put32(bootp.data()+236,0x63825363);
  bootp.insert(bootp.end(),{53,1,1,61,7,1});bootp.insert(bootp.end(),station_test_mac.begin(),station_test_mac.end());bootp.insert(bootp.end(),{55,3,1,3,6,255});bootp.resize(300); // BOOTP minimum interoperability padding.
@@ -123,6 +130,10 @@ inline std::optional<DhcpOffer> decode_dhcp_reply(const std::vector<std::uint8_t
  if(!type||!server||!end||!offer.server[0]||offer.server[0]>=224||offer.server[0]==127)return {};return offer;
 }
 inline std::optional<DhcpOffer> decode_dhcp_offer(const std::vector<std::uint8_t>& msdu,std::uint32_t xid){return decode_dhcp_reply(msdu,xid,2);}
+inline unsigned dhcp_discover_backoff_ms(unsigned retransmission,unsigned jitter){
+ if(retransmission>1||jitter>2000)throw std::invalid_argument("Bounded DHCP backoff required");
+ return (retransmission?7000:3000)+jitter;
+}
 // Metadata only: plaintext stays in the authenticated, wiping SecretVector.
 struct SecureDataMetadata {
  bool group=false,reflected_discover=false;

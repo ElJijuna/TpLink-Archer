@@ -12,11 +12,16 @@ std::vector<std::uint8_t> reply(unsigned type,std::uint32_t xid=0x12345678){
  eapol_put_be16(udp,67);eapol_put_be16(udp+2,68);ip[12]=192;ip[14]=2;ip[15]=1;ip[10]=ip[11]=0;eapol_put_be16(ip+10,internet_checksum(ip,20));return b;
 }
 int main(){
+ assert(dhcp_discover_backoff_ms(0,0)==3000&&dhcp_discover_backoff_ms(0,2000)==5000);
+ assert(dhcp_discover_backoff_ms(1,0)==7000&&dhcp_discover_backoff_ms(1,2000)==9000);
+ rejects([]{dhcp_discover_backoff_ms(2,0);});rejects([]{dhcp_discover_backoff_ms(0,2001);});
+ auto initial=dhcp_discover_msdu(1,true),retry=dhcp_discover_msdu(1,true,4);assert(eapol_be16(retry.data()+44)==4);retry[45]=0;assert(initial==retry);
+ rejects([]{dhcp_discover_msdu(1,true,65536);});
  const auto offer=reply(2),ack=reply(5);DhcpSelectingExchange exchange(0x12345678);
  rejects([]{DhcpSelectingExchange bad(0);});rejects([&]{exchange.issue_request();});rejects([&]{exchange.issue_release();});
  assert(!exchange.accept_authenticated_ack(ack));assert(!exchange.accept_authenticated_offer(reply(2,1)));
  assert(exchange.accept_authenticated_offer(offer));assert(!exchange.accept_authenticated_offer(offer));
- auto request=exchange.issue_request();assert(request.size()==336&&request[278]==3&&request[279]==50&&request[285]==54);
+ auto request=exchange.issue_request(8);assert(eapol_be16(request.data()+44)==8);assert(request.size()==336&&request[278]==3&&request[279]==50&&request[285]==54);
  assert(eapol_be16(request.data()+46)==0x8000&&network_u32(request.data()+48)==0&&internet_checksum(request.data()+8,20)==0);
  assert(std::equal(request.begin()+281,request.begin()+285,ack.begin()+52));
  rejects([&]{exchange.issue_request();});assert(!exchange.accept_authenticated_ack(offer));assert(!exchange.accept_authenticated_ack(reply(6)));

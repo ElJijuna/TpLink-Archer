@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **64 %**
 
-Actualizado: **2026-11-08**, etapa139: WPA2 experimental y OFFER DHCP cifrado coincidente confirmados. Respuesta tras3361 ms; desautenticación y limpieza completadas. Contexto CLEAN,206 secuencias libres. Sin lease ni interfaz de red. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-11**, etapa143: el éxito DISCOVER/OFFER138 sigue verificado, pero141 no recibió una respuesta DHCP identificable en la captura auditada. REQUEST/ACK aún sin prueba física. Recuperación147 verificada el2026-11-17: contexto CLEAN,215 secuencias libres; ensayo148 preparado. Sin lease ni interfaz de red. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -32,6 +32,24 @@ autenticado con XID/chaddr coincidentes tras3361 ms en138. Limpieza CLEAN.
 Faltan DHCP REQUEST/ACK, lease, recepción unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas145–148 (2026-11-17): ausencia USB y perfil frío comprobados;
+recuperación147 verificada, contexto CLEAN,215 secuencias libres y210 registros
+correctos. Ensayo148 preparado con hasta dos DISCOVER y REQUEST/ACK/RELEASE.
+125 pruebas Python, suites C++ y ARM/Intel pasan; aún sin ensayo físico nuevo.
+[Recuperación147](research/STAGE147.md), [ejecución148](research/STAGE148.md).
+
+Etapa144: sin acceso al registro DHCP del router; alternativa preparada con
+una retransmisión DISCOVER acotada, mismo XID y nuevos PN/secuencia. Se omite
+si llega OFFER temprano.125 pruebas Python, suites C++ y ARM/Intel pasan.
+Sin ensayo nuevo admitido; contexto DIRTY y recuperación pendiente.
+[Política y validación](research/STAGE144.md).
+
+Etapa143: auditoría real completada,815 hashes verificados.34 tramas CCMP
+autenticadas; solo DISCOVER propio como DHCP, ninguna UDP67→68. Sin evidencia
+de OFFER descartado por el parser; no determina la emisión del servidor o
+pérdida previa al receptor. Pendiente correlación con registro DHCP del router.
+[Resultado y límites](research/STAGE143.md).
 
 Etapa142: intento141 se detuvo antes de REQUEST:34 tramas CCMP de grupo
 autenticadas, DISCOVER reflejado y ningún OFFER aceptado en10s. Postflight

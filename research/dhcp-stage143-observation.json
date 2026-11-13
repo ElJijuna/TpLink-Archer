@@ -1,0 +1,44 @@
+{
+  "stage": 143,
+  "date": "2026-11-11",
+  "status": "offline_audit_no_dhcp_reply_in_recorded_frames",
+  "verified_input_hashes": 815,
+  "summary": {
+    "result": "offline_wpa2_audited",
+    "m2_reproduced": true,
+    "m3_authenticated": true,
+    "m4_reproduced": true,
+    "recorded_discover_verified": true,
+    "protected_frames": 34,
+    "authenticated_frames": 34,
+    "rejected_frames": 0,
+    "pairwise_frames": 0,
+    "group_frames": 34,
+    "matched_offers": 0,
+    "reflected_discover_frames": 1,
+    "h2c_submissions": 0,
+    "network_submissions": 0
+  },
+  "udp_67_to_68_frames": 0,
+  "classified_udp_pairs": {
+    "(68, 67)": 1,
+    "(0, 0)": 22,
+    "(5353, 5353)": 8,
+    "(53659, 1900)": 1,
+    "(57254, 1900)": 2
+  },
+  "context_released": false,
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "limits": [
+    "Only recorded native frames examined",
+    "No conclusion about server transmissions not received",
+    "REQUEST/ACK still not exercised"
+  ],
+  "evidence_sha256": {
+    "artifacts/dhcp-offline-stage142/audit.json": "068750d61c852b843316c6837be4075f2afa48d75c3256c3e66bf302702489bb",
+    "artifacts/dhcp-offline-stage142/audit.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/dhcp-offline-stage142/audit.jsonl": "5d61e234e8bd830a3fd6432c8b5abb20a83fc586205cf66ae9901f211278e8aa",
+    "artifacts/dhcp-offline-stage142/archer-wpa2-capture-audit": "801fcdd7dbafcd02d97ebe5040a60367a347c30151e755db2daeff29f3d03bad"
+  }
+}

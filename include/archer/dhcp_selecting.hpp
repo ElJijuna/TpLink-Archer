@@ -4,9 +4,9 @@ namespace archer {
 inline bool dhcp_unicast_ipv4(const std::array<std::uint8_t,4>& address){
  return address[0]&&address[0]!=127&&address[0]<224;
 }
-inline std::vector<std::uint8_t> dhcp_selecting_request(std::uint32_t xid,const DhcpOffer& offer){
+inline std::vector<std::uint8_t> dhcp_selecting_request(std::uint32_t xid,const DhcpOffer& offer,unsigned elapsed_seconds=0){
  if(!dhcp_unicast_ipv4(offer.address)||!dhcp_unicast_ipv4(offer.server))throw std::invalid_argument("Invalid selected DHCP offer");
- auto msdu=dhcp_discover_msdu(xid,true);
+ auto msdu=dhcp_discover_msdu(xid,true,elapsed_seconds);
  std::fill(msdu.begin()+276,msdu.end(),0);
  std::vector<std::uint8_t> options{53,1,3,50,4};
  options.insert(options.end(),offer.address.begin(),offer.address.end());options.insert(options.end(),{54,4});
@@ -36,9 +36,9 @@ public:
   if(state_!=State::selecting)return false;auto offer=decode_dhcp_offer(msdu,xid_);if(!offer)return false;
   selected_=*offer;state_=State::offered;return true;
  }
- std::vector<std::uint8_t> issue_request(){
+ std::vector<std::uint8_t> issue_request(unsigned elapsed_seconds=0){
   if(state_!=State::offered)throw std::logic_error("DHCP REQUEST order/retry forbidden");
-  auto request=dhcp_selecting_request(xid_,selected_);state_=State::request_issued;return request;
+  auto request=dhcp_selecting_request(xid_,selected_,elapsed_seconds);state_=State::request_issued;return request;
  }
  bool accept_authenticated_ack(const std::vector<std::uint8_t>& msdu){
   if(state_!=State::request_issued)return false;auto ack=decode_dhcp_reply(msdu,xid_,5);

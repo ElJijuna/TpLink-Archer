@@ -37,7 +37,7 @@ int main(int argc,char** argv){
 #ifdef ARCHER_WPA2_ONCE
  constexpr unsigned probe_channel=9;
 #ifdef ARCHER_DHCP_LEASE
- const char* marker_path="artifacts/37ad-0104-special-channel9-dhcp-lease-stage141-attempted";
+ const char* marker_path="artifacts/37ad-0104-special-channel9-dhcp-lease-stage148-attempted";
 #elif defined(ARCHER_WPA2_RECOVERED)
  const char* marker_path="artifacts/37ad-0104-special-channel9-wpa2-recovered-stage138-attempted";
 #else
@@ -117,7 +117,13 @@ int main(int argc,char** argv){
  }
  try{
 #ifdef ARCHER_WPA2_ONCE
-    const auto secure_deadline=std::chrono::steady_clock::now()+std::chrono::seconds(20);
+    const auto secure_deadline=std::chrono::steady_clock::now()+std::chrono::seconds(
+#ifdef ARCHER_DHCP_LEASE
+        30
+#else
+        20
+#endif
+    );
     const auto credential_env=std::getenv("ARCHER_CREDENTIAL_FD");char* credential_end=nullptr;errno=0;
     const long credential_fd=credential_env?std::strtol(credential_env,&credential_end,10):-1;
     if(!credential_env||errno||!credential_end||*credential_end||credential_fd<3||credential_fd>0x7fffffff)throw std::runtime_error("Private credential FD required");

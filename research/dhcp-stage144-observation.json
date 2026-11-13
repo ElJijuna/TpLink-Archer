@@ -1,0 +1,51 @@
+{
+  "stage": 144,
+  "date": "2026-11-11",
+  "status": "bounded_discover_retransmission_validated_recovery_pending",
+  "router_dhcp_log_available": false,
+  "experiment_automatic_retry": false,
+  "protocol_discover_retransmissions_max": 1,
+  "discover_wait_ranges_ms": [
+    [
+      3000,
+      5000
+    ],
+    [
+      7000,
+      9000
+    ]
+  ],
+  "experiment_deadline_ms": 30000,
+  "cleanup_grace_ms": 3000,
+  "same_xid": true,
+  "fresh_ccmp_pn_and_wifi_sequence": true,
+  "bootp_secs_updated": true,
+  "new_attempt_admitted": false,
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "context": "DIRTY",
+  "remaining_sequences": 206,
+  "validation": {
+    "python_tests": 125,
+    "cpp_suites_passed": true,
+    "native_architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "evidence_sha256": {
+    "include/archer/secure_network.hpp": "79d2dd24958554ff9f0482cdfb1f0b7ba8a2dd1761547e12fe04f38bb5c35b48",
+    "include/archer/dhcp_selecting.hpp": "1bfa7f517510fdb5308b7e2ac916ce69a0784d748f57fdb70338597d84c28da7",
+    "include/archer/secure_exchange.inc": "5fd0603ff679503b6179d63a3d0fdd0fec119f97af9e4ee10fe041162ccd2d3f",
+    "src/macos_context_rx.cpp": "9e2b2d71e2615a2b809d009265f10b2bf3ce85d54a7351a4a69265b03bd40a78",
+    "tools/wpa2_once.py": "9f7438c2e430c1ab8e93bbaf7c77ecf609b36b5bafd4bf792872ff1048f8a175",
+    "tools/external_probe_capture.py": "dba15ff999afd1f83e94c030108f4dcafd3220c8a8698cb270515fd34ac0b536",
+    "tests/dhcp_selecting_test.cpp": "87c9cba52b8537b3370f9b2aa2d9279026cb4ee14a07deaf0a8703cf4882bf97",
+    "tests/dhcp_lease_guard_test.cpp": "856c63de2a47d854f0e654146a40cb0885753209a7364237b69c5fb008a66b6c",
+    "tests/test_wpa2_once.py": "e7e5109d8e989f7a5114354ad5863ddd584383eac97a60f3d89185062db8bdb0",
+    "build/archer-special-dhcp-lease-universal": "d1b40fa2b23a773a036322a04e39980e39b120c9745eeb01e784aa545539ed3b",
+    "artifacts/dhcp-stage144-validation.log": "5419f28841819533e0706e9de1584c70d677b0f5e538302bf0367695c79ea6ed",
+    "artifacts/37ad-0104-context-reservation": "37fbc5d84a74b9ac79e59b639426000390ce2ed15b2510215954d866e000e0eb",
+    "artifacts/37ad-0104-sequences.bin": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13"
+  }
+}

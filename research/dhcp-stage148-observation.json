@@ -1,0 +1,99 @@
+{
+  "stage": 148,
+  "date": "2026-11-17",
+  "status": "prepared_not_executed",
+  "epoch_id": "8632af42-2107-421a-be29-06401f34d4c4",
+  "context": "CLEAN",
+  "remaining_sequences": 215,
+  "ledger_sha256": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "validation": {
+    "python_tests": 125,
+    "cpp_suites_passed": true,
+    "native_architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "local_passphrase_confirmation": true,
+  "planned_attempt": {
+    "wifi_sequences": [
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75
+    ],
+    "release_report_tag": 9,
+    "cleanup_report_tag": 10,
+    "h2c_reservations": [
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ],
+    "automatic_retry": false,
+    "protocol_discover_retransmissions_max": 1,
+    "discover_wait_ranges_ms": [
+      [
+        3000,
+        5000
+      ],
+      [
+        7000,
+        9000
+      ]
+    ],
+    "experiment_deadline_ms": 30000,
+    "cleanup_grace_ms": 3000,
+    "requests_dhcp_lease": true,
+    "attempts_release": true,
+    "server_release_confirmation_available": false,
+    "os_interface": false
+  },
+  "build_evidence": {
+    "Makefile": "5259ff419660f70ac239b3b9b96d55d77fd3a4094432928b9c1c6d748187d775",
+    "artifacts/archer-special-dhcp-lease-stage148": "3be883e72c48c4f0630b7e4781af795edc23c43ce4e8de68c118b2aca4381341",
+    "artifacts/dhcp-stage148-help.txt": "129afe7962acc3c135ab69a9ca486e3b26d574eb619d98ffc9a9ece4239f87a5",
+    "artifacts/dhcp-stage148-validation.log": "449a65bb2cb2872c867a9f8c82d397e5508011ec246e2847b259837bcce01f7f",
+    "build/archer-cleanup-verify-universal": "1f520a4113ff51ae4f636b964218f230a03b7d6dad1d11549ee342ba127e33dd",
+    "build/archer-monitor-capture-universal": "aa4a212f0f2bfe6430aae248beab3e2ac199eb7818adbdd6ba7ab021872e47b5",
+    "build/archer-special-dhcp-lease-universal": "3be883e72c48c4f0630b7e4781af795edc23c43ce4e8de68c118b2aca4381341",
+    "include/archer/ccmp.hpp": "d0cd87c1e1f9b2acb353639d839da2969526cefefb39719898b8d65fb63601e4",
+    "include/archer/credential_pipe.hpp": "3394d5778bd016e658803ec6080ca3e58eeb20fa6e513ba9db67142d5796d9f4",
+    "include/archer/dhcp_selecting.hpp": "1bfa7f517510fdb5308b7e2ac916ce69a0784d748f57fdb70338597d84c28da7",
+    "include/archer/eapol_m1.hpp": "2f5d2bdf45c58752e6126dda1f4ddc795f8f6da685f20ebd06d1ee5a2639dcdc",
+    "include/archer/macos_bulk.hpp": "b603b6dcf34f976f188c28ad11641777406b5caeebb89a13716471cbc4abda3c",
+    "include/archer/secure_exchange.inc": "5fd0603ff679503b6179d63a3d0fdd0fec119f97af9e4ee10fe041162ccd2d3f",
+    "include/archer/secure_network.hpp": "e95fb046a731260354bd9b724ac13b9e07676b2db92b7b30d8db39b35a177b5f",
+    "include/archer/single_probe.hpp": "252f296c40653bd7b0e1cd0e7874aa2ec177043749f1ddab8f81dad1f180e288",
+    "include/archer/station_management.hpp": "3af627f5805fcef2dc3e394f43298acb90763b60a27f0cdb4af59eaf4ce86702",
+    "include/archer/wpa2_handshake.hpp": "aacbb18fdeb17b734bb2a0cec7fb28a4c1e80cb377a59be423a36ab17d4b70b5",
+    "research/recovery-stage147-observation.json": "e128afc496f96cd542172127958ce28fe9feb43a0f01f59b36b6e6f843f16b27",
+    "src/macos_context_rx.cpp": "224119a8d146908be5d2975941614fdae87b200b6134164c6fa98b39d9303049",
+    "src/wpa2_capture_audit.cpp": "c8f1c8ed6c68104da0d8166255ae0a0f5c816f042f51447e1a9ad710af14d269",
+    "tests/ccmp_test.cpp": "38ad6b5fb339767b72fb06dd6e92cabf2f8ededd7c2d8fe3e0c9b570e51f26f4",
+    "tests/credential_pipe_test.cpp": "1cbdaf01ea547d6fd1de7612dd0ace4861c78014856a95be65a3940ca148e3ac",
+    "tests/dhcp_lease_guard_test.cpp": "a7febbd368f14f115c0ee4ce47ff3d837c306c41074c79401c02cd1b5f656216",
+    "tests/dhcp_selecting_test.cpp": "87c9cba52b8537b3370f9b2aa2d9279026cb4ee14a07deaf0a8703cf4882bf97",
+    "tests/secure_network_test.cpp": "329c00981c454976f41d00405035f96b4c69e0f0c6fb9a78245da24f98072ced",
+    "tests/test_sequence_epoch.py": "1969167a7c6fd8cfe05a05e1ad5be2d07d7048e11152b0a7ce7ec13d3c63d7ce",
+    "tests/test_wpa2_capture_audit.py": "99434623835b1fb94eb5bbc2775e6a981a423af76fff73ae5545aaf9c4f58e68",
+    "tests/test_wpa2_once.py": "b51213da79dc97fb6e9586e8252eb822b8053a87f23245b6b4f75d296431c9bc",
+    "tests/wpa2_audit_fixture.cpp": "bf6a1f1f7312c225c7ec569c6454cfbd5e6339fe9aeb7adc97a03e5fd5989658",
+    "tests/wpa2_handshake_test.cpp": "c0d0b4decfe79c635f66d53ba3af27603eef1352f029307917a203d28a8a738f",
+    "tools/external_probe_capture.py": "17c448da2136ed8458940a1fb22ccd6e8988c9d1f9754e14808e6336410bc32f",
+    "tools/sequence_epoch.py": "11366132d07929376a128d1f7a8f56a36cf3bcc4499c2e569dcea77bd4f6874f",
+    "tools/wpa2_once.py": "2e1270764807d5362d47f4979630c2ec63fac6f4d9d00ec7cbbbe431b6b87031"
+  }
+}
