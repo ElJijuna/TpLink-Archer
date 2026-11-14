@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **64 %**
 
-Actualizado: **2026-11-11**, etapa143: el éxito DISCOVER/OFFER138 sigue verificado, pero141 no recibió una respuesta DHCP identificable en la captura auditada. REQUEST/ACK aún sin prueba física. Recuperación147 verificada el2026-11-17: contexto CLEAN,215 secuencias libres; ensayo148 preparado. Sin lease ni interfaz de red. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-17**, etapa155: éxito DISCOVER/OFFER138 conservado. Respuestas a M1 repetidos y coordinador validados; recuperación154 parada antes de RFK, drenaje corregido. Contexto DIRTY,232 secuencias libres; sin lease ni interfaz de red. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -32,6 +32,26 @@ autenticado con XID/chaddr coincidentes tras3361 ms en138. Limpieza CLEAN.
 Faltan DHCP REQUEST/ACK, lease, recepción unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas152–155: frontera fría y recarga comprobadas, pero la recuperación154
+se detuvo antes del primer H2C RFK de canal9 por drenaje RX. Corregido el
+drenaje y validado el coordinador supplicant:130 pruebas Python, suites C++
+y ARM/Intel pasan. Admisión bloqueada correctamente; contexto DIRTY y232
+secuencias libres. Sin ensayo Wi-Fi nuevo.
+[Parada154](research/STAGE154.md), [validación155](research/STAGE155.md).
+
+Etapa151: comparación offline confirma la misma credencial en138/148.
+El AP repitió M1 con ANonce constante y replay creciente; el cliente anterior
+ignoraba esas repeticiones. Respuestas M2 acotadas preparadas,126 pruebas
+Python y suites C++ pasan; ARM/Intel compilados. Sin admisión ni prueba RF
+nueva; contexto DIRTY y206 secuencias libres.
+[Hallazgo, implementación y límites](research/STAGE151.md).
+
+Etapa150:148 se ejecutó, pero se detuvo tras M2 sin M3; no llegó a DHCP.
+El usuario confirma clave sin cambio desde138. Comparación offline preparada
+para verificar la clave local frente a138 y M2 de148 sin USB/TX.126 pruebas
+Python, suites C++ y auditor ARM/Intel pasan. Contexto DIRTY,206 secuencias.
+[Resultado y comprobación](research/STAGE150.md).
 
 Etapas145–148 (2026-11-17): ausencia USB y perfil frío comprobados;
 recuperación147 verificada, contexto CLEAN,215 secuencias libres y210 registros

@@ -83,7 +83,7 @@ class Wpa2PskHandshake {
  enum class Phase {ready,m1,m2,m3,m4};Phase phase_=Phase::ready;
  SecretBytes<32> pmk_;SecretBytes<48> ptk_;SecretBytes<16> gtk_;
  std::array<std::uint8_t,32> snonce_;EapolM1 m1_{};std::array<std::uint8_t,8> replay3_{};
- unsigned gtk_id_=0;std::uint64_t gtk_initial_pn_=0;
+ unsigned gtk_id_=0,m1_retries_=0;std::uint64_t gtk_initial_pn_=0;
 public:
  Wpa2PskHandshake(SecretBytes<32>&& pmk,const std::array<std::uint8_t,32>& snonce):pmk_(std::move(pmk)),snonce_(snonce){}
  void accept_m1(const std::uint8_t* frame,std::size_t size){
@@ -94,6 +94,16 @@ public:
  std::vector<std::uint8_t> issue_m2(){
   if(phase_!=Phase::m1)throw std::logic_error("M2 order/retry forbidden");phase_=Phase::m2;
   auto result=encode_wpa2_key(0x010a,m1_.replay,snonce_,{station_rsn_ie.begin(),station_rsn_ie.end()});sign_wpa2_eapol(result,ptk_);return result;
+ }
+ // Response generation only; the transport must allocate a fresh MAC sequence.
+ // Never accept a new ANonce or change installed-key state in this bounded path.
+ std::vector<std::uint8_t> issue_m2_for_m1_retry(const std::uint8_t* frame,std::size_t size){
+  if(phase_!=Phase::m2||m1_retries_>=3)throw std::logic_error("M1 response retry state/budget forbidden");
+  const auto next=decode_target_eapol_m1(frame,size);
+  if(!next||next->nonce!=m1_.nonce||next->replay<=m1_.replay||next->key_data_bytes||m1_.key_data_bytes)
+   throw std::invalid_argument("Same ANonce and newer replay without key data required");
+  auto result=encode_wpa2_key(0x010a,next->replay,snonce_,{station_rsn_ie.begin(),station_rsn_ie.end()});sign_wpa2_eapol(result,ptk_);
+  m1_.replay=next->replay;++m1_retries_;return result;
  }
  void accept_m3(const std::vector<std::uint8_t>& eapol){
   if(phase_!=Phase::m2)throw std::logic_error("M3 order/reinstallation forbidden");

@@ -1,5 +1,6 @@
 #include "archer/macos_bulk.hpp"
 #include "archer/context_reservation.hpp"
+#include "archer/input_quiescence.hpp"
 #include "archer/passive_channels.hpp"
 #include "archer/cmac_init.hpp"
 #include "archer/channel_bus.hpp"
@@ -99,8 +100,8 @@ int main(int argc,char** argv){
         std::optional<archer::TssiReport> tssi;
         std::optional<archer::RxdckReport> rxdck;
         unsigned capture=0;
-        auto receive=[&](unsigned pipe,archer::RfkReportTracker* tracker){
-            const auto bytes=usb.receive(pipe,5);
+        auto receive=[&](unsigned pipe,archer::RfkReportTracker* tracker,unsigned timeout=5){
+            const auto bytes=usb.receive(pipe,timeout);
             if(bytes.empty())return false;
             const auto id=capture++;
             std::ofstream output(directory/("rx-"+std::to_string(id)+".bin"),std::ios::binary);
@@ -131,10 +132,9 @@ int main(int argc,char** argv){
             return true;
         };
         auto command=[&](archer::RfkCommand cmd,const std::vector<std::uint8_t>& payload,bool scan=false){
-            bool quiet=false;const auto end_drain=std::chrono::steady_clock::now()+std::chrono::seconds(3);
-            for(unsigned i=0;i<512 && std::chrono::steady_clock::now()<end_drain;++i) {
-                const auto a=receive(0,nullptr),b=receive(1,nullptr);if(!a&&!b){quiet=true;break;}
-            }
+            const bool quiet=archer::drain_input_until_quiet(
+                [&](unsigned input,unsigned timeout){return receive(input,nullptr,timeout);},
+                []{return std::chrono::steady_clock::now();});
             if(!quiet)throw std::runtime_error("RX not quiescent before TX RFK");
             txgapk.reset();iqk.reset();dpk.reset();tssi.reset();rxdck.reset();
             const auto sequence=ledger.reserve();

@@ -1,0 +1,20 @@
+{
+  "stage": 153,
+  "date": "2026-11-17",
+  "status": "installer_session_local_eject_required",
+  "prior_usb_absence_verified_stage": 152,
+  "usb_vendor": "0bda",
+  "usb_product": "1a2b",
+  "usb_session_id": 17881031154931,
+  "cold_profile_verified": false,
+  "sudo_exit": 1,
+  "sudo_error": "sudo: a password is required",
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "firmware_reloads": 0,
+  "evidence_sha256": {
+    "artifacts/recovery-stage153-usb.txt": "731be85ab0494c04e60f9437352b4dd6f1fe1bfbba565a21e8d1e9a441131e85",
+    "artifacts/recovery-stage153-optical.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage153-optical.stderr": "9b3a3b7a78f239c4473bb193476b1a860c91f1c2b4fab9c7639eceea414a60fb"
+  }
+}

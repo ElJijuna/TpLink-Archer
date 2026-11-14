@@ -15,6 +15,10 @@ int main(){
     const auto deadline=old.time+std::chrono::seconds(3);bool quiet=false;
     while(old.time<deadline){const bool a=old.receive(0,10),b=old.receive(1,10);if(!a&&!b){quiet=true;break;}}
     assert(!quiet&&old.queued); // Original pacing fails with a finite backlog.
+    Replay rfk_old;bool rfk_quiet=false;
+    const auto rfk_deadline=rfk_old.time+std::chrono::seconds(3);
+    for(unsigned i=0;i<512&&rfk_old.time<rfk_deadline;++i){const bool a=rfk_old.receive(0,5),b=rfk_old.receive(1,5);if(!a&&!b){rfk_quiet=true;break;}}
+    assert(!rfk_quiet&&rfk_old.queued); // TX RFK used this five-ms/capped seam.
     Replay fixed;
     assert(archer::drain_input_until_quiet([&](unsigned i,unsigned t){return fixed.receive(i,t);},[&]{return fixed.time;}));
     assert(fixed.consumed==879&&!fixed.queued&&fixed.empty_waits==2);

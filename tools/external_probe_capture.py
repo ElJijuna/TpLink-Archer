@@ -30,7 +30,8 @@ class ExistingCaptureDirectory(ValueError):
     """A prior capture must remain intact and must not be retried."""
 
 
-def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa2=False,recovered=False,lease=False):
+def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa2=False,recovered=False,lease=False,supplicant=False):
+    if supplicant:lease=True
     if lease:recovered=True
     if recovered:wpa2=True
     if eapol:station=True
@@ -47,9 +48,9 @@ def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa
     monitor=None
     credential_context=nullcontext(None)
     if wpa2:
-        wpa2_once.admission(recovered,lease)
+        wpa2_once.admission(recovered,lease,supplicant)
         credential_context=wpa2_once.credential_pipe(confirm=True)
-        report.update(attempt='dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',cleanup_report_tag=10 if lease else 6 if recovered else 0,protocol_discover_retransmissions_max=1 if lease else 0)
+        report.update(attempt='eapol_retry' if supplicant else 'dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',cleanup_report_tag=12 if supplicant else 10 if lease else 6 if recovered else 0,protocol_discover_retransmissions_max=1 if lease else 0,protocol_m1_response_retries_max=3 if supplicant else 0)
         report.pop('tag',None)
     credential_fd=credential_context.__enter__()
     try:
@@ -62,7 +63,7 @@ def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa
                 '--capture-probe-channel9',str(output/'monitor')],cwd=ROOT,stdout=out,stderr=err)
             started=time.monotonic()
             def guard():
-                if monitor.poll() is not None or time.monotonic()-started>20:
+                if monitor.poll() is not None or time.monotonic()-started>(8 if supplicant else 20):
                     raise ValueError('Independent capture no longer live or handoff too late')
                 ready=json.loads((output/'monitor/ready.json').read_text())
                 if ready.get('channel')!=9 or ready.get('width_mhz')!=20:raise ValueError('Capture not on9/20MHz')
@@ -84,7 +85,7 @@ def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa
             report['status']='capture_live';save(output/'paired.json',report)
             print('Independent capture live; submitting the unique WPA2 attempt.' if wpa2 else f'Independent capture live; submitting the unique tag{tag} attempt.',flush=True)
             try:
-                if wpa2:wpa2_once.execute(output/'probe',guard,credential_fd,recovered,lease)
+                if wpa2:wpa2_once.execute(output/'probe',guard,credential_fd,recovered,lease,supplicant)
                 else:execute(output/'probe',external_capture=True,capture_guard=guard,external_phy=phy,external_phy_drained=drained,external_phy_grant=grant,station_exchange=station,eapol_rx=eapol)
                 report['probe_executor']='completed'
             except Exception as error:
@@ -117,9 +118,11 @@ if __name__=='__main__':
     parser.add_argument('--wpa2-once',action='store_true',help='One WPA2 and encrypted DHCP DISCOVER experiment; hidden local passphrase prompt')
     parser.add_argument('--wpa2-recovered',action='store_true',help='New one-shot WPA2 experiment after verified cold recovery; sequences52–57, fresh epoch report6, DHCP broadcast reply and up to10s observation')
     parser.add_argument('--dhcp-lease',action='store_true',help='At most two DISCOVER frames and one REQUEST/ACK/RELEASE experiment; no OS interface')
+    parser.add_argument('--dhcp-supplicant',action='store_true',help='Up to three responses to increasing M1 replay plus bounded DHCP lease experiment')
     args=parser.parse_args()
+    if args.dhcp_supplicant and any((args.dhcp_lease,args.wpa2_recovered,args.wpa2_once,args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx)):parser.error('Choose only --dhcp-supplicant')
     if args.dhcp_lease and any((args.wpa2_recovered,args.wpa2_once,args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx)):parser.error('Choose only --dhcp-lease')
     if args.wpa2_recovered and args.wpa2_once:parser.error('Choose one WPA2 experiment')
     if (args.wpa2_once or args.wpa2_recovered) and any((args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx)):parser.error('--wpa2-once cannot be combined with prior experiments')
-    try:run(args.new_directory,args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx,args.wpa2_once,args.wpa2_recovered,args.dhcp_lease)
+    try:run(args.new_directory,args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx,args.wpa2_once,args.wpa2_recovered,args.dhcp_lease,args.dhcp_supplicant)
     except ExistingCaptureDirectory as error:parser.exit(2,str(error)+"\n")

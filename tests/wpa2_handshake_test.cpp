@@ -31,6 +31,29 @@ int main(){
  assert(std::equal(ptk.bytes.begin()+32,ptk.bytes.end(),handshake.pairwise_key()));
  for(unsigned i=0;i<16;++i)assert(handshake.group_key()[i]==0xa0+i);
  rejects([&]{handshake.issue_m4();});
+ // A new M1 replay counter with the same ANonce needs a matching M2 MIC.
+ Wpa2PskHandshake retrying(derive_wpa2_pmk("password","Especial"),snonce);
+ rejects([&]{retrying.issue_m2_for_m1_retry(m1.data(),m1.size());});
+ retrying.accept_m1(m1.data(),m1.size());retrying.issue_m2();
+ auto retried_m1=m1;
+ const auto update_m1=[&](unsigned replay,bool change_nonce=false){
+  retried_m1=m1;const unsigned header=(retried_m1[0]&0x80)?26:24;
+  retried_m1[header+8+9+7]=replay;if(change_nonce)retried_m1[header+8+17]^=1;
+  channel_put32(retried_m1.data()+retried_m1.size()-4,ieee_fcs(retried_m1.data(),retried_m1.size()-4));
+ };
+ rejects([&]{retrying.issue_m2_for_m1_retry(m1.data(),m1.size());});
+ update_m1(2,true);rejects([&]{retrying.issue_m2_for_m1_retry(retried_m1.data(),retried_m1.size());});
+ for(unsigned replay=2;replay<=4;++replay){
+  update_m1(replay);auto response=retrying.issue_m2_for_m1_retry(retried_m1.data(),retried_m1.size());
+  assert(response[16]==replay&&std::equal(snonce.begin(),snonce.end(),response.begin()+17));
+  auto expected=response;sign_wpa2_eapol(expected,ptk);assert(expected==response);
+  rejects([&]{retrying.issue_m2_for_m1_retry(retried_m1.data(),retried_m1.size());});
+ }
+ update_m1(5);rejects([&]{retrying.issue_m2_for_m1_retry(retried_m1.data(),retried_m1.size());});
+ auto current_m3=m3;current_m3[16]=5;sign_wpa2_eapol(current_m3,ptk);
+ retrying.accept_m3(current_m3);rejects([&]{retrying.accept_m3(current_m3);});
+ rejects([&]{retrying.issue_m2_for_m1_retry(retried_m1.data(),retried_m1.size());});retrying.issue_m4();
+ rejects([&]{retrying.issue_m2_for_m1_retry(retried_m1.data(),retried_m1.size());});
  auto random=fresh_wpa2_snonce();assert(std::any_of(random.begin(),random.end(),[](auto b){return b!=0;}));
  std::cout<<"WPA2 PMK/PTK/MIC independent vectors, RFC3394, M1-M4 ordering/replay/integrity and one-shot guards passed\n";
 }

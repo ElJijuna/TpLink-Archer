@@ -11,12 +11,16 @@ std::vector<std::uint8_t> read_capture(const fs::path& path){
  std::ifstream f(path,std::ios::binary);std::vector<std::uint8_t> b((std::istreambuf_iterator<char>(f)),{});if(f.bad()||b.empty())throw std::runtime_error("Capture read failed");return b;
 }
 int main(int argc,char** argv){
- if(argc!=2){std::cerr<<"Usage: wpa2-capture-audit CAPTURE_DIRECTORY (private credential FD required)\n";return 2;}
+ if(argc!=2&&argc!=3){std::cerr<<"Usage: wpa2-capture-audit REFERENCE_CAPTURE [COMPARE_ATTEMPT_CAPTURE] (private credential FD required)\n";return 2;}
  try{
   const auto value=std::getenv("ARCHER_CREDENTIAL_FD");char* end=nullptr;errno=0;long fd=value?std::strtol(value,&end,10):-1;
   if(!value||errno||!end||*end||fd<3||fd>0x7fffffff)throw std::runtime_error("Private credential FD required");
-  auto pmk=archer::pmk_from_credential_pipe(fd);const fs::path dir=argv[1];
-  auto m2_packet=read_capture(dir/"secure-tx-2.bin"),m4_packet=read_capture(dir/"secure-tx-3.bin"),data_packet=read_capture(dir/"secure-tx-4.bin");
+  auto pmk=archer::pmk_from_credential_pipe(fd);archer::SecretBytes<32> comparison_pmk;
+  if(argc==3)std::copy(pmk.bytes.begin(),pmk.bytes.end(),comparison_pmk.bytes.begin());
+  const fs::path dir=argv[1];
+  unsigned m4_index=3,data_index=4;
+  if(fs::exists(dir/"secure-layout.txt")){auto bytes=read_capture(dir/"secure-layout.txt");if(std::string(bytes.begin(),bytes.end())!="wpa2-phase-layout-v1\n2 6 7\n")throw std::runtime_error("Unsupported capture phase layout");m4_index=6;data_index=7;}
+  auto m2_packet=read_capture(dir/"secure-tx-2.bin"),m4_packet=read_capture(dir/("secure-tx-"+std::to_string(m4_index)+".bin")),data_packet=read_capture(dir/("secure-tx-"+std::to_string(data_index)+".bin"));
   if(m2_packet.size()!=217||m4_packet.size()!=195||data_packet.size()<104)throw std::runtime_error("Unexpected recorded TX extent");
   std::vector<std::uint8_t> m2(m2_packet.begin()+96,m2_packet.end()),m4(m4_packet.begin()+96,m4_packet.end());
   std::array<std::uint8_t,32> snonce{};std::copy_n(m2.begin()+17,32,snonce.begin());
@@ -56,6 +60,26 @@ int main(int argc,char** argv){
     const bool offer=bool(archer::decode_dhcp_offer(b,xid));offers+=offer;
     std::cout<<"{\"operation\":\"offline_authenticated_data\",\"group\":"<<(broadcast?"true":"false")<<",\"bytes\":"<<b.size()<<",\"ether_type\":"<<ether<<",\"udp_source\":"<<sport<<",\"udp_destination\":"<<dport<<",\"dhcp_message_type\":"<<message<<",\"xid_matches\":"<<(xid_match?"true":"false")<<",\"chaddr_matches\":"<<(chaddr_match?"true":"false")<<",\"arp_operation\":"<<arp_operation<<",\"arp_sender_ip_zero\":"<<(arp_sender_zero?"true":"false")<<",\"arp_target_ip_zero\":"<<(arp_target_zero?"true":"false")<<",\"arp_sender_is_ap\":"<<(arp_sender_ap?"true":"false")<<",\"arp_target_is_station\":"<<(arp_target_station?"true":"false")<<",\"matches_recorded_discover\":"<<(echo?"true":"false")<<",\"strict_offer\":"<<(offer?"true":"false")<<"}"<<std::endl;
    }catch(const std::exception&){++rejected;}
+  }
+  if(argc==3){
+   const fs::path attempt=argv[2];const auto packet=read_capture(attempt/"secure-tx-2.bin");
+   if(packet.size()!=217)throw std::runtime_error("Unexpected comparison M2 extent");
+   std::vector<std::uint8_t> expected(packet.begin()+96,packet.end()),m1;
+   std::array<std::uint8_t,32> attempt_nonce{};std::copy_n(expected.begin()+17,32,attempt_nonce.begin());
+   std::map<unsigned,fs::path> attempt_files;
+   for(auto& entry:fs::directory_iterator(attempt)){auto n=entry.path().filename().string();std::smatch m;if(std::regex_match(n,m,pattern)){auto i=std::stoul(m[1]);if(i>=4096||!attempt_files.emplace(i,entry.path()).second)throw std::runtime_error("Invalid comparison index");}}
+   unsigned next=0;
+   for(auto& [i,path]:attempt_files){if(i!=next++)throw std::runtime_error("Missing comparison transfer");auto bytes=read_capture(path);
+    for(auto& meta:archer::decode_be_rx_metadata(bytes,archer::RxFcsPolicy::appended)){
+     if(!meta.normal_80211_candidate())continue;const auto* frame=bytes.data()+meta.packet.payload_offset;const auto size=meta.packet.payload_bytes;
+     if(archer::decode_target_eapol_m1(frame,size)){m1.assign(frame,frame+size);break;}
+    }
+    if(!m1.empty())break;
+   }
+   if(m1.empty())throw std::runtime_error("Comparison capture has no valid M1");
+   archer::Wpa2PskHandshake attempt_hs(std::move(comparison_pmk),attempt_nonce);attempt_hs.accept_m1(m1.data(),m1.size());
+   const bool reproduced=attempt_hs.issue_m2()==expected;
+   std::cout<<"{\"operation\":\"offline_credential_comparison\",\"reference_m3_authenticated\":true,\"attempt_m2_reproduced\":"<<(reproduced?"true":"false")<<",\"h2c_submissions\":0,\"network_submissions\":0}"<<std::endl;
   }
   std::cout<<"{\"result\":\"offline_wpa2_audited\",\"m2_reproduced\":true,\"m3_authenticated\":true,\"m4_reproduced\":true,\"recorded_discover_verified\":true,\"protected_frames\":"<<protected_frames.size()<<",\"authenticated_frames\":"<<accepted<<",\"rejected_frames\":"<<rejected<<",\"pairwise_frames\":"<<pairwise<<",\"group_frames\":"<<group<<",\"matched_offers\":"<<offers<<",\"reflected_discover_frames\":"<<reflected<<",\"h2c_submissions\":0,\"network_submissions\":0}"<<std::endl;return 0;
  }catch(const std::exception& e){std::cerr<<"Offline audit: "<<e.what()<<'\n';return 2;}

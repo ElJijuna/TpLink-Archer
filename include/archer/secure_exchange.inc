@@ -55,9 +55,29 @@
                                     if(station_association->status)throw std::runtime_error("AP rejected association");
                                     secure_wait([&]{return !secure_m1.empty();});handshake.accept_m1(secure_m1.data(),secure_m1.size());
                                     std::cout<<"{\"operation\":\"secure_m1_accepted\"}"<<std::endl;
+#ifdef ARCHER_EAPOL_RETRY
+                                    secure_m1_profile=archer::decode_target_eapol_m1(secure_m1.data(),secure_m1.size());secure_last_m1_replay=secure_m1_profile->replay;
+#endif
                                     const auto m2=handshake.issue_m2();m2_sent=true;
                                     secure_send(archer::SecureFramePhase::m2,archer::secure_eapol_packet(archer::SecureFramePhase::m2,m2));
+#ifdef ARCHER_EAPOL_RETRY
+                                    unsigned response_retries=0;
+                                    while(secure_m3.empty()){
+                                        secure_wait([&]{return !secure_m3.empty()||!secure_m1_retry.empty();});
+                                        if(!secure_m3.empty())break;
+                                        if(response_retries>=3)throw std::runtime_error("M1 response budget exhausted");
+                                        auto retry_frame=std::move(secure_m1_retry);secure_m1_retry.clear();
+                                        const auto response=handshake.issue_m2_for_m1_retry(retry_frame.data(),retry_frame.size());
+                                        secure_last_m1_replay=archer::decode_target_eapol_m1(retry_frame.data(),retry_frame.size())->replay;
+                                        archer::channel_bus_write(bus,0x10398,0x3ffff,0);secure_capture_phy();
+                                        const auto phase=static_cast<archer::SecureFramePhase>(unsigned(archer::SecureFramePhase::m2_retry1)+response_retries++);
+                                        std::cout<<"{\"operation\":\"secure_m2_response_retry\",\"ordinal\":"<<response_retries<<",\"same_anonce\":true,\"replay_advanced\":true}"<<std::endl;
+                                        secure_send(phase,archer::secure_eapol_packet(phase,response));
+                                    }
+                                    handshake.accept_m3(secure_m3);secure_confirm();
+#else
                                     secure_wait([&]{return !secure_m3.empty();});handshake.accept_m3(secure_m3);secure_confirm();
+#endif
                                     std::cout<<"{\"operation\":\"secure_m3_authenticated\",\"security_established\":false}"<<std::endl;
                                     const auto m4=handshake.issue_m4();ccmp.emplace(handshake);
                                     secure_send(archer::SecureFramePhase::m4,archer::secure_eapol_packet(archer::SecureFramePhase::m4,m4));

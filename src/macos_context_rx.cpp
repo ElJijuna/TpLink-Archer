@@ -36,7 +36,9 @@
 int main(int argc,char** argv){
 #ifdef ARCHER_WPA2_ONCE
  constexpr unsigned probe_channel=9;
-#ifdef ARCHER_DHCP_LEASE
+#ifdef ARCHER_EAPOL_RETRY
+ const char* marker_path="artifacts/37ad-0104-special-channel9-eapol-retry-stage155-attempted";
+#elif defined(ARCHER_DHCP_LEASE)
  const char* marker_path="artifacts/37ad-0104-special-channel9-dhcp-lease-stage148-attempted";
 #elif defined(ARCHER_WPA2_RECOVERED)
  const char* marker_path="artifacts/37ad-0104-special-channel9-wpa2-recovered-stage138-attempted";
@@ -118,7 +120,9 @@ int main(int argc,char** argv){
  try{
 #ifdef ARCHER_WPA2_ONCE
     const auto secure_deadline=std::chrono::steady_clock::now()+std::chrono::seconds(
-#ifdef ARCHER_DHCP_LEASE
+#ifdef ARCHER_EAPOL_RETRY
+        30
+#elif defined(ARCHER_DHCP_LEASE)
         30
 #else
         20
@@ -131,6 +135,10 @@ int main(int argc,char** argv){
     std::optional<archer::CcmpSession> ccmp;std::optional<archer::DhcpOffer> dhcp_offer;
     archer::SecureDataObservation secure_data;
     std::vector<std::uint8_t> secure_m1,secure_m3;bool m2_sent=false;std::uint32_t dhcp_xid=0;
+#ifdef ARCHER_EAPOL_RETRY
+    std::vector<std::uint8_t> secure_m1_retry;std::optional<archer::EapolM1> secure_m1_profile;
+    std::array<std::uint8_t,8> secure_last_m1_replay{};
+#endif
     if(CCRandomGenerateBytes(&dhcp_xid,sizeof(dhcp_xid))!=kCCSuccess||!dhcp_xid)throw std::runtime_error("DHCP random transaction unavailable");
 #ifdef ARCHER_DHCP_LEASE
     archer::DhcpSelectingExchange dhcp_selecting(dhcp_xid);bool dhcp_ack=false;
@@ -163,6 +171,9 @@ int main(int argc,char** argv){
 #endif
     const std::filesystem::path dir=argv[2];
     if(!std::filesystem::create_directory(dir))throw std::runtime_error("Capture directory must be new");
+#ifdef ARCHER_EAPOL_RETRY
+    {std::ofstream layout(dir/"secure-layout.txt");layout<<"wpa2-phase-layout-v1\n2 6 7\n";layout.close();if(!layout)throw std::runtime_error("Capture layout preservation failed");}
+#endif
     const bool persistent_async=std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management-async";
     MacRegisterBus bus;MacBulkChannel usb(persistent_async);
     archer::with_wlan_io_window(bus,[&]{
@@ -252,6 +263,12 @@ int main(int argc,char** argv){
                     const auto* frame=bytes.data()+m.packet.payload_offset;const auto size=m.packet.payload_bytes;
                     if(secure_m1.empty()&&archer::decode_target_eapol_m1(frame,size))secure_m1.assign(frame,frame+size);
                     if(m2_sent&&secure_m3.empty()){
+#ifdef ARCHER_EAPOL_RETRY
+                        if(auto retry=archer::decode_target_eapol_m1(frame,size);retry&&secure_m1_profile&&retry->nonce==secure_m1_profile->nonce&&retry->replay>secure_last_m1_replay&&!retry->key_data_bytes){
+                            const auto queued=secure_m1_retry.empty()?std::optional<archer::EapolM1>{}:archer::decode_target_eapol_m1(secure_m1_retry.data(),secure_m1_retry.size());
+                            if(!queued||retry->replay>queued->replay)secure_m1_retry.assign(frame,frame+size);
+                        }
+#endif
                         const auto eapol=archer::target_rsn_eapol(frame,size);
                         if(eapol&&archer::eapol_be16(eapol->data()+5)==0x13ca)secure_m3=*eapol;
                     }

@@ -2,7 +2,10 @@
 #include "archer/ccmp.hpp"
 #include <chrono>
 namespace archer {
-#ifdef ARCHER_DHCP_LEASE
+#ifdef ARCHER_EAPOL_RETRY
+inline constexpr unsigned secure_first_sequence=76,secure_cleanup_tag=12,secure_release_tag=11;
+inline constexpr bool secure_dhcp_broadcast=true;
+#elif defined(ARCHER_DHCP_LEASE)
 inline constexpr unsigned secure_first_sequence=67,secure_cleanup_tag=10,secure_release_tag=9;
 inline constexpr bool secure_dhcp_broadcast=true;
 #elif defined(ARCHER_WPA2_RECOVERED)
@@ -22,11 +25,21 @@ inline std::chrono::steady_clock::time_point secure_response_deadline(
  unsigned budget_ms,bool cleanup=false){
  return std::min(now+std::chrono::milliseconds(budget_ms),experiment_deadline+std::chrono::seconds(cleanup?3:0));
 }
-enum class SecureFramePhase:unsigned {authenticate,associate,m2,m4,discover,
+enum class SecureFramePhase:unsigned {authenticate,associate,m2,
+#ifdef ARCHER_EAPOL_RETRY
+ m2_retry1,m2_retry2,m2_retry3,
+#endif
+ m4,discover,
 #ifdef ARCHER_DHCP_LEASE
  discover_retry,request,release,
 #endif
  deauthenticate};
+inline bool secure_m2_phase(SecureFramePhase phase){
+#ifdef ARCHER_EAPOL_RETRY
+ if(phase>=SecureFramePhase::m2_retry1&&phase<=SecureFramePhase::m2_retry3)return true;
+#endif
+ return phase==SecureFramePhase::m2;
+}
 inline bool secure_data_phase(SecureFramePhase phase){return unsigned(phase)>=2&&unsigned(phase)<unsigned(SecureFramePhase::deauthenticate);}
 inline unsigned secure_report_tag(SecureFramePhase phase){
 #ifdef ARCHER_DHCP_LEASE
@@ -62,7 +75,7 @@ inline std::vector<std::uint8_t> secure_management_packet(SecureFramePhase phase
  return secure_tx_packet(phase,frame);
 }
 inline std::vector<std::uint8_t> secure_eapol_packet(SecureFramePhase phase,const std::vector<std::uint8_t>& eapol){
- if((phase!=SecureFramePhase::m2&&phase!=SecureFramePhase::m4)||eapol.size()<99||eapol[0]!=2||eapol[1]!=3||eapol_be16(eapol.data()+2)!=eapol.size()-4||eapol_be16(eapol.data()+5)!=(phase==SecureFramePhase::m2?0x10a:0x30a))throw std::invalid_argument("Unbound secure EAPOL phase");
+ if((!secure_m2_phase(phase)&&phase!=SecureFramePhase::m4)||eapol.size()<99||eapol[0]!=2||eapol[1]!=3||eapol_be16(eapol.data()+2)!=eapol.size()-4||eapol_be16(eapol.data()+5)!=(secure_m2_phase(phase)?0x10a:0x30a))throw std::invalid_argument("Unbound secure EAPOL phase");
  std::vector<std::uint8_t> frame(24);frame[0]=8;frame[1]=1;
  std::copy(station_target_ap.begin(),station_target_ap.end(),frame.begin()+4);std::copy(station_test_mac.begin(),station_test_mac.end(),frame.begin()+10);std::copy(station_target_ap.begin(),station_target_ap.end(),frame.begin()+16);
  const auto seq=secure_frame_sequence(phase);frame[22]=seq<<4;frame[23]=seq>>4;
@@ -74,17 +87,19 @@ public:
  void issue(SecureFramePhase phase,const std::vector<std::uint8_t>& packet){
   const auto i=unsigned(phase),last=unsigned(SecureFramePhase::deauthenticate);if(i>last||packet.size()<88)throw std::invalid_argument("Invalid secure submission");
   const unsigned bit=1u<<i;
-  unsigned expected=bit-1;
-#ifdef ARCHER_DHCP_LEASE
-  // REQUEST may follow the first OFFER without using the optional retry slot.
-  if(phase==SecureFramePhase::request&&mask_==((1u<<unsigned(SecureFramePhase::discover_retry))-1))expected=mask_;
-  if(phase==SecureFramePhase::release&&mask_==((bit-1)&~(1u<<unsigned(SecureFramePhase::discover_retry))))expected=mask_;
+  unsigned optional=0;
+#ifdef ARCHER_EAPOL_RETRY
+  if(phase>=SecureFramePhase::m4)optional|=(1u<<unsigned(SecureFramePhase::m2_retry1))|(1u<<unsigned(SecureFramePhase::m2_retry2))|(1u<<unsigned(SecureFramePhase::m2_retry3));
 #endif
+#ifdef ARCHER_DHCP_LEASE
+  if(phase>=SecureFramePhase::request)optional|=1u<<unsigned(SecureFramePhase::discover_retry);
+#endif
+  const unsigned expected=((bit-1)&~optional)|(mask_&optional);
   if(mask_&bit||mask_&(1u<<last)||(i<last&&mask_!=expected)||(i==last&&!(mask_&1)))throw std::logic_error("Secure frame order/retry forbidden");
   const std::vector<std::uint8_t> frame(packet.begin()+64,packet.end());
   if(packet!=secure_tx_packet(phase,frame))throw std::invalid_argument("Secure descriptor differs from bound source profile");
   if(i==0||i==1||i==last){if(packet!=secure_management_packet(phase))throw std::invalid_argument("Unbound secure management packet");}
-  else if(i==2||i==3){if(frame.size()<32||!std::equal(frame.begin()+24,frame.begin()+32,std::array<std::uint8_t,8>{0xaa,0xaa,3,0,0,0,0x88,0x8e}.begin())||packet!=secure_eapol_packet(phase,{frame.begin()+32,frame.end()}))throw std::invalid_argument("Unbound EAPOL payload");}
+  else if(secure_m2_phase(phase)||phase==SecureFramePhase::m4){if(frame.size()<32||!std::equal(frame.begin()+24,frame.begin()+32,std::array<std::uint8_t,8>{0xaa,0xaa,3,0,0,0,0x88,0x8e}.begin())||packet!=secure_eapol_packet(phase,{frame.begin()+32,frame.end()}))throw std::invalid_argument("Unbound EAPOL payload");}
   else if(management_u16(frame.data())!=0x4108||frame.size()<40)throw std::invalid_argument("Encrypted data frame required");
   mask_|=bit;
  }

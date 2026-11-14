@@ -1,0 +1,39 @@
+{
+  "stage": 155,
+  "date": "2026-11-17",
+  "status": "blocked_recovery_not_prepared",
+  "reason": "Recovery154 stopped before RFK; context DIRTY; no passive context validation",
+  "new_attempt_admitted": false,
+  "context": "DIRTY",
+  "remaining_sequences": 232,
+  "network_submissions": 0,
+  "validation": {
+    "python_tests": 130,
+    "cpp_suites_passed": true,
+    "native_architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "max_m1_response_retries": 3,
+  "max_discover_retransmissions": 1,
+  "experiment_deadline_ms": 30000,
+  "capture_handoff_limit_ms": 8000,
+  "cleanup_grace_ms": 3000,
+  "build_evidence": {
+    "src/macos_context_rx.cpp": "2aed0b0f00a9ede4bf7ac3239a56b2dd0c0e47b2d09156e00ede88f77c47d5d8",
+    "src/macos_tx_calibrate.cpp": "f4b223ab3f06a333adf836eb0baa4f3eefab778ffdfbde8886774f19b07e3fe5",
+    "include/archer/secure_network.hpp": "ec2dac3219df69b7203ab1a0c566bb49f74a85ca1a19030a9d56a08a208872d4",
+    "include/archer/wpa2_handshake.hpp": "8522e4ad72931cb49c0e2ea4999d77470c033ab9c0e66b41af275073cd1619c3",
+    "include/archer/secure_exchange.inc": "942c624b8ec0dd538adda20f41ac5aa8269a90909cc2ec2ac0a806ee174cf01f",
+    "tools/wpa2_once.py": "b94b7cbaf97ec4d90d57c5e439a932e1003750a9e346bd32e84a0aabd1c554bb",
+    "tools/external_probe_capture.py": "477adb58f69515391af668dbcbb35d01af8a6ab957e0b2bd83c51df1567c9256",
+    "tools/audit_wpa2_capture.py": "bb9222a9f47010a876f3729bfa57a63b01e69aea637c537169392bf8e18fdd73",
+    "tests/test_supplicant_result.py": "357928bf2a0c5c904073642f64861c32adafde75f1c8818a1c9646650529d1a8",
+    "tests/test_wpa2_capture_audit.py": "dee09c3959a405c44ce737dfee6d19884c8e3adb061495b7d0691b98cb4b2b0c",
+    "tests/input_quiescence_test.cpp": "7dbde0b2b5f2c1ac5618ffeb5381d977e9317ccf7a254326bbf93044c6636595",
+    "artifacts/supplicant-stage155-validation.log": "cc5deab23ffe2fd4b0b78439f278e558e1fb270f01f9c3d60f1947b406bf7ab5",
+    "build/archer-special-dhcp-supplicant-universal": "d82a39a4fe31c650f8fe2dcacf7a4e1889318eb662a447519388e8069f57f676",
+    "build/archer-tx-calibrate-universal": "1177db27a7bc2a5b72187031fa5cd7d7e6846ae7f5d847331e5b3db42fae0e4f"
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "stage": 151,
+  "date": "2026-11-17",
+  "status": "credential_matched_increasing_m1_replay_observed_bounded_responses_prepared",
+  "verified_reference_inputs": 733,
+  "verified_attempt_inputs": 344,
+  "credential_comparison": {
+    "operation": "offline_credential_comparison",
+    "reference_m3_authenticated": true,
+    "attempt_m2_reproduced": true,
+    "h2c_submissions": 0,
+    "network_submissions": 0
+  },
+  "reference_audit_summary": {
+    "result": "offline_wpa2_audited",
+    "m2_reproduced": true,
+    "m3_authenticated": true,
+    "m4_reproduced": true,
+    "recorded_discover_verified": true,
+    "protected_frames": 4,
+    "authenticated_frames": 4,
+    "rejected_frames": 0,
+    "pairwise_frames": 0,
+    "group_frames": 4,
+    "matched_offers": 1,
+    "reflected_discover_frames": 1,
+    "h2c_submissions": 0,
+    "network_submissions": 0
+  },
+  "attempt_handshake_metadata": [
+    {
+      "rx": 126,
+      "message": "m1",
+      "same_replay_nonce_as_first": true,
+      "same_replay": true,
+      "same_nonce": true,
+      "replay_greater_than_previous": false
+    },
+    {
+      "rx": 169,
+      "message": "m1",
+      "same_replay_nonce_as_first": false,
+      "same_replay": false,
+      "same_nonce": true,
+      "replay_greater_than_previous": true
+    },
+    {
+      "rx": 220,
+      "message": "m1",
+      "same_replay_nonce_as_first": false,
+      "same_replay": false,
+      "same_nonce": true,
+      "replay_greater_than_previous": true
+    },
+    {
+      "rx": 283,
+      "message": "m1",
+      "same_replay_nonce_as_first": false,
+      "same_replay": false,
+      "same_nonce": true,
+      "replay_greater_than_previous": true
+    },
+    {
+      "result": "offline_handshake_metadata",
+      "m1_frames": 4,
+      "m3_candidates": 0,
+      "ap_disconnect_frames": 0,
+      "network_submissions": 0
+    }
+  ],
+  "m2_descriptor_differences": [
+    {
+      "dword": 3,
+      "reference": "0x36",
+      "attempt": "0x45",
+      "meaning": "expected sequence"
+    }
+  ],
+  "max_new_m1_responses": 3,
+  "requires_same_anonce": true,
+  "requires_strictly_increasing_replay": true,
+  "prevents_key_reinstallation": true,
+  "transport_sequences_reserved_before_use": true,
+  "new_attempt_admitted": false,
+  "context": "DIRTY",
+  "remaining_sequences": 206,
+  "new_network_submissions": 0,
+  "new_h2c_submissions": 0,
+  "physical_effect_verified": false,
+  "validation": {
+    "python_tests": 126,
+    "cpp_suites_passed": true,
+    "native_architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "evidence_sha256": {
+    "artifacts/credential-check-stage150/audit.json": "1027eeb50c6ecb6f1872deaa5e62ae0174df75e2a9bb227644f93a5743f4ecad",
+    "artifacts/credential-check-stage150/audit.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/credential-check-stage150/audit.jsonl": "663169120178fb6839c545707f71f466cda08aa4685991fe4a079c8c3bccebba",
+    "artifacts/credential-check-stage150/archer-wpa2-capture-audit": "98ff552838e23df234552c29094b4335c18a2b6c389445f8db4904525a005b8e",
+    "artifacts/handshake-stage151-audit.cpp": "94e8972f5bcc01e09743b037b1e2b7c6eca3203ec268963c0a84a8ff9d94f58a",
+    "artifacts/handshake-stage151-audit": "57beabafecda630c0a4512b7f945c6f323110c14a4f29483d28c1ae0132733f1",
+    "artifacts/handshake-stage151-attempt148.jsonl": "32d7eef2dbe716d3342dc965ba39d9d521c73fc63bc43837e85892d9cbce699c",
+    "artifacts/handshake-stage151-reference138.jsonl": "59f04739a354b9dba9402ad3efd08cf5db30ecbb592269dcb1d80fbdb382283d",
+    "artifacts/wpa2-stage151-validation.log": "52f29b78c6a3a63511edf97875cce0ffbbcbc5ae1732494b204f39744979a4fc",
+    "artifacts/wpa2-stage151-supplicant-build.log": "10dc0f1885be7b0339d0fdc07f51b927b646d02f9c91a308a90119e529d7b406",
+    "include/archer/wpa2_handshake.hpp": "8522e4ad72931cb49c0e2ea4999d77470c033ab9c0e66b41af275073cd1619c3",
+    "include/archer/secure_network.hpp": "ec2dac3219df69b7203ab1a0c566bb49f74a85ca1a19030a9d56a08a208872d4",
+    "include/archer/secure_exchange.inc": "942c624b8ec0dd538adda20f41ac5aa8269a90909cc2ec2ac0a806ee174cf01f",
+    "src/macos_context_rx.cpp": "37225eadcb5712cd1eac9bc5068785e5cd8532f897d1362f9c8cfa8d50a0e16d",
+    "tests/wpa2_handshake_test.cpp": "f5581fe5ff93580ad98e2ae99dd7093802b0f866f43037f50aaa48f4f123ba38",
+    "tests/eapol_retry_guard_test.cpp": "1977d88eddc790377d1bbee4b9bc5ecd3276cdf6039e4552c253d93a6e0fc5fe",
+    "Makefile": "f6468d8803b32bb0c1a39fed677ada1869a6e98f4d0b89525188c4b1aa254575",
+    "build/archer-special-dhcp-supplicant-universal": "42dbf71c15ab7fd8aec132ccb10e68cd1ab5f23312e52d2b2d3f2d7ab834c74e"
+  }
+}

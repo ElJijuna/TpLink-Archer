@@ -1,0 +1,19 @@
+{
+  "stage": 149,
+  "date": "2026-11-17",
+  "status": "attempt148_unexecuted_live_preflight_and_admission_passed",
+  "attempt148_output_exists": false,
+  "attempt148_marker_exists": false,
+  "context": "CLEAN",
+  "remaining_sequences": 215,
+  "verified_registers": 210,
+  "network_tx_paused": true,
+  "admission148": "passed",
+  "new_network_submissions": 0,
+  "new_h2c_submissions": 0,
+  "evidence_sha256": {
+    "artifacts/preflight-stage149-usb.txt": "98a5b8a08f2c2c0328ef52910db2758143c897d64302fa2aa4fa8cc6e0bc33c4",
+    "artifacts/preflight-stage149-paused.jsonl": "02c8792b49650845107e6b0c8bcf7dce44bc55dbba741412a2d9857a08366078",
+    "artifacts/preflight-stage149-paused.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

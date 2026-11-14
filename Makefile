@@ -134,6 +134,7 @@ test: build/channel-init-test build/tssi-protocol-test build/mac-reset-test buil
 	./build/credential-pipe-test
 	./build/dhcp-selecting-test
 	./build/dhcp-lease-guard-test
+	./build/eapol-retry-guard-test
 	python3 -m unittest discover -s tests -p 'test_*.py'
 build/archer-probe: src/macos_probe.cpp include/archer/usb_descriptors.hpp include/archer/usb_request.hpp | build
 	$(CXX) $(CXXFLAGS) $< -framework IOKit -framework CoreFoundation -o $@
@@ -482,3 +483,11 @@ test: build/dhcp-lease-guard-test
 .PHONY: special-dhcp-lease-universal
 special-dhcp-lease-universal: | build
 	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -DARCHER_SPECIAL_ACK_CAPTURE -DARCHER_SPECIAL_EXTERNAL_CAPTURE -DARCHER_SPECIAL_PHY_CAPTURE -DARCHER_SPECIAL_DRAINED_PHY_CAPTURE -DARCHER_SPECIAL_GRANT_CAPTURE -DARCHER_STATION_EXCHANGE -DARCHER_WPA2_ONCE -DARCHER_WPA2_RECOVERED -DARCHER_DHCP_LEASE -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-dhcp-lease-universal
+
+.PHONY: special-dhcp-supplicant-universal
+special-dhcp-supplicant-universal: | build
+	$(CXX) $(CXXFLAGS) -Iartifacts -DARCHER_SINGLE_PROBE -DARCHER_SPECIAL_PROBE -DARCHER_SPECIAL_UNICAST -DARCHER_SPECIAL_MONITORED -DARCHER_SPECIAL_ACK_CAPTURE -DARCHER_SPECIAL_EXTERNAL_CAPTURE -DARCHER_SPECIAL_PHY_CAPTURE -DARCHER_SPECIAL_DRAINED_PHY_CAPTURE -DARCHER_SPECIAL_GRANT_CAPTURE -DARCHER_STATION_EXCHANGE -DARCHER_WPA2_ONCE -DARCHER_WPA2_RECOVERED -DARCHER_DHCP_LEASE -DARCHER_EAPOL_RETRY -arch arm64 -arch x86_64 src/macos_context_rx.cpp -framework IOKit -framework CoreFoundation -o build/archer-special-dhcp-supplicant-universal
+
+build/eapol-retry-guard-test: tests/eapol_retry_guard_test.cpp include/archer/secure_network.hpp include/archer/wpa2_handshake.hpp include/archer/dhcp_selecting.hpp | build
+	$(CXX) $(CXXFLAGS) -DARCHER_DHCP_LEASE -DARCHER_WPA2_RECOVERED -DARCHER_EAPOL_RETRY $< -o $@
+test: build/eapol-retry-guard-test
