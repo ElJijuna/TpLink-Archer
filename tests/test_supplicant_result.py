@@ -21,8 +21,8 @@ def trace(replies=0,retry=False):
         rows.append(dict(operation='secure_discover_retry',ordinal=1,same_xid=True,fresh_pn_and_sequence=True,secs=4));write(8)
     rows.append(dict(operation='secure_dhcp_offer',matched_transaction=True,ccmp_authenticated=True,security_established=True,data_path_established=True,lease_acquired=False))
     write(9);rows.append(dict(operation='secure_dhcp_ack',ccmp_authenticated=True,lease_acknowledged=True,os_interface=False))
-    write(10);rows.append(dict(operation='single_probe_tx_report',tag=11,state=0,tx_count=1));rows.append(dict(operation='secure_dhcp_release',tx_done=True,server_release_confirmed=False))
-    write(11);rows += [dict(operation='single_probe_tx_report',tag=12,state=0,tx_count=1),dict(result='context_cleanup_acknowledged',network_tx_paused=True),dict(operation='bulk_async_drained',pending=0),dict(operation='probe_grant_policy',phase='restored')]
+    write(10);rows.append(dict(operation='single_probe_tx_report',tag=13,state=0,tx_count=1));rows.append(dict(operation='secure_dhcp_release',tx_done=True,server_release_confirmed=False))
+    write(11);rows += [dict(operation='single_probe_tx_report',tag=14,state=0,tx_count=1),dict(result='context_cleanup_acknowledged',network_tx_paused=True),dict(operation='bulk_async_drained',pending=0),dict(operation='probe_grant_policy',phase='restored')]
     return rows
 
 

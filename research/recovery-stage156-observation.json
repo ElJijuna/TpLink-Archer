@@ -1,0 +1,12 @@
+{
+  "stage": 156,
+  "date": "2026-11-17",
+  "status": "usb_absence_verified",
+  "archer_or_realtek_vendor_present": false,
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "firmware_reloads": 0,
+  "evidence_sha256": {
+    "artifacts/recovery-stage156-usb-disconnected.txt": "9d272002630f2de1dd0d8d4a4caed9926632d6f0d298c22bd0bc7782eb437749"
+  }
+}

@@ -3,7 +3,7 @@
 #include <chrono>
 namespace archer {
 #ifdef ARCHER_EAPOL_RETRY
-inline constexpr unsigned secure_first_sequence=76,secure_cleanup_tag=12,secure_release_tag=11;
+inline constexpr unsigned secure_first_sequence=88,secure_cleanup_tag=14,secure_release_tag=13;
 inline constexpr bool secure_dhcp_broadcast=true;
 #elif defined(ARCHER_DHCP_LEASE)
 inline constexpr unsigned secure_first_sequence=67,secure_cleanup_tag=10,secure_release_tag=9;

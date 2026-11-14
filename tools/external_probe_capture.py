@@ -50,7 +50,7 @@ def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa
     if wpa2:
         wpa2_once.admission(recovered,lease,supplicant)
         credential_context=wpa2_once.credential_pipe(confirm=True)
-        report.update(attempt='eapol_retry' if supplicant else 'dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',cleanup_report_tag=12 if supplicant else 10 if lease else 6 if recovered else 0,protocol_discover_retransmissions_max=1 if lease else 0,protocol_m1_response_retries_max=3 if supplicant else 0)
+        report.update(attempt='eapol_retry' if supplicant else 'dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',cleanup_report_tag=14 if supplicant else 10 if lease else 6 if recovered else 0,protocol_discover_retransmissions_max=1 if lease else 0,protocol_m1_response_retries_max=3 if supplicant else 0)
         report.pop('tag',None)
     credential_fd=credential_context.__enter__()
     try:
