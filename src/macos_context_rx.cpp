@@ -37,7 +37,7 @@ int main(int argc,char** argv){
 #ifdef ARCHER_WPA2_ONCE
  constexpr unsigned probe_channel=9;
 #ifdef ARCHER_EAPOL_RETRY
- const char* marker_path="artifacts/37ad-0104-special-channel9-eapol-retry-stage159-attempted";
+ const char* marker_path="artifacts/37ad-0104-special-channel9-eapol-retry-stage162-attempted";
 #elif defined(ARCHER_DHCP_LEASE)
  const char* marker_path="artifacts/37ad-0104-special-channel9-dhcp-lease-stage148-attempted";
 #elif defined(ARCHER_WPA2_RECOVERED)

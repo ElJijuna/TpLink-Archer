@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **64 %**
 
-Actualizado: **2026-11-17**, etapa159: éxito DISCOVER/OFFER138 conservado. Recuperación158 completa con drenaje corregido, contexto CLEAN y215 secuencias libres. Ensayo de respuestas M1 repetidos y DHCP159 preparado; sin lease ni interfaz de red. Objetivo: controlador Wi-Fi funcional
+Actualizado: **2026-11-24**, etapa162: éxito DISCOVER/OFFER138 conservado. Recuperación161 actual completa, contexto CLEAN y215 secuencias libres. Ensayo de respuestas M1 repetidos y DHCP162 preparado; sin lease ni interfaz de red. Objetivo: controlador Wi-Fi funcional
 para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
@@ -32,6 +32,13 @@ autenticado con XID/chaddr coincidentes tras3361 ms en138. Limpieza CLEAN.
 Faltan DHCP REQUEST/ACK, lease, recepción unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas160–162 (2026-11-24):159 no se ejecutó; recuperación actual161
+completa, Especial visible en canal9, contexto CLEAN,215 secuencias libres
+y210 registros correctos. Ensayo162 admitido con respuestas M1 y DHCP
+acotadas;130 pruebas Python, suites C++ y ARM/Intel pasan. Sin efecto RF
+nuevo ni ACK de lease comprobados todavía.
+[Recuperación161](research/STAGE161.md), [ejecución162](research/STAGE162.md).
 
 Etapas156–159: nueva frontera fría y recuperación158 completas. El drenaje
 RFK corregido terminó los ocho comandos de canal9; contexto CLEAN,215
