@@ -52,7 +52,7 @@ def audit(data,target_details=False):
         if kind==0xd4:result['valid_ack']+=1
         if kind==0xc4:result['valid_cts']+=1
         addresses=[frame[4:10]]
-        if frame[0]&0x0c==0 and len(frame)>=24:addresses += [frame[10:16],frame[16:22]]
+        if frame[0]&0x0c in (0,8) and len(frame)>=24:addresses += [frame[10:16],frame[16:22]]
         elif kind==0xb4 and len(frame)>=16:addresses.append(frame[10:16])
         if test in addresses:
             result['valid_test_mac_frames']+=1

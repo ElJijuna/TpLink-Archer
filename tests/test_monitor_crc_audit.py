@@ -24,6 +24,13 @@ class MonitorCrcTest(unittest.TestCase):
             bad=audit(capture(frame,corrupt=True));self.assertEqual(bad['crc_invalid'],1)
             self.assertEqual(bad['flag_crc_disagreements'],1);self.assertEqual(bad['valid_test_mac_frames'],0)
 
+    def test_outbound_data_matches_transmitter_not_only_receiver(self):
+        ap=bytes.fromhex('50926a110666');station=bytes.fromhex('0200008922a1')
+        frame=bytes([8,0x41,0,0])+ap+station+bytes([255])*6+bytes(2)+bytes(16)
+        result=audit(capture(frame),target_details=True)
+        self.assertEqual(result['valid_test_mac_frames'],1);self.assertIn('02:00:00:89:22:a1',result['valid_test_mac_records'][0]['addresses'])
+        self.assertEqual(audit(capture(frame,corrupt=True))['valid_test_mac_frames'],0)
+
     def test_target_beacon_requires_crc_and_ssid(self):
         ap=bytes.fromhex('50926a110666')
         frame=bytes([0x80,0,0,0])+bytes([255])*6+ap+ap+bytes(2)+bytes(12)+b'\x00\x08Especial'
