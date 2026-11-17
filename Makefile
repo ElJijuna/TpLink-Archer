@@ -466,7 +466,7 @@ test: build/secure-network-recovered-test
 wpa2-capture-audit-universal: | build
 	$(CXX) $(CXXFLAGS) -arch arm64 -arch x86_64 src/wpa2_capture_audit.cpp -o build/archer-wpa2-capture-audit-universal
 
-build/archer-wpa2-capture-audit: src/wpa2_capture_audit.cpp include/archer/secure_network.hpp include/archer/credential_pipe.hpp | build
+build/archer-wpa2-capture-audit: src/wpa2_capture_audit.cpp include/archer/dhcp_selecting.hpp include/archer/secure_network.hpp include/archer/credential_pipe.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
 build/wpa2-audit-fixture: tests/wpa2_audit_fixture.cpp include/archer/secure_network.hpp | build
 	$(CXX) $(CXXFLAGS) $< -o $@
@@ -491,3 +491,7 @@ special-dhcp-supplicant-universal: | build
 build/eapol-retry-guard-test: tests/eapol_retry_guard_test.cpp include/archer/secure_network.hpp include/archer/wpa2_handshake.hpp include/archer/dhcp_selecting.hpp | build
 	$(CXX) $(CXXFLAGS) -DARCHER_DHCP_LEASE -DARCHER_WPA2_RECOVERED -DARCHER_EAPOL_RETRY $< -o $@
 test: build/eapol-retry-guard-test
+
+build/wpa2-lease-audit-fixture: tests/wpa2_audit_fixture.cpp include/archer/dhcp_selecting.hpp include/archer/secure_network.hpp | build
+	$(CXX) $(CXXFLAGS) -DARCHER_WPA2_RECOVERED -DARCHER_DHCP_LEASE -DARCHER_EAPOL_RETRY $< -o $@
+test: build/wpa2-lease-audit-fixture

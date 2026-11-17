@@ -1,4 +1,4 @@
-#include "archer/secure_network.hpp"
+#include "archer/dhcp_selecting.hpp"
 #include "archer/credential_pipe.hpp"
 #include <filesystem>
 #include <fstream>
@@ -43,7 +43,8 @@ int main(int argc,char** argv){
   if(txplain.bytes.size()<48)throw std::runtime_error("Recorded DHCP payload too short");const auto xid=archer::network_u32(txplain.bytes.data()+40);
   const auto flags=archer::eapol_be16(txplain.bytes.data()+46);
   if((flags!=0&&flags!=0x8000)||txplain.bytes!=archer::dhcp_discover_msdu(xid,flags==0x8000))throw std::runtime_error("Recorded encrypted DISCOVER does not reproduce expected payload");
-  archer::CcmpSession ccmp(hs);unsigned accepted=0,rejected=0,pairwise=0,group=0,offers=0,reflected=0;
+  archer::CcmpSession ccmp(hs);unsigned accepted=0,rejected=0,pairwise=0,group=0,offers=0,reflected=0,acks=0;
+  std::optional<archer::DhcpOffer> selected,acknowledged;std::array<std::uint8_t,6> ack_source{};
   for(auto& frame:protected_frames){
    try{
     auto plain=ccmp.decrypt_from_ap(frame.data(),frame.size());++accepted;const bool broadcast=frame[4]&1;if(broadcast)++group;else ++pairwise;
@@ -57,9 +58,32 @@ int main(int argc,char** argv){
      arp_target_station=std::equal(archer::station_test_mac.begin(),archer::station_test_mac.end(),b.begin()+26);
     }
     const bool echo=b==txplain.bytes&&std::equal(archer::station_test_mac.begin(),archer::station_test_mac.end(),frame.begin()+16);reflected+=echo;
-    const bool offer=bool(archer::decode_dhcp_offer(b,xid));offers+=offer;
-    std::cout<<"{\"operation\":\"offline_authenticated_data\",\"group\":"<<(broadcast?"true":"false")<<",\"bytes\":"<<b.size()<<",\"ether_type\":"<<ether<<",\"udp_source\":"<<sport<<",\"udp_destination\":"<<dport<<",\"dhcp_message_type\":"<<message<<",\"xid_matches\":"<<(xid_match?"true":"false")<<",\"chaddr_matches\":"<<(chaddr_match?"true":"false")<<",\"arp_operation\":"<<arp_operation<<",\"arp_sender_ip_zero\":"<<(arp_sender_zero?"true":"false")<<",\"arp_target_ip_zero\":"<<(arp_target_zero?"true":"false")<<",\"arp_sender_is_ap\":"<<(arp_sender_ap?"true":"false")<<",\"arp_target_is_station\":"<<(arp_target_station?"true":"false")<<",\"matches_recorded_discover\":"<<(echo?"true":"false")<<",\"strict_offer\":"<<(offer?"true":"false")<<"}"<<std::endl;
+    const auto decoded_offer=archer::decode_dhcp_offer(b,xid);const bool offer=bool(decoded_offer);offers+=offer;if(decoded_offer&&!selected)selected=decoded_offer;
+    const auto decoded_ack=archer::decode_dhcp_reply(b,xid,5);
+    const bool ack=decoded_ack&&selected&&decoded_ack->address==selected->address&&decoded_ack->server==selected->server;
+    if(ack){++acks;if(!acknowledged){acknowledged=decoded_ack;std::copy_n(frame.begin()+16,6,ack_source.begin());}}
+    std::cout<<"{\"operation\":\"offline_authenticated_data\",\"group\":"<<(broadcast?"true":"false")<<",\"bytes\":"<<b.size()<<",\"ether_type\":"<<ether<<",\"udp_source\":"<<sport<<",\"udp_destination\":"<<dport<<",\"dhcp_message_type\":"<<message<<",\"xid_matches\":"<<(xid_match?"true":"false")<<",\"chaddr_matches\":"<<(chaddr_match?"true":"false")<<",\"arp_operation\":"<<arp_operation<<",\"arp_sender_ip_zero\":"<<(arp_sender_zero?"true":"false")<<",\"arp_target_ip_zero\":"<<(arp_target_zero?"true":"false")<<",\"arp_sender_is_ap\":"<<(arp_sender_ap?"true":"false")<<",\"arp_target_is_station\":"<<(arp_target_station?"true":"false")<<",\"matches_recorded_discover\":"<<(echo?"true":"false")<<",\"strict_offer\":"<<(offer?"true":"false")<<",\"strict_ack\":"<<(ack?"true":"false")<<"}"<<std::endl;
    }catch(const std::exception&){++rejected;}
+  }
+  bool request_verified=false,release_verified=false;std::uint64_t request_pn=0;
+  const auto verify_tx=[&](const fs::path& path,std::uint64_t& packet_pn){
+   auto packet=read_capture(path);if(packet.size()!=440)throw std::runtime_error("Unexpected recorded data TX extent");
+   const auto* frame=packet.data()+64;const auto size=packet.size()-64;
+   if(archer::management_u16(frame)!=0x4108||!std::equal(archer::station_target_ap.begin(),archer::station_target_ap.end(),frame+4)||!std::equal(archer::station_test_mac.begin(),archer::station_test_mac.end(),frame+10))throw std::runtime_error("Recorded data TX identity mismatch");
+   const auto* v=frame+24;if(v[2]||v[3]!=0x20)throw std::runtime_error("Recorded TX CCMP key ID mismatch");packet_pn=std::uint64_t(v[0])|(std::uint64_t(v[1])<<8)|(std::uint64_t(v[4])<<16)|(std::uint64_t(v[5])<<24)|(std::uint64_t(v[6])<<32)|(std::uint64_t(v[7])<<40);
+   const auto parameters=archer::ccmp_parameters(frame,size,packet_pn);
+   return archer::ccm8_decrypt(hs.pairwise_key(),parameters.nonce,parameters.aad,v+8,size-32);
+  };
+  if(m4_index==6&&fs::exists(dir/"secure-tx-9.bin")){
+   if(!selected)throw std::runtime_error("Recorded REQUEST without matching OFFER");
+   const auto request=verify_tx(dir/"secure-tx-9.bin",request_pn);const auto seconds=archer::eapol_be16(request.bytes.data()+44);
+   const auto request_packet=read_capture(dir/"secure-tx-9.bin");
+   if(request_pn<=pn||!std::all_of(request_packet.begin()+80,request_packet.begin()+86,[](auto b){return b==255;})||request.bytes!=archer::dhcp_selecting_request(xid,*selected,seconds))throw std::runtime_error("Recorded REQUEST does not reproduce selected offer");request_verified=true;
+  }
+  if(m4_index==6&&fs::exists(dir/"secure-tx-10.bin")){
+   if(!request_verified||!acknowledged)throw std::runtime_error("Recorded RELEASE without matching ACK");
+   std::uint64_t release_pn=0;const auto release=verify_tx(dir/"secure-tx-10.bin",release_pn);const auto packet=read_capture(dir/"secure-tx-10.bin");
+   if(release_pn<=request_pn||release.bytes!=archer::dhcp_release_msdu(xid,*acknowledged)||!std::equal(ack_source.begin(),ack_source.end(),packet.begin()+80))throw std::runtime_error("Recorded RELEASE does not reproduce ACK lease/source");release_verified=true;
   }
   if(argc==3){
    const fs::path attempt=argv[2];const auto packet=read_capture(attempt/"secure-tx-2.bin");
@@ -81,6 +105,6 @@ int main(int argc,char** argv){
    const bool reproduced=attempt_hs.issue_m2()==expected;
    std::cout<<"{\"operation\":\"offline_credential_comparison\",\"reference_m3_authenticated\":true,\"attempt_m2_reproduced\":"<<(reproduced?"true":"false")<<",\"h2c_submissions\":0,\"network_submissions\":0}"<<std::endl;
   }
-  std::cout<<"{\"result\":\"offline_wpa2_audited\",\"m2_reproduced\":true,\"m3_authenticated\":true,\"m4_reproduced\":true,\"recorded_discover_verified\":true,\"protected_frames\":"<<protected_frames.size()<<",\"authenticated_frames\":"<<accepted<<",\"rejected_frames\":"<<rejected<<",\"pairwise_frames\":"<<pairwise<<",\"group_frames\":"<<group<<",\"matched_offers\":"<<offers<<",\"reflected_discover_frames\":"<<reflected<<",\"h2c_submissions\":0,\"network_submissions\":0}"<<std::endl;return 0;
+  std::cout<<"{\"result\":\"offline_wpa2_audited\",\"m2_reproduced\":true,\"m3_authenticated\":true,\"m4_reproduced\":true,\"recorded_discover_verified\":true,\"protected_frames\":"<<protected_frames.size()<<",\"authenticated_frames\":"<<accepted<<",\"rejected_frames\":"<<rejected<<",\"pairwise_frames\":"<<pairwise<<",\"group_frames\":"<<group<<",\"matched_acks\":"<<acks<<",\"recorded_request_verified\":"<<(request_verified?"true":"false")<<",\"recorded_release_verified\":"<<(release_verified?"true":"false")<<",\"server_release_confirmed\":false,\"matched_offers\":"<<offers<<",\"reflected_discover_frames\":"<<reflected<<",\"h2c_submissions\":0,\"network_submissions\":0}"<<std::endl;return 0;
  }catch(const std::exception& e){std::cerr<<"Offline audit: "<<e.what()<<'\n';return 2;}
 }

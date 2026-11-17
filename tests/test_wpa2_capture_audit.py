@@ -38,6 +38,23 @@ class OfflineCaptureAuditTest(unittest.TestCase):
     def test_explicit_phase_layout_selects_new_m4_and_discover_slots(self):
         self.audit_fixture(False,True)
 
+    def test_recorded_request_ack_release_and_ciphertext_corruption(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            capture=Path(tmp)/'capture'
+            subprocess.run([str(ROOT/'build/wpa2-lease-audit-fixture'),str(capture),'lease'],cwd=ROOT,check=True)
+            originals={n:(capture/n).read_bytes() for n in ('secure-tx-9.bin','secure-tx-10.bin')}
+            for corrupt in (None,'secure-tx-9.bin','secure-tx-10.bin'):
+                for name,data in originals.items():(capture/name).write_bytes(data)
+                if corrupt:
+                    data=bytearray(originals[corrupt]);data[110]^=1;(capture/corrupt).write_bytes(data)
+                fd,writer=os.pipe();os.write(writer,b'password');os.close(writer)
+                try:result=subprocess.run([str(ROOT/'build/archer-wpa2-capture-audit'),str(capture)],cwd=ROOT,env=dict(os.environ,ARCHER_CREDENTIAL_FD=str(fd)),pass_fds=(fd,),capture_output=True,text=True,check=False)
+                finally:os.close(fd)
+                self.assertEqual(result.returncode==0,corrupt is None);self.assertNotIn('password',result.stdout+result.stderr);self.assertNotIn('192.168.1.55',result.stdout+result.stderr)
+                if corrupt is None:
+                    summary=json.loads(result.stdout.splitlines()[-1]);self.assertEqual(summary['matched_acks'],1)
+                    self.assertTrue(summary['recorded_request_verified']);self.assertTrue(summary['recorded_release_verified']);self.assertFalse(summary['server_release_confirmed'])
+
     def audit_fixture(self,broadcast,layout=False):
         with tempfile.TemporaryDirectory() as tmp:
             capture=Path(tmp)/'capture'

@@ -1,0 +1,44 @@
+{
+  "stage": 163,
+  "date": "2026-11-24",
+  "status": "lease_ack_observed_cleanup_incomplete_offline_audit_pending",
+  "epoch_id": "2f5c0f06-7948-4c76-a387-782c48a6f425",
+  "attempt": 162,
+  "context": "DIRTY",
+  "remaining_sequences": 206,
+  "evidence": {
+    "m3_authenticated": true,
+    "matched_offer": true,
+    "offer_delay_ms": 3378,
+    "matched_ack": true,
+    "ack_delay_ms": 12,
+    "lease_acknowledged": true,
+    "release_usb_write_completed": true,
+    "release_tx_done_observed": false,
+    "server_release_confirmed": false,
+    "deauth_sent": false,
+    "authenticated_frames": 9,
+    "pairwise_frames": 0,
+    "group_frames": 9,
+    "os_interface": false
+  },
+  "postflight_registers_verified": 210,
+  "validation": {
+    "python_tests": 132,
+    "cpp_suites_passed": true,
+    "auditor_architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "analysis_h2c_submissions": 0,
+  "analysis_network_submissions": 0,
+  "pcap_sha256": "713e54081b295cf779c3763f57f05cae8d31ea11c28d0610b06c0d8fa9b4cf24",
+  "sha256": {
+    "artifacts/supplicant-stage162/probe/archer-special-wpa2": "1824c6846dbf4cd77ccd138ea17679d336d0fdb049fb38c501256979f1186747",
+    "artifacts/supplicant-stage162/probe/probe.jsonl": "300eccea2b5b624704cf0e499264b914b5cd6c5403bedb5185a811464e348876",
+    "artifacts/supplicant-stage162/probe/probe.stderr": "4e4d416c840f111a1c6d8d69f2e092b50961d185f6ee5bc3bd6e496827a64b4f",
+    "build/archer-wpa2-capture-audit-universal": "868d996e892d9f3d83a3487a6531c2b3c27fa57cffb518883961ed0e1229c6af",
+    "artifacts/supplicant-stage163-validation.log": "85804b546d0a007820ee2ef082e51db1e6d63043930e7eac862005ce190f28f1"
+  }
+}
