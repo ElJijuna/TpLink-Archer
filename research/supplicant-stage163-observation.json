@@ -1,7 +1,7 @@
 {
   "stage": 163,
   "date": "2026-11-24",
-  "status": "lease_ack_observed_cleanup_incomplete_offline_audit_pending",
+  "status": "lease_ack_and_recorded_request_release_verified_cleanup_incomplete",
   "epoch_id": "2f5c0f06-7948-4c76-a387-782c48a6f425",
   "attempt": 162,
   "context": "DIRTY",
@@ -40,5 +40,29 @@
     "artifacts/supplicant-stage162/probe/probe.stderr": "4e4d416c840f111a1c6d8d69f2e092b50961d185f6ee5bc3bd6e496827a64b4f",
     "build/archer-wpa2-capture-audit-universal": "868d996e892d9f3d83a3487a6531c2b3c27fa57cffb518883961ed0e1229c6af",
     "artifacts/supplicant-stage163-validation.log": "85804b546d0a007820ee2ef082e51db1e6d63043930e7eac862005ce190f28f1"
+  },
+  "offline_audit": {
+    "summary": {
+      "result": "offline_wpa2_audited",
+      "m2_reproduced": true,
+      "m3_authenticated": true,
+      "m4_reproduced": true,
+      "recorded_discover_verified": true,
+      "protected_frames": 11,
+      "authenticated_frames": 11,
+      "rejected_frames": 0,
+      "pairwise_frames": 0,
+      "group_frames": 11,
+      "matched_acks": 1,
+      "recorded_request_verified": true,
+      "recorded_release_verified": true,
+      "server_release_confirmed": false,
+      "matched_offers": 1,
+      "reflected_discover_frames": 1,
+      "h2c_submissions": 0,
+      "network_submissions": 0
+    },
+    "audit_sha256": "35fe2d89b292b6fac15bdab1b9e6683bc50ea3aca8159531959da9157f325bea",
+    "all_input_hashes_verified": true
   }
 }

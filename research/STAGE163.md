@@ -6,7 +6,7 @@ RELEASE completó su escritura USB, pero no apareció el reporte TX_DONE13 duran
 
 El análisis de las transferencias guardadas no encontró reportes TX, incluidos tags alternativos o tardíos. La captura independiente se guardó, pero la restauración del canal de en0 falló; reconectar el Wi-Fi del Mac si hace falta. La comprobación posterior validó210 registros con TX pausado, sin nuevos H2C ni transmisiones Wi-Fi.
 
-Se amplió el auditor offline para autenticar el ACK y reproducir REQUEST/RELEASE desde OFFER/ACK, verificar su cifrado y el avance de PN. Esta comprobación valida los bytes guardados, no la entrega por radio ni la liberación del servidor. Pasaron132 pruebas Python, las suites C++ y compilación del auditor ARM/Intel; la regresión incluye corrupción de REQUEST y RELEASE. La auditoría de la captura real aún necesita la credencial local, que no se guardó.
+Se amplió el auditor offline para autenticar el ACK y reproducir REQUEST/RELEASE desde OFFER/ACK, verificar su cifrado y el avance de PN. Esta comprobación valida los bytes guardados, no la entrega por radio ni la liberación del servidor. Pasaron132 pruebas Python, las suites C++ y compilación del auditor ARM/Intel; la regresión incluye corrupción de REQUEST y RELEASE. La auditoría local de la captura real terminó correctamente: once tramas autenticadas, cero rechazos, un OFFER y un ACK coincidentes. REQUEST y RELEASE guardados se reprodujeron con cifrado y PN válidos. Se verificaron todos los hashes de entrada, del helper y de las salidas; no hubo USB ni TX. Esto no confirma que el servidor recibiera RELEASE.
 
 Ejecutar como usuario normal, sin sudo:
 
