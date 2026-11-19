@@ -1,0 +1,51 @@
+{
+  "stage": 164,
+  "date": "2026-11-24",
+  "status": "cold_recovery_and_context_verified",
+  "epoch_id": "12fc87ad-9c12-428d-9ca3-a060ded67535",
+  "context": "CLEAN",
+  "epoch_transition": "CLEAN",
+  "context_check": {
+    "result": "context_cleanup_acknowledged",
+    "transfers": 570,
+    "normal_packets": 545,
+    "beacons": 142,
+    "network_tx_paused": true,
+    "initial_macid_pause_measured": false
+  },
+  "target_passive_observation": {
+    "bssid_hex": "50926a110666",
+    "ssid_hex": "457370656369616c",
+    "advertised_ds_channel": 9,
+    "beacons": 70,
+    "probe_responses": 8,
+    "first_observation": 3,
+    "last_observation": 539,
+    "interval_tu": 100,
+    "capability": 6161
+  },
+  "postflight_registers": 210,
+  "new_network_submissions": 0,
+  "evidence": {
+    "artifacts/37ad-0104-sequences.bin": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+    "artifacts/recovery-stage164-cold.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage164-cold.stderr": "bb290de066b96505330ffddbc69ce66d81be883be24ac81a04faed4239b3bf26",
+    "artifacts/recovery-stage164-usb-absence.json": "6847815b0fdbffbf48793fc33b5f1ec4bcb950728ee196391a81c4073d29b1f1",
+    "artifacts/recovery-stage164-switch.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage164-usb-reconnected.json": "c7537bbd2d6e2467a8f1acf1ca3840a6f169407845a645a84d3240bbb4a89e43",
+    "artifacts/recovery-stage164-context.jsonl": "45d33ab0ac899308a99b9c9f13cdb5f88eae50fdacb1511ff2d10b8dbd6674ef",
+    "artifacts/recovery-stage164-context.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage164-switch.jsonl": "4e98b2d762fcffdea51ba266a36e0f45b3e35d65264bd5aa3c8409a1b9fba0f9",
+    "artifacts/recovery-stage164-postflight.jsonl": "8b0d633078a222d6dbfb8d2cfe86f074c6e8bd54077ab273ade282b7c969b173",
+    "artifacts/recovery-stage164-cold-after.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage164-channel9.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage164-channel9.jsonl": "e844ba3ada8d64fcc23f0c9e41bba7cb01fbab1dfdbfc379b1b99890566b80e3",
+    "artifacts/recovery-stage164-epoch.stdout": "167e3b020efbe53008efb2dc870bbe503d0b84df6c10c6cc9bc608e19bdcca33",
+    "artifacts/recovery-stage164-bootstrap.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage164-postflight.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage164-bootstrap.stdout": "5f9af37e068d6f83aa84a3e0be8d5e17557e79f16eb8b115751a582f49b7fd95",
+    "artifacts/recovery-stage164-cold-after.jsonl": "1a03fee0042644a3582a55ec7b06e0dacb65488244ce7bc726865261af65460a",
+    "artifacts/recovery-stage164-epoch.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "remaining_sequences": 215
+}

@@ -2,14 +2,13 @@
 
 ## Checklist resumido — avance estimado: **64 %**
 
-Actualizado: **2026-11-24**, etapa162: éxito DISCOVER/OFFER138 conservado. Recuperación161 actual completa, contexto CLEAN y215 secuencias libres. Ensayo de respuestas M1 repetidos y DHCP162 preparado; sin lease ni interfaz de red. Objetivo: controlador Wi-Fi funcional
-para macOS ARM/Intel, con Linux posteriormente.
+Actualizado: **2026-11-24**, etapa164: el intento162 recibió OFFER y ACK DHCP autenticados y coincidentes. La auditoría163 verificó REQUEST/RELEASE cifrados; falta confirmación del cierre. Recuperación164 completa, contexto CLEAN y215 secuencias libres. Sin interfaz de red. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
 - [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
 - [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
-- [ ] Ruta completa de datos Wi-Fi TX/RX — **13/15**: DISCOVER/OFFER cifrados y coincidentes verificados nativamente, con limpieza; faltan recepción unicast, lease/IP e integración.
+- [ ] Ruta completa de datos Wi-Fi TX/RX — **13/15**: DISCOVER/OFFER cifrados y coincidentes verificados nativamente, con limpieza; faltan recepción unicast, cierre fiable, IP e integración.
 - [ ] Escaneo, asociación y seguridad Wi-Fi — **11/15**: barrido pasivo1/6/11, asociación/WPA2 y CCMP de grupo con OFFER verificados; faltan ciclo completo de claves, reconexión y ampliación.
 - [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
 - [ ] Validación física en Mac Intel — **0/5**.
@@ -29,9 +28,12 @@ El último postflight dejó TX de red pausado. Especial aceptó autenticación y
 asociación (AID1 en116); M3 fue autenticado y M2/M4 reproducidos offline.
 El AP reenvió por CCMP de grupo el DISCOVER propio y se recibió un OFFER
 autenticado con XID/chaddr coincidentes tras3361 ms en138. Limpieza CLEAN.
-Faltan DHCP REQUEST/ACK, lease, recepción unicast cifrada e interfaz de red.
+En162 se verificó REQUEST/ACK y lease temporal; RELEASE se entregó por USB sin reporte TX_DONE. La auditoría163 verificó su contenido y cifrado, sin confirmar entrega. La recuperación164 dejó contexto CLEAN. Faltan cierre fiable, recepción unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas163–164: auditoría offline completada, once tramas autenticadas y cero rechazos; REQUEST/RELEASE reproducidos. Recuperación fría nueva completada con Especial visible y210 registros correctos. Sin otro ensayo DHCP. El reporte TX de RELEASE sigue pendiente; no reutilizar162. Pasan132 pruebas Python y suites C++; auditor ARM/Intel compilado.
+[Auditoría163](research/STAGE163.md), [recuperación164](research/STAGE164.md).
 
 Etapas160–162 (2026-11-24):159 no se ejecutó; recuperación actual161
 completa, Especial visible en canal9, contexto CLEAN,215 secuencias libres
