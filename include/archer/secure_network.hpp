@@ -41,13 +41,22 @@ inline bool secure_m2_phase(SecureFramePhase phase){
  return phase==SecureFramePhase::m2;
 }
 inline bool secure_data_phase(SecureFramePhase phase){return unsigned(phase)>=2&&unsigned(phase)<unsigned(SecureFramePhase::deauthenticate);}
+inline void require_secure_discover_report(const std::optional<ProbeTxReport>& report){
+ if(!report||report->state!=0||report->count!=1)throw std::runtime_error("DISCOVER TX_DONE/count1 absent; no DHCP REQUEST or retransmission");
+}
 inline unsigned secure_report_tag(SecureFramePhase phase){
+#ifdef ARCHER_EAPOL_RETRY
+ if(phase==SecureFramePhase::discover)return 12;
+#endif
 #ifdef ARCHER_DHCP_LEASE
  if(phase==SecureFramePhase::release)return secure_release_tag;
 #endif
  return phase==SecureFramePhase::deauthenticate?secure_cleanup_tag:0;
 }
 inline bool secure_report_requested(SecureFramePhase phase){
+#ifdef ARCHER_EAPOL_RETRY
+ if(phase==SecureFramePhase::discover)return true;
+#endif
 #ifdef ARCHER_DHCP_LEASE
  if(phase==SecureFramePhase::release)return true;
 #endif
@@ -64,7 +73,7 @@ inline std::vector<std::uint8_t> secure_tx_packet(SecureFramePhase phase,const s
  channel_put32(packet.data(),data?0x00406480:0x00486480); // DMA0/BE via USB09; MGQ/DMA8 via USB05.
  channel_put32(packet.data()+8,(data?0:0x00240000)|frame.size());// rtw89_core_tx_update_data_info clears sw_mld; management sets it.
  channel_put32(packet.data()+12,(data?0:0x2000)|sequence);
- channel_put32(packet.data()+36,secure_report_requested(phase)?secure_report_tag(phase)<<28:0); // Only final cleanup requests a report in this firmware epoch.
+ channel_put32(packet.data()+36,secure_report_requested(phase)?secure_report_tag(phase)<<28:0); // Distinct reports for data admission and final cleanup.
  channel_put32(packet.data()+40,secure_report_requested(phase)?0x40000000:0);
  packet.insert(packet.end(),frame.begin(),frame.end());return packet;
 }

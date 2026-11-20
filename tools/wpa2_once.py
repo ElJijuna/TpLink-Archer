@@ -32,8 +32,8 @@ RECOVERED_HISTORY=ROOT/'research/recovery-stage137-observation.json'
 RECOVERED_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-wpa2-recovered-stage138-attempted'
 LEASE_HISTORY=ROOT/'research/recovery-stage147-observation.json'
 LEASE_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-dhcp-lease-stage148-attempted'
-SUPPLICANT_HISTORY=ROOT/'research/recovery-stage161-observation.json'
-SUPPLICANT_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage162-attempted'
+SUPPLICANT_HISTORY=ROOT/'research/recovery-stage164-observation.json'
+SUPPLICANT_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage165-attempted'
 
 def validate_recovered_history(history,ledger,epoch_id,expected_stage=137):
     if (history.get('stage')!=expected_stage or history.get('status')!='cold_recovery_and_context_verified'
@@ -52,13 +52,13 @@ def validate_recovered_history(history,ledger,epoch_id,expected_stage=137):
 def admission(recovered=False,lease=False,supplicant=False):
     if supplicant:lease=True
     if lease:recovered=True
-    readiness=json.loads((ROOT/('research/supplicant-stage162-observation.json' if supplicant else 'research/dhcp-stage148-observation.json' if lease else 'research/wpa2-stage138-observation.json' if recovered else 'research/wpa2-stage105-observation.json')).read_text())
-    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=(162 if supplicant else 148 if lease else 138 if recovered else 105):raise ValueError('WPA2 state/build not prepared: '+str(readiness.get('status')))
+    readiness=json.loads((ROOT/('research/supplicant-stage165-observation.json' if supplicant else 'research/dhcp-stage148-observation.json' if lease else 'research/wpa2-stage138-observation.json' if recovered else 'research/wpa2-stage105-observation.json')).read_text())
+    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=(165 if supplicant else 148 if lease else 138 if recovered else 105):raise ValueError('WPA2 state/build not prepared: '+str(readiness.get('status')))
     for name,sha in readiness['build_evidence'].items():
         path=(ROOT/name).resolve()
         if not path.is_relative_to(ROOT) or digest(path)!=sha:raise ValueError('Tested WPA2 build/source changed')
     history=json.loads((SUPPLICANT_HISTORY if supplicant else LEASE_HISTORY if lease else RECOVERED_HISTORY if recovered else HISTORY).read_text())
-    if recovered:validate_recovered_history(history,LEDGER.read_bytes(),Path(str(LEDGER)+'.epoch-id').read_text().strip(),161 if supplicant else 147 if lease else 137)
+    if recovered:validate_recovered_history(history,LEDGER.read_bytes(),Path(str(LEDGER)+'.epoch-id').read_text().strip(),164 if supplicant else 147 if lease else 137)
     else:validate_history(history,LEDGER.read_bytes())
     for name,sha in history['evidence'].items():
         path=(ROOT/name).resolve()
@@ -75,6 +75,7 @@ def admission(recovered=False,lease=False,supplicant=False):
     if lease and RECOVERED_MARKER.read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage138 reservation must remain intact')
     if lease and (ROOT/'artifacts/37ad-0104-special-channel9-dhcp-lease-stage141-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage141 reservation must remain intact')
     if supplicant and LEASE_MARKER.read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage148 reservation must remain intact')
+    if supplicant and (ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage162-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage162 reservation must remain intact')
     if (SUPPLICANT_MARKER if supplicant else LEASE_MARKER if lease else RECOVERED_MARKER if recovered else MARKER).exists():raise ValueError('WPA2 attempt already reserved; no retry')
 
 
@@ -171,9 +172,17 @@ def validate_supplicant_result(rows):
     m3=[i for i,r in enumerate(rows) if r.get('operation')=='secure_m3_authenticated']
     if len(m3)!=1 or not write_pos[2+count]<m3[0]<write_pos[6]:raise ValueError('M3 must authenticate before M4')
     reports=[r for r in rows if r.get('operation')=='single_probe_tx_report']
-    if {r.get('tag') for r in reports}!={13,14}:raise ValueError('Distinct supplicant RELEASE/deauth reports required')
+    if {r.get('tag') for r in reports}!={12,13,14}:raise ValueError('Distinct DISCOVER/RELEASE/deauth reports required')
+    discover_reports=[(i,r) for i,r in enumerate(rows) if r.get('operation')=='single_probe_tx_report' and r.get('tag')==12]
+    admissions=[i for i,r in enumerate(rows) if r.get('operation')=='secure_discover_report' and r.get('tag')==12 and r.get('tx_done') is True and r.get('server_delivery_confirmed') is False]
+    if len(discover_reports)!=1 or len(admissions)!=1:raise ValueError('Unique DISCOVER TX report admission required')
+    report_pos,report=discover_reports[0]
+    next_data=write_pos[8] if 8 in write_pos else write_pos[9]
+    if report.get('state')!=0 or report.get('tx_count')!=1 or not write_pos[7]<report_pos<admissions[0]<next_data:raise ValueError('DISCOVER report must precede retry or REQUEST')
     canonical=[]
     for row in copy.deepcopy(rows):
+        if row.get('operation')=='single_probe_tx_report' and row.get('tag')==12:continue
+        if row.get('operation')=='secure_discover_report':continue
         if row.get('operation')=='secure_usb_write':
             if row['phase'] in (3,4,5):continue
             if row['phase']>=6:row['phase']-=3

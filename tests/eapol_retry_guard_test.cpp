@@ -7,6 +7,13 @@ std::vector<std::uint8_t> load(const char* p){std::ifstream f(p,std::ios::binary
 template<class F>void rejects(F f){bool bad=false;try{f();}catch(...){bad=true;}assert(bad);}
 int main(){
  static_assert(unsigned(SecureFramePhase::deauthenticate)==11);
+ assert(secure_report_requested(SecureFramePhase::discover));
+ assert(secure_report_tag(SecureFramePhase::discover)==12);
+ assert(!secure_report_requested(SecureFramePhase::discover_retry));
+ rejects([]{require_secure_discover_report(std::nullopt);});
+ rejects([]{require_secure_discover_report(ProbeTxReport{1,1});});
+ rejects([]{require_secure_discover_report(ProbeTxReport{0,2});});
+ require_secure_discover_report(ProbeTxReport{0,1});
  for(unsigned replies=0;replies<=3;++replies)for(bool dhcp_retry:{false,true}){
   std::array<std::uint8_t,32> nonce{};for(unsigned i=0;i<32;++i)nonce[i]=i+1;
   auto m1=load("tests/fixtures/special-eapol-m1-stage104.bin");auto decoded=decode_target_eapol_m1(m1.data(),m1.size());assert(decoded);

@@ -32,6 +32,9 @@ En162 se verificó REQUEST/ACK y lease temporal; RELEASE se entregó por USB sin
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 
+Etapa165 preparada: contraste de reporte TX en DISCOVER (tag12), exigido antes de retransmitir o solicitar lease. Si falta, se detiene sin REQUEST. Admisión ligada a recuperación164;133 pruebas Python, suites C++ y ARM/Intel pasan. No hay causa raíz del reporte ausente ni nuevo resultado RF todavía.
+[Contraste165](research/STAGE165.md).
+
 Etapas163–164: auditoría offline completada, once tramas autenticadas y cero rechazos; REQUEST/RELEASE reproducidos. Recuperación fría nueva completada con Especial visible y210 registros correctos. Sin otro ensayo DHCP. El reporte TX de RELEASE sigue pendiente; no reutilizar162. Pasan132 pruebas Python y suites C++; auditor ARM/Intel compilado.
 [Auditoría163](research/STAGE163.md), [recuperación164](research/STAGE164.md).
 

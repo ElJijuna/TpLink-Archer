@@ -6,12 +6,25 @@
   "context": "CLEAN",
   "epoch_transition": "CLEAN",
   "context_check": {
-    "result": "context_cleanup_acknowledged",
-    "transfers": 570,
-    "normal_packets": 545,
-    "beacons": 142,
+    "ack_steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8
+    ],
     "network_tx_paused": true,
-    "initial_macid_pause_measured": false
+    "result": {
+      "result": "context_cleanup_acknowledged",
+      "transfers": 570,
+      "normal_packets": 545,
+      "beacons": 142,
+      "network_tx_paused": true,
+      "initial_macid_pause_measured": false
+    }
   },
   "target_passive_observation": {
     "bssid_hex": "50926a110666",
@@ -47,5 +60,19 @@
     "artifacts/recovery-stage164-cold-after.jsonl": "1a03fee0042644a3582a55ec7b06e0dacb65488244ce7bc726865261af65460a",
     "artifacts/recovery-stage164-epoch.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
-  "remaining_sequences": 215
+  "remaining_sequences": 215,
+  "epoch_boundary": {
+    "status": "committed",
+    "epoch_id": "12fc87ad-9c12-428d-9ca3-a060ded67535",
+    "old_ledger_sha256": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+    "firmware_download_writes": 212,
+    "h2c_submissions": 0,
+    "available_after": 254
+  },
+  "ledger_sha256": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+  "postflight": {
+    "registers": 210,
+    "differences": 0,
+    "network_tx_paused": true
+  }
 }

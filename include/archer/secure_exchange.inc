@@ -93,7 +93,15 @@
 #ifdef ARCHER_DHCP_LEASE
                                     const auto acquisition_started=std::chrono::steady_clock::now();
                                     const unsigned first_wait=archer::dhcp_discover_backoff_ms(0,arc4random_uniform(2001));
-                                    if(!secure_wait([&]{return bool(dhcp_offer);},first_wait,false,true)){
+#ifdef ARCHER_EAPOL_RETRY
+                                    const bool initial_offer=secure_wait([&]{return bool(dhcp_offer)&&bool(probe_report);},first_wait,false,true);
+                                    archer::require_secure_discover_report(probe_report);
+                                    std::cout<<"{\"operation\":\"secure_discover_report\",\"tag\":12,\"tx_done\":true,\"server_delivery_confirmed\":false}"<<std::endl;
+                                    probe_submitted=false;
+#else
+                                    const bool initial_offer=secure_wait([&]{return bool(dhcp_offer);},first_wait,false,true);
+#endif
+                                    if(!initial_offer){
                                         // Drain once more before consuming the single retry slot.
                                         receive(0,true);receive(1,true);
                                         if(!dhcp_offer){

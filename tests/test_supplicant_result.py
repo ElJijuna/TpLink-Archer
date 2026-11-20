@@ -17,6 +17,7 @@ def trace(replies=0,retry=False):
     for i in range(replies):
         rows.append(dict(operation='secure_m2_response_retry',ordinal=i+1,same_anonce=True,replay_advanced=True));write(3+i)
     rows.append(dict(operation='secure_m3_authenticated'));write(6);write(7)
+    rows.append(dict(operation='single_probe_tx_report',tag=12,state=0,tx_count=1));rows.append(dict(operation='secure_discover_report',tag=12,tx_done=True,server_delivery_confirmed=False))
     if retry:
         rows.append(dict(operation='secure_discover_retry',ordinal=1,same_xid=True,fresh_pn_and_sequence=True,secs=4));write(8)
     rows.append(dict(operation='secure_dhcp_offer',matched_transaction=True,ccmp_authenticated=True,security_established=True,data_path_established=True,lease_acquired=False))
@@ -47,3 +48,9 @@ class SupplicantResultTest(unittest.TestCase):
     def test_m3_must_precede_m4_after_last_m2_response(self):
         changed=trace(2);m3=next(r for r in changed if r.get('operation')=='secure_m3_authenticated');changed.remove(m3);changed.append(m3)
         with self.assertRaises(ValueError):w.validate_supplicant_result(changed)
+
+    def test_offer_without_discover_report_cannot_admit_lease(self):
+        rows=[r for r in trace() if not (r.get('operation')=='single_probe_tx_report' and r.get('tag')==12)]
+        with self.assertRaises(ValueError):w.validate_supplicant_result(rows)
+        rows=trace();report=next(r for r in rows if r.get('operation')=='single_probe_tx_report' and r.get('tag')==12);rows.remove(report);rows.append(report)
+        with self.assertRaises(ValueError):w.validate_supplicant_result(rows)
