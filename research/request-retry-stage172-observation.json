@@ -1,0 +1,62 @@
+{
+  "stage": 172,
+  "date": "2026-11-24",
+  "status": "bounded_request_retry_built_recovery_pending",
+  "prior_attempt": 170,
+  "prior_context": "DIRTY",
+  "physical_request_retry_verified": false,
+  "limits": {
+    "request_retransmissions_max": 1,
+    "request_wait_total_ms": 10000,
+    "new_packet_pn_and_sequence": true,
+    "request_retry_requires_original_tx_done": true,
+    "nak_prevents_retry": true,
+    "whole_experiment_automatic_retry": false
+  },
+  "planned_phases": {
+    "request": 9,
+    "request_retry": 10,
+    "release": 11,
+    "deauthenticate": 12
+  },
+  "planned_report_tags": {
+    "discover": 12,
+    "request": 11,
+    "request_retry": 10,
+    "release": 13,
+    "deauthenticate": 14
+  },
+  "future_recovery_stage": 173,
+  "future_attempt_stage": 174,
+  "future_attempt_prepared": false,
+  "validation": {
+    "python_tests": 134,
+    "cpp_suites_passed": true,
+    "architectures": [
+      "arm64",
+      "x86_64"
+    ],
+    "old_capture_layouts_retained": true
+  },
+  "new_h2c_submissions": 0,
+  "new_network_submissions": 0,
+  "reference": "https://www.rfc-editor.org/rfc/rfc2131.html",
+  "build_evidence": {
+    "include/archer/dhcp_selecting.hpp": "61a4ab63d42569d6d25a6b5748bc1811767d2b57e170dcdff186ef7da32a9174",
+    "include/archer/secure_network.hpp": "403eeb55eca3b308b0187b09b8ce06052f6354d832a94d2502019b3517779fa5",
+    "include/archer/secure_exchange.inc": "3a3e73018b914f1594a76e387d735adac599ed35ed10a9cb858c409b8e34ccd6",
+    "src/macos_context_rx.cpp": "5fb276384c13646a12986247a46ed23b1c2ed76d0b248fcb7564dcbcc605eff6",
+    "src/wpa2_capture_audit.cpp": "f9532df3d41e3a90e2f1ba1a356c25aa5048eca1d12387b04eecef411cfab4a4",
+    "tools/wpa2_once.py": "b48a7d6228f68c928f13bfb3df9356461e57b72a561461d42bcdfb2134eeb987",
+    "tools/external_probe_capture.py": "788a3fe0d92faba47f3eb2341650c190424ec16e5acc556e682a0e54baa5463e",
+    "tools/audit_wpa2_capture.py": "3aae2105c16ab9587a2f716a03c4b905a162a753615d6cca749a9b81df75a290",
+    "tests/dhcp_selecting_test.cpp": "83b25234c374bf6ef40a45af5dfaa1ab2bc0ed1902f996fea838f818c12a8ea1",
+    "tests/eapol_retry_guard_test.cpp": "49fb867f3ac43258821658401cbc6bb6ec3173a132fb35717610f6771e7930ec",
+    "tests/test_supplicant_result.py": "c53b746ad95abab55b6f8111821f593cb10592818a57e9bd39d540639dc1c9fe",
+    "tests/test_wpa2_capture_audit.py": "b08021b024d4534c789e424c7b11ab93ed34429a108deb3dc52c8d54f3f15025",
+    "tests/wpa2_audit_fixture.cpp": "5ee9d1db229ca62da294d6dd77513f9c3c76dc26b12bb78a83aa7679f8af23fc",
+    "artifacts/request-retry-stage172-validation-final.log": "c85123019c1258bcc01c1f0787d29478740f3be030ac393ecbdf4da78d5b3235",
+    "artifacts/archer-special-dhcp-supplicant-stage172": "8699aee1777d9c6fc6dfa8205c666cfe5c77b3ee5f06c9e2376a6e6ccb82a374",
+    "artifacts/archer-wpa2-capture-audit-stage172": "b15e3f0c5fdda2577af3818c7b2602d4829a75c4416bbf687c354e86910f62ba"
+  }
+}

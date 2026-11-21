@@ -42,8 +42,8 @@ class OfflineCaptureAuditTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             capture=Path(tmp)/'capture'
             subprocess.run([str(ROOT/'build/wpa2-lease-audit-fixture'),str(capture),'lease'],cwd=ROOT,check=True)
-            originals={n:(capture/n).read_bytes() for n in ('secure-tx-9.bin','secure-tx-10.bin')}
-            for corrupt in (None,'secure-tx-9.bin','secure-tx-10.bin'):
+            originals={n:(capture/n).read_bytes() for n in ('secure-tx-9.bin','secure-tx-10.bin','secure-tx-11.bin')}
+            for corrupt in (None,'secure-tx-9.bin','secure-tx-10.bin','secure-tx-11.bin'):
                 for name,data in originals.items():(capture/name).write_bytes(data)
                 if corrupt:
                     data=bytearray(originals[corrupt]);data[110]^=1;(capture/corrupt).write_bytes(data)
@@ -53,7 +53,7 @@ class OfflineCaptureAuditTest(unittest.TestCase):
                 self.assertEqual(result.returncode==0,corrupt is None);self.assertNotIn('password',result.stdout+result.stderr);self.assertNotIn('192.168.1.55',result.stdout+result.stderr)
                 if corrupt is None:
                     summary=json.loads(result.stdout.splitlines()[-1]);self.assertEqual(summary['matched_acks'],1)
-                    self.assertTrue(summary['recorded_request_verified']);self.assertTrue(summary['recorded_release_verified']);self.assertFalse(summary['server_release_confirmed'])
+                    self.assertTrue(summary['recorded_request_verified']);self.assertTrue(summary['recorded_request_retry_verified']);self.assertTrue(summary['recorded_release_verified']);self.assertFalse(summary['server_release_confirmed'])
 
     def audit_fixture(self,broadcast,layout=False):
         with tempfile.TemporaryDirectory() as tmp:

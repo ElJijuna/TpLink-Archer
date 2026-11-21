@@ -15,6 +15,16 @@ void finish(archer::InterfaceContextLifecycle& s){
 }
 int main(){
  using namespace archer;
+ // ACQ report enable must survive the actual lifecycle packet builder.
+ InterfaceContextLifecycle acq(context,sequences,true,true,false,StationCapability::legacy,0,true,true);
+ InterfaceContextLifecycle mgq(context,sequences,true,true,false,StationCapability::legacy,0,true);
+ for(unsigned i=0;i<4;++i){finish(acq);finish(mgq);}
+ const auto acq_frame=acq.issue(),mgq_frame=mgq.issue();
+ assert(acq_frame.size()==140&&mgq_frame.size()==140);
+ assert(channel_u32(acq_frame.data()+12)==0x300004);
+ assert(channel_u32(acq_frame.data()+76)&0x100000);
+ for(unsigned i=0;i<140;++i)assert((i==14)?(acq_frame[i]^mgq_frame[i])==0x10:acq_frame[i]==mgq_frame[i]);
+ rejects([]{InterfaceContextLifecycle bad(context,sequences,true,true,false,StationCapability::legacy,0,false,true);});
  InterfaceContextLifecycle s(context,sequences,true,true,true);
  rejects([&]{s.begin_removal();});for(unsigned i=0;i<6;++i)finish(s);
  assert(s.phase()==ContextPhase::ready&&s.step()==6);rejects([&]{s.issue();});

@@ -1,0 +1,77 @@
+{
+  "stage": 171,
+  "date": "2026-11-24",
+  "status": "acq_tx_report_verified_request_ack_timeout",
+  "attempt": 170,
+  "context": "DIRTY",
+  "remaining_sequences": 206,
+  "epoch_id": "88c619a3-cd2a-4836-8893-f961aefc92bb",
+  "cmac_w0": "0x00300004",
+  "cmac_difference_from165": "ACQ_RPT_EN bit20 only, excluding H2C sequence",
+  "tx_report": {
+    "operation": "single_probe_tx_report",
+    "tag": 12,
+    "state": 0,
+    "tx_count": 1
+  },
+  "phases": [
+    0,
+    1,
+    2,
+    6,
+    7,
+    9
+  ],
+  "data_summary": {
+    "operation": "secure_data_summary",
+    "authenticated_frames": 20,
+    "rejected_frames": 0,
+    "group_frames": 20,
+    "pairwise_frames": 0,
+    "reflected_discover_frames": 1,
+    "matched_offers": 1,
+    "lease_acquired": false
+  },
+  "request_sent": true,
+  "ack_observed": false,
+  "release_sent": false,
+  "server_lease_state_known": false,
+  "offline_audit_pending": false,
+  "new_analysis_h2c_submissions": 0,
+  "new_analysis_network_submissions": 0,
+  "pcap_sha256": "48bc45f3d22e0d3f0a20bb79f2cf14641dcbeea1d9a1f94a9bfd7e90765435d3",
+  "evidence": {
+    "artifacts/supplicant-stage170/paired.json": "5cf5b387316a8c49e4399d6358bd814e67b032290e9edf4f625e15e3d7c56227",
+    "artifacts/supplicant-stage170/probe/attempt.json": "d924b2b268edbc2c7a65b1802575eb8adb3bc59663c67fc269765dd0207015a2",
+    "artifacts/supplicant-stage170/probe/probe.jsonl": "534c5654af56136d7b2a85304696d4cbffaf5df0431db1b57aef5a364c18a8fa",
+    "artifacts/supplicant-stage170/probe/probe.stderr": "4e4d416c840f111a1c6d8d69f2e092b50961d185f6ee5bc3bd6e496827a64b4f",
+    "artifacts/supplicant-stage170/probe/capture/tx-4.bin": "cba0ab16c78affc1d8442baf9e7dc34578e92e0a580579bfd00c206454f49d2e",
+    "artifacts/tx-report-stage171-native.jsonl": "32dd1cf322e590ea69e4eb5fb64562fd78114deb50ce8977951739722428b5cc"
+  },
+  "offline_audit": {
+    "summary": {
+      "result": "offline_wpa2_audited",
+      "m2_reproduced": true,
+      "m3_authenticated": true,
+      "m4_reproduced": true,
+      "recorded_discover_verified": true,
+      "protected_frames": 22,
+      "authenticated_frames": 22,
+      "rejected_frames": 0,
+      "pairwise_frames": 0,
+      "group_frames": 22,
+      "matched_acks": 0,
+      "recorded_request_verified": true,
+      "recorded_release_verified": false,
+      "server_release_confirmed": false,
+      "matched_offers": 1,
+      "reflected_discover_frames": 1,
+      "h2c_submissions": 0,
+      "network_submissions": 0
+    },
+    "audit_sha256": "d8d4753952547268fa9b03027124dc10f4e6cdd66ce48ea1c41cc73592de6a01",
+    "all_input_hashes_verified": true,
+    "matching_reflected_request_frames": 1,
+    "dhcp_ack_or_nak_frames": 0
+  }
+}

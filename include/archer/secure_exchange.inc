@@ -122,7 +122,31 @@
 #ifdef ARCHER_DHCP_LEASE
                                     const auto request=ccmp->encrypt_to_ap(dhcp_selecting.issue_request(unsigned(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now()-acquisition_started).count())),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::request));
                                     secure_send(archer::SecureFramePhase::request,archer::secure_tx_packet(archer::SecureFramePhase::request,request));
-                                    secure_wait([&]{return dhcp_ack;},10000);secure_confirm();
+#ifdef ARCHER_EAPOL_RETRY
+                                    const auto request_started=std::chrono::steady_clock::now();
+                                    secure_wait([&]{return (dhcp_ack||dhcp_nak)&&bool(probe_report);},archer::dhcp_discover_backoff_ms(0,arc4random_uniform(2001)),false,true);
+                                    if(dhcp_nak)throw std::runtime_error("Authenticated DHCP NAK; no REQUEST retry");
+                                    archer::require_secure_discover_report(probe_report,"REQUEST");
+                                    std::cout<<"{\"operation\":\"secure_request_report\",\"tag\":11,\"tx_done\":true}"<<std::endl;
+                                    secure_confirm();probe_submitted=false;
+                                    receive(0,true);receive(1,true);
+                                    if(dhcp_nak)throw std::runtime_error("Authenticated DHCP NAK before retry");
+                                    if(!dhcp_ack){
+                                        const auto seconds=std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now()-acquisition_started).count();
+                                        const auto retry=ccmp->encrypt_to_ap(dhcp_selecting.issue_request_retry(unsigned(seconds)),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::request_retry));
+                                        std::cout<<"{\"operation\":\"secure_request_retry\",\"ordinal\":1,\"same_xid\":true,\"fresh_pn_and_sequence\":true,\"secs\":"<<seconds<<"}"<<std::endl;
+                                        secure_send(archer::SecureFramePhase::request_retry,archer::secure_tx_packet(archer::SecureFramePhase::request_retry,retry));
+                                        const auto elapsed=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now()-request_started).count();
+                                        secure_wait([&]{return (dhcp_ack||dhcp_nak)&&bool(probe_report);},unsigned(std::max<long long>(0,10000-elapsed)));
+                                        if(dhcp_nak)throw std::runtime_error("Authenticated DHCP NAK after REQUEST retry");
+                                        archer::require_secure_discover_report(probe_report,"REQUEST");
+                                        std::cout<<"{\"operation\":\"secure_request_report\",\"tag\":10,\"tx_done\":true}"<<std::endl;
+                                        secure_confirm();probe_submitted=false;
+                                    }
+#else
+                                    secure_wait([&]{return dhcp_ack||dhcp_nak;},10000);
+                                    if(dhcp_nak)throw std::runtime_error("Authenticated DHCP NAK");secure_confirm();
+#endif
                                     secure_lease_acquired=true;
                                     std::cout<<"{\"operation\":\"secure_dhcp_ack\",\"ccmp_authenticated\":true,\"lease_acknowledged\":true,\"os_interface\":false}"<<std::endl;
                                     if(dhcp_server_mac[0]&1)throw std::runtime_error("DHCP server source MAC is not unicast");

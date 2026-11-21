@@ -1,0 +1,50 @@
+{
+  "stage": 167,
+  "date": "2026-11-24",
+  "status": "recovery_stopped_iqk_rx_failure",
+  "context": "DIRTY",
+  "remaining_sequences": 227,
+  "epoch_id": "8d14e782-25b7-4db2-83a5-89cc301f4795",
+  "bootstrap_status": "completed",
+  "channel9_iqk": {
+    "tx_fail": [
+      0,
+      0
+    ],
+    "rx_fail": [
+      0,
+      1
+    ],
+    "channels": [
+      9,
+      9
+    ],
+    "phy": 0,
+    "version": 85,
+    "status": 0,
+    "flags_clear": false
+  },
+  "new_wifi_attempt_executed": false,
+  "acq_report_contrast_executed": false,
+  "automatic_retry": false,
+  "evidence": {
+    "artifacts/recovery-stage167-switch.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage167-cold-after.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage167-cold-after.jsonl": "1a03fee0042644a3582a55ec7b06e0dacb65488244ce7bc726865261af65460a",
+    "artifacts/recovery-stage167-bootstrap.stdout": "e42bdc1f14ba38053a336c9bbd012b95d9730f3934752035d1e69ec221f0eb28",
+    "artifacts/recovery-stage167-epoch.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage167-epoch.stdout": "167e3b020efbe53008efb2dc870bbe503d0b84df6c10c6cc9bc608e19bdcca33",
+    "artifacts/recovery-stage167-cold.stderr": "bb290de066b96505330ffddbc69ce66d81be883be24ac81a04faed4239b3bf26",
+    "artifacts/recovery-stage167-bootstrap.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage167-switch.jsonl": "4e98b2d762fcffdea51ba266a36e0f45b3e35d65264bd5aa3c8409a1b9fba0f9",
+    "artifacts/recovery-stage167-usb-reconnected.json": "d96c35195699a98a5a93b4317910ba06291fd097a235e68c1166c3fe9a82193e",
+    "artifacts/recovery-stage167-channel9.stderr": "9825b4be300cb937751ca2cc48827d28a4d70848405c1fd0bc8d38fbf268c8ac",
+    "artifacts/recovery-stage167-channel9.jsonl": "68fd127261500614f3846889d80d7a44e51627e2b1184e32e2953835ff8d89bb",
+    "artifacts/recovery-stage167-usb-absence.json": "5678ee1cb414bb0c8fe3bf613d65926bbf70123bc2d4797e32db1e076c493c07",
+    "artifacts/recovery-stage167-cold.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/iqk-stage167-audit.cpp": "90899599a52a422427ef9d4e8865960e631ff4d35c7cdea7ceb4669f5ce861f4",
+    "artifacts/iqk-stage167-audit.jsonl": "c7bac719e35b4ebc02db156fd5316eb5c6a5e1975e23116a39463de4fe489351",
+    "artifacts/calibration-stage167/rx-17.bin": "d9e121925670dab9fd68d15c9ce627538e70b4e22e59fa6eefdd9be830aa7f2c",
+    "artifacts/epoch-stage167/epoch.json": "5684e046e779ca52fe709e8faa589f459c8993ce0a526c7f67f68ac85eeadf57"
+  }
+}

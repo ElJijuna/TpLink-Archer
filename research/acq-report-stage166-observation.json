@@ -1,0 +1,59 @@
+{
+  "stage": 166,
+  "date": "2026-11-24",
+  "status": "acq_report_contrast_built_recovery_pending",
+  "attempt165": {
+    "phases": [
+      0,
+      1,
+      2,
+      6,
+      7
+    ],
+    "summary": {
+      "operation": "secure_data_summary",
+      "authenticated_frames": 8,
+      "rejected_frames": 0,
+      "group_frames": 8,
+      "pairwise_frames": 0,
+      "reflected_discover_frames": 1,
+      "matched_offers": 1,
+      "lease_acquired": false
+    },
+    "tx_reports": 0,
+    "request_sent": false,
+    "lease_acquired": false,
+    "cmac_w0": "0x200004",
+    "context": "DIRTY",
+    "remaining_sequences": 206
+  },
+  "finding": {
+    "mgq_report_bit": 21,
+    "acq_report_bit": 20,
+    "observed_acq_enabled": false,
+    "contrast_w0": "0x00300004",
+    "radio_effect_verified": false
+  },
+  "validation": {
+    "python_tests": 133,
+    "cpp_suites_passed": true,
+    "architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "evidence": {
+    "artifacts/supplicant-stage165/paired.json": "75f71c80c8339f2da279aee8baac86c118706cd58e946ee89805e9f724f52556",
+    "artifacts/supplicant-stage165/probe/attempt.json": "8f49112d8baadf3b1cd436989c86709267925b43fcf2d62f5d0f546382e549bb",
+    "artifacts/supplicant-stage165/probe/probe.jsonl": "418117cbd34b0f860063eefb93034508253ae62229d1c4f971d91ce64c093813",
+    "artifacts/supplicant-stage165/probe/probe.stderr": "1118e1fe02a5c38c6f184a1eae599afc2daad671941385a3e956d9680a679d06",
+    "artifacts/supplicant-stage165/probe/capture/tx-4.bin": "f548f05bc5324bddc9f2d26f453683f1b95b2ef5a4dfe736650876894fb29342",
+    "artifacts/tx-report-stage166-native.jsonl": "f0f4faf290beed4ec1acd10a3c5e3bdff904ca1b3ea54370aabde875d9ba0d2e",
+    "artifacts/acq-report-stage166-validation.log": "ecba2a7cef5511c51f6e6d7c5ed50de9d306d05554ac079f44795c563542ec65",
+    "artifacts/archer-special-dhcp-supplicant-stage166": "0377bbf773718fd06f0e9a09055d7bf3382203203c2dee21e97c730c19a3b4bd",
+    "include/archer/interface_tables.hpp": "feca6e2308fd69a920a15de35fd59b3e1768fc48663dcc020836846a5f1596f9",
+    "include/archer/interface_lifecycle.hpp": "118eb52cca8fce95a370017a60eabb143f84fa21f6cd344fd4d727da5686c4cd",
+    "src/macos_context_rx.cpp": "d91bf44111c8273498927ea8ca728b4621c2b8d0d62c8297d0b81d7d89e9d798",
+    "tests/interface_lifecycle_test.cpp": "6f1940804f23bf4429906c781b731a6bd2ca340b2ee64287c1897ed60a810514"
+  }
+}

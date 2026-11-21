@@ -18,8 +18,8 @@ int main(int argc,char** argv){
   auto pmk=archer::pmk_from_credential_pipe(fd);archer::SecretBytes<32> comparison_pmk;
   if(argc==3)std::copy(pmk.bytes.begin(),pmk.bytes.end(),comparison_pmk.bytes.begin());
   const fs::path dir=argv[1];
-  unsigned m4_index=3,data_index=4;
-  if(fs::exists(dir/"secure-layout.txt")){auto bytes=read_capture(dir/"secure-layout.txt");if(std::string(bytes.begin(),bytes.end())!="wpa2-phase-layout-v1\n2 6 7\n")throw std::runtime_error("Unsupported capture phase layout");m4_index=6;data_index=7;}
+  unsigned m4_index=3,data_index=4,release_index=10;bool request_retry_layout=false;
+  if(fs::exists(dir/"secure-layout.txt")){auto bytes=read_capture(dir/"secure-layout.txt");const std::string layout(bytes.begin(),bytes.end());request_retry_layout=layout=="wpa2-phase-layout-v2\n2 6 7 9 10 11 12\n";if(request_retry_layout)release_index=11;if(!request_retry_layout&&layout!="wpa2-phase-layout-v1\n2 6 7\n")throw std::runtime_error("Unsupported capture phase layout");m4_index=6;data_index=7;}
   auto m2_packet=read_capture(dir/"secure-tx-2.bin"),m4_packet=read_capture(dir/("secure-tx-"+std::to_string(m4_index)+".bin")),data_packet=read_capture(dir/("secure-tx-"+std::to_string(data_index)+".bin"));
   if(m2_packet.size()!=217||m4_packet.size()!=195||data_packet.size()<104)throw std::runtime_error("Unexpected recorded TX extent");
   std::vector<std::uint8_t> m2(m2_packet.begin()+96,m2_packet.end()),m4(m4_packet.begin()+96,m4_packet.end());
@@ -65,7 +65,7 @@ int main(int argc,char** argv){
     std::cout<<"{\"operation\":\"offline_authenticated_data\",\"group\":"<<(broadcast?"true":"false")<<",\"bytes\":"<<b.size()<<",\"ether_type\":"<<ether<<",\"udp_source\":"<<sport<<",\"udp_destination\":"<<dport<<",\"dhcp_message_type\":"<<message<<",\"xid_matches\":"<<(xid_match?"true":"false")<<",\"chaddr_matches\":"<<(chaddr_match?"true":"false")<<",\"arp_operation\":"<<arp_operation<<",\"arp_sender_ip_zero\":"<<(arp_sender_zero?"true":"false")<<",\"arp_target_ip_zero\":"<<(arp_target_zero?"true":"false")<<",\"arp_sender_is_ap\":"<<(arp_sender_ap?"true":"false")<<",\"arp_target_is_station\":"<<(arp_target_station?"true":"false")<<",\"matches_recorded_discover\":"<<(echo?"true":"false")<<",\"strict_offer\":"<<(offer?"true":"false")<<",\"strict_ack\":"<<(ack?"true":"false")<<"}"<<std::endl;
    }catch(const std::exception&){++rejected;}
   }
-  bool request_verified=false,release_verified=false;std::uint64_t request_pn=0;
+  bool request_verified=false,release_verified=false,request_retry_verified=false;std::uint64_t request_pn=0;
   const auto verify_tx=[&](const fs::path& path,std::uint64_t& packet_pn){
    auto packet=read_capture(path);if(packet.size()!=440)throw std::runtime_error("Unexpected recorded data TX extent");
    const auto* frame=packet.data()+64;const auto size=packet.size()-64;
@@ -80,9 +80,16 @@ int main(int argc,char** argv){
    const auto request_packet=read_capture(dir/"secure-tx-9.bin");
    if(request_pn<=pn||!std::all_of(request_packet.begin()+80,request_packet.begin()+86,[](auto b){return b==255;})||request.bytes!=archer::dhcp_selecting_request(xid,*selected,seconds))throw std::runtime_error("Recorded REQUEST does not reproduce selected offer");request_verified=true;
   }
-  if(m4_index==6&&fs::exists(dir/"secure-tx-10.bin")){
+  if(request_retry_layout&&fs::exists(dir/"secure-tx-10.bin")){
+   if(!request_verified||!selected)throw std::runtime_error("Recorded REQUEST retry without selected original");
+   std::uint64_t retry_pn=0;const auto retry=verify_tx(dir/"secure-tx-10.bin",retry_pn);const auto packet=read_capture(dir/"secure-tx-10.bin");
+   const auto original=verify_tx(dir/"secure-tx-9.bin",request_pn);
+   if(retry_pn<=request_pn||archer::eapol_be16(retry.bytes.data()+44)<archer::eapol_be16(original.bytes.data()+44)||retry.bytes!=archer::dhcp_selecting_request(xid,*selected,archer::eapol_be16(retry.bytes.data()+44))||!std::all_of(packet.begin()+80,packet.begin()+86,[](auto b){return b==255;}))throw std::runtime_error("Recorded REQUEST retry mismatch");
+   request_pn=retry_pn;request_retry_verified=true;
+  }
+  if(m4_index==6&&fs::exists(dir/("secure-tx-"+std::to_string(release_index)+".bin"))){
    if(!request_verified||!acknowledged)throw std::runtime_error("Recorded RELEASE without matching ACK");
-   std::uint64_t release_pn=0;const auto release=verify_tx(dir/"secure-tx-10.bin",release_pn);const auto packet=read_capture(dir/"secure-tx-10.bin");
+   std::uint64_t release_pn=0;const auto release=verify_tx(dir/("secure-tx-"+std::to_string(release_index)+".bin"),release_pn);const auto packet=read_capture(dir/("secure-tx-"+std::to_string(release_index)+".bin"));
    if(release_pn<=request_pn||release.bytes!=archer::dhcp_release_msdu(xid,*acknowledged)||!std::equal(ack_source.begin(),ack_source.end(),packet.begin()+80))throw std::runtime_error("Recorded RELEASE does not reproduce ACK lease/source");release_verified=true;
   }
   if(argc==3){
@@ -105,6 +112,6 @@ int main(int argc,char** argv){
    const bool reproduced=attempt_hs.issue_m2()==expected;
    std::cout<<"{\"operation\":\"offline_credential_comparison\",\"reference_m3_authenticated\":true,\"attempt_m2_reproduced\":"<<(reproduced?"true":"false")<<",\"h2c_submissions\":0,\"network_submissions\":0}"<<std::endl;
   }
-  std::cout<<"{\"result\":\"offline_wpa2_audited\",\"m2_reproduced\":true,\"m3_authenticated\":true,\"m4_reproduced\":true,\"recorded_discover_verified\":true,\"protected_frames\":"<<protected_frames.size()<<",\"authenticated_frames\":"<<accepted<<",\"rejected_frames\":"<<rejected<<",\"pairwise_frames\":"<<pairwise<<",\"group_frames\":"<<group<<",\"matched_acks\":"<<acks<<",\"recorded_request_verified\":"<<(request_verified?"true":"false")<<",\"recorded_release_verified\":"<<(release_verified?"true":"false")<<",\"server_release_confirmed\":false,\"matched_offers\":"<<offers<<",\"reflected_discover_frames\":"<<reflected<<",\"h2c_submissions\":0,\"network_submissions\":0}"<<std::endl;return 0;
+  std::cout<<"{\"result\":\"offline_wpa2_audited\",\"m2_reproduced\":true,\"m3_authenticated\":true,\"m4_reproduced\":true,\"recorded_discover_verified\":true,\"protected_frames\":"<<protected_frames.size()<<",\"authenticated_frames\":"<<accepted<<",\"rejected_frames\":"<<rejected<<",\"pairwise_frames\":"<<pairwise<<",\"group_frames\":"<<group<<",\"matched_acks\":"<<acks<<",\"recorded_request_verified\":"<<(request_verified?"true":"false")<<",\"recorded_release_verified\":"<<(release_verified?"true":"false")<<",\"recorded_request_retry_verified\":"<<(request_retry_verified?"true":"false")<<",\"server_release_confirmed\":false,\"matched_offers\":"<<offers<<",\"reflected_discover_frames\":"<<reflected<<",\"h2c_submissions\":0,\"network_submissions\":0}"<<std::endl;return 0;
  }catch(const std::exception& e){std::cerr<<"Offline audit: "<<e.what()<<'\n';return 2;}
 }

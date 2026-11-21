@@ -32,8 +32,8 @@ RECOVERED_HISTORY=ROOT/'research/recovery-stage137-observation.json'
 RECOVERED_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-wpa2-recovered-stage138-attempted'
 LEASE_HISTORY=ROOT/'research/recovery-stage147-observation.json'
 LEASE_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-dhcp-lease-stage148-attempted'
-SUPPLICANT_HISTORY=ROOT/'research/recovery-stage164-observation.json'
-SUPPLICANT_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage165-attempted'
+SUPPLICANT_HISTORY=ROOT/'research/recovery-stage173-observation.json'
+SUPPLICANT_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage174-attempted'
 
 def validate_recovered_history(history,ledger,epoch_id,expected_stage=137):
     if (history.get('stage')!=expected_stage or history.get('status')!='cold_recovery_and_context_verified'
@@ -52,13 +52,13 @@ def validate_recovered_history(history,ledger,epoch_id,expected_stage=137):
 def admission(recovered=False,lease=False,supplicant=False):
     if supplicant:lease=True
     if lease:recovered=True
-    readiness=json.loads((ROOT/('research/supplicant-stage165-observation.json' if supplicant else 'research/dhcp-stage148-observation.json' if lease else 'research/wpa2-stage138-observation.json' if recovered else 'research/wpa2-stage105-observation.json')).read_text())
-    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=(165 if supplicant else 148 if lease else 138 if recovered else 105):raise ValueError('WPA2 state/build not prepared: '+str(readiness.get('status')))
+    readiness=json.loads((ROOT/('research/supplicant-stage174-observation.json' if supplicant else 'research/dhcp-stage148-observation.json' if lease else 'research/wpa2-stage138-observation.json' if recovered else 'research/wpa2-stage105-observation.json')).read_text())
+    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=(174 if supplicant else 148 if lease else 138 if recovered else 105):raise ValueError('WPA2 state/build not prepared: '+str(readiness.get('status')))
     for name,sha in readiness['build_evidence'].items():
         path=(ROOT/name).resolve()
         if not path.is_relative_to(ROOT) or digest(path)!=sha:raise ValueError('Tested WPA2 build/source changed')
     history=json.loads((SUPPLICANT_HISTORY if supplicant else LEASE_HISTORY if lease else RECOVERED_HISTORY if recovered else HISTORY).read_text())
-    if recovered:validate_recovered_history(history,LEDGER.read_bytes(),Path(str(LEDGER)+'.epoch-id').read_text().strip(),164 if supplicant else 147 if lease else 137)
+    if recovered:validate_recovered_history(history,LEDGER.read_bytes(),Path(str(LEDGER)+'.epoch-id').read_text().strip(),173 if supplicant else 147 if lease else 137)
     else:validate_history(history,LEDGER.read_bytes())
     for name,sha in history['evidence'].items():
         path=(ROOT/name).resolve()
@@ -76,6 +76,8 @@ def admission(recovered=False,lease=False,supplicant=False):
     if lease and (ROOT/'artifacts/37ad-0104-special-channel9-dhcp-lease-stage141-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage141 reservation must remain intact')
     if supplicant and LEASE_MARKER.read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage148 reservation must remain intact')
     if supplicant and (ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage162-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage162 reservation must remain intact')
+    if supplicant and (ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage165-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage165 reservation must remain intact')
+    if supplicant and (ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage170-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage170 reservation must remain intact')
     if (SUPPLICANT_MARKER if supplicant else LEASE_MARKER if lease else RECOVERED_MARKER if recovered else MARKER).exists():raise ValueError('WPA2 attempt already reserved; no retry')
 
 
@@ -161,9 +163,9 @@ def validate_lease_result(rows):
 def validate_supplicant_result(rows):
     writes=[r for r in rows if r.get('operation')=='secure_usb_write'];phases=[r.get('phase') for r in writes]
     retries=[r for r in rows if r.get('operation')=='secure_m2_response_retry'];count=len(retries)
-    expected=[0,1,2]+list(range(3,3+count))+[6,7]+([8] if 8 in phases else [])+[9,10,11]
+    expected=[0,1,2]+list(range(3,3+count))+[6,7]+([8] if 8 in phases else [])+[9]+([10] if 10 in phases else [])+[11,12]
     if count>3 or phases!=expected or any(r.get('status')!=0 for r in writes):raise ValueError('Bounded supplicant phase sequence required')
-    if [r.get('bytes') for r in writes]!=[94 if p==0 else 130 if p==1 else 217 if p<=5 else 195 if p==6 else 90 if p==11 else 440 for p in phases] or [r.get('endpoint') for r in writes]!=[5 if p in (0,1,11) else 9 for p in phases]:raise ValueError('Supplicant lengths/endpoints mismatch')
+    if [r.get('bytes') for r in writes]!=[94 if p==0 else 130 if p==1 else 217 if p<=5 else 195 if p==6 else 90 if p==12 else 440 for p in phases] or [r.get('endpoint') for r in writes]!=[5 if p in (0,1,12) else 9 for p in phases]:raise ValueError('Supplicant lengths/endpoints mismatch')
     if [r.get('ordinal') for r in retries]!=list(range(1,count+1)) or any(r.get('same_anonce') is not True or r.get('replay_advanced') is not True for r in retries):raise ValueError('Bounded matching M1 response metadata required')
     write_pos={r['phase']:i for i,r in enumerate(rows) if r.get('operation')=='secure_usb_write'}
     for ordinal,r in enumerate(retries):
@@ -172,30 +174,42 @@ def validate_supplicant_result(rows):
     m3=[i for i,r in enumerate(rows) if r.get('operation')=='secure_m3_authenticated']
     if len(m3)!=1 or not write_pos[2+count]<m3[0]<write_pos[6]:raise ValueError('M3 must authenticate before M4')
     reports=[r for r in rows if r.get('operation')=='single_probe_tx_report']
-    if {r.get('tag') for r in reports}!={12,13,14}:raise ValueError('Distinct DISCOVER/RELEASE/deauth reports required')
+    if {r.get('tag') for r in reports}!=({11,12,13,14}|({10} if 10 in phases else set())):raise ValueError('Distinct data and cleanup reports required')
     discover_reports=[(i,r) for i,r in enumerate(rows) if r.get('operation')=='single_probe_tx_report' and r.get('tag')==12]
     admissions=[i for i,r in enumerate(rows) if r.get('operation')=='secure_discover_report' and r.get('tag')==12 and r.get('tx_done') is True and r.get('server_delivery_confirmed') is False]
     if len(discover_reports)!=1 or len(admissions)!=1:raise ValueError('Unique DISCOVER TX report admission required')
     report_pos,report=discover_reports[0]
     next_data=write_pos[8] if 8 in write_pos else write_pos[9]
     if report.get('state')!=0 or report.get('tx_count')!=1 or not write_pos[7]<report_pos<admissions[0]<next_data:raise ValueError('DISCOVER report must precede retry or REQUEST')
+    if any(r.get('operation')=='secure_dhcp_nak' for r in rows):raise ValueError('NAK cannot produce successful lease')
+    for tag,phase,next_phase in [(11,9,10 if 10 in phases else 11)]+([(10,10,11)] if 10 in phases else []):
+        matching=[(i,r) for i,r in enumerate(rows) if r.get('operation')=='single_probe_tx_report' and r.get('tag')==tag]
+        admissions=[i for i,r in enumerate(rows) if r.get('operation')=='secure_request_report' and r.get('tag')==tag and r.get('tx_done') is True]
+        if len(matching)!=1 or len(admissions)!=1:raise ValueError('Unique REQUEST report required')
+        position,report=matching[0]
+        if report.get('state')!=0 or report.get('tx_count')!=1 or not write_pos[phase]<position<admissions[0]<write_pos[next_phase]:raise ValueError('REQUEST report must precede next submission')
+    request_retries=[r for r in rows if r.get('operation')=='secure_request_retry']
+    if len(request_retries)!=(1 if 10 in phases else 0) or any(r.get('ordinal')!=1 or r.get('same_xid') is not True or r.get('fresh_pn_and_sequence') is not True or not 3<=r.get('secs',-1)<=30 for r in request_retries):raise ValueError('One fresh REQUEST retry required')
+    if request_retries and not write_pos[9]<rows.index(request_retries[0])<write_pos[10]:raise ValueError('REQUEST retry chronology mismatch')
     canonical=[]
     for row in copy.deepcopy(rows):
-        if row.get('operation')=='single_probe_tx_report' and row.get('tag')==12:continue
-        if row.get('operation')=='secure_discover_report':continue
+        if row.get('operation')=='single_probe_tx_report' and row.get('tag') in (10,11,12):continue
+        if row.get('operation') in ('secure_discover_report','secure_request_report','secure_request_retry'):continue
         if row.get('operation')=='secure_usb_write':
-            if row['phase'] in (3,4,5):continue
-            if row['phase']>=6:row['phase']-=3
+            if row['phase'] in (3,4,5,10):continue
+            if row['phase']>=11:row['phase']-=4
+            elif row['phase']>=6:row['phase']-=3
         if row.get('operation')=='single_probe_tx_report':row['tag']-=4
         canonical.append(row)
-    result=validate_lease_result(canonical);result['m1_response_retries']=count;return result
+    result=validate_lease_result(canonical);result['m1_response_retries']=count;result['request_retransmissions']=len(request_retries);return result
 
 
 def execute(output,capture_guard,credential_fd,recovered=False,lease=False,supplicant=False):
     if supplicant:lease=True
     if lease:recovered=True
     output=output.resolve();output.mkdir();fds=[]
-    report=dict(status='preflight',attempt='eapol_retry' if supplicant else 'dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',wifi_sequences=list(range(100,112) if supplicant else range(67,76) if lease else range(52,58) if recovered else range(16,22)),cleanup_report_tag=14 if supplicant else 10 if lease else 6 if recovered else 0,automatic_retry=False,protocol_discover_retransmissions_max=1 if lease else 0,protocol_m1_response_retries_max=3 if supplicant else 0)
+    report=dict(status='preflight',attempt='eapol_retry' if supplicant else 'dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',wifi_sequences=list(range(100,113) if supplicant else range(67,76) if lease else range(52,58) if recovered else range(16,22)),cleanup_report_tag=14 if supplicant else 10 if lease else 6 if recovered else 0,automatic_retry=False,protocol_discover_retransmissions_max=1 if lease else 0,protocol_m1_response_retries_max=3 if supplicant else 0)
+    if supplicant:report.update(discover_tx_done_required_before_request=True,request_tx_done_required=True,protocol_request_retransmissions_max=1)
     try:
         owner=os.open(str(LEDGER)+'.workflow',os.O_RDWR|os.O_CREAT|os.O_NOFOLLOW,0o600);fds.append(owner);fcntl.flock(owner,fcntl.LOCK_EX|fcntl.LOCK_NB)
         admission(recovered,lease,supplicant)

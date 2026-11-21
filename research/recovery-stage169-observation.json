@@ -1,0 +1,84 @@
+{
+  "stage": 169,
+  "date": "2026-11-24",
+  "status": "cold_recovery_and_context_verified",
+  "context": "CLEAN",
+  "epoch_transition": "CLEAN",
+  "remaining_sequences": 215,
+  "ledger_sha256": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+  "epoch_boundary": {
+    "status": "committed",
+    "epoch_id": "88c619a3-cd2a-4836-8893-f961aefc92bb",
+    "old_ledger_sha256": "f0d4a30f55005170ac38d9d831ec31005f5d2f59dfa666fce2e0e2b2710e90fa",
+    "firmware_download_writes": 212,
+    "h2c_submissions": 0,
+    "available_after": 254
+  },
+  "bootstrap": {
+    "status": "completed",
+    "network_entries": 17
+  },
+  "channel9_rfk_commands": 8,
+  "context_check": {
+    "ack_steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8
+    ],
+    "network_tx_paused": true,
+    "result": {
+      "result": "context_cleanup_acknowledged",
+      "transfers": 374,
+      "normal_packets": 299,
+      "beacons": 234,
+      "network_tx_paused": true,
+      "initial_macid_pause_measured": false
+    }
+  },
+  "target_passive_observation": {
+    "bssid_hex": "50926a110666",
+    "ssid_hex": "457370656369616c",
+    "advertised_ds_channel": 9,
+    "beacons": 73,
+    "probe_responses": 6,
+    "first_observation": 5,
+    "last_observation": 297,
+    "interval_tu": 100,
+    "capability": 6161
+  },
+  "postflight": {
+    "registers": 210,
+    "differences": 0,
+    "network_tx_paused": true
+  },
+  "new_network_submissions": 0,
+  "evidence": {
+    "artifacts/37ad-0104-sequences.bin": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+    "artifacts/37ad-0104-sequences.bin.epoch-id": "46fe1552c436aec38973e6a32f7daef71aec1aeb6a241f657435cba4b8ff7511",
+    "artifacts/recovery-stage169-bootstrap.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage169-context.jsonl": "80f7d1779f4a147c89c57cc1cd0e39a7e2fe3211c74aa645c09e428b0469e1fb",
+    "artifacts/recovery-stage169-cold.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage169-switch.jsonl": "4e98b2d762fcffdea51ba266a36e0f45b3e35d65264bd5aa3c8409a1b9fba0f9",
+    "artifacts/recovery-stage169-context.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage169-switch.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage169-cold-after.jsonl": "1a03fee0042644a3582a55ec7b06e0dacb65488244ce7bc726865261af65460a",
+    "artifacts/recovery-stage169-bootstrap.stdout": "5901b19f90300ca56df218373d783203fe3123acad9aa7abc253d215c770cbd7",
+    "artifacts/recovery-stage169-postflight.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage169-usb-absence.json": "58b1feafbcf057f5d7e6e723f59534d61020d808fa369bfd5b6d2b622beef5e2",
+    "artifacts/recovery-stage169-usb-reconnected.json": "bf7924e7f0e25f050f582295f7e93490d59bc4fde80354fecdc79b6fed7c8e85",
+    "artifacts/recovery-stage169-epoch.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage169-cold-after.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage169-channel9.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage169-cold.stderr": "bb290de066b96505330ffddbc69ce66d81be883be24ac81a04faed4239b3bf26",
+    "artifacts/recovery-stage169-postflight.jsonl": "8b0d633078a222d6dbfb8d2cfe86f074c6e8bd54077ab273ade282b7c969b173",
+    "artifacts/recovery-stage169-channel9.jsonl": "dd5c95c0aed690a8823afaf573d4e6f610633ac2613ad6aab162fc8179575212",
+    "artifacts/recovery-stage169-epoch.stdout": "167e3b020efbe53008efb2dc870bbe503d0b84df6c10c6cc9bc608e19bdcca33",
+    "artifacts/epoch-stage169/epoch.json": "bd596e31955fe20952b6fa1402dedec1b3ab985bbb03cd964401f929ecd486e5",
+    "artifacts/context-channel9-stage169/networks.json": "2178c2475a470f3fb03ca1d0cfa1b632804904abaae5a4df8702525992eef6ae"
+  }
+}

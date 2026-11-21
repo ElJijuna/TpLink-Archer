@@ -26,10 +26,10 @@ inline std::vector<std::uint8_t> dhcp_release_msdu(std::uint32_t xid,const DhcpO
  std::copy(options.begin(),options.end(),msdu.begin()+276);return msdu;
 }
 // Protocol only. The caller must authenticate CCMP before providing an MSDU.
-// No address configuration, submission, retransmission or delivery claim here.
+// No address configuration, submission or delivery claim here; one explicit protocol retry.
 class DhcpSelectingExchange {
- enum class State {selecting,offered,request_issued,acknowledged,release_issued};
- State state_=State::selecting;std::uint32_t xid_;DhcpOffer selected_{};
+ enum class State {selecting,offered,request_issued,rejected,acknowledged,release_issued};
+ State state_=State::selecting;std::uint32_t xid_;DhcpOffer selected_{};bool request_retried_=false;unsigned request_seconds_=0;
 public:
  explicit DhcpSelectingExchange(std::uint32_t xid):xid_(xid){if(!xid)throw std::invalid_argument("Nonzero DHCP transaction required");}
  bool accept_authenticated_offer(const std::vector<std::uint8_t>& msdu){
@@ -38,7 +38,15 @@ public:
  }
  std::vector<std::uint8_t> issue_request(unsigned elapsed_seconds=0){
   if(state_!=State::offered)throw std::logic_error("DHCP REQUEST order/retry forbidden");
-  auto request=dhcp_selecting_request(xid_,selected_,elapsed_seconds);state_=State::request_issued;return request;
+  auto request=dhcp_selecting_request(xid_,selected_,elapsed_seconds);state_=State::request_issued;request_seconds_=elapsed_seconds;return request;
+ }
+ std::vector<std::uint8_t> issue_request_retry(unsigned elapsed_seconds){
+  if(state_!=State::request_issued||request_retried_||elapsed_seconds<request_seconds_)throw std::logic_error("Single pending DHCP REQUEST retransmission required");
+  auto request=dhcp_selecting_request(xid_,selected_,elapsed_seconds);request_retried_=true;return request;
+ }
+ bool accept_authenticated_nak(const std::vector<std::uint8_t>& msdu){
+  if(state_!=State::request_issued)return false;auto nak=decode_dhcp_reply(msdu,xid_,6);
+  if(!nak||nak->server!=selected_.server)return false;state_=State::rejected;return true;
  }
  bool accept_authenticated_ack(const std::vector<std::uint8_t>& msdu){
   if(state_!=State::request_issued)return false;auto ack=decode_dhcp_reply(msdu,xid_,5);

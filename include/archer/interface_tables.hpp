@@ -19,9 +19,12 @@ inline std::vector<std::uint8_t> encode_station_macid_pause_sleep(unsigned seque
 // RTL8922A defaults, fw.c default_cmac_tbl_g7/default_dmac_tbl_v2. No I/O here.
 // Both payloads: c0, w0..15, m0..15 =132 bytes. Not direct AX table I/O.
 inline std::vector<std::uint8_t> encode_default_station_cmac_g7(unsigned sequence,
-    unsigned mac_id,bool tx_report_enabled){
+    unsigned mac_id,bool tx_report_enabled,bool acq_report_enabled=false){
     if(mac_id>127)throw std::invalid_argument("CMAC G7 MACID exceeds 7 bits");
-    const std::array<unsigned,16> values{4u|(tx_report_enabled?0x200000u:0u),
+    if(acq_report_enabled&&!tx_report_enabled)throw std::invalid_argument("ACQ report contrast requires management reports enabled");
+    // fw.h CCTLINFO_G7_W0_ACQ_RPT_EN bit20; upstream default enables only MGQ bit21.
+    // Explicit experiment opt-in; preserve the source default for all other contexts.
+    const std::array<unsigned,16> values{4u|(tx_report_enabled?0x200000u:0u)|(acq_report_enabled?0x100000u:0u),
         0x400a0004,0,0,0xffff0000,0x2aa,0xb000,0xb8109,0,0,0,0,0,0,0,0};
     const std::array<unsigned,16> masks{0xfff7ffff,0xffffffff,0xffffffff,0xffffffff,
         0xffffdfff,0xffff7fff,0x80ffffff,0xefffefff,0xffff,0,0,0,0,0,0xffffffff,0x0fffffff};

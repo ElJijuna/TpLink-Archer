@@ -37,7 +37,7 @@ int main(int argc,char** argv){
 #ifdef ARCHER_WPA2_ONCE
  constexpr unsigned probe_channel=9;
 #ifdef ARCHER_EAPOL_RETRY
- const char* marker_path="artifacts/37ad-0104-special-channel9-eapol-retry-stage165-attempted";
+ const char* marker_path="artifacts/37ad-0104-special-channel9-eapol-retry-stage174-attempted";
 #elif defined(ARCHER_DHCP_LEASE)
  const char* marker_path="artifacts/37ad-0104-special-channel9-dhcp-lease-stage148-attempted";
 #elif defined(ARCHER_WPA2_RECOVERED)
@@ -141,7 +141,7 @@ int main(int argc,char** argv){
 #endif
     if(CCRandomGenerateBytes(&dhcp_xid,sizeof(dhcp_xid))!=kCCSuccess||!dhcp_xid)throw std::runtime_error("DHCP random transaction unavailable");
 #ifdef ARCHER_DHCP_LEASE
-    archer::DhcpSelectingExchange dhcp_selecting(dhcp_xid);bool dhcp_ack=false;
+    archer::DhcpSelectingExchange dhcp_selecting(dhcp_xid);bool dhcp_ack=false,dhcp_nak=false;
     std::array<std::uint8_t,6> dhcp_server_mac{};
 #endif
 #endif
@@ -172,7 +172,7 @@ int main(int argc,char** argv){
     const std::filesystem::path dir=argv[2];
     if(!std::filesystem::create_directory(dir))throw std::runtime_error("Capture directory must be new");
 #ifdef ARCHER_EAPOL_RETRY
-    {std::ofstream layout(dir/"secure-layout.txt");layout<<"wpa2-phase-layout-v1\n2 6 7\n";layout.close();if(!layout)throw std::runtime_error("Capture layout preservation failed");}
+    {std::ofstream layout(dir/"secure-layout.txt");layout<<"wpa2-phase-layout-v2\n2 6 7 9 10 11 12\n";layout.close();if(!layout)throw std::runtime_error("Capture layout preservation failed");}
 #endif
     const bool persistent_async=std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management-async";
     MacRegisterBus bus;MacBulkChannel usb(persistent_async);
@@ -201,6 +201,9 @@ int main(int argc,char** argv){
         archer::InterfaceContextLifecycle session(context,sequences,true,true,false
 #ifdef ARCHER_SINGLE_PROBE
             ,archer::StationCapability::legacy,0,true
+#ifdef ARCHER_EAPOL_RETRY
+            ,true // Controlled ACQ_RPT_EN contrast, gated by DISCOVER TX_DONE.
+#endif
 #endif
         );
 #ifdef ARCHER_SINGLE_PROBE
@@ -274,7 +277,7 @@ int main(int argc,char** argv){
                     }
                     if(ccmp&&(!dhcp_offer
 #ifdef ARCHER_DHCP_LEASE
-                         ||!dhcp_ack
+                         ||(!dhcp_ack&&!dhcp_nak)
 #endif
                     )){
                         const auto data=secure_data.observe(*ccmp,frame,size,dhcp_xid,archer::secure_dhcp_broadcast
@@ -283,6 +286,8 @@ int main(int argc,char** argv){
                             if(!dhcp_offer)dhcp_selecting.accept_authenticated_offer(msdu);
                             else if(dhcp_selecting.accept_authenticated_ack(msdu)){
                                 dhcp_ack=true;std::copy_n(frame+16,6,dhcp_server_mac.begin());
+                            }else if(dhcp_selecting.accept_authenticated_nak(msdu)){
+                                dhcp_nak=true;std::cout<<"{\"operation\":\"secure_dhcp_nak\",\"ccmp_authenticated\":true}"<<std::endl;
                             }
                          }
 #endif

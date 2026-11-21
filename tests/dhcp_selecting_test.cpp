@@ -38,5 +38,14 @@ int main(){
  // A duplicate critical option must not replace the first one.
  auto duplicate=ack;duplicate[291]=53;duplicate[292]=1;duplicate[293]=5;duplicate[294]=255;
  assert(!decode_dhcp_reply(duplicate,0x12345678,5));
+ DhcpSelectingExchange retried(0x12345678);assert(retried.accept_authenticated_offer(offer));retried.issue_request(3);
+ auto second=retried.issue_request_retry(7);assert(eapol_be16(second.data()+44)==7);
+ rejects([&]{retried.issue_request_retry(8);});assert(retried.accept_authenticated_ack(ack));rejects([&]{retried.issue_request_retry(9);});
+ DhcpSelectingExchange negative(0x12345678);assert(negative.accept_authenticated_offer(offer));negative.issue_request(3);
+ auto nak=reply(6);std::fill(nak.begin()+52,nak.begin()+56,0);
+ assert(!negative.accept_authenticated_nak(reply(6,1)));assert(negative.accept_authenticated_nak(nak));
+ rejects([&]{negative.issue_request_retry(7);});assert(!negative.accept_authenticated_ack(ack));assert(!negative.lease_acknowledged());
+ DhcpSelectingExchange early(0x12345678);rejects([&]{early.issue_request_retry(7);});
+ assert(early.accept_authenticated_offer(offer));early.issue_request(8);rejects([&]{early.issue_request_retry(7);});
  std::cout<<"DHCP selection, matching ACK/lease, REQUEST/RELEASE fields and no-retry state passed\n";
 }

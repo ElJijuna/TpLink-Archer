@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **64 %**
 
-Actualizado: **2026-11-24**, etapa164: el intento162 recibió OFFER y ACK DHCP autenticados y coincidentes. La auditoría163 verificó REQUEST/RELEASE cifrados; falta confirmación del cierre. Recuperación164 completa, contexto CLEAN y215 secuencias libres. Sin interfaz de red. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
+Actualizado: **2026-11-24**, etapa171: el intento162 recibió OFFER y ACK DHCP autenticados y coincidentes. La auditoría163 verificó REQUEST/RELEASE cifrados; falta confirmación del cierre. Contraste170 confirmó TX_DONE de datos al activar ACQ; REQUEST agotó espera de ACK, contexto DIRTY y206 secuencias libres. Sin interfaz de red. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
@@ -32,8 +32,20 @@ En162 se verificó REQUEST/ACK y lease temporal; RELEASE se entregó por USB sin
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 
-Etapa165 preparada: contraste de reporte TX en DISCOVER (tag12), exigido antes de retransmitir o solicitar lease. Si falta, se detiene sin REQUEST. Admisión ligada a recuperación164;133 pruebas Python, suites C++ y ARM/Intel pasan. No hay causa raíz del reporte ausente ni nuevo resultado RF todavía.
-[Contraste165](research/STAGE165.md).
+Etapa172: auditoría171 confirmó REQUEST válido y reflejado, sin ACK/NAK entre22 tramas autenticadas. Una retransmisión REQUEST condicionada a TX_DONE, con PN/secuencia nuevos y bloqueo por NAK, compilada y validada con134 pruebas Python y suites C++; falta recuperación fría y contraste físico. No relanza el ensayo completo.
+[Implementación y límites172](research/STAGE172.md).
+
+Etapa171: ACQ activó el reporte TX de DISCOVER (tag12, TX_DONE/count1), con OFFER válido. REQUEST se entregó por USB pero no hubo ACK aceptado en10s; RELEASE y desautenticación no se ejecutaron. Contexto DIRTY; pendiente auditoría offline para clasificar DHCP guardado. El estado de lease del servidor es desconocido.
+[Resultado y auditoría171](research/STAGE171.md).
+
+Etapas169–170: nueva recuperación fría completa, ocho comandos RFK con IQK sin fallos, ocho ACK de contexto y210 registros verificados; Especial visible en canal9. Contraste ACQ170 admitido sin TX, ligado a la época actual.133 pruebas Python, suites C++ y ARM/Intel pasan. Falta comprobar por radio el reporte de datos.
+[Recuperación169](research/STAGE169.md), [contraste170](research/STAGE170.md).
+
+Etapa167: recuperación detenida por IQK de canal9 con RX fail[0,1] (TX[0,0]), confirmado por replay. Contexto DIRTY; no se ejecutó ACQ ni DHCP. Admisión168 bloqueada, sin reintentos automáticos ni omisión del flag.
+[Recuperación detenida167](research/STAGE167.md).
+
+Etapas165–166: DISCOVER llegó al AP y recibió OFFER, pero faltó TX_DONE; la barrera evitó REQUEST y otro lease. La tabla capturada habilita reportes de gestión y desactiva ACQ/datos. Contraste bit20 preparado y validado con133 pruebas Python, suites C++ y ARM/Intel; falta recuperación167 y prueba física. Contexto de165 DIRTY, no reutilizarlo.
+[Hallazgo y contraste166](research/STAGE166.md).
 
 Etapas163–164: auditoría offline completada, once tramas autenticadas y cero rechazos; REQUEST/RELEASE reproducidos. Recuperación fría nueva completada con Especial visible y210 registros correctos. Sin otro ensayo DHCP. El reporte TX de RELEASE sigue pendiente; no reutilizar162. Pasan132 pruebas Python y suites C++; auditor ARM/Intel compilado.
 [Auditoría163](research/STAGE163.md), [recuperación164](research/STAGE164.md).
