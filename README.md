@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **64 %**
 
-Actualizado: **2026-11-24**, etapa171: el intento162 recibió OFFER y ACK DHCP autenticados y coincidentes. La auditoría163 verificó REQUEST/RELEASE cifrados; falta confirmación del cierre. Contraste170 confirmó TX_DONE de datos al activar ACQ; REQUEST agotó espera de ACK, contexto DIRTY y206 secuencias libres. Sin interfaz de red. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
+Actualizado: **2026-11-24**, etapa174: el intento162 recibió OFFER y ACK DHCP autenticados y coincidentes. La auditoría163 verificó REQUEST/RELEASE cifrados; falta confirmación del cierre. Contraste170 confirmó TX_DONE de datos al activar ACQ; REQUEST agotó espera de ACK. Recuperación173 actual CLEAN,215 secuencias libres e intento174 con una retransmisión REQUEST preparado. Sin interfaz de red. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
@@ -31,6 +31,9 @@ autenticado con XID/chaddr coincidentes tras3361 ms en138. Limpieza CLEAN.
 En162 se verificó REQUEST/ACK y lease temporal; RELEASE se entregó por USB sin reporte TX_DONE. La auditoría163 verificó su contenido y cifrado, sin confirmar entrega. La recuperación164 dejó contexto CLEAN. Faltan cierre fiable, recepción unicast cifrada e interfaz de red.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas173–174: recuperación fría completa con IQK sin flags de fallo, ocho ACK de contexto,210 registros y Especial visible en canal9. Ensayo174 admite una retransmisión REQUEST solo tras TX_DONE, usa PN/secuencia nuevos y se detiene ante NAK.134 pruebas Python, suites C++ y ARM/Intel pasan. Todavía no ejecutado por radio.
+[Recuperación173](research/STAGE173.md), [ensayo174](research/STAGE174.md).
 
 Etapa172: auditoría171 confirmó REQUEST válido y reflejado, sin ACK/NAK entre22 tramas autenticadas. Una retransmisión REQUEST condicionada a TX_DONE, con PN/secuencia nuevos y bloqueo por NAK, compilada y validada con134 pruebas Python y suites C++; falta recuperación fría y contraste físico. No relanza el ensayo completo.
 [Implementación y límites172](research/STAGE172.md).

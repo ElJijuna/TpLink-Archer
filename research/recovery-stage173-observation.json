@@ -1,0 +1,84 @@
+{
+  "stage": 173,
+  "date": "2026-11-24",
+  "status": "cold_recovery_and_context_verified",
+  "context": "CLEAN",
+  "epoch_transition": "CLEAN",
+  "remaining_sequences": 215,
+  "ledger_sha256": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+  "epoch_boundary": {
+    "status": "committed",
+    "epoch_id": "f99dbe27-5d10-4876-bb30-aa835c07f33e",
+    "old_ledger_sha256": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+    "firmware_download_writes": 212,
+    "h2c_submissions": 0,
+    "available_after": 254
+  },
+  "bootstrap": {
+    "status": "completed",
+    "network_entries": 26
+  },
+  "channel9_rfk_commands": 8,
+  "context_check": {
+    "ack_steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8
+    ],
+    "network_tx_paused": true,
+    "result": {
+      "result": "context_cleanup_acknowledged",
+      "transfers": 380,
+      "normal_packets": 341,
+      "beacons": 250,
+      "network_tx_paused": true,
+      "initial_macid_pause_measured": false
+    }
+  },
+  "target_passive_observation": {
+    "bssid_hex": "50926a110666",
+    "ssid_hex": "457370656369616c",
+    "advertised_ds_channel": 9,
+    "beacons": 36,
+    "probe_responses": 11,
+    "first_observation": 3,
+    "last_observation": 333,
+    "interval_tu": 100,
+    "capability": 6161
+  },
+  "postflight": {
+    "registers": 210,
+    "differences": 0,
+    "network_tx_paused": true
+  },
+  "new_network_submissions": 0,
+  "evidence": {
+    "artifacts/37ad-0104-sequences.bin": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+    "artifacts/37ad-0104-sequences.bin.epoch-id": "dc39dd0e0c01057854cd5bd2e4139677d454daec59235297abee1a6ac9e7a866",
+    "artifacts/recovery-stage173-postflight.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage173-usb-reconnected.json": "1bda56278282f1f81bc31bf4c9ecd8d13edb336ce19b53af8ffa4fe266bf7392",
+    "artifacts/recovery-stage173-bootstrap.stdout": "eadf5f80b73d0a2bad094f0824e47cf34b850f28689f4831f3a0c5bbd861e599",
+    "artifacts/recovery-stage173-cold-after.jsonl": "1a03fee0042644a3582a55ec7b06e0dacb65488244ce7bc726865261af65460a",
+    "artifacts/recovery-stage173-epoch.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage173-channel9.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage173-context.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage173-switch.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage173-context.jsonl": "428b0161606b04893ecd7686391f31bf0c18a20535c3418a0413f3646ec5a71f",
+    "artifacts/recovery-stage173-bootstrap.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage173-epoch.stdout": "167e3b020efbe53008efb2dc870bbe503d0b84df6c10c6cc9bc608e19bdcca33",
+    "artifacts/recovery-stage173-postflight.jsonl": "8b0d633078a222d6dbfb8d2cfe86f074c6e8bd54077ab273ade282b7c969b173",
+    "artifacts/recovery-stage173-switch.jsonl": "4e98b2d762fcffdea51ba266a36e0f45b3e35d65264bd5aa3c8409a1b9fba0f9",
+    "artifacts/recovery-stage173-cold.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage173-cold-after.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/recovery-stage173-channel9.jsonl": "75421d808df94764cf49ed336b5b58ff7fdcea6b4e9902cb9120d86324ca4ad1",
+    "artifacts/recovery-stage173-usb-absence.json": "e38b93f499039ce53009a5b8e0ca651e6d23e48f19d4b0c450dfd3319dc7d626",
+    "artifacts/recovery-stage173-cold.stderr": "bb290de066b96505330ffddbc69ce66d81be883be24ac81a04faed4239b3bf26",
+    "artifacts/epoch-stage173/epoch.json": "9afa123a7fe6d769cf969af78833e8e030772ec0fba2cdb9e6d1389ac2c98f4d",
+    "artifacts/context-channel9-stage173/networks.json": "1412da41da18ff7396f92d33213c83cc54ce919a584079d1de31743732c075f4"
+  }
+}
