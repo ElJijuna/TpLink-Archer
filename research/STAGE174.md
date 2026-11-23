@@ -18,3 +18,5 @@ Contraseña de Especial solo en los dos prompts locales ocultos. Compartir salid
 [Preparación y hashes](supplicant-stage174-observation.json).
 
 Incidencia de directorio antes del ensayo: la ruta original artifacts/supplicant-stage174 existe vacía, sin paired.json/probe ni marcador174. Contexto CLEAN y ledger sin cambios (215 libres); admisión revalidada. No hubo intento Wi-Fi registrado. Se conserva esa carpeta y se usa la ruta nueva artifacts/supplicant-stage174-capture para el mismo marcador174, sin borrar ni reutilizar reservas. Evidencia: artifacts/supplicant-stage175-directory-audit.json.
+
+Resultado posterior: completado y verificado en etapa176, sin usar retransmisiones. No repetir este comando ni cambiar la ruta para intentar repetirlo; el marcador174 está consumido. Contexto CLEAN con206 secuencias libres. Véase STAGE176.md.

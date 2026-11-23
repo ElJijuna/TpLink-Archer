@@ -1,0 +1,102 @@
+{
+  "stage": 176,
+  "date": "2026-11-24",
+  "status": "completed_lease_and_context_verified",
+  "attempt": 174,
+  "capture_directory": "artifacts/supplicant-stage174-capture",
+  "epoch_id": "f99dbe27-5d10-4876-bb30-aa835c07f33e",
+  "context": "CLEAN",
+  "epoch_transition": "CLEAN",
+  "remaining_sequences": 206,
+  "ledger_sha256": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+  "validation": {
+    "security_established": true,
+    "data_path_established": true,
+    "lease_acquired": true,
+    "os_interface": false,
+    "release_submitted": true,
+    "server_release_confirmed": false,
+    "m1_response_retries": 0,
+    "request_retransmissions": 0
+  },
+  "data_summary": {
+    "operation": "secure_data_summary",
+    "authenticated_frames": 4,
+    "rejected_frames": 0,
+    "group_frames": 4,
+    "pairwise_frames": 0,
+    "reflected_discover_frames": 1,
+    "matched_offers": 1,
+    "lease_acquired": true
+  },
+  "context_check": {
+    "ack_steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8
+    ],
+    "network_tx_paused": true,
+    "result": {
+      "result": "context_cleanup_acknowledged",
+      "transfers": 565,
+      "normal_packets": 493,
+      "beacons": 353,
+      "network_tx_paused": true,
+      "initial_macid_pause_measured": false
+    }
+  },
+  "postflight": {
+    "registers": 210,
+    "network_tx_paused": true
+  },
+  "tx_reports": [
+    {
+      "operation": "single_probe_tx_report",
+      "tag": 12,
+      "state": 0,
+      "tx_count": 1
+    },
+    {
+      "operation": "single_probe_tx_report",
+      "tag": 11,
+      "state": 0,
+      "tx_count": 1
+    },
+    {
+      "operation": "single_probe_tx_report",
+      "tag": 13,
+      "state": 0,
+      "tx_count": 1
+    },
+    {
+      "operation": "single_probe_tx_report",
+      "tag": 14,
+      "state": 0,
+      "tx_count": 1
+    }
+  ],
+  "monitor_exit": 0,
+  "pcap_sha256": "80f602e2c74f51491af2c162b1f773d0015d398be611a116f020b1415d91cfca",
+  "server_release_confirmed": false,
+  "request_retransmission_physically_exercised": false,
+  "pairwise_rx_physically_verified": false,
+  "os_interface": false,
+  "new_analysis_h2c_submissions": 0,
+  "new_analysis_network_submissions": 0,
+  "evidence": {
+    "artifacts/supplicant-stage174-capture/paired.json": "4afa945df0aa4a7ba999e3dc6f94659157d20740660d62e247ada9f76db9895e",
+    "artifacts/supplicant-stage174-capture/probe/attempt.json": "4ea1c0535d0faa8df283052bb76732620b210fcc01f593f2b9c98e9f09e8a3b4",
+    "artifacts/supplicant-stage174-capture/probe/probe.jsonl": "7d8f2070cde4004563eaf28b800138efc31cb63e6c1edbe056bbe9fdf07b4d9e",
+    "artifacts/supplicant-stage174-capture/probe/probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/supplicant-stage174-capture/probe/archer-special-wpa2": "8699aee1777d9c6fc6dfa8205c666cfe5c77b3ee5f06c9e2376a6e6ccb82a374",
+    "artifacts/supplicant-stage176-postflight.jsonl": "02c8792b49650845107e6b0c8bcf7dce44bc55dbba741412a2d9857a08366078",
+    "artifacts/37ad-0104-sequences.bin": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+    "artifacts/37ad-0104-sequences.bin.epoch-id": "dc39dd0e0c01057854cd5bd2e4139677d454daec59235297abee1a6ac9e7a866",
+    "artifacts/tx-report-stage176-native.jsonl": "7235fb4c8d1a2a8994a328fbfa92f4cf86bb742f8571c9d9384dd1e3bb49f5ec"
+  }
+}

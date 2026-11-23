@@ -1,20 +1,20 @@
 # Archer USB — investigación y base de controlador
 
-## Checklist resumido — avance estimado: **64 %**
+## Checklist resumido — avance estimado: **65 %**
 
-Actualizado: **2026-11-24**, etapa174: el intento162 recibió OFFER y ACK DHCP autenticados y coincidentes. La auditoría163 verificó REQUEST/RELEASE cifrados; falta confirmación del cierre. Contraste170 confirmó TX_DONE de datos al activar ACQ; REQUEST agotó espera de ACK. Recuperación173 actual CLEAN,215 secuencias libres e intento174 con una retransmisión REQUEST preparado. Sin interfaz de red. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
+Actualizado: **2026-11-24**, etapa176: intento174 completó WPA2, DISCOVER/OFFER, REQUEST/ACK, RELEASE y desautenticación con reportes TX_DONE. Contexto CLEAN,206 secuencias libres y210 registros posteriores verificados. Sin confirmación de liberación del servidor, recepción unicast cifrada ni interfaz de red. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
 - [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
 - [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
-- [ ] Ruta completa de datos Wi-Fi TX/RX — **13/15**: DISCOVER/OFFER cifrados y coincidentes verificados nativamente, con limpieza; faltan recepción unicast, cierre fiable, IP e integración.
+- [ ] Ruta completa de datos Wi-Fi TX/RX — **14/15**: ciclo WPA2/DHCP con ACK de lease, RELEASE/TX_DONE y desautenticación/retirada de contexto verificados; faltan recepción unicast, IP e integración.
 - [ ] Escaneo, asociación y seguridad Wi-Fi — **11/15**: barrido pasivo1/6/11, asociación/WPA2 y CCMP de grupo con OFFER verificados; faltan ciclo completo de claves, reconexión y ampliación.
 - [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
 - [ ] Validación física en Mac Intel — **0/5**.
 - [ ] Implementación y validación en Linux — **0/5**.
 
-**64/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
+**65/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
 no del tiempo restante. Compilar para Intel no equivale a validarlo físicamente.
 El adaptador todavía no ofrece conexión Wi-Fi utilizable.
 
@@ -28,9 +28,12 @@ El último postflight dejó TX de red pausado. Especial aceptó autenticación y
 asociación (AID1 en116); M3 fue autenticado y M2/M4 reproducidos offline.
 El AP reenvió por CCMP de grupo el DISCOVER propio y se recibió un OFFER
 autenticado con XID/chaddr coincidentes tras3361 ms en138. Limpieza CLEAN.
-En162 se verificó REQUEST/ACK y lease temporal; RELEASE se entregó por USB sin reporte TX_DONE. La auditoría163 verificó su contenido y cifrado, sin confirmar entrega. La recuperación164 dejó contexto CLEAN. Faltan cierre fiable, recepción unicast cifrada e interfaz de red.
+En174 se verificó REQUEST/ACK y lease temporal, RELEASE con TX_DONE y desautenticación/retirada de contexto CLEAN. La activación ACQ permitió los reportes TX de datos. No se confirma procesamiento de RELEASE por el servidor. Faltan recepción unicast cifrada, integración de IP/interfaz y ciclo de vida completo.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapa176: intento174 completado sin retransmisiones; reportes TX_DONE12/11/13/14 reproducidos desde captura, OFFER/ACK autenticados y cierre CLEAN. Cuatro tramas de datos autenticadas, todas de grupo. No configura IP ni crea interfaz macOS; las ramas de retransmisión REQUEST/M1 siguen sin contraste físico.
+[Resultado verificado176](research/STAGE176.md).
 
 Etapas173–174: recuperación fría completa con IQK sin flags de fallo, ocho ACK de contexto,210 registros y Especial visible en canal9. Ensayo174 admite una retransmisión REQUEST solo tras TX_DONE, usa PN/secuencia nuevos y se detiene ante NAK.134 pruebas Python, suites C++ y ARM/Intel pasan. Todavía no ejecutado por radio.
 [Recuperación173](research/STAGE173.md), [ensayo174](research/STAGE174.md).
