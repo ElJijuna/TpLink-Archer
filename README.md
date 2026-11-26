@@ -1,5 +1,11 @@
 # Archer USB — investigación y base de controlador
 
+## Aplicación de escritorio
+
+Primera versión macOS: **Archer Control**, con estado USB, redes observadas, gráficas, explorador de paquetes, capturas, modos y ensayos guiados. Construir con `./desktop/build.sh` y abrir `build/Archer Control.app`. No crea todavía una interfaz de red ni convierte el Archer en una conexión utilizable del sistema.
+
+[Uso, alcance y arquitectura de la app](desktop/README.md).
+
 ## Checklist resumido — avance estimado: **66 %**
 
 Actualizado: **2026-11-25**, etapa182: ARP pairwise y rechazo local de replay verificados en179, con cierre CLEAN y206 secuencias libres. Un único ICMP al gateway preparado y validado en software; falta efecto por radio.210 registros actuales correctos. Sin interfaz macOS ni confirmación de liberación del servidor. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
