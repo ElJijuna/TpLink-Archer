@@ -1,4 +1,4 @@
-#include "archer/unicast_arp.hpp"
+#include "archer/unicast_icmp.hpp"
 #include <cassert>
 #include <fstream>
 #include <iostream>
@@ -6,7 +6,10 @@ using namespace archer;
 std::vector<std::uint8_t> load(const char* p){std::ifstream f(p,std::ios::binary);assert(f);return {(std::istreambuf_iterator<char>(f)),{}};}
 template<class F>void rejects(F f){bool bad=false;try{f();}catch(...){bad=true;}assert(bad);}
 int main(){
-#ifdef ARCHER_UNICAST_ARP
+#ifdef ARCHER_UNICAST_ICMP
+ static_assert(unsigned(SecureFramePhase::deauthenticate)==14);
+ assert(secure_first_sequence==200&&secure_report_tag(SecureFramePhase::echo_request)==9&&secure_report_requested(SecureFramePhase::echo_request));
+#elif defined(ARCHER_UNICAST_ARP)
  static_assert(unsigned(SecureFramePhase::deauthenticate)==13);
  assert(secure_first_sequence==150&&secure_report_tag(SecureFramePhase::arp_request)==15&&secure_report_requested(SecureFramePhase::arp_request));
 #else
@@ -44,6 +47,9 @@ int main(){
   data(SecureFramePhase::request,dhcp_selecting_request(1,selected));if(request_retry)data(SecureFramePhase::request_retry,dhcp_selecting_request(1,selected,8));
 #ifdef ARCHER_UNICAST_ARP
   selected.router=selected.server;selected.subnet={255,255,255,0};GatewayArpProbe arp(selected);if(arp_sent)data(SecureFramePhase::arp_request,arp.issue_request());
+#endif
+#ifdef ARCHER_UNICAST_ICMP
+  if(arp_sent){const std::array<std::uint8_t,6> peer{2,1,2,3,4,5};std::array<std::uint8_t,16> cookie{};GatewayIcmpProbe echo(selected,peer,1,cookie);data(SecureFramePhase::echo_request,echo.issue_request());}
 #endif
   data(SecureFramePhase::release,dhcp_release_msdu(1,selected));send(SecureFramePhase::deauthenticate,secure_management_packet(SecureFramePhase::deauthenticate));
  }

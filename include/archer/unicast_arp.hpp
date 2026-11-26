@@ -3,7 +3,7 @@
 namespace archer {
 // Only a leased on-link gateway, not an arbitrary host. No I/O or IP configuration.
 class GatewayArpProbe {
- DhcpOffer lease_;bool issued_=false,matched_=false;
+ DhcpOffer lease_;bool issued_=false,matched_=false;std::array<std::uint8_t,6> peer_{};
 public:
  explicit GatewayArpProbe(const DhcpOffer& lease):lease_(lease){
   const auto mask=network_u32(lease.subnet.data()),host=network_u32(lease.address.data()),gateway=network_u32(lease.router.data());
@@ -28,8 +28,9 @@ public:
      !std::equal(lease_.router.begin(),lease_.router.end(),b.begin()+22)||
      !std::equal(station_test_mac.begin(),station_test_mac.end(),b.begin()+26)||
      !std::equal(lease_.address.begin(),lease_.address.end(),b.begin()+32))return false;
-  matched_=true;return true;
+  peer_=ethernet_source;matched_=true;return true;
  }
  bool matched()const{return matched_;}
+ const std::array<std::uint8_t,6>& peer_mac()const{if(!matched_)throw std::logic_error("Matched ARP required");return peer_;}
 };
 }

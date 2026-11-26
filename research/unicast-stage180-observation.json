@@ -1,0 +1,76 @@
+{
+  "stage": 180,
+  "date": "2026-11-25",
+  "status": "completed_unicast_arp_and_context_verified",
+  "attempt": 179,
+  "epoch_id": "abec701b-e225-4e2c-a716-8dc1ee4dc5c6",
+  "context": "CLEAN",
+  "epoch_transition": "CLEAN",
+  "remaining_sequences": 206,
+  "ledger_sha256": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+  "validation": {
+    "security_established": true,
+    "data_path_established": true,
+    "lease_acquired": true,
+    "os_interface": false,
+    "release_submitted": true,
+    "server_release_confirmed": false,
+    "m1_response_retries": 0,
+    "request_retransmissions": 0,
+    "pairwise_arp_verified": true,
+    "local_replay_rejected": true
+  },
+  "data_summary": {
+    "operation": "secure_data_summary",
+    "authenticated_frames": 9,
+    "rejected_frames": 0,
+    "group_frames": 8,
+    "pairwise_frames": 1,
+    "reflected_discover_frames": 1,
+    "matched_offers": 1,
+    "lease_acquired": true
+  },
+  "context_check": {
+    "ack_steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8
+    ],
+    "network_tx_paused": true,
+    "result": {
+      "result": "context_cleanup_acknowledged",
+      "transfers": 621,
+      "normal_packets": 523,
+      "beacons": 315,
+      "network_tx_paused": true,
+      "initial_macid_pause_measured": false
+    }
+  },
+  "postflight": {
+    "registers": 210,
+    "network_tx_paused": true
+  },
+  "monitor_exit": 1,
+  "monitor_capture_completed": true,
+  "monitor_channel_restore_failed": true,
+  "pcap_sha256": "152d38abb7859455dd4a95c766c22a1a0ac9fcbb28ab0fa95aca10cfd5f54783",
+  "new_analysis_h2c_submissions": 0,
+  "new_analysis_network_submissions": 0,
+  "evidence": {
+    "artifacts/unicast-stage179/paired.json": "9ff89715cab711d5a5230fcd1b30fdd2485b578ebe3be01c1e516fb78824686b",
+    "artifacts/unicast-stage179/probe/attempt.json": "c050901737cf9f12a22751400b4be69cf755012fc77694d65bd70784dd60f14b",
+    "artifacts/unicast-stage179/probe/probe.jsonl": "f92573825a00059cc70a588fc819300d77189965cc599093a5b6e76adacc27f6",
+    "artifacts/unicast-stage179/probe/probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/unicast-stage179/probe/archer-special-wpa2": "0520a105199abcf9a262ee1599569e72ca82d1b4a0ed2ee2a800c5fc6aefce2d",
+    "artifacts/unicast-stage179/monitor.stderr": "69ab9726032273ccdc5f4cc0ac3fec9b6f5e77b6ccf62cb5b3341ee5f8ea6dcc",
+    "artifacts/unicast-stage180-postflight.jsonl": "02c8792b49650845107e6b0c8bcf7dce44bc55dbba741412a2d9857a08366078",
+    "artifacts/37ad-0104-sequences.bin": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+    "artifacts/37ad-0104-sequences.bin.epoch-id": "f6bf7ef32423cbf1345f8ada0edbfba8576d75ac0e8fc6061f4da68a63a67022",
+    "artifacts/tx-report-stage180-native.jsonl": "235ae34962713f6f2716d2490bf1dca5ffcfd48926d749ebe260a318ccd8e637"
+  }
+}

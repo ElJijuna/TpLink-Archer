@@ -1,0 +1,40 @@
+{
+  "stage": 181,
+  "date": "2026-11-25",
+  "status": "single_gateway_echo_built_not_radio_verified",
+  "validation": {
+    "python_tests": 142,
+    "cpp_suites_passed": true,
+    "architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "echo_requests_max": 1,
+  "echo_wait_ms": 3000,
+  "pairwise_reply_required": true,
+  "random_echo_cookie": true,
+  "local_replay_test": true,
+  "os_interface": false,
+  "new_radio_submissions": 0,
+  "build_evidence": {
+    "Makefile": "2712ba5f96f9dd28fc0912479f37c023f85e41aba80ddab31955c38137cbe78d",
+    "include/archer/unicast_icmp.hpp": "fab92890d4352035474f94b1776374da9a46048f22874559b0e80daca5407092",
+    "include/archer/unicast_arp.hpp": "6319e4345b1f229eeecc1031d4cda66823d1d557dc8d30242f78600efbcccf74",
+    "include/archer/secure_network.hpp": "d29da4cc367f20b958caf81626fbecee0532f8838616300f67ad45043d27beca",
+    "include/archer/secure_exchange.inc": "d3109d58a56cbd3be2496193d44ceebbfbdf584349709c2205f43c9c8e7cd906",
+    "src/macos_context_rx.cpp": "7269c78c870c07671c559d13e7a35ba052bdeb4922836708b2bd8f41bd593fc7",
+    "src/wpa2_capture_audit.cpp": "f92e7592f5ace2fa9faa505452fc8104cf5f750efcf69b98a253a1f4925df7c4",
+    "tools/wpa2_once.py": "b8961ddffe34e38691d3a45c04409cf86617fc0a48bbf36756059dc5bced19df",
+    "tools/external_probe_capture.py": "8a7792c26444b24b04696c6740b0aa4d127f5d85e5f9ab4d16df2084134781df",
+    "tools/audit_wpa2_capture.py": "baa65bde4fb9513e7dad6420c2e0b78b2bba3b45c06797f0505dc4ffeaac3a14",
+    "tests/unicast_icmp_test.cpp": "0e9b1e90777219f83a633520280f57cfe88615ad185fe99d7d2423aa2a51345a",
+    "tests/eapol_retry_guard_test.cpp": "b32651adc71d918b299b9b104e7ec150330245c1f06954e2510fa362ed1c0932",
+    "tests/test_echo_result.py": "6e78c196a6178293d40347a96351ca807575ac2b99d8de7cea8c26c0e7a90b83",
+    "tests/test_wpa2_capture_audit.py": "669723d74481356d27cfd07074f52282b3c43ea429da4b80d9b9851321d6f60a",
+    "tests/wpa2_audit_fixture.cpp": "fb181861dd8ea16b2659ade8f4abdd9291d83435d4674f3f1ec8d28099abec23",
+    "artifacts/icmp-stage181-validation-final.log": "60e815b5f3dc50acfa3eabe74d601ae003f02722ab8fdb95d04577356c2d946b",
+    "artifacts/archer-unicast-icmp-stage181": "3f9bedffb19b68c4c226a636b3a40d7a7211a5e083b591134829669be77ac401",
+    "artifacts/archer-wpa2-capture-audit-stage181": "92da62f246f47abbb7cd48b384f4b82ee38d8b1ecd4c2d62115a4b1c67932a6f"
+  }
+}

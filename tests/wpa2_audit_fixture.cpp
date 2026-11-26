@@ -1,4 +1,4 @@
-#include "archer/unicast_arp.hpp"
+#include "archer/unicast_icmp.hpp"
 #include <filesystem>
 #include <fstream>
 #include <cassert>
@@ -22,7 +22,9 @@ int main(int argc,char** argv){if(argc!=2&&argc!=3)return 2;const bool broadcast
  if(argc==3&&std::string(argv[2])=="lease"){
   fs::rename(dir/"secure-tx-3.bin",dir/"secure-tx-6.bin");fs::rename(dir/"secure-tx-4.bin",dir/"secure-tx-7.bin");
   {std::ofstream layout(dir/"secure-layout.txt");
-#ifdef ARCHER_UNICAST_ARP
+#ifdef ARCHER_UNICAST_ICMP
+  layout<<"wpa2-phase-layout-v4\n2 6 7 9 10 11 12 13 14\n";
+#elif defined(ARCHER_UNICAST_ARP)
   layout<<"wpa2-phase-layout-v3\n2 6 7 9 10 11 12 13\n";
 #else
   layout<<"wpa2-phase-layout-v2\n2 6 7 9 10 11 12\n";
@@ -44,6 +46,14 @@ int main(int argc,char** argv){if(argc!=2&&argc!=3)return 2;const bool broadcast
   arp[15]=2;std::copy(station_target_ap.begin(),station_target_ap.end(),arp.begin()+16);std::copy(lease->router.begin(),lease->router.end(),arp.begin()+22);std::copy(station_test_mac.begin(),station_test_mac.end(),arp.begin()+26);std::copy(lease->address.begin(),lease->address.end(),arp.begin()+32);
   auto reply_frame=header(0x4208);const auto reply_params=ccmp_parameters(reply_frame.data(),reply_frame.size(),2);const auto reply_cipher=ccm8_encrypt(hs.pairwise_key(),reply_params.nonce,reply_params.aad,arp);
   reply_frame.insert(reply_frame.end(),{2,0,0,0x20,0,0,0,0});reply_frame.insert(reply_frame.end(),reply_cipher.begin(),reply_cipher.end());fcs(reply_frame);rx(dir,6,reply_frame);
+#endif
+#ifdef ARCHER_UNICAST_ICMP
+  std::array<std::uint8_t,16> cookie{};for(unsigned i=0;i<16;++i)cookie[i]=i+1;
+  GatewayIcmpProbe echo_probe(*lease,station_target_ap,123,cookie);auto echo=echo_probe.issue_request();
+  auto echo_tx=session.encrypt_to_ap(echo,station_target_ap,secure_frame_sequence(SecureFramePhase::echo_request));save(dir/"secure-tx-12.bin",secure_tx_packet(SecureFramePhase::echo_request,echo_tx));
+  std::copy(lease->router.begin(),lease->router.end(),echo.begin()+20);std::copy(lease->address.begin(),lease->address.end(),echo.begin()+24);echo[28]=0;echo[18]=echo[19]=echo[30]=echo[31]=0;eapol_put_be16(echo.data()+18,internet_checksum(echo.data()+8,20));eapol_put_be16(echo.data()+30,internet_checksum(echo.data()+28,24));
+  auto echo_frame=header(0x4208);const auto echo_params=ccmp_parameters(echo_frame.data(),echo_frame.size(),3);const auto echo_cipher=ccm8_encrypt(hs.pairwise_key(),echo_params.nonce,echo_params.aad,echo);
+  echo_frame.insert(echo_frame.end(),{3,0,0,0x20,0,0,0,0});echo_frame.insert(echo_frame.end(),echo_cipher.begin(),echo_cipher.end());fcs(echo_frame);rx(dir,7,echo_frame);
 #endif
   auto released=session.encrypt_to_ap(dhcp_release_msdu(0x12345678,*lease),station_target_ap,secure_frame_sequence(SecureFramePhase::release));save(dir/("secure-tx-"+std::to_string(unsigned(SecureFramePhase::release))+".bin"),secure_tx_packet(SecureFramePhase::release,released));
  }

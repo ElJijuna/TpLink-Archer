@@ -1,20 +1,20 @@
 # Archer USB — investigación y base de controlador
 
-## Checklist resumido — avance estimado: **65 %**
+## Checklist resumido — avance estimado: **66 %**
 
-Actualizado: **2026-11-25**, etapa179: ciclo WPA2/DHCP y cierre verificados en174. Primera comprobación unicast ARP preparada y validada en software; falta efecto por radio. Recuperación178 actual CLEAN,215 secuencias libres y210 registros verificados. Sin interfaz macOS ni confirmación de liberación del servidor. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
+Actualizado: **2026-11-25**, etapa182: ARP pairwise y rechazo local de replay verificados en179, con cierre CLEAN y206 secuencias libres. Un único ICMP al gateway preparado y validado en software; falta efecto por radio.210 registros actuales correctos. Sin interfaz macOS ni confirmación de liberación del servidor. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
 - [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
 - [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
 - [ ] Ruta completa de datos Wi-Fi TX/RX — **14/15**: ciclo WPA2/DHCP con ACK de lease, RELEASE/TX_DONE y desautenticación/retirada de contexto verificados; faltan recepción unicast, IP e integración.
-- [ ] Escaneo, asociación y seguridad Wi-Fi — **11/15**: barrido pasivo1/6/11, asociación/WPA2 y CCMP de grupo con OFFER verificados; faltan ciclo completo de claves, reconexión y ampliación.
+- [ ] Escaneo, asociación y seguridad Wi-Fi — **12/15**: barrido pasivo1/6/11, WPA2, CCMP de grupo y ARP pairwise con replay local verificados; faltan ciclo completo de claves, reconexión y ampliación.
 - [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
 - [ ] Validación física en Mac Intel — **0/5**.
 - [ ] Implementación y validación en Linux — **0/5**.
 
-**65/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
+**66/100 puntos de hitos ponderados.** Es una estimación de alcance completado,
 no del tiempo restante. Compilar para Intel no equivale a validarlo físicamente.
 El adaptador todavía no ofrece conexión Wi-Fi utilizable.
 
@@ -28,9 +28,12 @@ El último postflight dejó TX de red pausado. Especial aceptó autenticación y
 asociación (AID1 en116); M3 fue autenticado y M2/M4 reproducidos offline.
 El AP reenvió por CCMP de grupo el DISCOVER propio y se recibió un OFFER
 autenticado con XID/chaddr coincidentes tras3361 ms en138. Limpieza CLEAN.
-En174 se verificó REQUEST/ACK y lease temporal, RELEASE con TX_DONE y desautenticación/retirada de contexto CLEAN. La activación ACQ permitió los reportes TX de datos. No se confirma procesamiento de RELEASE por el servidor. Faltan recepción unicast cifrada, integración de IP/interfaz y ciclo de vida completo.
+En174 se verificó REQUEST/ACK y lease temporal, RELEASE con TX_DONE y desautenticación/retirada de contexto CLEAN. La activación ACQ permitió los reportes TX de datos. No se confirma procesamiento de RELEASE por el servidor. ARP pairwise quedó verificado en179. Faltan intercambio IP, integración de interfaz y ciclo de vida completo.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas180–182: ARP pairwise físico completado, replay local rechazado y cierre CLEAN. Preparado el siguiente paso separado: un único Echo ICMP al gateway resuelto, con respuesta pairwise estricta.142 pruebas Python, suites C++ y ARM/Intel pasan. Admisión182 verificada sin recarga ni TX nuevos; todavía sin resultado ICMP por radio.
+[Resultado180](research/STAGE180.md), [implementación181](research/STAGE181.md), [ensayo182](research/STAGE182.md).
 
 Etapas177–179: solicitud ARP única para gateway del ACK, respuesta pairwise CCMP estricta y prueba local de replay preparadas.138 pruebas Python, suites C++ y ARM/Intel pasan. Recuperación178 completa y admisión179 verificada; todavía sin resultado ARP por radio. ICMP y la interfaz macOS quedan para etapas posteriores.
 [Implementación177](research/STAGE177.md), [recuperación178](research/STAGE178.md), [ensayo179](research/STAGE179.md).

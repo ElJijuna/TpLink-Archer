@@ -2,7 +2,10 @@
 #include "archer/ccmp.hpp"
 #include <chrono>
 namespace archer {
-#ifdef ARCHER_UNICAST_ARP
+#ifdef ARCHER_UNICAST_ICMP
+inline constexpr unsigned secure_first_sequence=200,secure_cleanup_tag=14,secure_release_tag=13;
+inline constexpr bool secure_dhcp_broadcast=true;
+#elif defined(ARCHER_UNICAST_ARP)
 inline constexpr unsigned secure_first_sequence=150,secure_cleanup_tag=14,secure_release_tag=13;
 inline constexpr bool secure_dhcp_broadcast=true;
 #elif defined(ARCHER_EAPOL_RETRY)
@@ -41,6 +44,9 @@ enum class SecureFramePhase:unsigned {authenticate,associate,m2,
 #ifdef ARCHER_UNICAST_ARP
  arp_request,
 #endif
+#ifdef ARCHER_UNICAST_ICMP
+ echo_request,
+#endif
  release,
 #endif
  deauthenticate};
@@ -55,6 +61,9 @@ inline void require_secure_discover_report(const std::optional<ProbeTxReport>& r
  if(!report||report->state!=0||report->count!=1)throw std::runtime_error(std::string(phase)+" TX_DONE/count1 absent; no next submission");
 }
 inline unsigned secure_report_tag(SecureFramePhase phase){
+#ifdef ARCHER_UNICAST_ICMP
+ if(phase==SecureFramePhase::echo_request)return 9;
+#endif
 #ifdef ARCHER_UNICAST_ARP
  if(phase==SecureFramePhase::arp_request)return 15;
 #endif
@@ -69,6 +78,9 @@ inline unsigned secure_report_tag(SecureFramePhase phase){
  return phase==SecureFramePhase::deauthenticate?secure_cleanup_tag:0;
 }
 inline bool secure_report_requested(SecureFramePhase phase){
+#ifdef ARCHER_UNICAST_ICMP
+ if(phase==SecureFramePhase::echo_request)return true;
+#endif
 #ifdef ARCHER_UNICAST_ARP
  if(phase==SecureFramePhase::arp_request)return true;
 #endif
@@ -115,6 +127,9 @@ public:
   const auto i=unsigned(phase),last=unsigned(SecureFramePhase::deauthenticate);if(i>last||packet.size()<88)throw std::invalid_argument("Invalid secure submission");
   const unsigned bit=1u<<i;
   unsigned optional=0;
+#ifdef ARCHER_UNICAST_ICMP
+  if(phase>=SecureFramePhase::release)optional|=1u<<unsigned(SecureFramePhase::echo_request);
+#endif
 #ifdef ARCHER_UNICAST_ARP
   // RELEASE remains possible when gateway metadata prevents the optional probe.
   // Successful unicast validation separately requires the probe and its reply.

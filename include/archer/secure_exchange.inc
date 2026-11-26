@@ -160,6 +160,20 @@
                                         if(!gateway_arp->matched()||!arp_replay_rejected)throw std::runtime_error("Pairwise ARP reply or local replay rejection absent");
                                     }catch(...){arp_error=std::current_exception();}
                                     if(arp_error&&secure_pending)std::rethrow_exception(arp_error);
+#ifdef ARCHER_UNICAST_ICMP
+                                    if(!arp_error)try{
+                                        std::array<std::uint8_t,18> random{};
+                                        if(CCRandomGenerateBytes(random.data(),random.size())!=kCCSuccess)throw std::runtime_error("Echo random cookie unavailable");
+                                        std::array<std::uint8_t,16> cookie{};std::copy_n(random.begin(),16,cookie.begin());
+                                        gateway_echo.emplace(dhcp_selecting.acknowledged_lease(),gateway_arp->peer_mac(),archer::eapol_be16(random.data()+16),cookie);
+                                        const auto echo=ccmp->encrypt_to_ap(gateway_echo->issue_request(),gateway_arp->peer_mac(),archer::secure_frame_sequence(archer::SecureFramePhase::echo_request));
+                                        secure_send(archer::SecureFramePhase::echo_request,archer::secure_tx_packet(archer::SecureFramePhase::echo_request,echo));
+                                        secure_wait([&]{return gateway_echo->matched()&&bool(probe_report);},3000,false,true);
+                                        archer::require_secure_discover_report(probe_report,"Echo");secure_confirm();probe_submitted=false;
+                                        if(!gateway_echo->matched()||!echo_replay_rejected)throw std::runtime_error("Matching pairwise gateway Echo Reply absent");
+                                    }catch(...){arp_error=std::current_exception();}
+                                    if(arp_error&&secure_pending)std::rethrow_exception(arp_error);
+#endif
 #endif
                                     if(dhcp_server_mac[0]&1)throw std::runtime_error("DHCP server source MAC is not unicast");
                                     const auto release=ccmp->encrypt_to_ap(dhcp_selecting.issue_release(),dhcp_server_mac,archer::secure_frame_sequence(archer::SecureFramePhase::release));

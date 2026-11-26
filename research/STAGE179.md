@@ -16,3 +16,5 @@ sudo -v && python3 tools/external_probe_capture.py --dhcp-supplicant artifacts/u
 Contraseña de Especial solo en los dos prompts locales ocultos. Compartir salida completa sin contraseña. Captura simultánea; puede desconectar en0. No repetir174 ni179 si se detiene. Aún no se comprobó este ARP por radio; no declarar unicast ni avance adicional hasta analizar resultados.
 
 [Preparación y hashes](supplicant-stage179-observation.json).
+
+Resultado posterior: completado y verificado en180. ARP pairwise y replay local aprobados; contexto CLEAN con206 secuencias libres. Marcador179 consumido: no repetir el comando.
