@@ -1,0 +1,34 @@
+{
+  "stage": 191,
+  "date": "2026-11-26",
+  "status": "ethernet_codec_sdk_compile_verified_not_integrated",
+  "component": "bounded allocation-free exception-free Ethernet II / RFC1042 codec",
+  "verification": {
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "host_test": "passed",
+    "sdk_compile_architectures": [
+      "arm64",
+      "x86_64"
+    ],
+    "sdk": "DriverKit27.2",
+    "compile_target": "DriverKit24.0",
+    "dext_linked": false,
+    "dext_installed": false,
+    "os_interface_created": false,
+    "usb_or_network_submissions": 0
+  },
+  "signing_prerequisite": "user reports Apple ID without Developer Program membership; no DriverKit profile established",
+  "sha256": {
+    "include/archer/ethernet_bridge.hpp": "4c00a0f4c7468a347784df2c8fae018b2d939a481e196c75ea20a4856a9c583d",
+    "tests/ethernet_bridge_test.cpp": "e10e705eb6b87a9ca26cb8015ac6d1012b97b996a681ba647a13a56017d44a12",
+    "driverkit/bridge_compile.cpp": "1a0714362d7de8e1e116267489aa28a806fff5f10ea27370433d90da3fbca157",
+    "driverkit/test_bridge.sh": "13f047ccc20d37eb7acd18f0a70c2796e569e5d8c48185895e618e65756ccd14",
+    "driverkit/check_sdk.sh": "43dea26a47a59c59ddea82ae44d991043a2099ca04d291c8cd7f78427a00d709",
+    "artifacts/driverkit-stage191-tests.log": "1bd633603e68a0901944abbd65bffe0b6c98e396b279b3958d1a3ea843b366c1",
+    "artifacts/driverkit-stage191-sdk.log": "3426b834e099b041096c35108ea1af387d3dec1a6a2d1133a000be23fbbafe61",
+    "artifacts/driverkit-stage191-sdk-before.log": "ac667e5710e77c3a6dc7fd0d9a4ac988b924bbedcdf004648a5bdf8a01dd4662"
+  }
+}

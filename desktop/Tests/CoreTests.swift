@@ -47,9 +47,9 @@ import CryptoKit
         let trusted=root.appendingPathComponent("trusted.bin");try Data("trusted".utf8).write(to:trusted)
         let ledger=root.appendingPathComponent("artifacts/37ad-0104-sequences.bin");try Data([65,82,67,72,83,69,81,1]+Array(repeating:1,count:50)+Array(repeating:0,count:206)).write(to:ledger)
         let readiness=root.appendingPathComponent("research/readiness.json")
-        var manifest:[String:Any]=["status":"prepared_not_executed","stage":182,"epoch_id":"epoch","remaining_sequences":206,"ledger_sha256":try digestFile(ledger),"build_evidence":["trusted.bin":try digestFile(trusted)]]
+        var manifest:[String:Any]=["status":"prepared_not_executed","stage":189,"epoch_id":"epoch","remaining_sequences":206,"ledger_sha256":try digestFile(ledger),"build_evidence":["trusted.bin":try digestFile(trusted)]]
         try JSONSerialization.data(withJSONObject:manifest).write(to:readiness)
-        let w=Workflow(id:"test",title:"Echo",detail:"test",stage:182,mode:"--dhcp-supplicant",readiness:"research/readiness.json",marker:"artifacts/consumed",outputPrefix:"desktop-icmp-stage182")
+        let w=Workflow(id:"test",title:"Echo",detail:"test",stage:189,mode:"--dhcp-supplicant",readiness:"research/readiness.json",marker:"artifacts/consumed",outputPrefix:"desktop-icmp-stage189")
         var device=DeviceSnapshot(mode:.wifi);device.context="CLEAN";device.fence="CLEAN";device.remaining=206;device.epoch="epoch"
         let ready=WorkflowGate.check(w,root:root,device:device);check(ready.ready && ready.command.contains(shellQuote(root.path)),"ready workflow command escaped")
         try Data().write(to:root.appendingPathComponent("artifacts/consumed"));check(!WorkflowGate.check(w,root:root,device:device).ready,"consumed marker blocks")

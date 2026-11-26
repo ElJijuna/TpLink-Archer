@@ -1,0 +1,71 @@
+{
+  "stage": 188,
+  "date": "2026-11-26",
+  "status": "cold_recovery_and_context_verified",
+  "context": "CLEAN",
+  "epoch_transition": "CLEAN",
+  "remaining_sequences": 215,
+  "ledger_sha256": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+  "epoch_boundary": {
+    "status": "committed",
+    "epoch_id": "a24247b2-5dff-4d09-8a4d-5efc628ea2a2",
+    "old_ledger_sha256": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+    "firmware_download_writes": 212,
+    "h2c_submissions": 0,
+    "available_after": 254
+  },
+  "bootstrap": {
+    "status": "completed",
+    "network_entries": 10
+  },
+  "channel9_rfk_commands": 8,
+  "context_check": {
+    "ack_steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8
+    ],
+    "network_tx_paused": true,
+    "result": {
+      "result": "context_cleanup_acknowledged",
+      "transfers": 385,
+      "normal_packets": 328,
+      "beacons": 184,
+      "network_tx_paused": true,
+      "initial_macid_pause_measured": false
+    }
+  },
+  "target_passive_observation": {
+    "bssid_hex": "50926a110666",
+    "ssid_hex": "457370656369616c",
+    "advertised_ds_channel": 9,
+    "beacons": 72,
+    "probe_responses": 1,
+    "first_observation": 6,
+    "last_observation": 328,
+    "interval_tu": 100,
+    "capability": 6161
+  },
+  "postflight": {
+    "registers": 210,
+    "differences": 0,
+    "network_tx_paused": true
+  },
+  "new_network_submissions": 0,
+  "evidence": {
+    "artifacts/37ad-0104-sequences.bin": "074e50060cfe6fcde10d705193f4454641a35b11b54fd3bf75f13109e3e7da29",
+    "artifacts/37ad-0104-sequences.bin.epoch-id": "1b4e4ec7f05f39dab22afa82221c1b9df5a70e3afba1e626354439fd8f40543b",
+    "artifacts/recovery-stage188-boundary/epoch.json": "f18778753e09c29173f587ced2a8083bea5701b2268cce6c5c39edb6d74fa146",
+    "artifacts/recovery-stage188-boundary/reload.jsonl": "931f481102e38e89d0f1a3b39355f66f8b74841c70c11cc9b5402161eaba355f",
+    "artifacts/recovery-stage188-bootstrap/workflow.json": "fb98c6587c688a0e8ae81923fa05209aeb5c588c72c6d15bab9f377fc35a9dd9",
+    "artifacts/recovery-stage188-channel9.jsonl": "90bd33040c27f0b6aec4a610fd5f678e7ed06fc76360498fbf8705e47cb6c5f0",
+    "artifacts/recovery-stage188-context.jsonl": "9ae34a119cb7111b794dd9f1f447ede10df3db0e932f8352d0603dc09f12d056",
+    "artifacts/recovery-stage188-postflight.jsonl": "e4e9a5dc7d77ac38b9ac4da6e3507fabda52dccc09aea35f130939442b56954b",
+    "artifacts/recovery-stage188-context/networks.json": "3b52afe65f803bbcd181141bd2eef45a4d71fddadc9ba20b4a95a828bf68c609"
+  }
+}

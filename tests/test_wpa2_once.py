@@ -82,6 +82,16 @@ class Wpa2OnceTest(unittest.TestCase):
         with self.assertRaises(ValueError):w.validate_result(recovered_rows,False)
         with self.assertRaises(ValueError):w.validate_result(rows(),True)
 
+    def test_new_icmp_epoch_requires_recovery188_not_old_unicast(self):
+        history=dict(stage=188,status='cold_recovery_and_context_verified',context='CLEAN',epoch_transition='CLEAN',remaining_sequences=215,ledger_sha256='fresh',epoch_boundary=dict(status='committed',epoch_id='fresh-epoch'),context_check=dict(ack_steps=[0,1,2,3,4,6,7,8],network_tx_paused=True),postflight=dict(registers=210),evidence={'raw':'hash'})
+        ledger=b'ARCHSEQ\x01'+bytes([1])*41+bytes(215)
+        with patch.object(w,'digest',return_value='fresh'):
+            w.validate_recovered_history(history,ledger,'fresh-epoch',188)
+            for field,value in [('stage',178),('remaining_sequences',206),('context','DIRTY')]:
+                changed=copy.deepcopy(history);changed[field]=value
+                with self.assertRaises(ValueError):w.validate_recovered_history(changed,ledger,'fresh-epoch',188)
+            with self.assertRaises(ValueError):w.validate_recovered_history(history,ledger,'old-epoch',188)
+
     def test_lease_result_requires_ack_release_and_both_reports(self):
         base=rows();writes=[r for r in base if r.get('operation')=='secure_usb_write']
         trace=writes[:5]+[r for r in base if r.get('operation') in ('secure_m1_accepted','secure_m3_authenticated','secure_dhcp_offer','station_management_reply')]

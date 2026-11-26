@@ -1,0 +1,94 @@
+{
+  "stage": 190,
+  "date": "2026-11-26",
+  "status": "gateway_echo_independently_audited_and_context_verified",
+  "attempt": 189,
+  "epoch_id": "a24247b2-5dff-4d09-8a4d-5efc628ea2a2",
+  "context": "CLEAN",
+  "epoch_transition": "CLEAN",
+  "remaining_sequences": 206,
+  "ledger_sha256": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+  "validation": {
+    "security_established": true,
+    "data_path_established": true,
+    "lease_acquired": true,
+    "os_interface": false,
+    "release_submitted": true,
+    "server_release_confirmed": false,
+    "m1_response_retries": 0,
+    "request_retransmissions": 0,
+    "pairwise_arp_verified": true,
+    "local_replay_rejected": true,
+    "gateway_echo_verified": true
+  },
+  "data_summary": {
+    "operation": "secure_data_summary",
+    "authenticated_frames": 8,
+    "rejected_frames": 0,
+    "group_frames": 5,
+    "pairwise_frames": 3,
+    "reflected_discover_frames": 1,
+    "matched_offers": 1,
+    "lease_acquired": true
+  },
+  "context_check": {
+    "ack_steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8
+    ],
+    "network_tx_paused": true
+  },
+  "postflight": {
+    "registers": 210,
+    "network_tx_paused": true
+  },
+  "independent_monitor": {
+    "exit": 1,
+    "pcap_saved": true,
+    "restore_failed": true
+  },
+  "evidence": {
+    "artifacts/icmp-stage189/paired.json": "135ab9971e4da5020debd62e7517a632636d4a9f09ab3e40e50d087b6b7ab65e",
+    "artifacts/icmp-stage189/probe/attempt.json": "d55f8f65e2a42f8cc407e36d59a98b56afee400897200531eb093d7ea2155984",
+    "artifacts/icmp-stage189/probe/probe.jsonl": "9f8a5c8763ac77597f6a633452aa0737019cc19ae456cfe8c870f1c406ece83e",
+    "artifacts/icmp-stage189/probe/probe.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "artifacts/icmp-stage189/monitor/monitor-channel9.pcap": "b9086acae3ce530621f082842f11aaacb8770911c0f2494c196ba9a4a9b7b32d",
+    "artifacts/icmp-stage190-postflight.jsonl": "1227f9fbe3796ea6f5fddd51ea9d4e4dcdac8ec409defdb75c4ca4db7d39cc83",
+    "artifacts/37ad-0104-sequences.bin": "df8bdc691dac6db8dff1eb11a06cd2948a02ad0a862d08f4e7829b44cfaa8d13",
+    "artifacts/37ad-0104-sequences.bin.epoch-id": "1b4e4ec7f05f39dab22afa82221c1b9df5a70e3afba1e626354439fd8f40543b",
+    "artifacts/icmp-offline-stage190/audit.json": "5ad4f3705614e778d0430adeac5493109da5d4a8fc19427f806e076088164f1b",
+    "artifacts/icmp-offline-stage190/audit.jsonl": "8d5c337ed258a2b6f8b7985242701be118583f3b023f27aad5ae56f2894cf8b8",
+    "artifacts/icmp-offline-stage190/audit.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "offline_audit": {
+    "result": "offline_wpa2_audited",
+    "m2_reproduced": true,
+    "m3_authenticated": true,
+    "m4_reproduced": true,
+    "recorded_discover_verified": true,
+    "protected_frames": 8,
+    "authenticated_frames": 8,
+    "rejected_frames": 0,
+    "pairwise_frames": 3,
+    "group_frames": 5,
+    "matched_acks": 1,
+    "recorded_request_verified": true,
+    "recorded_release_verified": true,
+    "recorded_request_retry_verified": false,
+    "recorded_arp_request_verified": true,
+    "pairwise_arp_reply_verified": true,
+    "recorded_echo_request_verified": true,
+    "pairwise_echo_reply_verified": true,
+    "server_release_confirmed": false,
+    "matched_offers": 1,
+    "reflected_discover_frames": 1,
+    "h2c_submissions": 0,
+    "network_submissions": 0
+  }
+}

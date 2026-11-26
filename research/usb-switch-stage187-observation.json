@@ -1,0 +1,47 @@
+{
+  "stage": 187,
+  "status": "wifi_mode_observed_after_unconfirmed_usb_eject",
+  "previous_stage186": {
+    "eject_exit": 0,
+    "saw_wifi": false,
+    "installer_sessions_after_eject": 3
+  },
+  "contrast": "one existing verified USB START STOP UNIT, no allow-removal or ioctl fallback",
+  "validation": {
+    "python_diagnostic_tests": 3,
+    "cpp_storage_packet_test": "passed",
+    "architectures": [
+      "arm64",
+      "x86_64"
+    ],
+    "cached_configuration": "09022000010100e0fa0904000002080650000705840200020007050502000200"
+  },
+  "evidence_sha256": {
+    "artifacts/usb-switch-stage186/timeline.jsonl": "c976eb3835e820e2c3f63bcdc27ecd01825f58aa2cf3d0e777bc581db23b4f8e",
+    "tools/diagnose_usb_switch.py": "e1c150c60850b0faf4e675a6f94a81df18a8383ac7e1301235e8fee2d6efc0d4",
+    "build/archer-mode-switch-universal": "5f71ae5d5a56c6704dfdd699155d81b5d2f7359ec510b5ce729273fb9d9377b4"
+  },
+  "new_firmware_submissions": 0,
+  "new_network_submissions": 0,
+  "command_exit_code": 3,
+  "scsi_completion_confirmed": false,
+  "usb_observation": {
+    "operation": "result",
+    "elapsed_seconds": 23.613,
+    "status": "observed",
+    "saw_wifi": true,
+    "final_devices": [
+      {
+        "idVendor": 14253,
+        "idProduct": 260,
+        "sessionID": 21732909895443,
+        "locationID": 34603008,
+        "mode": "wifi"
+      }
+    ],
+    "automatic_retry": false,
+    "firmware_submissions": 0,
+    "network_submissions": 0
+  },
+  "timeline_sha256": "b5458fb357d7432a336b191a5355c5230f1660f79a6edcab922a673e08d29c50"
+}

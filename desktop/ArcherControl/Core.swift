@@ -221,7 +221,7 @@ enum WorkflowGate {
     static func check(_ workflow:Workflow,root:URL,device:DeviceSnapshot)->WorkflowCheck {
         func result(_ ready:Bool,_ reason:String,_ command:String="")->WorkflowCheck { WorkflowCheck(ready:ready,reason:reason,command:command,title:workflow.title,detail:workflow.detail) }
         do {
-            guard workflow.mode=="--dhcp-supplicant", workflow.stage==182, workflow.outputPrefix=="desktop-icmp-stage182" else { return result(false,"Flujo no admitido por esta versión de la app") }
+            guard workflow.mode=="--dhcp-supplicant", workflow.stage==189, workflow.outputPrefix=="desktop-icmp-stage189" else { return result(false,"Flujo no admitido por esta versión de la app") }
             let readiness=try safeChild(root,workflow.readiness),marker=try safeChild(root,workflow.marker)
             guard !FileManager.default.fileExists(atPath:marker.path) else { return result(false,"Intento ya reservado. No se puede repetir.") }
             guard device.mode == .wifi else { return result(false,"Se necesita el Archer en interfaz USB Wi-Fi") }

@@ -1,7 +1,7 @@
 {
   "stage": 182,
   "date": "2026-11-25",
-  "status": "prepared_not_executed",
+  "status": "superseded_without_execution",
   "epoch_id": "abec701b-e225-4e2c-a716-8dc1ee4dc5c6",
   "context": "CLEAN",
   "remaining_sequences": 206,
@@ -145,5 +145,7 @@
     "research/icmp-stage181-observation.json": "71c64704c2f31384ecd113d66904a3e341288931523a419a213469f24ac8a6d1",
     "artifacts/archer-unicast-icmp-stage182": "3f9bedffb19b68c4c226a636b3a40d7a7211a5e083b591134829669be77ac401",
     "artifacts/icmp-stage182-preflight.jsonl": "02c8792b49650845107e6b0c8bcf7dce44bc55dbba741412a2d9857a08366078"
-  }
+  },
+  "superseded_by": 189,
+  "reason": "Physical reconnect established a new verified firmware epoch; previous epoch cannot be reused"
 }

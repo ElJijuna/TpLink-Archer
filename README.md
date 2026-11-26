@@ -6,15 +6,17 @@ Primera versión macOS: **Archer Control**, con estado USB, redes observadas, gr
 
 [Uso, alcance y arquitectura de la app](desktop/README.md).
 
+Integración en desarrollo: [puente de paquetes Ethernet/DriverKit](driverkit/README.md), compilado con el SDK real para ARM/Intel; todavía sin extensión instalada ni interfaz del sistema.
+
 ## Checklist resumido — avance estimado: **66 %**
 
-Actualizado: **2026-11-25**, etapa182: ARP pairwise y rechazo local de replay verificados en179, con cierre CLEAN y206 secuencias libres. Un único ICMP al gateway preparado y validado en software; falta efecto por radio.210 registros actuales correctos. Sin interfaz macOS ni confirmación de liberación del servidor. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
+Actualizado: **2026-11-26**, etapa190: ensayo189 completó WPA2, DHCP, ARP y Echo ICMP pairwise autenticado al gateway. RELEASE con TX_DONE y retirada de contexto CLEAN;206 secuencias libres y postflight210 verificados. Auditoría offline independiente completada: Echo request/reply, DHCP y ARP verificados;8 tramas autenticadas,0 rechazos. La app local funciona para diagnóstico; todavía no hay interfaz de red macOS. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
 - [x] DLE/HFC/DMAC/CMAC0 y tablas BB/radio/NCTL en USB2/SCC sobre Mac ARM — **15/15**.
 - [ ] Calibraciones y validación RF completas — **5/10**: comandos ejecutados; faltan semánticas DPK/TSSI y contraste de calidad RF.
-- [ ] Ruta completa de datos Wi-Fi TX/RX — **14/15**: ciclo WPA2/DHCP con ACK de lease, RELEASE/TX_DONE y desautenticación/retirada de contexto verificados; faltan recepción unicast, IP e integración.
+- [ ] Ruta completa de datos Wi-Fi TX/RX — **14/15**: ciclo WPA2/DHCP con ACK de lease, RELEASE/TX_DONE y desautenticación/retirada de contexto verificados; unicast ARP e IP al gateway verificados en ensayos acotados; faltan tráfico continuo e integración.
 - [ ] Escaneo, asociación y seguridad Wi-Fi — **12/15**: barrido pasivo1/6/11, WPA2, CCMP de grupo y ARP pairwise con replay local verificados; faltan ciclo completo de claves, reconexión y ampliación.
 - [ ] Integración macOS: DriverKit, interfaz de red, instalación y ciclo de vida — **0/15**.
 - [ ] Validación física en Mac Intel — **0/5**.
@@ -34,7 +36,7 @@ El último postflight dejó TX de red pausado. Especial aceptó autenticación y
 asociación (AID1 en116); M3 fue autenticado y M2/M4 reproducidos offline.
 El AP reenvió por CCMP de grupo el DISCOVER propio y se recibió un OFFER
 autenticado con XID/chaddr coincidentes tras3361 ms en138. Limpieza CLEAN.
-En174 se verificó REQUEST/ACK y lease temporal, RELEASE con TX_DONE y desautenticación/retirada de contexto CLEAN. La activación ACQ permitió los reportes TX de datos. No se confirma procesamiento de RELEASE por el servidor. ARP pairwise quedó verificado en179. Faltan intercambio IP, integración de interfaz y ciclo de vida completo.
+En174 se verificó REQUEST/ACK y lease temporal, RELEASE con TX_DONE y desautenticación/retirada de contexto CLEAN. La activación ACQ permitió los reportes TX de datos. No se confirma procesamiento de RELEASE por el servidor. ARP pairwise quedó verificado en179. Echo IP autenticado al gateway verificado en189. Faltan integración de interfaz, tráfico continuo y ciclo de vida completo.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
 

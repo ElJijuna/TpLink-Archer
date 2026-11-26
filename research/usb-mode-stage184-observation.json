@@ -1,0 +1,23 @@
+{
+  "stage": 184,
+  "status": "installer_reenumeration_unresolved",
+  "connection": "direct_per_user",
+  "last_usb_session": 21719392780363,
+  "usb_id": "0bda:1a2b",
+  "interface": {
+    "class": 8,
+    "subclass": 6,
+    "protocol": 80
+  },
+  "optical_media_present": false,
+  "prior_eject_report": {
+    "DKIOCEJECT": 0,
+    "errno": 0,
+    "disk": "disk20"
+  },
+  "wifi_interface_present": false,
+  "firmware_loaded": false,
+  "new_network_submissions": 0,
+  "conclusion": "USB installer enumeration remains; successful eject did not establish observed Wi-Fi mode. Cause not established.",
+  "next_contrast": "different physical port, verify absence then new enumeration"
+}

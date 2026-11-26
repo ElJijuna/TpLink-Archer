@@ -32,8 +32,8 @@ RECOVERED_HISTORY=ROOT/'research/recovery-stage137-observation.json'
 RECOVERED_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-wpa2-recovered-stage138-attempted'
 LEASE_HISTORY=ROOT/'research/recovery-stage147-observation.json'
 LEASE_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-dhcp-lease-stage148-attempted'
-SUPPLICANT_HISTORY=ROOT/'research/unicast-stage180-observation.json'
-SUPPLICANT_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage182-attempted'
+SUPPLICANT_HISTORY=ROOT/'research/recovery-stage188-observation.json'
+SUPPLICANT_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage189-attempted'
 
 def validate_recovered_history(history,ledger,epoch_id,expected_stage=137):
     if (history.get('stage')!=expected_stage or history.get('status')!='cold_recovery_and_context_verified'
@@ -67,13 +67,13 @@ def validate_clean_unicast_history(history,ledger,epoch_id):
 def admission(recovered=False,lease=False,supplicant=False):
     if supplicant:lease=True
     if lease:recovered=True
-    readiness=json.loads((ROOT/('research/supplicant-stage182-observation.json' if supplicant else 'research/dhcp-stage148-observation.json' if lease else 'research/wpa2-stage138-observation.json' if recovered else 'research/wpa2-stage105-observation.json')).read_text())
-    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=(182 if supplicant else 148 if lease else 138 if recovered else 105):raise ValueError('WPA2 state/build not prepared: '+str(readiness.get('status')))
+    readiness=json.loads((ROOT/('research/supplicant-stage189-observation.json' if supplicant else 'research/dhcp-stage148-observation.json' if lease else 'research/wpa2-stage138-observation.json' if recovered else 'research/wpa2-stage105-observation.json')).read_text())
+    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=(189 if supplicant else 148 if lease else 138 if recovered else 105):raise ValueError('WPA2 state/build not prepared: '+str(readiness.get('status')))
     for name,sha in readiness['build_evidence'].items():
         path=(ROOT/name).resolve()
         if not path.is_relative_to(ROOT) or digest(path)!=sha:raise ValueError('Tested WPA2 build/source changed')
     history=json.loads((SUPPLICANT_HISTORY if supplicant else LEASE_HISTORY if lease else RECOVERED_HISTORY if recovered else HISTORY).read_text())
-    if supplicant:validate_clean_unicast_history(history,LEDGER.read_bytes(),Path(str(LEDGER)+'.epoch-id').read_text().strip())
+    if supplicant:validate_recovered_history(history,LEDGER.read_bytes(),Path(str(LEDGER)+'.epoch-id').read_text().strip(),188)
     elif recovered:validate_recovered_history(history,LEDGER.read_bytes(),Path(str(LEDGER)+'.epoch-id').read_text().strip(),147 if lease else 137)
     else:validate_history(history,LEDGER.read_bytes())
     for name,sha in history['evidence'].items():

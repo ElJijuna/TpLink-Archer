@@ -24,7 +24,7 @@ La app está firmada localmente con una firma ad hoc. No es un instalador Driver
 - Gráficas reales de actividad por tipo de trama y RSSI radiotap; redes observadas a partir de beacons/probe responses. Son datos de la captura seleccionada, no un escaneo en vivo ni un medidor de Internet.
 - Explorador 802.11 con filtros por tipo, texto y estación; detalle hexadecimal; CSV de la vista y copia del PCAP completo. La app no descifra payloads protegidos ni solicita claves.
 - Resultados WPA2/DHCP/ARP/ICMP y reportes TX del ejecutor cuando existen, con su procedencia. El registro nativo prueba la autenticación; el bit Protected del PCAP por sí solo no la prueba.
-- Apertura en Terminal del ensayo ICMP182 preparado, solo si coinciden USB Wi-Fi, CLEAN/fence, época, ledger, hashes y marcador ausente. El backend vuelve a ejecutar su admisión completa. Se usa una ruta de salida nueva y no se borran reservas.
+- Apertura en Terminal del ensayo ICMP189 preparado, solo si coinciden USB Wi-Fi, CLEAN/fence, época, ledger, hashes y marcador ausente. El backend vuelve a ejecutar su admisión completa. Se usa una ruta de salida nueva y no se borran reservas.
 - Expulsión del instalador a través del helper existente en Terminal, con verificación de identidad por el helper.
 
 ## Modos y límites
