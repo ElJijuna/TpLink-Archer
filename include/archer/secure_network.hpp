@@ -2,7 +2,10 @@
 #include "archer/ccmp.hpp"
 #include <chrono>
 namespace archer {
-#ifdef ARCHER_EAPOL_RETRY
+#ifdef ARCHER_UNICAST_ARP
+inline constexpr unsigned secure_first_sequence=150,secure_cleanup_tag=14,secure_release_tag=13;
+inline constexpr bool secure_dhcp_broadcast=true;
+#elif defined(ARCHER_EAPOL_RETRY)
 inline constexpr unsigned secure_first_sequence=100,secure_cleanup_tag=14,secure_release_tag=13;
 inline constexpr bool secure_dhcp_broadcast=true;
 #elif defined(ARCHER_DHCP_LEASE)
@@ -35,6 +38,9 @@ enum class SecureFramePhase:unsigned {authenticate,associate,m2,
 #ifdef ARCHER_EAPOL_RETRY
  request_retry,
 #endif
+#ifdef ARCHER_UNICAST_ARP
+ arp_request,
+#endif
  release,
 #endif
  deauthenticate};
@@ -49,6 +55,9 @@ inline void require_secure_discover_report(const std::optional<ProbeTxReport>& r
  if(!report||report->state!=0||report->count!=1)throw std::runtime_error(std::string(phase)+" TX_DONE/count1 absent; no next submission");
 }
 inline unsigned secure_report_tag(SecureFramePhase phase){
+#ifdef ARCHER_UNICAST_ARP
+ if(phase==SecureFramePhase::arp_request)return 15;
+#endif
 #ifdef ARCHER_EAPOL_RETRY
  if(phase==SecureFramePhase::discover)return 12;
  if(phase==SecureFramePhase::request)return 11;
@@ -60,6 +69,9 @@ inline unsigned secure_report_tag(SecureFramePhase phase){
  return phase==SecureFramePhase::deauthenticate?secure_cleanup_tag:0;
 }
 inline bool secure_report_requested(SecureFramePhase phase){
+#ifdef ARCHER_UNICAST_ARP
+ if(phase==SecureFramePhase::arp_request)return true;
+#endif
 #ifdef ARCHER_EAPOL_RETRY
  if(phase==SecureFramePhase::discover||phase==SecureFramePhase::request||phase==SecureFramePhase::request_retry)return true;
 #endif
@@ -103,8 +115,13 @@ public:
   const auto i=unsigned(phase),last=unsigned(SecureFramePhase::deauthenticate);if(i>last||packet.size()<88)throw std::invalid_argument("Invalid secure submission");
   const unsigned bit=1u<<i;
   unsigned optional=0;
+#ifdef ARCHER_UNICAST_ARP
+  // RELEASE remains possible when gateway metadata prevents the optional probe.
+  // Successful unicast validation separately requires the probe and its reply.
+  if(phase>=SecureFramePhase::release)optional|=1u<<unsigned(SecureFramePhase::arp_request);
+#endif
 #ifdef ARCHER_EAPOL_RETRY
-  if(phase>=SecureFramePhase::release)optional|=1u<<unsigned(SecureFramePhase::request_retry);
+  if(phase>SecureFramePhase::request_retry)optional|=1u<<unsigned(SecureFramePhase::request_retry);
   if(phase>=SecureFramePhase::m4)optional|=(1u<<unsigned(SecureFramePhase::m2_retry1))|(1u<<unsigned(SecureFramePhase::m2_retry2))|(1u<<unsigned(SecureFramePhase::m2_retry3));
 #endif
 #ifdef ARCHER_DHCP_LEASE
@@ -134,7 +151,7 @@ inline std::vector<std::uint8_t> dhcp_discover_msdu(std::uint32_t xid,bool broad
  eapol_put_be16(ip.data()+10,internet_checksum(ip.data(),20));eapol_put_be16(ip.data()+20,68);eapol_put_be16(ip.data()+22,67);eapol_put_be16(ip.data()+24,bootp.size()+8);
  std::copy(bootp.begin(),bootp.end(),ip.begin()+28);std::vector<std::uint8_t> result{0xaa,0xaa,3,0,0,0,8,0};result.insert(result.end(),ip.begin(),ip.end());return result;
 }
-struct DhcpOffer {std::array<std::uint8_t,4> address{},server{};std::uint32_t lease_seconds=0;};
+struct DhcpOffer {std::array<std::uint8_t,4> address{},server{};std::uint32_t lease_seconds=0;std::array<std::uint8_t,4> subnet{},router{};};
 inline std::optional<DhcpOffer> decode_dhcp_reply(const std::vector<std::uint8_t>& msdu,std::uint32_t xid,unsigned expected_type){
  if(!xid||(expected_type!=2&&expected_type!=5&&expected_type!=6))return {};
  const std::array<std::uint8_t,8> snap{0xaa,0xaa,3,0,0,0,8,0};
@@ -149,12 +166,14 @@ inline std::optional<DhcpOffer> decode_dhcp_reply(const std::vector<std::uint8_t
  }
  const auto* b=udp+8;const unsigned size=length-8;
  if(b[0]!=2||b[1]!=1||b[2]!=6||network_u32(b+4)!=xid||!std::equal(station_test_mac.begin(),station_test_mac.end(),b+28)||network_u32(b+236)!=0x63825363)return {};
- bool type=false,server=false,end=false,lease=false;DhcpOffer offer;std::copy_n(b+16,4,offer.address.begin());
+ bool type=false,server=false,end=false,lease=false,subnet=false,router=false;DhcpOffer offer;std::copy_n(b+16,4,offer.address.begin());
  if(expected_type==6){if(offer.address!=std::array<std::uint8_t,4>{})return {};}
  else if(!offer.address[0]||offer.address[0]>=224||offer.address[0]==127)return {};
  for(unsigned at=240;at<size;){const unsigned id=b[at++];if(id==0)continue;if(id==255){end=true;break;}if(at>=size||b[at]>size-at-1)return {};const unsigned n=b[at++];
   if(id==53){if(type||n!=1||b[at]!=expected_type)return {};type=true;}
   if(id==54){if(server||n!=4)return {};std::copy_n(b+at,4,offer.server.begin());server=true;}
+  if(id==1){if(subnet||n!=4)return {};std::copy_n(b+at,4,offer.subnet.begin());subnet=true;}
+  if(id==3){if(router||n<4||n%4)return {};std::copy_n(b+at,4,offer.router.begin());router=true;}
   if(id==51){if(lease||n!=4)return {};offer.lease_seconds=network_u32(b+at);lease=true;}
   at+=n;
  }

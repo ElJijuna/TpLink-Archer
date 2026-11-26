@@ -2,7 +2,7 @@
 
 ## Checklist resumido — avance estimado: **65 %**
 
-Actualizado: **2026-11-24**, etapa176: intento174 completó WPA2, DISCOVER/OFFER, REQUEST/ACK, RELEASE y desautenticación con reportes TX_DONE. Contexto CLEAN,206 secuencias libres y210 registros posteriores verificados. Sin confirmación de liberación del servidor, recepción unicast cifrada ni interfaz de red. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
+Actualizado: **2026-11-25**, etapa179: ciclo WPA2/DHCP y cierre verificados en174. Primera comprobación unicast ARP preparada y validada en software; falta efecto por radio. Recuperación178 actual CLEAN,215 secuencias libres y210 registros verificados. Sin interfaz macOS ni confirmación de liberación del servidor. Objetivo: controlador Wi-Fi funcional para macOS ARM/Intel, con Linux posteriormente.
 
 - [x] Identificación del dispositivo y protocolo USB/registros — **10/10**.
 - [x] Carga experimental de firmware principal y BBMCU0 — **10/10**.
@@ -31,6 +31,9 @@ autenticado con XID/chaddr coincidentes tras3361 ms en138. Limpieza CLEAN.
 En174 se verificó REQUEST/ACK y lease temporal, RELEASE con TX_DONE y desautenticación/retirada de contexto CLEAN. La activación ACQ permitió los reportes TX de datos. No se confirma procesamiento de RELEASE por el servidor. Faltan recepción unicast cifrada, integración de IP/interfaz y ciclo de vida completo.
 Los ejecutables compilan para Intel/ARM; falta prueba física en Intel y Linux.
 Evidencia y límites: [research/STAGE42.md](research/STAGE42.md).
+
+Etapas177–179: solicitud ARP única para gateway del ACK, respuesta pairwise CCMP estricta y prueba local de replay preparadas.138 pruebas Python, suites C++ y ARM/Intel pasan. Recuperación178 completa y admisión179 verificada; todavía sin resultado ARP por radio. ICMP y la interfaz macOS quedan para etapas posteriores.
+[Implementación177](research/STAGE177.md), [recuperación178](research/STAGE178.md), [ensayo179](research/STAGE179.md).
 
 Etapa176: intento174 completado sin retransmisiones; reportes TX_DONE12/11/13/14 reproducidos desde captura, OFFER/ACK autenticados y cierre CLEAN. Cuatro tramas de datos autenticadas, todas de grupo. No configura IP ni crea interfaz macOS; las ramas de retransmisión REQUEST/M1 siguen sin contraste físico.
 [Resultado verificado176](research/STAGE176.md).

@@ -55,6 +55,23 @@ class OfflineCaptureAuditTest(unittest.TestCase):
                     summary=json.loads(result.stdout.splitlines()[-1]);self.assertEqual(summary['matched_acks'],1)
                     self.assertTrue(summary['recorded_request_verified']);self.assertTrue(summary['recorded_request_retry_verified']);self.assertTrue(summary['recorded_release_verified']);self.assertFalse(summary['server_release_confirmed'])
 
+    def test_leased_arp_layout_pairwise_reply_and_corrupt_request(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            capture=Path(tmp)/'capture'
+            subprocess.run([str(ROOT/'build/wpa2-arp-audit-fixture'),str(capture),'lease'],cwd=ROOT,check=True)
+            original=(capture/'secure-tx-11.bin').read_bytes()
+            for corrupt in (False,True):
+                packet=bytearray(original)
+                if corrupt:packet[110]^=1
+                (capture/'secure-tx-11.bin').write_bytes(packet)
+                fd,writer=os.pipe();os.write(writer,b'password');os.close(writer)
+                try:result=subprocess.run([str(ROOT/'build/archer-wpa2-capture-audit'),str(capture)],cwd=ROOT,env=dict(os.environ,ARCHER_CREDENTIAL_FD=str(fd)),pass_fds=(fd,),capture_output=True,text=True,check=False)
+                finally:os.close(fd)
+                self.assertEqual(result.returncode==0,not corrupt)
+                if not corrupt:
+                    summary=json.loads(result.stdout.splitlines()[-1]);self.assertTrue(summary['recorded_arp_request_verified']);self.assertTrue(summary['pairwise_arp_reply_verified']);self.assertTrue(summary['recorded_release_verified'])
+                self.assertNotIn('password',result.stdout+result.stderr);self.assertNotIn('192.168.1.55',result.stdout+result.stderr)
+
     def audit_fixture(self,broadcast,layout=False):
         with tempfile.TemporaryDirectory() as tmp:
             capture=Path(tmp)/'capture'

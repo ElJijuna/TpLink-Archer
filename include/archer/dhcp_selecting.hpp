@@ -53,6 +53,7 @@ public:
   if(!ack||ack->address!=selected_.address||ack->server!=selected_.server)return false;
   selected_=*ack;state_=State::acknowledged;return true;
  }
+ const DhcpOffer& acknowledged_lease()const{if(!lease_acknowledged())throw std::logic_error("ACK lease required");return selected_;}
  bool lease_acknowledged()const{return state_==State::acknowledged||state_==State::release_issued;}
  std::vector<std::uint8_t> issue_release(){
   if(state_!=State::acknowledged)throw std::logic_error("DHCP RELEASE order/retry forbidden");

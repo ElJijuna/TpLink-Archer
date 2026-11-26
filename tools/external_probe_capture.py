@@ -50,7 +50,7 @@ def run(output,phy=False,drained=False,grant=False,station=False,eapol=False,wpa
     if wpa2:
         wpa2_once.admission(recovered,lease,supplicant)
         credential_context=wpa2_once.credential_pipe(confirm=True)
-        report.update(attempt='eapol_retry' if supplicant else 'dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',cleanup_report_tag=14 if supplicant else 10 if lease else 6 if recovered else 0,protocol_discover_retransmissions_max=1 if lease else 0,protocol_m1_response_retries_max=3 if supplicant else 0)
+        report.update(attempt='unicast_arp' if supplicant else 'dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',cleanup_report_tag=14 if supplicant else 10 if lease else 6 if recovered else 0,protocol_discover_retransmissions_max=1 if lease else 0,protocol_m1_response_retries_max=3 if supplicant else 0)
         if supplicant:report.update(discover_tx_done_required_before_request=True,request_tx_done_required=True,protocol_request_retransmissions_max=1)
         report.pop('tag',None)
     credential_fd=credential_context.__enter__()
@@ -119,7 +119,7 @@ if __name__=='__main__':
     parser.add_argument('--wpa2-once',action='store_true',help='One WPA2 and encrypted DHCP DISCOVER experiment; hidden local passphrase prompt')
     parser.add_argument('--wpa2-recovered',action='store_true',help='New one-shot WPA2 experiment after verified cold recovery; sequences52–57, fresh epoch report6, DHCP broadcast reply and up to10s observation')
     parser.add_argument('--dhcp-lease',action='store_true',help='At most two DISCOVER frames and one REQUEST/ACK/RELEASE experiment; no OS interface')
-    parser.add_argument('--dhcp-supplicant',action='store_true',help='Bounded M1 responses; require DISCOVER TX_DONE before any DHCP lease REQUEST')
+    parser.add_argument('--dhcp-supplicant',action='store_true',help='Bounded WPA2/DHCP followed by one leased gateway ARP; require pairwise reply')
     args=parser.parse_args()
     if args.dhcp_supplicant and any((args.dhcp_lease,args.wpa2_recovered,args.wpa2_once,args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx)):parser.error('Choose only --dhcp-supplicant')
     if args.dhcp_lease and any((args.wpa2_recovered,args.wpa2_once,args.phy,args.phy_drained,args.phy_grant,args.station_exchange,args.eapol_rx)):parser.error('Choose only --dhcp-lease')

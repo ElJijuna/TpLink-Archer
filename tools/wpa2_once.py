@@ -32,8 +32,8 @@ RECOVERED_HISTORY=ROOT/'research/recovery-stage137-observation.json'
 RECOVERED_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-wpa2-recovered-stage138-attempted'
 LEASE_HISTORY=ROOT/'research/recovery-stage147-observation.json'
 LEASE_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-dhcp-lease-stage148-attempted'
-SUPPLICANT_HISTORY=ROOT/'research/recovery-stage173-observation.json'
-SUPPLICANT_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage174-attempted'
+SUPPLICANT_HISTORY=ROOT/'research/recovery-stage178-observation.json'
+SUPPLICANT_MARKER=ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage179-attempted'
 
 def validate_recovered_history(history,ledger,epoch_id,expected_stage=137):
     if (history.get('stage')!=expected_stage or history.get('status')!='cold_recovery_and_context_verified'
@@ -52,13 +52,13 @@ def validate_recovered_history(history,ledger,epoch_id,expected_stage=137):
 def admission(recovered=False,lease=False,supplicant=False):
     if supplicant:lease=True
     if lease:recovered=True
-    readiness=json.loads((ROOT/('research/supplicant-stage174-observation.json' if supplicant else 'research/dhcp-stage148-observation.json' if lease else 'research/wpa2-stage138-observation.json' if recovered else 'research/wpa2-stage105-observation.json')).read_text())
-    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=(174 if supplicant else 148 if lease else 138 if recovered else 105):raise ValueError('WPA2 state/build not prepared: '+str(readiness.get('status')))
+    readiness=json.loads((ROOT/('research/supplicant-stage179-observation.json' if supplicant else 'research/dhcp-stage148-observation.json' if lease else 'research/wpa2-stage138-observation.json' if recovered else 'research/wpa2-stage105-observation.json')).read_text())
+    if readiness.get('status')!='prepared_not_executed' or readiness.get('stage')!=(179 if supplicant else 148 if lease else 138 if recovered else 105):raise ValueError('WPA2 state/build not prepared: '+str(readiness.get('status')))
     for name,sha in readiness['build_evidence'].items():
         path=(ROOT/name).resolve()
         if not path.is_relative_to(ROOT) or digest(path)!=sha:raise ValueError('Tested WPA2 build/source changed')
     history=json.loads((SUPPLICANT_HISTORY if supplicant else LEASE_HISTORY if lease else RECOVERED_HISTORY if recovered else HISTORY).read_text())
-    if recovered:validate_recovered_history(history,LEDGER.read_bytes(),Path(str(LEDGER)+'.epoch-id').read_text().strip(),173 if supplicant else 147 if lease else 137)
+    if recovered:validate_recovered_history(history,LEDGER.read_bytes(),Path(str(LEDGER)+'.epoch-id').read_text().strip(),178 if supplicant else 147 if lease else 137)
     else:validate_history(history,LEDGER.read_bytes())
     for name,sha in history['evidence'].items():
         path=(ROOT/name).resolve()
@@ -78,6 +78,7 @@ def admission(recovered=False,lease=False,supplicant=False):
     if supplicant and (ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage162-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage162 reservation must remain intact')
     if supplicant and (ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage165-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage165 reservation must remain intact')
     if supplicant and (ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage170-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage170 reservation must remain intact')
+    if supplicant and (ROOT/'artifacts/37ad-0104-special-channel9-eapol-retry-stage174-attempted').read_bytes()!=b'RECOVERY_RESERVED\n':raise ValueError('Stage174 reservation must remain intact')
     if (SUPPLICANT_MARKER if supplicant else LEASE_MARKER if lease else RECOVERED_MARKER if recovered else MARKER).exists():raise ValueError('WPA2 attempt already reserved; no retry')
 
 
@@ -204,11 +205,36 @@ def validate_supplicant_result(rows):
     result=validate_lease_result(canonical);result['m1_response_retries']=count;result['request_retransmissions']=len(request_retries);return result
 
 
+def validate_unicast_result(rows):
+    writes={r['phase']:i for i,r in enumerate(rows) if r.get('operation')=='secure_usb_write'}
+    arp_writes=[r for r in rows if r.get('operation')=='secure_usb_write' and r.get('phase')==11]
+    if len(arp_writes)!=1:raise ValueError('One ARP request without retry required')
+    reports=[(i,r) for i,r in enumerate(rows) if r.get('operation')=='single_probe_tx_report' and r.get('tag')==15]
+    replies=[(i,r) for i,r in enumerate(rows) if r.get('operation')=='secure_unicast_arp_reply']
+    ack=[i for i,r in enumerate(rows) if r.get('operation')=='secure_dhcp_ack']
+    if len(reports)!=1 or len(replies)!=1 or len(ack)!=1 or not all(p in writes for p in (11,12,13)):raise ValueError('Unique leased ARP phase and report required')
+    report_pos,report=reports[0];reply_pos,reply=replies[0]
+    arp=next(r for r in rows if r.get('operation')=='secure_usb_write' and r.get('phase')==11)
+    if arp.get('bytes')!=140 or arp.get('endpoint')!=9 or arp.get('status')!=0 or report.get('state')!=0 or report.get('tx_count')!=1:raise ValueError('ARP TX_DONE/count1 and extent required')
+    if not ack[0]<writes[11]<report_pos<writes[12] or not writes[11]<reply_pos<writes[12]:raise ValueError('ARP must follow lease and finish before RELEASE')
+    if any(reply.get(k) is not True for k in ('pairwise','ccmp_authenticated','identity_matched','local_replay_rejected')):raise ValueError('Authenticated pairwise ARP and local replay rejection required')
+    summary=[r for r in rows if r.get('operation')=='secure_data_summary']
+    if len(summary)!=1 or summary[0].get('pairwise_frames',0)<1:raise ValueError('Pairwise RX counter required')
+    canonical=[]
+    for row in copy.deepcopy(rows):
+        if row.get('operation')=='secure_unicast_arp_reply' or (row.get('operation')=='single_probe_tx_report' and row.get('tag')==15):continue
+        if row.get('operation')=='secure_usb_write':
+            if row['phase']==11:continue
+            if row['phase']>=12:row['phase']-=1
+        canonical.append(row)
+    result=validate_supplicant_result(canonical);result.update(pairwise_arp_verified=True,local_replay_rejected=True);return result
+
+
 def execute(output,capture_guard,credential_fd,recovered=False,lease=False,supplicant=False):
     if supplicant:lease=True
     if lease:recovered=True
     output=output.resolve();output.mkdir();fds=[]
-    report=dict(status='preflight',attempt='eapol_retry' if supplicant else 'dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',wifi_sequences=list(range(100,113) if supplicant else range(67,76) if lease else range(52,58) if recovered else range(16,22)),cleanup_report_tag=14 if supplicant else 10 if lease else 6 if recovered else 0,automatic_retry=False,protocol_discover_retransmissions_max=1 if lease else 0,protocol_m1_response_retries_max=3 if supplicant else 0)
+    report=dict(status='preflight',attempt='unicast_arp' if supplicant else 'dhcp_lease' if lease else 'wpa2_recovered' if recovered else 'wpa2_once',wifi_sequences=list(range(150,164) if supplicant else range(67,76) if lease else range(52,58) if recovered else range(16,22)),cleanup_report_tag=14 if supplicant else 10 if lease else 6 if recovered else 0,automatic_retry=False,protocol_discover_retransmissions_max=1 if lease else 0,protocol_m1_response_retries_max=3 if supplicant else 0)
     if supplicant:report.update(discover_tx_done_required_before_request=True,request_tx_done_required=True,protocol_request_retransmissions_max=1)
     try:
         owner=os.open(str(LEDGER)+'.workflow',os.O_RDWR|os.O_CREAT|os.O_NOFOLLOW,0o600);fds.append(owner);fcntl.flock(owner,fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -232,7 +258,7 @@ def execute(output,capture_guard,credential_fd,recovered=False,lease=False,suppl
         report.update(exit_code=result.returncode,stdout_sha256=digest(output/'probe.jsonl'),stderr_sha256=digest(output/'probe.stderr'),ledger_after_sha256=digest(LEDGER))
         if result.returncode:raise RuntimeError('WPA2 attempt stopped; reservation retained, no retry')
         rows=[json.loads(line) for line in (output/'probe.jsonl').read_text().splitlines()]
-        report['validation']=validate_supplicant_result(rows) if supplicant else validate_lease_result(rows) if lease else validate_result(rows,recovered)
+        report['validation']=validate_unicast_result(rows) if supplicant else validate_lease_result(rows) if lease else validate_result(rows,recovered)
         report['status']='completed';save(output/'attempt.json',report)
     except BaseException as error:
         report.update(status='stopped',error=str(error));save(output/'attempt.json',report);raise

@@ -47,5 +47,10 @@ int main(){
  rejects([&]{negative.issue_request_retry(7);});assert(!negative.accept_authenticated_ack(ack));assert(!negative.lease_acknowledged());
  DhcpSelectingExchange early(0x12345678);rejects([&]{early.issue_request_retry(7);});
  assert(early.accept_authenticated_offer(offer));early.issue_request(8);rejects([&]{early.issue_request_retry(7);});
+ auto routed=ack;routed[291]=1;routed[292]=4;routed[293]=255;routed[294]=255;routed[295]=255;routed[296]=0;
+ routed[297]=3;routed[298]=4;routed[299]=192;routed[300]=0;routed[301]=2;routed[302]=1;routed[303]=255;
+ auto parsed=decode_dhcp_reply(routed,0x12345678,5);assert((parsed&&parsed->router==std::array<std::uint8_t,4>({192,0,2,1})&&parsed->subnet==std::array<std::uint8_t,4>({255,255,255,0})));
+ auto bad_router=routed;bad_router[298]=3;assert(!decode_dhcp_reply(bad_router,0x12345678,5));
+ bad_router=routed;bad_router[303]=3;bad_router[304]=4;bad_router[309]=255;assert(!decode_dhcp_reply(bad_router,0x12345678,5));
  std::cout<<"DHCP selection, matching ACK/lease, REQUEST/RELEASE fields and no-retry state passed\n";
 }

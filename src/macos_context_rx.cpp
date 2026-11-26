@@ -31,13 +31,14 @@
 #include "archer/credential_pipe.hpp"
 #ifdef ARCHER_DHCP_LEASE
 #include "archer/dhcp_selecting.hpp"
+#include "archer/unicast_arp.hpp"
 #endif
 #endif
 int main(int argc,char** argv){
 #ifdef ARCHER_WPA2_ONCE
  constexpr unsigned probe_channel=9;
 #ifdef ARCHER_EAPOL_RETRY
- const char* marker_path="artifacts/37ad-0104-special-channel9-eapol-retry-stage174-attempted";
+ const char* marker_path="artifacts/37ad-0104-special-channel9-eapol-retry-stage179-attempted";
 #elif defined(ARCHER_DHCP_LEASE)
  const char* marker_path="artifacts/37ad-0104-special-channel9-dhcp-lease-stage148-attempted";
 #elif defined(ARCHER_WPA2_RECOVERED)
@@ -143,6 +144,9 @@ int main(int argc,char** argv){
 #ifdef ARCHER_DHCP_LEASE
     archer::DhcpSelectingExchange dhcp_selecting(dhcp_xid);bool dhcp_ack=false,dhcp_nak=false;
     std::array<std::uint8_t,6> dhcp_server_mac{};
+#ifdef ARCHER_UNICAST_ARP
+    std::optional<archer::GatewayArpProbe> gateway_arp;bool arp_replay_rejected=false;
+#endif
 #endif
 #endif
 #ifdef ARCHER_STATION_EXCHANGE
@@ -171,7 +175,9 @@ int main(int argc,char** argv){
 #endif
     const std::filesystem::path dir=argv[2];
     if(!std::filesystem::create_directory(dir))throw std::runtime_error("Capture directory must be new");
-#ifdef ARCHER_EAPOL_RETRY
+#ifdef ARCHER_UNICAST_ARP
+    {std::ofstream layout(dir/"secure-layout.txt");layout<<"wpa2-phase-layout-v3\n2 6 7 9 10 11 12 13\n";layout.close();if(!layout)throw std::runtime_error("Capture layout preservation failed");}
+#elif defined(ARCHER_EAPOL_RETRY)
     {std::ofstream layout(dir/"secure-layout.txt");layout<<"wpa2-phase-layout-v2\n2 6 7 9 10 11 12\n";layout.close();if(!layout)throw std::runtime_error("Capture layout preservation failed");}
 #endif
     const bool persistent_async=std::string(argv[1])=="--run-owned-source-profile-usb-aggregation-all-management-async";
@@ -278,11 +284,22 @@ int main(int argc,char** argv){
                     if(ccmp&&(!dhcp_offer
 #ifdef ARCHER_DHCP_LEASE
                          ||(!dhcp_ack&&!dhcp_nak)
+#ifdef ARCHER_UNICAST_ARP
+                         ||(gateway_arp&&!gateway_arp->matched())
+#endif
 #endif
                     )){
                         const auto data=secure_data.observe(*ccmp,frame,size,dhcp_xid,archer::secure_dhcp_broadcast
 #ifdef ARCHER_DHCP_LEASE
                          ,[&](const std::vector<std::uint8_t>& msdu){
+#ifdef ARCHER_UNICAST_ARP
+                            std::array<std::uint8_t,6> source{};std::copy_n(frame+16,6,source.begin());
+                            if(gateway_arp&&gateway_arp->accept_authenticated_reply(msdu,!(frame[4]&1),source)){
+                                try{auto duplicate=ccmp->decrypt_from_ap(frame,size);(void)duplicate;}
+                                catch(const std::runtime_error& error){arp_replay_rejected=std::string(error.what())=="CCMP replay rejected";}
+                                std::cout<<"{\"operation\":\"secure_unicast_arp_reply\",\"pairwise\":true,\"ccmp_authenticated\":true,\"identity_matched\":true,\"local_replay_rejected\":"<<(arp_replay_rejected?"true":"false")<<"}"<<std::endl;
+                            }
+#endif
                             if(!dhcp_offer)dhcp_selecting.accept_authenticated_offer(msdu);
                             else if(dhcp_selecting.accept_authenticated_ack(msdu)){
                                 dhcp_ack=true;std::copy_n(frame+16,6,dhcp_server_mac.begin());

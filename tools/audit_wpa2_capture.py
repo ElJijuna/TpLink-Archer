@@ -14,7 +14,7 @@ def run(capture, output, compare_attempt=None):
     capture=capture.resolve();output=output.resolve()
     if not capture.is_relative_to(ROOT/'artifacts') or not capture.is_dir():raise ValueError('Recorded artifact capture required')
     layout=capture/'secure-layout.txt'
-    if layout.exists() and layout.read_text() not in ('wpa2-phase-layout-v1\n2 6 7\n','wpa2-phase-layout-v2\n2 6 7 9 10 11 12\n'):raise ValueError('Unsupported capture phase layout')
+    if layout.exists() and layout.read_text() not in ('wpa2-phase-layout-v1\n2 6 7\n','wpa2-phase-layout-v2\n2 6 7 9 10 11 12\n','wpa2-phase-layout-v3\n2 6 7 9 10 11 12 13\n'):raise ValueError('Unsupported capture phase layout')
     for name in (('secure-tx-2.bin','secure-tx-6.bin','secure-tx-7.bin') if layout.exists() else ('secure-tx-2.bin','secure-tx-3.bin','secure-tx-4.bin')):
         if not (capture/name).is_file():raise ValueError('Recorded M2, M4 and encrypted DISCOVER required')
     if not output.is_relative_to(ROOT/'artifacts'):raise ValueError('New artifact output directory required')

@@ -1,4 +1,4 @@
-#include "archer/dhcp_selecting.hpp"
+#include "archer/unicast_arp.hpp"
 #include <filesystem>
 #include <fstream>
 #include <cassert>
@@ -21,14 +21,31 @@ int main(int argc,char** argv){if(argc!=2&&argc!=3)return 2;const bool broadcast
 #ifdef ARCHER_EAPOL_RETRY
  if(argc==3&&std::string(argv[2])=="lease"){
   fs::rename(dir/"secure-tx-3.bin",dir/"secure-tx-6.bin");fs::rename(dir/"secure-tx-4.bin",dir/"secure-tx-7.bin");
-  {std::ofstream layout(dir/"secure-layout.txt");layout<<"wpa2-phase-layout-v2\n2 6 7 9 10 11 12\n";}
+  {std::ofstream layout(dir/"secure-layout.txt");
+#ifdef ARCHER_UNICAST_ARP
+  layout<<"wpa2-phase-layout-v3\n2 6 7 9 10 11 12 13\n";
+#else
+  layout<<"wpa2-phase-layout-v2\n2 6 7 9 10 11 12\n";
+#endif
+  }
   auto ack=offer;auto* a=ack.data()+36;a[242]=5;a[249]=51;a[250]=4;network_put32(a+251,3600);a[255]=255;
+#ifdef ARCHER_UNICAST_ARP
+  a[255]=1;a[256]=4;a[257]=255;a[258]=255;a[259]=255;a[260]=0;
+  a[261]=3;a[262]=4;a[263]=192;a[264]=168;a[265]=1;a[266]=1;a[267]=255;
+#endif
   auto ack_frame=header(0x4208);std::fill(ack_frame.begin()+4,ack_frame.begin()+10,255);auto ack_params=ccmp_parameters(ack_frame.data(),ack_frame.size(),3);auto ack_cipher=ccm8_encrypt(hs.group_key(),ack_params.nonce,ack_params.aad,ack);
   ack_frame.insert(ack_frame.end(),{3,0,0,0x60,0,0,0,0});ack_frame.insert(ack_frame.end(),ack_cipher.begin(),ack_cipher.end());fcs(ack_frame);rx(dir,5,ack_frame);
   const auto selected=decode_dhcp_offer(offer,0x12345678),lease=decode_dhcp_reply(ack,0x12345678,5);assert(selected&&lease);
   auto request=session.encrypt_to_ap(dhcp_selecting_request(0x12345678,*selected,4),broadcast,secure_frame_sequence(SecureFramePhase::request));save(dir/"secure-tx-9.bin",secure_tx_packet(SecureFramePhase::request,request));
   auto retried=session.encrypt_to_ap(dhcp_selecting_request(0x12345678,*selected,8),broadcast,secure_frame_sequence(SecureFramePhase::request_retry));save(dir/"secure-tx-10.bin",secure_tx_packet(SecureFramePhase::request_retry,retried));
-  auto released=session.encrypt_to_ap(dhcp_release_msdu(0x12345678,*lease),station_target_ap,secure_frame_sequence(SecureFramePhase::release));save(dir/"secure-tx-11.bin",secure_tx_packet(SecureFramePhase::release,released));
+#ifdef ARCHER_UNICAST_ARP
+  GatewayArpProbe arp_probe(*lease);auto arp=arp_probe.issue_request();
+  auto arp_tx=session.encrypt_to_ap(arp,broadcast,secure_frame_sequence(SecureFramePhase::arp_request));save(dir/"secure-tx-11.bin",secure_tx_packet(SecureFramePhase::arp_request,arp_tx));
+  arp[15]=2;std::copy(station_target_ap.begin(),station_target_ap.end(),arp.begin()+16);std::copy(lease->router.begin(),lease->router.end(),arp.begin()+22);std::copy(station_test_mac.begin(),station_test_mac.end(),arp.begin()+26);std::copy(lease->address.begin(),lease->address.end(),arp.begin()+32);
+  auto reply_frame=header(0x4208);const auto reply_params=ccmp_parameters(reply_frame.data(),reply_frame.size(),2);const auto reply_cipher=ccm8_encrypt(hs.pairwise_key(),reply_params.nonce,reply_params.aad,arp);
+  reply_frame.insert(reply_frame.end(),{2,0,0,0x20,0,0,0,0});reply_frame.insert(reply_frame.end(),reply_cipher.begin(),reply_cipher.end());fcs(reply_frame);rx(dir,6,reply_frame);
+#endif
+  auto released=session.encrypt_to_ap(dhcp_release_msdu(0x12345678,*lease),station_target_ap,secure_frame_sequence(SecureFramePhase::release));save(dir/("secure-tx-"+std::to_string(unsigned(SecureFramePhase::release))+".bin"),secure_tx_packet(SecureFramePhase::release,released));
  }
 #endif
  return 0;}

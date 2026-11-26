@@ -1,0 +1,38 @@
+{
+  "stage": 177,
+  "date": "2026-11-25",
+  "status": "leased_gateway_arp_built_not_radio_verified",
+  "validation": {
+    "python_tests": 138,
+    "cpp_suites_passed": true,
+    "architectures": [
+      "arm64",
+      "x86_64"
+    ]
+  },
+  "arp_requests_max": 1,
+  "pairwise_reply_required": true,
+  "local_replay_test": true,
+  "os_interface": false,
+  "new_wifi_submissions": 0,
+  "build_evidence": {
+    "Makefile": "d404f74cca5b858488d71ed36dfd8496dcdae2b86fb9072c45d4cadf0757aa08",
+    "include/archer/unicast_arp.hpp": "5985a4a472216fd68c8c9d6c9acd32d21a39454b057369ead93d73dc11c6df01",
+    "include/archer/dhcp_selecting.hpp": "999b9bf3f927a47f95d9591a8277ee85e8b117a841219400466f27becfd09c70",
+    "include/archer/secure_network.hpp": "11d2e640ac63fac4173465430663b891948de8488fce29f9e4a7722d4a610d20",
+    "include/archer/secure_exchange.inc": "1caded69707d010a8cf0916b85902a13294a0732008ac4575d70db67df46a5ab",
+    "src/macos_context_rx.cpp": "0604ee4ad82728ec3ffebf141abbf3c2c5acef9279a3d0ecdc66794df182bfef",
+    "src/wpa2_capture_audit.cpp": "9a87810fb55706b15382c1f4d4ace1a6788c7f031c26091e2d848f710193bc56",
+    "tools/wpa2_once.py": "807692e8f15346663df4d7acab5f190f7e2c3d62d70c1cff8064af92c24a4e74",
+    "tools/external_probe_capture.py": "6cbca80bfe808bbe0784c1c2c0a93ea8d1440c15930f037690f0e9f0cc46b690",
+    "tools/audit_wpa2_capture.py": "9a1d34d5c272862924bca2e3dd773dad8d66c5efe2a602d4c71dc42b872720fe",
+    "tests/unicast_arp_test.cpp": "1f62f2d8ad5c420ea421534e2d6054e94b1fc9d9e08eb6244dfb13d1022e79af",
+    "tests/test_unicast_result.py": "418f908648013c31abf695b7ca2285812d14b4afbc4cb78a64edd053ace660c5",
+    "tests/test_wpa2_capture_audit.py": "01a9d8699d3ed83dbe44bc14794944daa331ba2df022d11ef6ecbe0e0ab5ba95",
+    "tests/wpa2_audit_fixture.cpp": "10ec81fb08f20d458e7d4e7e0249dd58cdadb7ba3915a811c5c986250da7c439",
+    "artifacts/unicast-stage177-tests-final.log": "7ac37b8f6ea9f76a1bcfd497e81d55695a04694fdad224ac4e0e09029efc5c7c",
+    "artifacts/unicast-stage177-validation-final.log": "5f3e072549e836ad9134058470609360265c89737633faf00651dc62fba3308d",
+    "artifacts/archer-unicast-arp-stage177": "0520a105199abcf9a262ee1599569e72ca82d1b4a0ed2ee2a800c5fc6aefce2d",
+    "artifacts/archer-wpa2-capture-audit-stage177": "6d060f42c6feb04b5b27db31648154eac5b33195158d7b8c6fb6943d8047f337"
+  }
+}

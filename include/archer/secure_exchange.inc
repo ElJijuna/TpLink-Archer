@@ -149,12 +149,27 @@
 #endif
                                     secure_lease_acquired=true;
                                     std::cout<<"{\"operation\":\"secure_dhcp_ack\",\"ccmp_authenticated\":true,\"lease_acknowledged\":true,\"os_interface\":false}"<<std::endl;
+#ifdef ARCHER_UNICAST_ARP
+                                    std::exception_ptr arp_error;
+                                    try{
+                                        gateway_arp.emplace(dhcp_selecting.acknowledged_lease());
+                                        const auto arp=ccmp->encrypt_to_ap(gateway_arp->issue_request(),broadcast,archer::secure_frame_sequence(archer::SecureFramePhase::arp_request));
+                                        secure_send(archer::SecureFramePhase::arp_request,archer::secure_tx_packet(archer::SecureFramePhase::arp_request,arp));
+                                        secure_wait([&]{return gateway_arp->matched()&&bool(probe_report);},3000,false,true);
+                                        archer::require_secure_discover_report(probe_report,"ARP");secure_confirm();probe_submitted=false;
+                                        if(!gateway_arp->matched()||!arp_replay_rejected)throw std::runtime_error("Pairwise ARP reply or local replay rejection absent");
+                                    }catch(...){arp_error=std::current_exception();}
+                                    if(arp_error&&secure_pending)std::rethrow_exception(arp_error);
+#endif
                                     if(dhcp_server_mac[0]&1)throw std::runtime_error("DHCP server source MAC is not unicast");
                                     const auto release=ccmp->encrypt_to_ap(dhcp_selecting.issue_release(),dhcp_server_mac,archer::secure_frame_sequence(archer::SecureFramePhase::release));
                                     secure_send(archer::SecureFramePhase::release,archer::secure_tx_packet(archer::SecureFramePhase::release,release));
                                     secure_wait([&]{return bool(probe_report);});secure_confirm();probe_submitted=false;
                                     if(probe_report->state!=0||probe_report->count!=1)throw std::runtime_error("DHCP RELEASE not TX_DONE/count1");
                                     std::cout<<"{\"operation\":\"secure_dhcp_release\",\"tx_done\":true,\"server_release_confirmed\":false}"<<std::endl;
+#ifdef ARCHER_UNICAST_ARP
+                                    if(arp_error)std::rethrow_exception(arp_error);
+#endif
 #endif
                                 }catch(...){secure_error=std::current_exception();}
                                 station_expected_reply.reset();
