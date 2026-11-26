@@ -1,0 +1,49 @@
+{
+  "stage": 195,
+  "date": "2026-11-26",
+  "status": "firmware_download_core_ported_bound_and_linked_not_enabled",
+  "scope": "download core only, USB-no-DCPU variant",
+  "source_firmware_sha256": "4340bc322912f30f1793bb57a1747c23b15e40db2df628d6687d1ddf722f2828",
+  "images": 2,
+  "bound_packets": 212,
+  "validation": {
+    "exact_legacy_operations_and_packet_comparison": true,
+    "fault_injection_points": 101,
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "python_binding_tests": 2,
+    "architectures": [
+      "arm64",
+      "x86_64"
+    ],
+    "sdk": "DriverKit27.2",
+    "core_entry_points_linked": true
+  },
+  "full_boot_engine_enabled": false,
+  "windows_and_ownership_ported": false,
+  "native_boot_begin_api": false,
+  "dext_installed": false,
+  "usb_submissions": 0,
+  "network_submissions": 0,
+  "evidence_sha256": {
+    "include/archer/driver_firmware_engine.hpp": "b559fea6ef6b47d51397b95a7e3ac4f055797632ef71ff34511788cfd9b6485f",
+    "driverkit/bind_firmware.py": "cf2913f7f39b0ba5802b3644af2e7a4116e62d6f274e367ba29f5e5f4394c2c0",
+    "driverkit/ArcherUSB/FirmwareCore.hpp": "85128a79e31374508d042d073da23bba73ad25270b121a7e1237a822b49a38f8",
+    "driverkit/ArcherUSB/FirmwareCore.cpp": "d6e33ea81e049705abb78074f7b0cafa1b171c264753e9b797ed04633c5e20a7",
+    "driverkit/ArcherUSB/ArcherUSB.cpp": "e63e8efa94ee0779a91f571d9d123adb7947e0f1ca9e1e708df1183b8af4a128",
+    "driverkit/ArcherUSB/ArcherUSB.iig": "5c767782db0102016c1a43290c640ffbd3b675e3178c6e5ca8c5e8a980e07e3c",
+    "driverkit/build.sh": "feeb0aad4825dea2f8ece2d0d26b35bebe85dd49a66953a243e4508a16abbddc",
+    "driverkit/test_firmware.sh": "dd3bf6b4697d6c48cbc95a846c968bf039bd67b920cec86bb9a4ae781551115e",
+    "driverkit/verify_bundle.py": "9fef6ac5ccec23f428705cb9330bcd778a1414b79f7172e0767566d2e42b9d12",
+    "tests/driver_firmware_engine_test.cpp": "1e8fd8aff2e457632946ba1beabe2b7d7d8159ca4411fafb2ac8fb398b0271bc",
+    "tests/test_driver_firmware_bind.py": "f4470773f9dca9700f271daace26471ae5a7b43898aa1818f8c7e69ace70d91f",
+    "artifacts/driverkit-stage195-tests.log": "1631637de2fb18460dbb65af27ddecdb7e79d690230b80d37d8cb15c48c1bc2d",
+    "artifacts/driverkit-stage195-bind-tests.log": "fefd166249373c22bb2d282e0ce97b29629bb483ebf37ff0769f08b9370f8b7d",
+    "artifacts/driverkit-stage195-build.log": "988df555ae13041b3b5a7febfc2054a7774bbf0425c660bac7b72ecf23f23997",
+    "artifacts/driverkit-stage195-bundle.log": "a013461abf691eea28f1f9c5366f5c319cea1240a6ccba4516632e528a79abda",
+    "artifacts/driverkit-stage195-ArcherUSB": "815824b2f4da285d8b7d3b1431d5fd03a08e3c016d93ede8b4b7742396587e51",
+    "artifacts/driverkit-stage195-firmware-plan.json": "c4dc6163fca86cc9e83a5591be6521d22757573d102191022d7956fc33e8b295"
+  }
+}

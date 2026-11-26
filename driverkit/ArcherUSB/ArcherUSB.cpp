@@ -49,10 +49,12 @@ struct USBBackend {
  void release_pipe(unsigned i){pipes[i]->release();pipes[i]=nullptr;}
 };
 #include "USBTransport.inc"
+#include "FirmwareCore.hpp"
 struct ArcherUSB_IVars {
  USBBackend backend;
  archer::UsbServiceLifecycle<USBBackend> lifecycle;
  USBTransport transport;
+ archer::DriverFirmwareEngine firmware;
  bool super_started=false,stop_requested=false,stop_held=false;
  IOService* stop_provider=nullptr;
  kern_return_t stop_error=0;
@@ -95,6 +97,7 @@ kern_return_t IMPL(ArcherUSB,Stop){
  ivars->stop_requested=true;ivars->stop_provider=provider;provider->retain();
  retain();ivars->stop_held=true;
  auto& t=ivars->transport;
+ ivars->firmware.cancel();
  t.state.stop(); // Reject every new request/result BEFORE aborts and callbacks.
  ivars->stop_error=ivars->lifecycle.stop();
  t.closed=ivars->backend.last_close_status==kIOReturnSuccess;
@@ -255,4 +258,15 @@ kern_return_t ArcherUSB::ReadBootControls(std::uint32_t* values,std::uint32_t ca
  if(decoded==archer::DriverBootControls::inaccessible)return kIOReturnNotReadable;
  std::copy(observed.begin(),observed.end(),values);*classification=std::uint32_t(decoded);
  return 0; // No writes/reset/download; full boot ownership/images/window gates still required.
+}
+
+kern_return_t ArcherUSB::GetBoundFirmwarePlan(std::uint32_t* images,std::uint32_t* frames,std::uint32_t* bytes){
+ if(!ivars||!images||!frames||!bytes)return kIOReturnBadArgument;
+ if(!ivars->transport.on_queue())return kIOReturnNotPermitted;
+ const auto& images_view=archer::driverkit::bound_firmware_images();
+ if(!archer::DriverFirmwareEngine::valid_images(images_view))return kIOReturnUnsupported;
+ std::uint32_t count=0,total=0;
+ for(const auto& image:images_view){count+=image.count;for(unsigned i=0;i<image.count;++i)total+=image.frames[i].size;}
+ *images=2;*frames=count;*bytes=total;return 0;
+ // Metadata only. No engine.begin() until ownership/windows/drain orchestration is ported.
 }

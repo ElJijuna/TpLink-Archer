@@ -63,10 +63,27 @@ Pruebas ASan/UBSan: codificación diferencial con el transporte anterior, lectur
 
 La prueba usa los primeros controles leídos en la captura fría188 y un caso de ejecución sintético separado. Verifica sentinelas, cut incorrecto y estados ROM de rechazo. El método no se llama automáticamente desde Start y no se ejecutó sobre hardware en esta etapa. Sigue siendo LOCALONLY y el bundle universal compila/enlaza con él.
 
+## Núcleo de descarga de firmware portado — etapa195
+
+`DriverFirmwareEngine` porta la secuencia de `boot_firmware(..., usb_without_dcpu=true)` a una máquina de acciones sin excepciones, asignaciones dinámicas ni esperas bloqueantes dentro del núcleo. Produce lecturas, escrituras, bulk OUT07 y pausas de10ms; el coordinador debe completarlas explícitamente. Una sola acción pendiente, época/ticket, plazo global30s, hasta100 polls por condición, rechazo ROM4–7 y comprobación exacta de bytes. Una acción fallida/corta no se vuelve a emitir. Una instancia no permite un segundo inicio. Registra mutación y tentativa de reset antes de entregar la escritura, sin afirmar rollback.
+
+`bind_firmware.py` exige el SHA256 del archivo original ya utilizado por el proyecto y usa el generador anterior para producir dos imágenes inmutables con212 paquetes. No modifica seguridad, firmas ni contenido del firmware. La comparación con el header anterior verifica todos los bytes/orden. Un archivo alterado se rechaza antes de escribir archivos generados. El build incorpora las imágenes y enlaza explícitamente las entradas C++ del núcleo para ambas arquitecturas. `GetBoundFirmwarePlan` es LOCALONLY y solo consulta metadatos; no inicia el motor.
+
+```sh
+./driverkit/test_firmware.sh
+python3 -m unittest discover -s tests -p test_driver_firmware_bind.py
+./driverkit/build.sh
+python3 driverkit/verify_bundle.py
+```
+
+Las pruebas ASan/UBSan comparan todas las operaciones con la rutina anterior sobre un backend simulado, incluyendo los212 paquetes reales vinculados. Pasaron101 puntos de fallo inyectado, rechazo ROM, timeout, cancelación, reloj/plazo, imágenes inválidas y transferencia corta en el último paquete. Dos pruebas Python verifican binding y rechazo por hash. Esto **no representa confirmaciones ROM nuevas obtenidas del hardware**.
+
+**El arranque completo aún no está habilitado.** Faltan las ventanas WLAN/RF con sus restauraciones, la política de propiedad/fence, tablas posteriores, dispatcher/timers que conecten las acciones al transporte y drenaje final. Los controles fríos de194 no conceden esos permisos. Start no llama al núcleo y no existe una API que permita comenzar un reset desde la app. El bundle sigue sin instalarse; no hubo solicitudes USB ni cargas reales en esta etapa.
+
 ## Orden de implementación restante
 
 1. Servicio USB y ciclo Start/Stop/cancelación implementados y enlazados en192; falta contraste físico con la extensión instalada.
-2. Transporte de registros/bulk adaptado en193. Sigue conectar el motor de arranque al API sin excepciones, con política de reservas, firmware, decodificación de respuestas y errores; el motor IOUSBLib no se puede enlazar sin cambios.
+2. Transporte adaptado en193 y núcleo de descarga portado/enlazado en195. Faltan ventanas WLAN/RF, propiedad/fence, dispatcher/timers, tablas posteriores y drenaje antes de habilitar el arranque completo.
 3. Backend de criptografía y supplicant persistente: claves en memoria, PN/secuencias por sesión, rekey, desconexión y limpieza verificada. El backend CommonCrypto actual también necesita un límite de plataforma explícito.
 4. Pools y colas Ethernet TX/RX, backpressure y completado de propiedad una sola vez; solo publicar link-up después de asociación/claves/contexto válidos. Integrar el codec de esta etapa.
 5. Firma/perfil y activación desde la app. El usuario dispone de Apple ID sin membresía Developer; todavía no se acredita ningún perfil ni entitlement DriverKit. La app diagnóstica con firma local sigue siendo independiente de esto.
@@ -74,4 +91,4 @@ La prueba usa los primeros controles leídos en la captura fría188 y un caso de
 
 Apple documenta [NetworkingDriverKit](https://developer.apple.com/documentation/NetworkingDriverKit) como interfaz Ethernet y [el proceso de entitlements](https://developer.apple.com/documentation/driverkit/requesting-entitlements-for-driverkit-development) para su instalación. Este proyecto no instala extensiones ni modifica políticas de seguridad mediante los scripts anteriores.
 
-Evidencia: [etapa191](../research/driverkit-stage191-observation.json) y [etapa192](../research/driverkit-stage192-observation.json) y [etapa193](../research/driverkit-stage193-observation.json) y [etapa194](../research/driverkit-stage194-observation.json).
+Evidencia: [etapa191](../research/driverkit-stage191-observation.json) y [etapa192](../research/driverkit-stage192-observation.json) y [etapa193](../research/driverkit-stage193-observation.json) y [etapa194](../research/driverkit-stage194-observation.json) y [etapa195](../research/driverkit-stage195-observation.json).

@@ -44,7 +44,7 @@ for i in range(count):
 assert set(architectures)=={0x01000007,0x0100000c}
 for architecture in ['arm64','x86_64']:
     header=(ROOT/f'build/driverkit/service/{architecture}/ArcherUSB.h').read_text()
-    for method in ['ReadBootControls','ReadRegister','WriteRegister','SubmitBulk','CopyBulkResult','ReleaseBulk','GetTransportStatus']:
+    for method in ['GetBoundFirmwarePlan','ReadBootControls','ReadRegister','WriteRegister','SubmitBulk','CopyBulkResult','ReleaseBulk','GetTransportStatus']:
         assert f'#define ArcherUSB_{method}_ID' not in header, f'{method} unexpectedly exported as RPC'
     assert '#define ArcherUSB_BulkComplete_ID' in header
 print('DEXT bundle: exact Wi-Fi matching, DriverKit platform and framework links plus LOCALONLY transport boundary verified for ARM/Intel; not installed.')

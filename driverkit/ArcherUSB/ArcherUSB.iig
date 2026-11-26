@@ -20,6 +20,7 @@ public:
     virtual kern_return_t SetHardwareAssists(uint32_t hardwareAssists) override LOCAL;
     virtual kern_return_t GetHardwareAssists(uint32_t *hardwareAssists) override LOCAL;
     // In-process transport only. No user client or external arbitrary-register RPC.
+    kern_return_t GetBoundFirmwarePlan(uint32_t *images, uint32_t *frames, uint32_t *bytes) LOCALONLY;
     kern_return_t ReadBootControls(uint32_t *values, uint32_t capacity, uint32_t *classification) LOCALONLY;
     kern_return_t ReadRegister(uint32_t address, uint32_t width, uint32_t *value) LOCALONLY;
     kern_return_t WriteRegister(uint32_t address, uint32_t width, uint32_t value) LOCALONLY;
