@@ -1,0 +1,49 @@
+{
+  "stage": 192,
+  "date": "2026-11-26",
+  "status": "usb_service_compiled_linked_and_unit_verified_not_installed",
+  "class": "ArcherUSB",
+  "superclass": "IOUserNetworkEthernet",
+  "provider": "IOUSBHostInterface",
+  "usb_id": "37ad:0104",
+  "configuration": 1,
+  "interface": 0,
+  "profile": "USB2 bulk512 only",
+  "architectures": [
+    "arm64",
+    "x86_64"
+  ],
+  "sdk": "DriverKit27.2",
+  "target": "DriverKit24.0",
+  "validation": {
+    "fault_scenarios": 15,
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "physical_descriptor_replay": true,
+    "macho_platform": 10,
+    "framework_links_verified": true,
+    "dext_installed": false,
+    "physical_start_stop_tested": false,
+    "network_interface_created": false,
+    "usb_submissions": 0,
+    "network_submissions": 0
+  },
+  "evidence_sha256": {
+    "include/archer/usb_service_lifecycle.hpp": "08f4543566f2631d3925cba8865a66f7865808e899b039946319815dcee3819c",
+    "tests/usb_service_lifecycle_test.cpp": "11cc076b9aaee5d8ff1c010e09ee594e599d13bd61f8620866eb776de5d95129",
+    "driverkit/ArcherUSB/Entitlements.example.plist": "79743261b37068e34425ecc9c0e7259fb79abfd92601b21a88c086d2b97ddcd1",
+    "driverkit/ArcherUSB/ArcherUSB.iig": "3cd1b3b94379339c1db96369150e82ac4cd187598a6cbfe4e554565081d36996",
+    "driverkit/ArcherUSB/ArcherUSB.cpp": "475eb002269fe05ea4dae3cd2d306500fa8939ba39aefc262736e6148cceb493",
+    "driverkit/ArcherUSB/Info.plist": "3edd250e788458e1a51fc8f7c6d084ce021682f0d23e81cb31bee87e03e43e33",
+    "driverkit/build.sh": "34ad581501b9438885db1d11e3ca5b75a7dee78884f5b2ad5bb2c051e7abf67b",
+    "driverkit/test_service.sh": "f23df588180ffe2d7a3e36ce9f9fcfbce3f6bc12b88ad817ec01c9bace43b81f",
+    "driverkit/verify_bundle.py": "4cc0628436b47d87f5084dd67ea60f2e6fed81f42535981757e25bb041d9e62b",
+    "artifacts/driverkit-stage192-tests.log": "aba4d4235bdca355186988109870b9ac4f0c1c3ab7800e8aad563bbe7ddd791e",
+    "artifacts/driverkit-stage192-build.log": "36b9886e3d97d54ff9404fc2fac27a76c295f7635b4122533d8cbce055a0a743",
+    "artifacts/driverkit-stage192-bundle.log": "42e9c73f5a341d7267aee77faf66306a49bcff541c914d92a45fdf471bca73e6",
+    "build/driverkit/service/ArcherUSB.dext/Contents/MacOS/ArcherUSB": "58c11bc0d5e74d9067b10cd7dda2048db7ff352d4c17d049bd6edde57d52d509",
+    "build/driverkit/service/ArcherUSB.dext/Contents/Info.plist": "3edd250e788458e1a51fc8f7c6d084ce021682f0d23e81cb31bee87e03e43e33"
+  }
+}
