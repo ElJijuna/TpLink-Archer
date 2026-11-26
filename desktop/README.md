@@ -1,6 +1,6 @@
 # Archer Control — aplicación macOS
 
-Primera versión local de escritorio (SwiftUI + Swift Charts), macOS14 o posterior. Compila para Apple Silicon e Intel sin dependencias externas. El controlador de red todavía está en investigación: esta app no crea una interfaz ni permite navegar por el Archer.
+Primera versión local de escritorio (SwiftUI + Swift Charts), macOS14 o posterior. La UI se verificó en Apple Silicon; Intel solo se compiló, sin prueba física todavía. Compila para Apple Silicon e Intel sin dependencias externas. El controlador de red todavía está en investigación: esta app no crea una interfaz ni permite navegar por el Archer.
 
 ## Abrir y construir
 
@@ -11,6 +11,8 @@ Desde la raíz del proyecto:
 ./desktop/build.sh
 open "build/Archer Control.app"
 ```
+
+Si macOS no muestra las capturas al primer inicio, pulsa **Cambiar proyecto** y selecciona la carpeta `Tp-link-Archer`; después aparecerán los datos locales.
 
 La app está firmada localmente con una firma ad hoc. No es un instalador DriverKit ni una distribución notarizada. El proyecto por defecto se incorpora al bundle durante la compilación; se puede cambiar desde la barra lateral. También acepta `--project /ruta/al/proyecto` al abrir el ejecutable.
 

@@ -9,7 +9,8 @@ for ARCH in arm64 x86_64; do
   echo "Building Archer Control ($ARCH)…"
   xcrun swiftc -swift-version 5 -O -parse-as-library -sdk "$SDK" -module-cache-path "build/desktop/cache-$ARCH" -target "$ARCH-apple-macosx14.0" desktop/ArcherControl/*.swift -o "build/desktop/ArcherControl-$ARCH"
 done
-xcrun lipo -create build/desktop/ArcherControl-arm64 build/desktop/ArcherControl-x86_64 -output "$APP/Contents/MacOS/ArcherControl"
+xcrun lipo -create build/desktop/ArcherControl-arm64 build/desktop/ArcherControl-x86_64 -output "$APP/Contents/MacOS/ArcherControl.new"
+mv "$APP/Contents/MacOS/ArcherControl.new" "$APP/Contents/MacOS/ArcherControl"
 cp desktop/workflows.json "$APP/Contents/Resources/workflows.json"
 printf '%s\n' "$PROJECT_ROOT" > "$APP/Contents/Resources/DefaultProject.txt"
 xcrun swift -module-cache-path build/desktop/icon-cache desktop/MakeIcon.swift build/desktop/ArcherIcon.iconset

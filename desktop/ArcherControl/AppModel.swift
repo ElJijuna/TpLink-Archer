@@ -3,7 +3,7 @@ import AppKit
 import UniformTypeIdentifiers
 import CryptoKit
 
-struct CaptureDetails { var capture = PacketCapture(); var native = NativeSummary(); var pcapDigest = ""; var pcapVerified: Bool?; var nativeVerified: Bool?; var error = "" }
+struct CaptureDetails { var capture = PacketCapture(); var native = NativeSummary(); var pcapDigest = ""; var pcapVerified: Bool?; var nativeVerified: Bool?; var error = ""; var monitorWarning = "" }
 enum WorkspacePage: String, CaseIterable, Identifiable {
     case overview = "Resumen", networks = "Redes", traffic = "Tráfico", captures = "Capturas", modes = "Modos", activity = "Actividad"
     var id:String { rawValue }
@@ -75,7 +75,12 @@ enum WorkspacePage: String, CaseIterable, Identifiable {
         loadingCapture=true;let token=UUID();generation=token
         Task {
             let loaded=await Task.detached(priority:.userInitiated) { () -> CaptureDetails in
-                var result=CaptureDetails();let attempt=jsonObject(record.folder.appendingPathComponent("probe/attempt.json"));let paired=jsonObject(record.folder.appendingPathComponent("paired.json"))
+                var result=CaptureDetails();let attempt=record.status=="imported" ? [:]:jsonObject(record.folder.appendingPathComponent("probe/attempt.json"));let paired=record.status=="imported" ? [:]:jsonObject(record.folder.appendingPathComponent("paired.json"))
+                if let code=record.monitorExit,code != 0 {
+                    let log=textFile(record.folder.appendingPathComponent("monitor.stderr"),limit:65_536)
+                    if log.contains("packets captured") && log.contains("Reconnect the Mac Wi-Fi") {result.monitorWarning="El PCAP se guardó; falló la restauración del Wi-Fi del Mac. Revisa en0 si no se reconectó automáticamente."}
+                    else {result.monitorWarning="El monitor terminó con código \(code). Consulta monitor.stderr antes de interpretar esta captura."}
+                }
                 if let log=record.nativeLog,let data=try? readBounded(log) {result.native=NativeSummary.parse(data);if let expected=attempt["stdout_sha256"] as? String {result.nativeVerified=SHA256.hash(data:data).map{String(format:"%02x",$0)}.joined()==expected}}
                 if let pcap=record.pcap {
                     do {let data=try readBounded(pcap,limit:67_108_864);result.capture=try PcapReader.parse(data,allowPartial:true);result.pcapDigest=SHA256.hash(data:data).map{String(format:"%02x",$0)}.joined();if let expected=paired["pcap_sha256"] as? String{result.pcapVerified=result.pcapDigest==expected}}

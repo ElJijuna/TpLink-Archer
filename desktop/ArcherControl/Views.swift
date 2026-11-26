@@ -28,6 +28,9 @@ struct RootView:View {
         .environment(\.locale,Locale(identifier:"es_PE"))
         .onReceive(timer){_ in model.refresh()}
         .onChange(of:model.page){_,_ in model.search=""}
+        .onChange(of:model.search){_,_ in model.selectedPacket=nil}
+        .onChange(of:model.packetKind){_,_ in model.selectedPacket=nil}
+        .onChange(of:model.stationOnly){_,_ in model.selectedPacket=nil}
     }
     private var sidebar:some View{
         VStack(alignment:.leading,spacing:0){
@@ -42,17 +45,19 @@ struct RootView:View {
         }.padding(.horizontal,18).padding(.top,48).padding(.bottom,22).frame(width:220).frame(maxHeight:.infinity).background(Theme.sidebar).overlay(alignment:.trailing){Rectangle().fill(Theme.border).frame(width:1)}
     }
     private var topbar:some View{
-        HStack(spacing:14){HStack(spacing:7){Text("Archer Control").foregroundStyle(Theme.muted);Image(systemName:"chevron.right").font(.system(size:8));Text(model.page.rawValue)}.font(.system(size:11));Spacer();if model.loadingCapture{ProgressView().controlSize(.small)};if !model.captures.isEmpty{Picker("Captura",selection:Binding(get:{model.selected?.id ?? ""},set:{id in if let record=model.captures.first(where:{$0.id==id}){model.select(record)}})){ForEach(model.captures){Text($0.title).tag($0.id)}}.labelsHidden().pickerStyle(.menu).frame(maxWidth:265)};Button{model.importCapture()}label:{Label("Abrir PCAP",systemImage:"plus")}.buttonStyle(.bordered);Button{model.refresh()}label:{Image(systemName:"arrow.clockwise")}.buttonStyle(.bordered).help("Actualizar estado y capturas")}.padding(.horizontal,28).padding(.top,34).padding(.bottom,17)
+        HStack(spacing:14){HStack(spacing:7){Text("Archer Control").foregroundStyle(Theme.muted);Image(systemName:"chevron.right").font(.system(size:8));Text(model.page.rawValue)}.font(.system(size:11));Spacer();if model.loadingCapture || model.refreshing{ProgressView().controlSize(.small)};if !model.captures.isEmpty{Picker("Captura",selection:Binding(get:{model.selected?.id ?? ""},set:{id in if let record=model.captures.first(where:{$0.id==id}){model.select(record)}})){if let imported=model.selected,imported.status=="imported"{Text(imported.title).tag(imported.id)};ForEach(model.captures){Text($0.title).tag($0.id)}}.labelsHidden().pickerStyle(.menu).frame(maxWidth:265)};Button{model.importCapture()}label:{Label("Abrir PCAP",systemImage:"plus")}.buttonStyle(.bordered);Button{model.refresh()}label:{Image(systemName:"arrow.clockwise")}.buttonStyle(.bordered).help("Actualizar estado y capturas")}.padding(.horizontal,28).padding(.top,34).padding(.bottom,17)
     }
     @ViewBuilder private var content:some View{
-        switch model.page {
+        if model.refreshing && model.captures.isEmpty && model.selected == nil {
+            VStack(spacing:16){ProgressView();Text("Cargando estado USB y capturas locales…").foregroundStyle(Theme.muted)}.frame(maxWidth:.infinity,maxHeight:.infinity)
+        } else { switch model.page {
         case .overview:overview
         case .networks:networkPage
         case .traffic:trafficPage
         case .captures:capturesPage
         case .modes:modesPage
         case .activity:activityPage
-        }
+        }}
     }
     private func heading(_ title:String,_ subtitle:String)->some View{VStack(alignment:.leading,spacing:7){Text(title).font(.system(size:27,weight:.semibold));Text(subtitle).font(.system(size:12)).foregroundStyle(Theme.muted)}.frame(maxWidth:.infinity,alignment:.leading)}
     private var overview:some View{
@@ -68,7 +73,7 @@ struct RootView:View {
     }
     @ViewBuilder private var integrityWarnings:some View{
         if model.details.pcapVerified==false || model.details.nativeVerified==false{notice("Un archivo cambió respecto a su manifiesto. Revisa los originales antes de usar este resultado como evidencia.",color:.orange)}
-        if let selected=model.selected,let code=selected.monitorExit,code != 0{notice("El monitor terminó con código \(code). Consulta su registro: en capturas anteriores falló la restauración de en0 aunque el ensayo del Archer terminó.",color:.orange)}
+        if !model.details.monitorWarning.isEmpty{notice(model.details.monitorWarning,color:.orange)}
         if !model.details.error.isEmpty{notice(model.details.error,color:Theme.muted)}
         if let warning=model.details.capture.warnings.first{notice(warning,color:.orange)}
     }
@@ -81,7 +86,7 @@ struct RootView:View {
     private func empty(_ title:String,icon:String)->some View{VStack(spacing:10){Image(systemName:icon).font(.system(size:25)).foregroundStyle(Theme.muted.opacity(0.6));Text(title).font(.system(size:11)).foregroundStyle(Theme.muted)}.frame(maxWidth:.infinity,maxHeight:.infinity)}
     private var networkPage:some View{ScrollView{VStack(alignment:.leading,spacing:22){heading("Redes observadas","Las redes pertenecen a la captura seleccionada; cambiar de fila no cambia la radio.");searchBar;Panel(title:"\(model.networks.count) redes",subtitle:"RSSI más reciente por BSSID"){HStack{Text("RED / BSSID");Spacer();Text("CANAL").frame(width:65);Text("SEGURIDAD").frame(width:90);Text("TRAMAS").frame(width:65);Text("RSSI").frame(width:70)}.font(.system(size:9,weight:.semibold)).foregroundStyle(Theme.muted);ForEach(model.networks){n in HStack{networkRow(n);Text(n.security).font(.system(size:10)).foregroundStyle(Theme.muted).frame(width:80);Text("\(n.beacons)").font(.system(size:10,design:.monospaced)).frame(width:55)};Divider().opacity(0.3)};if model.networks.isEmpty{empty("No hay redes para este filtro",icon:"wifi.slash").frame(height:220)}}}.padding(28)}}
     private var searchBar:some View{HStack{Image(systemName:"magnifyingglass").foregroundStyle(Theme.muted);TextField("Buscar protocolo, MAC, BSSID o número…",text:$model.search).textFieldStyle(.plain);if !model.search.isEmpty{Button{model.search=""}label:{Image(systemName:"xmark.circle.fill")}.buttonStyle(.plain).foregroundStyle(Theme.muted)}}.padding(11).background(Color.white.opacity(0.04),in:RoundedRectangle(cornerRadius:8))}
-    private var trafficPage:some View{VStack(alignment:.leading,spacing:18){HStack{heading("Explorador de paquetes","\(model.packets.count.formatted()) tramas · los datos protegidos se muestran cifrados");Button("Exportar CSV"){model.exportCSV()}.buttonStyle(.bordered)};HStack(spacing:12){searchBar;Picker("Tipo",selection:$model.packetKind){ForEach(["Todos","Gestión","Datos","Control"],id:\.self){Text($0)}}.labelsHidden().frame(width:130);Toggle("Solo estación",isOn:$model.stationOnly).toggleStyle(.checkbox).font(.system(size:11))};
+    private var trafficPage:some View{VStack(alignment:.leading,spacing:18){HStack{heading("Explorador de paquetes","\(model.packets.count.formatted()) tramas · los datos protegidos se muestran cifrados");Button("Exportar CSV"){model.exportCSV()}.buttonStyle(.bordered).disabled(model.packets.isEmpty)};HStack(spacing:12){searchBar;Picker("Tipo",selection:$model.packetKind){ForEach(["Todos","Gestión","Datos","Control"],id:\.self){Text($0)}}.labelsHidden().frame(width:130);Toggle("Solo estación",isOn:$model.stationOnly).toggleStyle(.checkbox).font(.system(size:11))};
         Table(model.packets,selection:$model.selectedPacket){TableColumn("#"){Text("\($0.id)").foregroundStyle(Theme.muted)}.width(42);TableColumn("Tiempo"){Text(String(format:"%.4f",$0.relative))}.width(70);TableColumn("Protocolo"){p in HStack(spacing:5){if p.encrypted{Image(systemName:"lock.fill").font(.system(size:8)).foregroundStyle(Theme.accent)};Text(p.protocolName).lineLimit(1)}}.width(min:100,ideal:130);TableColumn("Origen"){Text($0.source.isEmpty ? "—":$0.source).foregroundStyle(Theme.muted)}.width(min:128,ideal:150);TableColumn("Destino"){Text($0.destination.isEmpty ? "—":$0.destination).foregroundStyle(Theme.muted)}.width(min:128,ideal:150);TableColumn("Bytes"){Text("\($0.bytes)")}.width(48);TableColumn("RSSI"){Text($0.signal.map(String.init) ?? "—")}.width(45);TableColumn("CRC"){p in Text(p.crcValid.map{$0 ? "OK":"Error"} ?? "—").foregroundStyle(p.crcValid==false ? .orange:Theme.muted)}.width(50)}.font(.system(size:10,design:.monospaced)).tableStyle(.inset).scrollContentBackground(.hidden).background(Theme.panel,in:RoundedRectangle(cornerRadius:10))
         if let packet=model.inspected{packetInspector(packet)}else{HStack{Image(systemName:"cursorarrow.click");Text("Selecciona una trama para ver cabeceras y bytes radiotap/802.11.")}.font(.system(size:11)).foregroundStyle(Theme.muted)}
     }.padding(28)}

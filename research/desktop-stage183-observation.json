@@ -1,0 +1,43 @@
+{
+  "stage": 183,
+  "date": "2026-11-26",
+  "result": "desktop_application_verified",
+  "application": "build/Archer Control.app",
+  "version": "0.1.0",
+  "platform": "macOS 14+",
+  "architectures": [
+    "arm64",
+    "x86_64"
+  ],
+  "ui_tested_architecture": "arm64",
+  "core_checks_passed": 31,
+  "capture_records": 2638,
+  "observed_networks": 10,
+  "native_pairwise_authenticated": 1,
+  "filtered_csv_rows": 506,
+  "ui_checks": [
+    "six views",
+    "packet selection and hex",
+    "search and cleared selection",
+    "CSV export",
+    "PCAP import and refresh persistence",
+    "disabled pending radio modes",
+    "initial loading indicator",
+    "project folder selection loads 19 captures",
+    "final summary 2638 packets 10 networks 1 pairwise CLEAN206"
+  ],
+  "radio_attempt_executed": false,
+  "stage182_marker_present": false,
+  "driver_progress": 66,
+  "source_sha256": {
+    "desktop/ArcherControl/AppModel.swift": "57e9c1b4c2107c01a2656fe2c8b69d0b667e18560364d472306dd66931bc7943",
+    "desktop/ArcherControl/ArcherControlApp.swift": "47003dc772e906add6d6c50c3df0c8f412a8a8b2c5d430f9c79bc1188260f848",
+    "desktop/ArcherControl/Core.swift": "2e30be126f1cbb1f874923c4141e0324e37bd451058eb43f40f96d116a2b9120",
+    "desktop/ArcherControl/Views.swift": "8d6edd1a3cb1ce963fb1f89e1225bc2b099a704a0c5c88c68a2e84991d8e6e01",
+    "desktop/MakeIcon.swift": "e66819dbbd34c79454263f220d36c46c6d378ed82a5e713a4f8a3d6f2718341a",
+    "desktop/Tests/CoreTests.swift": "f15cfc072ffff2b326286d091883f72233340b6745309175aa09ef9b90551e58",
+    "desktop/build.sh": "ce1033bf2f12a5e552e93037ffa63689e4678f41e6d03c6ab5a70267b725638d",
+    "desktop/workflows.json": "ada5ca86be41efc6e9e02479f4a50427f427b052b7f0cf6fb3a4065e5be77211"
+  },
+  "signature_verified": true
+}
