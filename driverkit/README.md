@@ -33,10 +33,40 @@ Salida: `build/driverkit/service/ArcherUSB.dext`. El build genera IIG, compila/e
 
 Pasaron15 escenarios de Start/Stop con fallos inyectados y sanitizadores, incluyendo fallo en cada adquisición, cancelación reentrante y cierre con errores. Se reprodujo el descriptor físico y se comprobaron identidad/plataforma DriverKit/frameworks de ambas arquitecturas. **Start/Stop no se ejecutaron dentro de una extensión instalada**: esa prueba física queda pendiente de firma y activación. No se atribuye funcionamiento de hardware a estas pruebas simuladas.
 
+## Transporte DriverKit implementado — etapa193
+
+El servicio incorpora APIs **LOCALONLY**, utilizables por el futuro motor dentro de la DEXT: `ReadRegister`, `WriteRegister`, `SubmitBulk`, `CopyBulkResult`, `ReleaseBulk` y `GetTransportStatus`. El código generado IIG confirma que no son RPC de acceso externo. Deben invocarse en la cola serial Default; el transporte rechaza otras colas. No existe user client ni invocación desde la app todavía.
+
+- Registros: solicitud vendor05, dirección24 bits repartida entre value/index y anchura1/2/4, como en IOUSBLib. Timeout200ms, contador exacto y little-endian. Las lecturas fallidas/cortas no publican un valor. La primitiva codifica el protocolo; la política de qué registros modificar corresponde al motor de inicialización.
+- Bulk: doce slots, buffers DMA preasignados de16KiB, dos buffers de control de4 bytes y una acción por solicitud. Se permiten solo los nueve endpoints verificados. Timeout explícito1–2000ms, sin rearmado ni reenvío automático. El máximo es192KiB+8 de capacidad útil de buffers, además del overhead del SDK.
+- Completado: un ticket no reutilizado y una época de instancia dentro del proceso. Cada acción conserva un token inmutable; callbacks duplicados/de otra época o slot se ignoran. RX corto es válido; OUT corto, exceso de longitud o error no se publican como datos correctos. Un consumidor copia el resultado y lo libera explícitamente. La época de callbacks no sustituye el ledger H2C ni valida la antigüedad del payload firmware; eso sigue perteneciendo al motor.
+- Cancelación: un slot no se recicla hasta que el handler de `OSAction::Cancel` confirma que sus callbacks finalizaron. Stop cierra admisión, aborta/cierra USB y difiere el Stop heredado hasta terminar los controles y cancelar todas las acciones. Si falla la confirmación de Cancel o Close, conserva los recursos en cuarentena en lugar de forzar su liberación. `GetTransportStatus` expone el fallo al motor futuro; no hay recuperación automática.
+
+```sh
+./driverkit/test_transport.sh
+./driverkit/test_service.sh
+./driverkit/build.sh
+python3 driverkit/verify_bundle.py
+```
+
+Pruebas ASan/UBSan: codificación diferencial con el transporte anterior, lecturas parciales/error, backpressure, identificadores agotados, callbacks antiguos/duplicados, cuarentena sin confirmación y reciclado tras Cancel. El bundle enlaza para ARM/Intel y mantiene plataforma/matching exactos. El binario probado se conserva en `artifacts/driverkit-stage193-ArcherUSB`.
+
+**Sin contraste físico dentro de una DEXT instalada.** Construir o iniciar este servicio no envía solicitudes de registros/bulk automáticamente ni carga firmware; el llamador del motor debe hacerlo explícitamente en la próxima etapa. No se ha portado todavía ese motor, su política de reservas, los decodificadores/eventos ni el backend criptográfico persistente. No se crea interfaz Ethernet.
+
+## Primera conexión al motor: observación de arranque — etapa194
+
+`ReadBootControls` lee FC/F0/1E0/84/D0/842C mediante el nuevo transporte, en una llamada local serializada. Solo publica el conjunto si todas las lecturas terminan correctamente y el transporte sigue vigente. Rechaza los valores de registro inaccesible conocidos. Devuelve observaciones de chip/cut, controles fríos, controles de firmware en ejecución o estado desconocido. **Ninguna clasificación acredita identidad/liveness del firmware ni autoriza reset, escritura o descarga.** Todavía faltan propiedad exclusiva, validación de imágenes, ventanas WLAN/RF, secuencias, confirmaciones y drenaje del motor completo.
+
+```sh
+./driverkit/test_boot_controls.sh
+```
+
+La prueba usa los primeros controles leídos en la captura fría188 y un caso de ejecución sintético separado. Verifica sentinelas, cut incorrecto y estados ROM de rechazo. El método no se llama automáticamente desde Start y no se ejecutó sobre hardware en esta etapa. Sigue siendo LOCALONLY y el bundle universal compila/enlaza con él.
+
 ## Orden de implementación restante
 
 1. Servicio USB y ciclo Start/Stop/cancelación implementados y enlazados en192; falta contraste físico con la extensión instalada.
-2. Adaptar transporte/registros y motor de arranque al entorno DriverKit. El motor IOUSBLib actual usa servicios de macOS y excepciones; no se puede enlazar sin cambios dentro de una DEXT.
+2. Transporte de registros/bulk adaptado en193. Sigue conectar el motor de arranque al API sin excepciones, con política de reservas, firmware, decodificación de respuestas y errores; el motor IOUSBLib no se puede enlazar sin cambios.
 3. Backend de criptografía y supplicant persistente: claves en memoria, PN/secuencias por sesión, rekey, desconexión y limpieza verificada. El backend CommonCrypto actual también necesita un límite de plataforma explícito.
 4. Pools y colas Ethernet TX/RX, backpressure y completado de propiedad una sola vez; solo publicar link-up después de asociación/claves/contexto válidos. Integrar el codec de esta etapa.
 5. Firma/perfil y activación desde la app. El usuario dispone de Apple ID sin membresía Developer; todavía no se acredita ningún perfil ni entitlement DriverKit. La app diagnóstica con firma local sigue siendo independiente de esto.
@@ -44,4 +74,4 @@ Pasaron15 escenarios de Start/Stop con fallos inyectados y sanitizadores, incluy
 
 Apple documenta [NetworkingDriverKit](https://developer.apple.com/documentation/NetworkingDriverKit) como interfaz Ethernet y [el proceso de entitlements](https://developer.apple.com/documentation/driverkit/requesting-entitlements-for-driverkit-development) para su instalación. Este proyecto no instala extensiones ni modifica políticas de seguridad mediante los scripts anteriores.
 
-Evidencia: [etapa191](../research/driverkit-stage191-observation.json) y [etapa192](../research/driverkit-stage192-observation.json).
+Evidencia: [etapa191](../research/driverkit-stage191-observation.json) y [etapa192](../research/driverkit-stage192-observation.json) y [etapa193](../research/driverkit-stage193-observation.json) y [etapa194](../research/driverkit-stage194-observation.json).

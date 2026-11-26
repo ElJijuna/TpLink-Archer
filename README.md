@@ -6,7 +6,7 @@ Primera versión macOS: **Archer Control**, con estado USB, redes observadas, gr
 
 [Uso, alcance y arquitectura de la app](desktop/README.md).
 
-Integración en desarrollo: [puente de paquetes Ethernet/DriverKit](driverkit/README.md), codec y servicio USB Start/Stop compilados y enlazados con el SDK real para ARM/Intel; todavía sin extensión instalada ni interfaz del sistema.
+Integración en desarrollo: [puente de paquetes Ethernet/DriverKit](driverkit/README.md), codec, servicio USB Start/Stop y transporte de registros/bulk asíncrono compilados y enlazados con el SDK real para ARM/Intel; todavía sin extensión instalada ni interfaz del sistema.
 
 ## Checklist resumido — avance estimado: **66 %**
 

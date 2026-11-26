@@ -1,0 +1,19 @@
+{
+  "source": "artifacts/recovery-stage188-boundary/reload.jsonl; first successful read of each control",
+  "cold": [
+    2147484529,
+    205724983,
+    201326592,
+    2163408896,
+    1,
+    0
+  ],
+  "synthetic_running": [
+    2147484529,
+    205724983,
+    201326626,
+    3145735,
+    0,
+    32761
+  ]
+}

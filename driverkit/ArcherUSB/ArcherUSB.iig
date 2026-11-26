@@ -1,5 +1,6 @@
 #include <NetworkingDriverKit/IOUserNetworkEthernet.iig>
 #include <USBDriverKit/IOUSBHostInterface.iig>
+#include <USBDriverKit/IOUSBHostPipe.iig>
 struct ArcherUSB_IVars;
 class ArcherUSB : public IOUserNetworkEthernet
 {
@@ -18,6 +19,17 @@ public:
     virtual kern_return_t GetMaxTransferUnit(uint32_t *mtu) override LOCAL;
     virtual kern_return_t SetHardwareAssists(uint32_t hardwareAssists) override LOCAL;
     virtual kern_return_t GetHardwareAssists(uint32_t *hardwareAssists) override LOCAL;
+    // In-process transport only. No user client or external arbitrary-register RPC.
+    kern_return_t ReadBootControls(uint32_t *values, uint32_t capacity, uint32_t *classification) LOCALONLY;
+    kern_return_t ReadRegister(uint32_t address, uint32_t width, uint32_t *value) LOCALONLY;
+    kern_return_t WriteRegister(uint32_t address, uint32_t width, uint32_t value) LOCALONLY;
+    kern_return_t SubmitBulk(uint8_t endpoint, const uint8_t *data, uint32_t length, uint32_t timeoutMS, uint64_t *ticket) LOCALONLY;
+    kern_return_t CopyBulkResult(uint64_t ticket, int32_t *status, uint8_t *output, uint32_t capacity, uint32_t *actual) LOCALONLY;
+    kern_return_t ReleaseBulk(uint64_t ticket) LOCALONLY;
+    kern_return_t GetTransportStatus(uint32_t *pending, int32_t *fault, bool *stopping) LOCALONLY;
+    void TransportCancelDone(uint32_t slot, uint64_t ticket) LOCALONLY;
+    void FinishStopIfReady() LOCALONLY;
+    virtual void BulkComplete(OSAction *action, IOReturn status, uint32_t actualByteCount, uint64_t completionTimestamp) TYPE(IOUSBHostPipe::CompleteAsyncIO);
 private:
     ArcherUSB_IVars *ivars;
 };

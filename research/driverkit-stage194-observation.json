@@ -1,0 +1,39 @@
+{
+  "stage": 194,
+  "date": "2026-11-26",
+  "status": "boot_control_observation_integrated_not_executed",
+  "architectures": [
+    "arm64",
+    "x86_64"
+  ],
+  "preflight_scope": "control bits only, not firmware identity or permission to reset",
+  "tests": {
+    "cold_physical_trace": true,
+    "running_case_synthetic": true,
+    "sentinel_chip_cut_and_rom_rejection": true,
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "sdk_compile_link": "passed",
+    "localonly_api_verified": true
+  },
+  "full_boot_engine_ported": false,
+  "dext_installed": false,
+  "usb_submissions": 0,
+  "network_submissions": 0,
+  "evidence_sha256": {
+    "include/archer/driver_boot_controls.hpp": "b1626f83a9bcd5e3031d200e1be86cf456ad6278aaab6e16803764a2dbe6f06f",
+    "driverkit/ArcherUSB/ArcherUSB.cpp": "81921485fbff6b87545c7934be1ac808133d575bd4a3373d001ed975a434bfe9",
+    "driverkit/ArcherUSB/ArcherUSB.iig": "48e183d24cae0df69672cb915397ea131ce10fe9a6d1010a8751a040e0b158b8",
+    "driverkit/ArcherUSB/USBTransport.inc": "47947374ac7e7a6165763e5daf02694be31af030c555564a732e194cdf6f776a",
+    "tests/driver_boot_controls_test.cpp": "73e11bb35b8d6f84c46d686beb2dfbd2f6ebfc4de4b0374646734ef9a696b388",
+    "tests/fixtures/driver-boot-controls-stage194.json": "440645ef37b4e979ff0e2842ca109e1cfc454d0d7911ecbe516fd7f89d8c3cf2",
+    "driverkit/test_boot_controls.sh": "330731649d84f7ec0dae8711533eed2995f8edc570adca401f600dceaa94f066",
+    "driverkit/verify_bundle.py": "94d50ca9b3ea72b67d4b883798d92be2b12957c22d34d125446d5ec744074615",
+    "artifacts/driverkit-stage194-tests.log": "df34382a6cd816453f512f8a8ec5cc36772df43a71d0ad01444dfb660d326f41",
+    "artifacts/driverkit-stage194-build.log": "36b9886e3d97d54ff9404fc2fac27a76c295f7635b4122533d8cbce055a0a743",
+    "artifacts/driverkit-stage194-bundle.log": "a013461abf691eea28f1f9c5366f5c319cea1240a6ccba4516632e528a79abda",
+    "artifacts/driverkit-stage194-ArcherUSB": "7a394a83051ccc4471a6ad25535fb77032effd0e5312be8db00a391e205d1dce"
+  }
+}

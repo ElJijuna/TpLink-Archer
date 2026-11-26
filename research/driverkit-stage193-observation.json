@@ -1,0 +1,63 @@
+{
+  "stage": 193,
+  "date": "2026-11-26",
+  "status": "driverkit_transport_compiled_linked_and_state_verified_not_installed",
+  "registers": {
+    "request": 5,
+    "address_bits": 24,
+    "widths": [
+      1,
+      2,
+      4
+    ],
+    "timeout_ms": 200,
+    "exact_length_required": true
+  },
+  "bulk": {
+    "slots": 12,
+    "capacity_per_slot": 16384,
+    "timeout_ms": [
+      1,
+      2000
+    ],
+    "automatic_retry": false,
+    "automatic_rearm": false,
+    "recycle_requires_cancel_ack": true,
+    "close_or_cancel_failure_quarantines_resources": true
+  },
+  "verification": {
+    "architectures": [
+      "arm64",
+      "x86_64"
+    ],
+    "sdk": "DriverKit27.2",
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "register_differential_replay": true,
+    "stale_and_duplicate_callback_tests": true,
+    "ticket_exhaustion_test": true,
+    "prior_lifecycle_scenarios": 15,
+    "transport_apis_local_only_verified": true,
+    "dext_installed": false,
+    "hardware_io_tested": false,
+    "usb_submissions": 0,
+    "network_submissions": 0
+  },
+  "evidence_sha256": {
+    "include/archer/usb_transport_state.hpp": "941045163f140bd19dd1374034d64bdb993a1d2b450c77a5b674c84420084787",
+    "tests/usb_transport_state_test.cpp": "f07b7564ca41c840d997eefdcd6030d58561a56854b205837d32a247ef2b71a3",
+    "driverkit/ArcherUSB/ArcherUSB.cpp": "efc0567befdacd5435a39536bfd0a0b7cdd20665bdcb5748ad9052872ba2a948",
+    "driverkit/ArcherUSB/ArcherUSB.iig": "8fb3e49f2f058b0b530cfcd821f02bbb019b661ef96cb21c3610e9f1c3729b8d",
+    "driverkit/ArcherUSB/USBTransport.inc": "47947374ac7e7a6165763e5daf02694be31af030c555564a732e194cdf6f776a",
+    "driverkit/build.sh": "46e4de7d6f06bebd34fc6b9574fdf67419119e2d5e3e8b0c16e65d7d68ec6622",
+    "driverkit/test_transport.sh": "8da93c0611201fb01d8ba88961cb8c7413cdd4c8e43431de9420317ca8e7ae9c",
+    "driverkit/verify_bundle.py": "6517d1538f3f170d1404d104d33152c73a1384fd88c645281165724989f70c22",
+    "artifacts/driverkit-stage193-tests.log": "60b8f3c791b3f87aaf8ea9ebf01821b273778a9744289123ed3d302556b3a270",
+    "artifacts/driverkit-stage193-lifecycle.log": "aba4d4235bdca355186988109870b9ac4f0c1c3ab7800e8aad563bbe7ddd791e",
+    "artifacts/driverkit-stage193-build.log": "36b9886e3d97d54ff9404fc2fac27a76c295f7635b4122533d8cbce055a0a743",
+    "artifacts/driverkit-stage193-bundle.log": "a013461abf691eea28f1f9c5366f5c319cea1240a6ccba4516632e528a79abda",
+    "artifacts/driverkit-stage193-ArcherUSB": "cd10b66f0e75ccc923835b1ad876af287efdaabbc50f677f64bf7f81318d353f"
+  }
+}
