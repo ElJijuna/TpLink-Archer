@@ -10,4 +10,15 @@ bool complete_firmware_action(DriverFirmwareEngine& engine,const DriverFirmwareA
                              std::int32_t status,std::uint32_t value,std::uint32_t actual,std::uint64_t now_us){
  return engine.complete(action,status,value,actual,now_us);
 }
+
+bool start_power_windows(DriverPowerWindows& windows,std::uint64_t epoch,std::uint64_t now_us){return windows.begin(epoch,now_us,true);}
+DriverFirmwareAction next_power_window_action(DriverPowerWindows& windows,std::uint64_t now_us){return windows.next(now_us);}
+bool complete_power_window_action(DriverPowerWindows& windows,const DriverFirmwareAction& action,
+                                 std::int32_t status,std::uint32_t value,std::uint32_t actual,std::uint64_t now_us){
+ return windows.complete(action,status,value,actual,now_us);
+}
+bool restore_power_windows(DriverPowerWindows& windows,std::uint64_t now_us,bool body_succeeded){return windows.close(now_us,body_succeeded);}
+
+bool restore_rf_windows(DriverPowerWindows& windows,std::uint64_t now_us,bool body_succeeded){return windows.close_rf(now_us,body_succeeded);}
+bool finish_wlan_window(DriverPowerWindows& windows,std::uint64_t now_us){return windows.finish_wlan(now_us);}
 }

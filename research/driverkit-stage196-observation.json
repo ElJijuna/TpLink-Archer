@@ -1,0 +1,41 @@
+{
+  "stage": 196,
+  "date": "2026-11-27",
+  "status": "wlan_rf_windows_ported_linked_and_simulated_not_enabled",
+  "scope": "WLAN IO, analog identity, RF power, masked restoration; no CPU/firmware rollback",
+  "validation": {
+    "legacy_valid_trace_comparison": true,
+    "injected_and_uncertain_failure_cases": 1576,
+    "multiple_cleanup_failures_recorded": true,
+    "split_rf_wlan_close": true,
+    "cold_reset_guard_before_rf": true,
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "architectures": [
+      "arm64",
+      "x86_64"
+    ],
+    "sdk": "DriverKit27.2",
+    "entry_points_linked": true
+  },
+  "full_boot_enabled": false,
+  "coordinator_and_drain_implemented": false,
+  "dext_installed": false,
+  "usb_submissions": 0,
+  "network_submissions": 0,
+  "evidence_sha256": {
+    "include/archer/driver_power_windows.hpp": "078546d547ee271e66b82fabd104cb7fc5969edb46eed4ff32403ea88cc48fbe",
+    "tests/driver_power_windows_test.cpp": "da0e602ac4344356577831bc2fbee6915da7f5b461bd8166a5e46b4aaefd0ec3",
+    "driverkit/test_windows.sh": "7779fc6129271a00ff0e5c749ee120b35176ef96fa63f3bd6ba195017b6cbe76",
+    "driverkit/ArcherUSB/FirmwareCore.hpp": "2e61aff7281ccaba7a8f1ddd571f05a23d9bb5b2cd251efa3a90e56a727757aa",
+    "driverkit/ArcherUSB/FirmwareCore.cpp": "65f9dc713da09e2912481a70ce8bdac831911e3c69e683c9612b5bb5a9a0bf3f",
+    "driverkit/ArcherUSB/ArcherUSB.cpp": "5b11bf3791c86c1d7439a3280037dd9f264fb201a2cc90d804a210728b07c96d",
+    "artifacts/driverkit-stage196-tests.log": "c4ad3068c5add984319dd8cdd0f684a547f7b358a33cc1f4b7bcccfd46c05aef",
+    "artifacts/driverkit-stage196-build.log": "988df555ae13041b3b5a7febfc2054a7774bbf0425c660bac7b72ecf23f23997",
+    "artifacts/driverkit-stage196-bundle.log": "a013461abf691eea28f1f9c5366f5c319cea1240a6ccba4516632e528a79abda",
+    "artifacts/driverkit-stage196-symbols.log": "6813fb737bc7128181812b5e40ee294730da2395a688da4db3c471729aaa40a2",
+    "artifacts/driverkit-stage196-ArcherUSB": "042bb98d0e1c012b74d74e2a2ce228bb84377fc17131052a3efa6525a40fc4b1"
+  }
+}

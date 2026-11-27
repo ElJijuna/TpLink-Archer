@@ -80,6 +80,24 @@ Las pruebas ASan/UBSan comparan todas las operaciones con la rutina anterior sob
 
 **El arranque completo aún no está habilitado.** Faltan las ventanas WLAN/RF con sus restauraciones, la política de propiedad/fence, tablas posteriores, dispatcher/timers que conecten las acciones al transporte y drenaje final. Los controles fríos de194 no conceden esos permisos. Start no llama al núcleo y no existe una API que permita comenzar un reset desde la app. El bundle sigue sin instalarse; no hubo solicitudes USB ni cargas reales en esta etapa.
 
+## Ventanas WLAN/RF portadas — etapa196
+
+`DriverPowerWindows` traslada `with_wlan_io_window`, la identidad analógica y `with_rf_power_window` a acciones sin excepciones ni asignaciones dinámicas. Verifica chip/cut y AID6933, las ocho bases XTAL y el estado activo antes de configurar RF. La entrada del módulo de firmware exige además BB/reset frío antes de las escrituras de potencia; el modo general de prueba permite contrastar por separado la ventana diagnóstica anterior.
+
+El diario acotado guarda cada máscara y su valor original **antes** de entregar la escritura. Restaura en orden inverso, conserva campos ajenos y verifica el valor. Reproduce también el byte original completo de los comandos XTAL, manteniendo sus máscaras. Una restauración fallida no omite las restantes: conserva el primer error y un bitmap de entradas no confirmadas. El resultado solo acredita los campos de ventana, nunca rollback de CPU/firmware ni limpieza de una época.
+
+La restauración puede hacerse de una vez o separada: `close_rf` restaura RF y deja WLAN disponible; `finish_wlan` cierra después de la verificación/drenaje. La espera intermedia pertenece al futuro coordinador. Preserva un enable WLAN que ya estuviera activo. Una cancelación con control pendiente espera su completado/aborto antes de emitir restauraciones. Una desconexión o agotamiento del presupuesto conserva el estado no confirmado en lugar de declararlo restaurado. Apertura y restauración tienen presupuestos propios de30s; las pausas son acciones de10ms y SIO mantiene seis polls acotados.
+
+```sh
+./driverkit/test_windows.sh
+./driverkit/build.sh
+python3 driverkit/verify_bundle.py
+```
+
+ASan/UBSan: traza exacta de la rutina anterior en casos válidos con WLAN inicialmente activa/inactiva,1576 fallos ciertos/inciertos, completados SIO tardíos, timeout, selector incorrecto, varias restauraciones fallidas, cancelación y desconexión. Se comprueba que los cambios de firmware del cuerpo **no** se revierten al cerrar la ventana, y que el cierre separado mantiene WLAN hasta la última fase. La entrada fría también se contrasta con la secuencia anterior. Las funciones están enlazadas para ARM/Intel. El binario se conserva en `artifacts/driverkit-stage196-ArcherUSB`.
+
+**La ejecución aún no está habilitada.** El servicio no abre estas ventanas desde Start ni expone una RPC para hacerlo. Un Stop inesperado registra abandono sin afirmar restauración. Sigue faltando el coordinador de propiedad/fence, dispatcher/timers, tablas posteriores y drenaje, además de la prueba de la extensión instalada. No se ejecutó ninguna de estas acciones sobre el USB en esta etapa.
+
 ## Orden de implementación restante
 
 1. Servicio USB y ciclo Start/Stop/cancelación implementados y enlazados en192; falta contraste físico con la extensión instalada.
@@ -91,4 +109,4 @@ Las pruebas ASan/UBSan comparan todas las operaciones con la rutina anterior sob
 
 Apple documenta [NetworkingDriverKit](https://developer.apple.com/documentation/NetworkingDriverKit) como interfaz Ethernet y [el proceso de entitlements](https://developer.apple.com/documentation/driverkit/requesting-entitlements-for-driverkit-development) para su instalación. Este proyecto no instala extensiones ni modifica políticas de seguridad mediante los scripts anteriores.
 
-Evidencia: [etapa191](../research/driverkit-stage191-observation.json) y [etapa192](../research/driverkit-stage192-observation.json) y [etapa193](../research/driverkit-stage193-observation.json) y [etapa194](../research/driverkit-stage194-observation.json) y [etapa195](../research/driverkit-stage195-observation.json).
+Evidencia: [etapa191](../research/driverkit-stage191-observation.json) y [etapa192](../research/driverkit-stage192-observation.json) y [etapa193](../research/driverkit-stage193-observation.json) y [etapa194](../research/driverkit-stage194-observation.json) y [etapa195](../research/driverkit-stage195-observation.json) y [etapa196](../research/driverkit-stage196-observation.json).

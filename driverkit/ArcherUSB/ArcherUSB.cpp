@@ -55,6 +55,7 @@ struct ArcherUSB_IVars {
  archer::UsbServiceLifecycle<USBBackend> lifecycle;
  USBTransport transport;
  archer::DriverFirmwareEngine firmware;
+ archer::DriverPowerWindows power_windows;
  bool super_started=false,stop_requested=false,stop_held=false;
  IOService* stop_provider=nullptr;
  kern_return_t stop_error=0;
@@ -97,6 +98,7 @@ kern_return_t IMPL(ArcherUSB,Stop){
  ivars->stop_requested=true;ivars->stop_provider=provider;provider->retain();
  retain();ivars->stop_held=true;
  auto& t=ivars->transport;
+ ivars->power_windows.abandon(archer::DriverWindowError::cancelled); // Unexpected Stop must never report unverified RF restoration.
  ivars->firmware.cancel();
  t.state.stop(); // Reject every new request/result BEFORE aborts and callbacks.
  ivars->stop_error=ivars->lifecycle.stop();
